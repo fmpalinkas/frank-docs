@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Proactive Control 10. Handle All Errors and Exceptions</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-controls-10-handle-all-errors-and-exceptions">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/10-handle-all.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">OWASP Top 10 Proactive Security Controls v3.0</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">10. Handle All Errors and Exceptions</h3>
+
+      <section class="api">
+
+        <dl>
+          <dt tabindex="0">Control Description</dt>
+          <dd>
+            <p>
+              Exception handling is a programming concept that allows an application to respond to
+              different error states (like network down, or database connection failed, etc) in various ways.
+            </p>
+            <ul>
+              <li><p>Handling exceptions and errors correctly is critical to making your code reliable and secure.</p></li>
+            </ul>
+
+            <p>
+              Error and exception handling occurs in all areas of an application including critical business
+              logic as well as security features and framework code.
+            </p>
+            <ul>
+              <li><p>Error handling is also important from an intrusion detection perspective.</p></li>
+              <li>
+                <p>
+                  Certain attacks
+                  against your application may trigger errors which can help detect attacks in progress.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Error Handling Mistakes</dt>
+          <dd>
+            <p>
+              Researchers at the University of Toronto have found that even small mistakes in error
+              handling or forgetting to handle errors can lead to catastrophic failures in distributed
+              systems.
+            </p>
+            <p>Mistakes in error handling can lead to different kinds of security vulnerabilities.</p>
+            <ol>
+              <li>
+                <p>
+                  <b>Information leakage:</b> Leaking sensitive information in error messages can
+                  unintentionally help attackers.
+                </p>
+                <ol>
+                  <li>
+                    <p>
+                      For example, an error that returns a stack trace or
+                      other internal error details can provide an attacker with information about your
+                      environment.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Even small differences in handling different error conditions (e.g.,
+                      returning "invalid user" or "invalid password" on authentication errors) can provide
+                      valuable clues to attackers.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      As described above, be sure to log error details for
+                      forensics and debugging purposes, but don’t expose this information, especially to an
+                      external client.
+                    </p>
+                  </li>
+                </ol>
+              </li>
+
+              <li>
+                <p>
+                  <b>TLS bypass:</b> The Apple goto "fail bug" was a control-flow error in error handling
+                  code that lead to a complete compromise of TLS connections on apple systems.
+                </p>
+              </li>
+
+              <li>
+                <p>
+                  <b>DOS:</b> A lack of basic error handling can lead to system shutdown.
+                </p>
+                <ol>
+                  <li>
+                    <p>
+                      This is usually a
+                      fairly easy vulnerability for attackers to exploit.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Other error handling problems could
+                      lead to increased usage of CPU or disk in ways that could degrade the system.
+                    </p>
+                  </li>
+                </ol>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Positive Advice</dt>
+          <dd>
+            <ol>
+              <li>
+                <p>
+                  Manage exceptions in a centralized manner to avoid duplicated try/catch blocks in
+                  the code. Ensure that all unexpected behavior is correctly handled inside the
+                  application.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Ensure that error messages displayed to users do not leak critical data, but are still
+                  verbose enough to enable the proper user response.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Ensure that exceptions are logged in a way that gives enough information for support,
+                  QA, forensics or incident response teams to understand the problem.
+                </p>
+              </li>
+              <li><p>Carefully test and verify error handling code.</p></li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Tools</dt>
+          <dd>
+            <ul>
+              <li>
+                <p>
+                  <a href="https://github.com/google/error-prone" target="_blank">
+                    Error Prone  <img src="bin/images/link.png" class="exlink" alt="- This is an external link." />
+                  </a> - A static analysis tool from Google to catch common mistakes in error
+                  handling for Java developers.
+                </p>
+              </li>
+              <li>
+                <p>
+                  One of the most famous automated tools for finding errors at runtime is
+                  <a href="https://github.com/Netflix/chaosmonkey" target="_blank">Netflix's Chaos Monkey <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>, which intentionally disables system instances to ensure that the
+                  overall service will recover correctly.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">References</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://www.owasp.org/index.php/Codereview-Error-Handling" target="_blank">OWASP Code Review Guide: Error Handling <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Testing_for_Error_Code_(OTG-ERR-001)" target="_blank">OWASP Testing Guide: Testing for Error Handling <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Improper_Error_Handling" target="_blank">OWASP Improper Error Handling <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/209.html" target="_blank">CWE 209: Information Exposure Through an Error Message <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/391.html" target="_blank">CWE 391: Unchecked Error Condition <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

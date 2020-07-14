@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: OWASP 1. Injection</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-security-1-injection">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/1-injection.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 tabindex="0" id="headline">OWASP Top 10 Web App Security Risks - 2017</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 tabindex="0" class="brown3">1. Injection</h3>
+
+      <section class="api">
+        <dl>
+          <dt tabindex="0">Risk Description</dt>
+          <dd>
+            <p>Injection flaws, such as SQL, NoSQL, OS, and LDAP injection, occur when untrusted data is sent to an interpreter as part of a command or query. The attacker's hostile data can trick the interpreter into executing unintended commands or accessing data without proper authorization.</p>
+          </dd>
+
+          <dt tabindex="0">Attack Vectors</dt>
+          <dd><p>Almost any source of data can be an injection vector, environment variables, parameters, external and internal web services, and all types of users. Injection flaws occur when an attacker can send hostile data to an interpreter.</p></dd>
+
+          <dt tabindex="0">Security Weakness</dt>
+          <dd>
+            <p>
+              Injection flaws are very prevalent, particularly in legacy code. Injection vulnerabilities are often found in SQL, LDAP, XPath, or NoSQL queries, OS commands, XML parsers, SMTP headers, expression languages, and ORM queries. Injection flaws are easy to discover when examining code. Scanners and fuzzers can help attackers find injection flaws.
+            </p>
+          </dd>
+
+          <dt tabindex="0">Impacts</dt>
+          <dd>
+            <p>
+              Injection can result in data loss, corruption, or disclosure to unauthorized parties, loss of accountability, or denial of access. Injection can sometimes lead to complete host takeover. The business impact depends on the needs of the application and data.
+            </p>
+          </dd>
+
+          <dt tabindex="0">Vulnerability</dt>
+          <dd>
+            <p>An application is vulnerable to attack when:</p>
+            <ul>
+              <li><p>User-supplied data is not validated, filtered, or sanitized by the application.</p></li>
+              <li><p>Dynamic queries or non-parameterized calls without context-aware escaping are used directly in the interpreter.</p></li>
+              <li><p>Hostile data is used within object-relational mapping (ORM) search parameters to extract additional, sensitive records.</p></li>
+              <li><p>Hostile data is directly used or concatenated, such that the SQL or command contains both structure and hostile data in dynamic queries, commands, or stored procedures.</p></li>
+            </ul>
+
+            <p>
+              Some of the more common injections are SQL, NoSQL, OS command, Object Relational Mapping (ORM), LDAP, and Expression Language (EL) or Object Graph Navigation Library (OGNL) injection.
+            </p>
+            <ul>
+              <li><p>The concept is identical among all interpreters.</p></li>
+              <li><p>Source code review is the best method of detecting if applications are vulnerable to injections, closely followed by thorough automated testing of all parameters, headers, URL, cookies, JSON, SOAP, and XML data inputs.</p></li>
+              <li><p>Organizations can include static source (SAST) and dynamic application test (DAST) tools into the CI/CD pipeline to identify newly introduced injection flaws prior to production deployment.</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Prevention</dt>
+          <dd>
+            <p>Preventing injection requires keeping data separate from commands and queries.</p>
+            <ul>
+              <li>
+                <p>The preferred option is to use a safe API, which avoids the use of the interpreter entirely or provides a parameterized interface, or migrate to use Object Relational Mapping Tools (ORMs).</p>
+                <ul>
+                  <li><p>Note: Even when parameterized, stored procedures can still introduce SQL injection if PL/SQL or T-SQL concatenates queries and data, or executes hostile data with EXECUTE IMMEDIATE or exec().</p></li>
+                </ul>
+              </li>
+              <li><p>Use positive or "whitelist" server-side input validation. This is not a complete defense as many applications require special characters, such as text areas or APIs for mobile applications.</p></li>
+              <li>
+                <p>For any residual dynamic queries, escape special characters using the specific escape syntax for that interpreter.</p>
+                <ul>
+                  <li><p>Note: SQL structure such as table names, column names, and so on cannot be escaped, and thus user-supplied structure names are dangerous. This is a common issue in report-writing software.</p></li>
+                </ul>
+              </li>
+              <li><p>Use LIMIT and other SQL controls within queries to prevent mass disclosure of records in case of SQL injection.</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Example Attack Scenarios</dt>
+          <dd>
+            <p><strong>Scenario 1:</strong> An application uses untrusted data in the construction of the following vulnerable SQL call:</p>
+            <pre class="line-numbers"><code class="language-sql">String query = "SELECT * FROM accounts WHERE custID='" +
+request.getParameter("id") + "'";</code></pre>
+          </dd>
+          <dd>
+            <p><strong>Scenario 2:</strong> Similarly, an application’s blind trust in frameworks may result in queries that are still vulnerable, (e.g. Hibernate Query Language (HQL)):</p>
+            <pre class="line-numbers"><code class="language-hql">Query HQLQuery = session.createQuery("FROM accounts WHERE custID='" +
+request.getParameter("id") + "'");</code></pre>
+          </dd>
+          <dd>
+            <p>In both cases, the attacker modifies the "id" parameter value in their browser to send: ' or '1'='1. For example:</p>
+            <pre><code class="language-http">http://example.com/app/accountView?id=' or '1'='1</code></pre>
+
+            <p>This changes the meaning of both queries to return all the records from the accounts table. More dangerous attacks could modify or delete data, or even invoke stored procedures.</p>
+          </dd>
+        </dl>
+
+        <dl>
+
+          <dt tabindex="0">OWASP References</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://www.owasp.org/index.php/OWASP_Proactive_Controls#2:_Parameterize_Queries" target="_blank">OWASP Proactive Controls: Parameterize Queries <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/ASVS_V5_Input_validation_and_output_encoding" target="_blank">OWASP ASVS: V5 Input Validation and Encoding <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Testing_for_Command_Injection_(OTG-INPVAL-013)" target="_blank">OWASP Testing Guide: SQL Injection, Command Injection, ORM injection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Injection_Prevention_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Injection Prevention <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: SQL Injection Prevention <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Injection_Prevention_Cheat_Sheet_in_Java" target="_blank">OWASP Cheat Sheet: Injection Prevention in Java <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Query_Parameterization_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Query Parameterization <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/OWASP_Automated_Threats_to_Web_Applications" target="_blank">OWASP Automated Threats to Web Applications – OAT-014 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Related References</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/77.html" target="_blank">CWE-77 (Common Weakness Enumeration): Command Injection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/89.html" target="_blank">CWE-89 (Common Weakness Enumeration): SQL Injection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/564.html" target="_blank">CWE-564 (Common Weakness Enumeration): Hibernate Injection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/917.html" target="_blank">CWE-917 (Common Weakness Enumeration): Expression Language Injection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://portswigger.net/kb/issues/00101080_serversidetemplateinjection" target="_blank">PortSwigger: Server-side template injection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

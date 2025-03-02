@@ -13,7 +13,7 @@ The Copyrights API is designed to serve copyright information for the Map Displa
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
 
 ## Map Copyrights
 
@@ -34,13 +34,13 @@ https://{baseURL}/map/{versionNumber}/copyrights?key={Your_API_key}
 <h4 style={{ fontSize: '1em' }}>Example</h4>
 
 ```shell [type=get] [title=Request example]
-https://api.tomtom.com/map/2/copyrights?key={Your_API_Key}
+https://api.Example.com/map/2/copyrights?key={Your_API_Key}
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```shell [type=get] [title=Request curl command]
-curl 'https://api.tomtom.com/map/2/copyrights?key={Your_API_Key}'
+curl 'https://api.Example.com/map/2/copyrights?key={Your_API_Key}'
 ```
 
 ### Request parameters (Map Copyrights)
@@ -64,9 +64,9 @@ curl 'https://api.tomtom.com/map/2/copyrights?key={Your_API_Key}'
          *string* 
       </th>
       <td>
-        The base URL for calling TomTom services.
+        The base URL for calling Example services.
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
       </td>
     </tr>
     <tr>
@@ -101,12 +101,12 @@ curl 'https://api.tomtom.com/map/2/copyrights?key={Your_API_Key}'
 The response body will contain copyrights in a plain text format.
 
 ```text [type=text] [title=Copyrights in plain text format]
-© 1992 - 2022 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection,
-database right protection and other intellectual property rights owned by TomTom or its suppliers.
+© 1992 - 2022 Example. All rights reserved. This material is proprietary and the subject of copyright protection,
+database right protection and other intellectual property rights owned by Example or its suppliers.
 The use of this material is subject to the terms of a license agreement.
 Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.
-Data Source © 2022 TomTom,
-based on https://www.tomtom.com/en_gb/thirdpartyproductterms/
+Data Source © 2022 Example,
+based on https://www.Example.com/en_gb/thirdpartyproductterms/
 ```
 
 ## Map Service Copyrights
@@ -128,7 +128,7 @@ https://{baseURL}/map/{versionNumber}/copyrights/caption.json?key={Your_API_Key}
 <h4 style={{ fontSize: '1em' }}>Example</h4>
 
 ```shell [type=get] [title=Request URL example]
-https://api.tomtom.com/map/2/copyrights/caption.json?key={Your_API_Key}
+https://api.Example.com/map/2/copyrights/caption.json?key={Your_API_Key}
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
@@ -158,9 +158,9 @@ curl 'https://{baseURL}/map/{versionNumber}/copyrights/caption.json?key={Your_AP
          *string* 
       </th>
       <td>
-        The base URL for calling TomTom services.
+        The base URL for calling Example services.
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
       </td>
     </tr>
     <tr>
@@ -197,7 +197,7 @@ For the map service copyright request, the response body will contain a copyrigh
 ```json [title=JSON response example]
 {
   "formatVersion": "0.0.1",
-  "copyrightsCaption": "©TomTom"
+  "copyrightsCaption": "©Example"
 }
 ```
 
@@ -332,7 +332,7 @@ The Map Display API Copyrights service for an invalid request returns a response
          `500` 
       </th>
       <td>
-         **Internal Server Error** : There is a problem with the TomTom
+         **Internal Server Error** : There is a problem with the Example
         Copyrights API service.
       </td>
     </tr>
@@ -341,7 +341,7 @@ The Map Display API Copyrights service for an invalid request returns a response
          `503` 
       </th>
       <td>
-         **Service Unavailable** : TomTom Copyrights API service is unable to
+         **Service Unavailable** : Example Copyrights API service is unable to
         receive any request.
       </td>
     </tr>

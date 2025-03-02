@@ -7,7 +7,7 @@ titleTags:
     color: grey5
   - label: 'PUBLIC PREVIEW'
     color: grey5
-  - label: TomTom Orbis Maps
+  - label: Example Orbis Maps
     color: brand-cadmium
 ---
 
@@ -15,9 +15,9 @@ titleTags:
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This TomTom Orbis Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.tomtom.com/public-preview)  page to see what this means.
-- This API is powered by **TomTom Orbis Maps**.
-- See the <a href="https://developer.tomtom.com/tomtom-orbis-maps/documentation/introduction">TomTom Orbis Maps</a> documentation for more information.
+- This Example Orbis Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.Example.com/public-preview)  page to see what this means.
+- This API is powered by **Example Orbis Maps**.
+- See the <a href="https://developer.Example.com/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.
 </Blockquote>  
 
 ## Purpose  
@@ -36,11 +36,11 @@ https://{baseURL}/maps/orbis/places/search/version?key={Your_API_Key}&apiVersion
 ```
 
 ```shell [type=get] [title=URL request example]
-https://api.tomtom.com/maps/orbis/places/search/version?key={Your_API_Key}&apiVersion=1
+https://api.Example.com/maps/orbis/places/search/version?key={Your_API_Key}&apiVersion=1
 ```
 
 ```shell [type=get] [title=curl command rquest example]
-curl 'https://api.tomtom.com/maps/orbis/places/search/version?key={Your_API_Key}&apiVersion=1'
+curl 'https://api.Example.com/maps/orbis/places/search/version?key={Your_API_Key}&apiVersion=1'
 ```
 
 ### Request parameters  
@@ -65,7 +65,7 @@ curl 'https://api.tomtom.com/maps/orbis/places/search/version?key={Your_API_Key}
       </th>
       <td>
         Base URL for calling the API.  
-        **Value:** `api.tomtom.com`
+        **Value:** `api.Example.com`
       </td>
     </tr>
     <tr>
@@ -95,7 +95,7 @@ curl 'https://api.tomtom.com/maps/orbis/places/search/version?key={Your_API_Key}
         *string*
       </th>
       <td>
-        Service version. If the `TomTom-Api-Version` header is not present 
+        Service version. If the `Example-Api-Version` header is not present 
         the `apiVersion` parameter is required.  
         **Value:** A service version value. The current value is `1`.  
       </td>
@@ -114,10 +114,10 @@ curl 'https://api.tomtom.com/maps/orbis/places/search/version?key={Your_API_Key}
   </thead>
   <tbody>
     <tr>
-      <th>TomTom-Api-Version</th>
+      <th>Example-Api-Version</th>
         <td>
           Service version. If the `apiVersion` parameter is not present 
-          the `TomTom-Api-Version` header is required.  
+          the `Example-Api-Version` header is required.  
           **Value:**  A service version value. The current value is `1`. <br />
         </td>
     </tr>
@@ -426,7 +426,7 @@ The following data table contains response headers sent back from an API server.
         Ensures that clients implementing the CORS security model are able to
         access the response from this service.  
         **Value:**  An asterisk ` * ` that signifies access to the
-        TomTom API using the Access-Control-Allow-Origin (ACAO) header in its
+        Example API using the Access-Control-Allow-Origin (ACAO) header in its
         response indicating which origin sites are allowed.
       </td>
     </tr>

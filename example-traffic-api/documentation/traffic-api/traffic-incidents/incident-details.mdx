@@ -24,7 +24,7 @@ The Incident Details service provides information on traffic incidents which are
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/traffic-api-v10/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/traffic-api-v10/api-explorer/)  page and follow the directions.
 
 ## Request data
 
@@ -46,27 +46,27 @@ https://{baseURL}/traffic/services/{versionNumber}/incidentDetails?key={Your_Api
 <h4 style={{ fontSize: '1em' }}>Example</h4>
 
 ```shell [type=get] [title=Example with bounding box]
-https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present
+https://api.Example.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present
 ```
 
 ```shell [type=get] [title=Example with IDs]
-https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&ids=4819f7d0a15db3d9b0c3cd9203be7ba5&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present
+https://api.Example.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&ids=4819f7d0a15db3d9b0c3cd9203be7ba5&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```shell [type=get] [title=curl command format]
-curl 'https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present'
+curl 'https://api.Example.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present'
 ```
 
 ```shell [type=get] [title=curl command format]
-curl 'https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&ids=4819f7d0a15db3d9b0c3cd9203be7ba5&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present'
+curl 'https://api.Example.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&ids=4819f7d0a15db3d9b0c3cd9203be7ba5&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present'
 ```
 
 <h4 style={{ fontSize: '1em' }}>Example with category filter</h4>
 
 ```shell [type=get] [title=category filter]
-https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&categoryFilter=Accident&timeValidityFilter=present
+https://api.Example.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&categoryFilter=Accident&timeValidityFilter=present
 ```
 
 <h4 id="curl-command-filter" style={{ fontSize: '1em' }}>
@@ -74,7 +74,7 @@ https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bb
 </h4>
 
 ```shell [type=get] [title=curl command with category filter]
-curl 'https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&categoryFilter=Accident&timeValidityFilter=present'
+curl 'https://api.Example.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&categoryFilter=Accident&timeValidityFilter=present'
 ```
 
 ### HTTPS method `POST`
@@ -92,13 +92,13 @@ https://{baseURL}/traffic/services/{versionNumber}/incidentDetails?key={Your_Api
 <h4 style={{ fontSize: '1em' }}>Example</h4>
 
 ```shell [type=post] [title=Example with IDs]
-https://api.tomtom.com/traffic/services/5/incidentDetails?key={Your_Api_Key}&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present
+https://api.Example.com/traffic/services/5/incidentDetails?key={Your_Api_Key}&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```shell [type=post] [title=curl command format
-curl -X POST 'https://api.tomtom.com/traffic/services/5/incidentDetails?key={Your_Api_Key}&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present -d '{
+curl -X POST 'https://api.Example.com/traffic/services/5/incidentDetails?key={Your_Api_Key}&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present -d '{
     "ids": [
         "4819f7d0a15db3d9b0c3cd9203be7ba5"
     ]
@@ -134,7 +134,7 @@ The following table describes all of the parameters that can be used in a reques
       <td>
         The base URL for calling the API.
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
       </td>
     </tr>
     <tr>

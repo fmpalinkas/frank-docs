@@ -388,9 +388,9 @@ components:
 info: 
   contact: 
     name: "Contact Us"
-    url: "https://developer.tomtom.com/contact-us"
+    url: "https://developer.Example.com/contact-us"
   description: |-
-      The TomTom Search API is a RESTful API that allows developers to run a single line fuzzy search for addresses and POIs. Search API returns the latitude/longitude of a specific address, cross street, geographic feature, or point of interest (POI).
+      The Example Search API is a RESTful API that allows developers to run a single line fuzzy search for addresses and POIs. Search API returns the latitude/longitude of a specific address, cross street, geographic feature, or point of interest (POI).
 
       Here are some potential use cases.
 
@@ -1818,4 +1818,4 @@ security:
     api_key: []
 servers: 
   - 
-    url: "https://api.tomtom.com"
+    url: "https://api.Example.com"

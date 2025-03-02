@@ -23,11 +23,11 @@ https://{baseURL}/search/{versionNumber}/autocomplete/{query}.{ext}?key={Your_AP
 ```
 
 ```shell [type=get] [title=URL request example]
-https://api.tomtom.com/search/2/autocomplete/pizza.json?key={Your_API_Key}&language=en-US
+https://api.Example.com/search/2/autocomplete/pizza.json?key={Your_API_Key}&language=en-US
 ```
 
 ```shell [type=get] [title=curl command request example]
-curl 'https://api.tomtom.com/search/2/autocomplete/pizza.json?key={Your_API_Key}&language=en-US'
+curl 'https://api.Example.com/search/2/autocomplete/pizza.json?key={Your_API_Key}&language=en-US'
 ```
 
 ### Request parameters
@@ -56,10 +56,10 @@ The following table describes the parameters that can be used in a request.
          **Values:**
         <ul>
           <li>
-             `api.tomtom.com`
+             `api.Example.com`
           </li>
           <li>
-             `kr-api.tomtom.com`  (see the
+             `kr-api.Example.com`  (see the
              [Region-specific content](/search-api/documentation/product-information/region-specific-content)
             page)
           </li>
@@ -103,7 +103,7 @@ The following table describes the parameters that can be used in a request.
       </th>
       <td>
         An API Key valid for the requested service.<br />
-         **Value:**  Your valid TomTom API Key.
+         **Value:**  Your valid Example API Key.
       </td>
     </tr>
     <tr>
@@ -113,7 +113,7 @@ The following table describes the parameters that can be used in a request.
       </th>
       <td>
         Language in which autocomplete results should be returned.<br />
-         **Value:**  One of the TomTom IETF
+         **Value:**  One of the Example IETF
          [Supported Language Tags](/search-api/documentation/product-information/supported-languages).
       </td>
     </tr>
@@ -753,7 +753,7 @@ The following table contains response headers sent back from an API server.
       <td>
         Ensures that clients implementing the CORS security model are able to
         access the response from this service.<br />
-         **Value:**  An asterisk that signifies access to the TomTom API using the
+         **Value:**  An asterisk that signifies access to the Example API using the
         Access-Control-Allow-Origin (ACAO) header in its response indicating
         which origin sites are allowed.
       </td>

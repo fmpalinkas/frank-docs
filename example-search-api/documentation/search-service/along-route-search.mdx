@@ -17,7 +17,7 @@ For performance reasons and large data sets, you may use `Content-Encoding: gzip
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
 
 ```json [type=post] [title=Example POST request body (JSON) ]
 {
@@ -56,7 +56,7 @@ https://{baseURL}/search/{versionNumber}/searchAlongRoute/{query}.{ext}?key={You
 ```
 
 ```shell [type=post] [title=URL request example]
-https://api.tomtom.com/search/2/searchAlongRoute/restaurant.json?key={Your_API_Key}&maxDetourTime=1000
+https://api.Example.com/search/2/searchAlongRoute/restaurant.json?key={Your_API_Key}&maxDetourTime=1000
 ```
 
 ```shell [type=post] [title=curl command request example]
@@ -81,7 +81,7 @@ curl -XPOST -d '{
       }
     ]
   }
-}' 'https://api.tomtom.com/search/2/searchAlongRoute/pizza.json?key={Your_API_Key}&maxDetourTime=1000'
+}' 'https://api.Example.com/search/2/searchAlongRoute/pizza.json?key={Your_API_Key}&maxDetourTime=1000'
 ```
 
 ### Request parameters
@@ -111,10 +111,10 @@ The following table describes the parameters that can be used in a request.
          **Values:**
         <ul>
           <li>
-             `api.tomtom.com`
+             `api.Example.com`
           </li>
           <li>
-             `kr-api.tomtom.com`  (see the
+             `kr-api.Example.com`  (see the
              [Region-specific content](/search-api/documentation/product-information/region-specific-content)
             page)
           </li>
@@ -250,12 +250,12 @@ The following table describes the parameters that can be used in a request.
          **Usage examples:**
         <ul>
           <li>
-             `brandSet=Tomtom`  (search Points Of Interest of the
-            "Tomtom" brand)
+             `brandSet=Example`  (search Points Of Interest of the
+            "Example" brand)
           </li>
           <li>
-             `brandSet=Tomtom,Foobar`  (search Points Of Interest of
-            the "Tomtom" brand OR "Foobar" brand)
+             `brandSet=Example,Foobar`  (search Points Of Interest of
+            the "Example" brand OR "Foobar" brand)
           </li>
           <li>
              `brandSet="A,B,C Comma"`  (search Points Of Interest of
@@ -504,12 +504,12 @@ The following table describes the parameters that can be used in a request.
        </th>
        <td>
          Language in which search results should be returned. It should be one of
-         the TomTom supported
+         the Example supported
           [IETF language tags](/search-api/documentation/product-information/supported-languages)
          , case insensitive. When data in the specified language is not available
          for a specific field or the language is not specified, the language best
          matched with your query is used.<br />
-          **Value:**  One of the TomTom supported
+          **Value:**  One of the Example supported
           [IETF language tags](/search-api/documentation/product-information/supported-languages).
        </td>
     </tr>
@@ -2202,7 +2202,7 @@ The following table contains response headers sent back from an API server.
         Ensures that clients implementing the CORS security model are able to
         access the response from this service.<br />
          **Value:**  An asterisk  `*`  that signifies access to the
-        TomTom API using the Access-Control-Allow-Origin (ACAO) header in its
+        Example API using the Access-Control-Allow-Origin (ACAO) header in its
         response indicating which origin sites are allowed.
       </td>
     </tr>

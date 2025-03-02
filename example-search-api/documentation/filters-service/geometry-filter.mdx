@@ -108,7 +108,7 @@ The Geometry Filter endpoint becomes handy when a list of POIs is already availa
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
 
 ## Request data
 
@@ -122,7 +122,7 @@ https://{baseURL}/search/{versionNumber}/geometryFilter.{ext}?key={Your_API_Key}
 ```
 
 ```shell [type=get] [title=GET URL request example]
-https://api.tomtom.com/search/2/geometryFilter.json?key={Your_API_Key}&geometryList=[
+https://api.Example.com/search/2/geometryFilter.json?key={Your_API_Key}&geometryList=[
   {
     "type": "CIRCLE",
     "position": "40.80558, -73.96548",
@@ -167,7 +167,7 @@ https://api.tomtom.com/search/2/geometryFilter.json?key={Your_API_Key}&geometryL
 ```
 
 ```shell [type=get] [title=GET curl command request format]
-curl 'https://api.tomtom.com/search/2/geometryFilter.json?key={Your_API_Key}&geometryList=[
+curl 'https://api.Example.com/search/2/geometryFilter.json?key={Your_API_Key}&geometryList=[
   {
     "type": "CIRCLE",
     "position": "40.80558, -73.96548",
@@ -238,10 +238,10 @@ The following table describes the parameters that can be used in a request.
          **Values:**
         <ul>
           <li>
-             `api.tomtom.com`
+             `api.Example.com`
           </li>
           <li>
-             `kr-api.tomtom.com`  (see the
+             `kr-api.Example.com`  (see the
              [Region-specific content](/search-api/documentation/product-information/region-specific-content)
             page)
           </li>
@@ -603,7 +603,7 @@ The following data table contains response headers sent back from an API server.
         Ensures that clients implementing the CORS security model are able to
         access the response from this service.<br />
          **Value:**  An asterisk  `*`  that signifies access to the
-        TomTom API using the Access-Control-Allow-Origin (ACAO) header in its
+        Example API using the Access-Control-Allow-Origin (ACAO) header in its
         response indicating which origin sites are allowed.
       </td>
     </tr>

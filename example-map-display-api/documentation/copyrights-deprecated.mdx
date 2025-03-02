@@ -43,7 +43,7 @@ The Copyrights API is designed to serve copyright information for the Map Displa
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
 
 ## Request data
 
@@ -132,9 +132,9 @@ These elements are used in calls to generate files with copyrights.
          *string* 
       </th>
       <td>
-        The base URL for calling TomTom services.
+        The base URL for calling Example services.
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
       </td>
     </tr>
     <tr>
@@ -312,19 +312,19 @@ These elements are used in calls to generate files with copyrights.
 To get the global copyrights in **JSON** format:
 
 ```shell [type=get] [title=Get global copyrights in JSON]
-https://api.tomtom.com/map/1/copyrights.json?key={Your_API_Key}
+https://api.Example.com/map/1/copyrights.json?key={Your_API_Key}
 ```
 
 To get copyrights in **JSONP** format for Albuquerque in the United States, using tile coordinate parameters:
 
 ```shell [type=get] [title=Get copyrights in JSONP using tile coordinate parameters]
-https://api.tomtom.com/map/1/copyrights/8/48/102.jsonp?key={Your_API_Key}
+https://api.Example.com/map/1/copyrights/8/48/102.jsonp?key={Your_API_Key}
 ```
 
 To get copyrights in **XML** format for Albuquerque in the United States, using bounding box parameters:
 
 ```shell [type=get] [title=Get copyrights in XML using bounding box parameters]
-https://api.tomtom.com/map/1/copyrights/-106.8224/34.9246/-106.4008/35.3234.xml?key={Your_API_Key}
+https://api.Example.com/map/1/copyrights/-106.8224/34.9246/-106.4008/35.3234.xml?key={Your_API_Key}
 ```
 
 ## Response data
@@ -343,15 +343,15 @@ For each request, the Copyrights API returns a file in JSON, JSONP or XML format
 {
   "formatVersion":"0.0.1",
   "generalCopyrights":[
-    "\u00a9 1992 \u2013 2019 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by TomTom or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.",
-    "Data Source \u00a9 2019 TomTom"
+    "\u00a9 1992 \u2013 2019 Example. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by Example or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.",
+    "Data Source \u00a9 2019 Example"
   ],
   "regions":[
     {
       "copyrights":[
-        "The following copyright notice applies to the use of Points of Interest: \u00A9 2006 \u2013 2018 TomTom. All rights reserved. Portions of the POI database contained in Points of Interest North America have been provided by Neustar Localeze",
+        "The following copyright notice applies to the use of Points of Interest: \u00A9 2006 \u2013 2018 Example. All rights reserved. Portions of the POI database contained in Points of Interest North America have been provided by Neustar Localeze",
         "The following copyright notice applies to the use of Telecommunications: \u00A9 2017 Pitney Bowes. All rights reserved. In addition, for the following product layers Wire Center Boundaries, ILEC Boundaries, and Rate Center Boundaries, the following also applies: This product contains information and\/or data of Telcordia Technologies, Inc. (Telcordia) licensed to be included herein.",
-        "The following copyright notice applies to the use of TomTom Traffic: Portions of the data have been provided by Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. \u00A9 2017. Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. All rights reserved.",
+        "The following copyright notice applies to the use of Example Traffic: Portions of the data have been provided by Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. \u00A9 2017. Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. All rights reserved.",
         "\u00A9 United States Postal Service 2017",
         "Contains data made available by the Rhode Island Geographic Information System (RIGIS) consortium, the State of Rhode Island, and the University of Rhode Island. For specifics, please reference: http:\/\/www.rigis.org\/information""Contains Address Points data made available by State of Maryland and MD iMAP. For specifics, please reference: http:\/\/imap.maryland.gov."
       ],
@@ -364,15 +364,15 @@ For each request, the Copyrights API returns a file in JSON, JSONP or XML format
 }{
   "formatVersion":"0.0.1",
   "generalCopyrights":[
-    "\u00a9 1992 \u2013 2019 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by TomTom or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.",
-    "Data Source \u00a9 2019 TomTom"
+    "\u00a9 1992 \u2013 2019 Example. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by Example or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.",
+    "Data Source \u00a9 2019 Example"
   ],
   "regions":[
     {
       "copyrights":[
-        "The following copyright notice applies to the use of Points of Interest: \u00A9 2006 \u2013 2018 TomTom. All rights reserved. Portions of the POI database contained in Points of Interest North America have been provided by Neustar Localeze",
+        "The following copyright notice applies to the use of Points of Interest: \u00A9 2006 \u2013 2018 Example. All rights reserved. Portions of the POI database contained in Points of Interest North America have been provided by Neustar Localeze",
         "The following copyright notice applies to the use of Telecommunications: \u00A9 2017 Pitney Bowes. All rights reserved. In addition, for the following product layers Wire Center Boundaries, ILEC Boundaries, and Rate Center Boundaries, the following also applies: This product contains information and\/or data of Telcordia Technologies, Inc. (Telcordia) licensed to be included herein.",
-        "The following copyright notice applies to the use of TomTom Traffic: Portions of the data have been provided by Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. \u00A9 2017. Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. All rights reserved.",
+        "The following copyright notice applies to the use of Example Traffic: Portions of the data have been provided by Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. \u00A9 2017. Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. All rights reserved.",
         "\u00A9 United States Postal Service 2017",
         "Contains data made available by the Rhode Island Geographic Information System (RIGIS) consortium, the State of Rhode Island, and the University of Rhode Island. For specifics, please reference: http:\/\/www.rigis.org\/information""Contains Address Points data made available by State of Maryland and MD iMAP. For specifics, please reference: http:\/\/imap.maryland.gov."
       ],
@@ -389,15 +389,15 @@ For each request, the Copyrights API returns a file in JSON, JSONP or XML format
 ({
   "formatVersion":"0.0.1",
   "generalCopyrights":[
-    "\u00a9 1992 \u2013 2019 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by TomTom or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.",
-    "Data Source \u00a9 2019 TomTom""based on"
+    "\u00a9 1992 \u2013 2019 Example. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by Example or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.",
+    "Data Source \u00a9 2019 Example""based on"
   ],
   "regions":[
     {
       "copyrights":[
-        "The following copyright notice applies to the use of Points of Interest: \u00A9 2006 \u2013 2018 TomTom. All rights reserved. Portions of the POI database contained in Points of Interest North America have been provided by Neustar Localeze",
+        "The following copyright notice applies to the use of Points of Interest: \u00A9 2006 \u2013 2018 Example. All rights reserved. Portions of the POI database contained in Points of Interest North America have been provided by Neustar Localeze",
         "The following copyright notice applies to the use of Telecommunications: \u00A9 2017 Pitney Bowes. All rights reserved. In addition, for the following product layers Wire Center Boundaries, ILEC Boundaries, and Rate Center Boundaries, the following also applies: This product contains information and\/or data of Telcordia Technologies, Inc. (Telcordia) licensed to be included herein.",
-        "The following copyright notice applies to the use of TomTom Traffic: Portions of the data have been provided by Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. \u00A9 2017. Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. All rights reserved.",
+        "The following copyright notice applies to the use of Example Traffic: Portions of the data have been provided by Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. \u00A9 2017. Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. All rights reserved.",
         "\u00A9 United States Postal Service 2017",
         "Contains data made available by the Rhode Island Geographic Information System (RIGIS) consortium, the State of Rhode Island, and the University of Rhode Island. For specifics, please reference: http:\/\/www.rigis.org\/information""Contains Address Points data made available by State of Maryland and MD iMAP. For specifics, please reference: http:\/\/imap.maryland.gov."
       ],
@@ -412,13 +412,13 @@ For each request, the Copyrights API returns a file in JSON, JSONP or XML format
 
 ```xml [title=Example XML file]
 <copyrightsResponse
-	xmlns="http://api.tomtom.com/map/1/copyrights" formatVersion="0.0.1">
+	xmlns="http://api.Example.com/map/1/copyrights" formatVersion="0.0.1">
 	<generalCopyrights>
 		<copyright>
-          © 1992 – 2015 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by TomTom or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.
+          © 1992 – 2015 Example. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by Example or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.
         </copyright>
 		<copyright>
-          Data Source © 2015 TomTom
+          Data Source © 2015 Example
         </copyright>
 	</generalCopyrights>
 	<regions>
@@ -433,13 +433,13 @@ For each request, the Copyrights API returns a file in JSON, JSONP or XML format
 			</country>
 			<copyrights>
 				<copyright>
-              The following copyright notice applies to the use of Points of Interest: © 2006 – 2018 TomTom. All rights reserved. Portions of the POI database contained in Points of Interest North America have been provided by Neustar Localeze
+              The following copyright notice applies to the use of Points of Interest: © 2006 – 2018 Example. All rights reserved. Portions of the POI database contained in Points of Interest North America have been provided by Neustar Localeze
             </copyright>
 				<copyright>
               The following copyright notice applies to the use of Telecommunications: © 2017 Pitney Bowes. All rights reserved. In addition, for the following product layers Wire Center Boundaries, ILEC Boundaries, and Rate Center Boundaries, the following also applies: This product contains information and/or data of Telcordia Technologies, Inc. (Telcordia) licensed to be included herein.
             </copyright>
 				<copyright>
-              The following copyright notice applies to the use of TomTom Traffic: Portions of the data have been provided by Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. © 2017. Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. All rights reserved.
+              The following copyright notice applies to the use of Example Traffic: Portions of the data have been provided by Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. © 2017. Total Traffic & Weather Network, a division of iHeartMedia + Entertainment, Inc. All rights reserved.
             </copyright>
 				<copyright>
               © United States Postal Service 2017
@@ -461,7 +461,7 @@ For each request, the Copyrights API returns a file in JSON, JSONP or XML format
 Optionally, you can get a response with only a list of countries and images without their copyright text. To achieve this, the `text=no` parameter has to be added to the request. To get copyrights with only country names and images in JSONP format for Albuquerque in United States, using tile coordinate parameters:
 
 ```shell [type=get] [title=Request URL]
-http://api.tomtom.com/map/1/copyrights/8/48/102.jsonp?text=no&key={Your_API_Key}
+http://api.Example.com/map/1/copyrights/8/48/102.jsonp?text=no&key={Your_API_Key}
 ```
 
 <h4 style={{ fontSize: '1em' }}>Example JSON file</h4>
@@ -486,39 +486,39 @@ As an alternative to copyrights for map request, you can receive copyrights for 
 To get captions in **XML**:
 
 ```shell [type=get] [title=Request URL for captions in XML]
-http://api.tomtom.com/map/1/copyrights/caption.xml?key={Your_API_Key}
+http://api.Example.com/map/1/copyrights/caption.xml?key={Your_API_Key}
 ```
 
 To get captions in **JSON**:
 
 ```shell [type=get] [title=Request URL for captions in JSON]
-http://api.tomtom.com/map/1/copyrights/caption.json?key={Your_API_Key}
+http://api.Example.com/map/1/copyrights/caption.json?key={Your_API_Key}
 ```
 
 To get captions in **JSONP**:
 
 ```shell [type=get] [title=Request URL for captions in JSONP]
-http://api.tomtom.com/map/1/copyrights/caption.jsonp?key={Your_API_Key}
+http://api.Example.com/map/1/copyrights/caption.jsonp?key={Your_API_Key}
 ```
 
 ### Responses
 
 ```xml [title=XML response]
-<copyrightsCaptionResponse formatVersion="0.0.1" xmlns="http://api.tomtom.com/map/1/copyrights/caption">
-  <copyrightsCaption>©TomTom</copyrightsCaption>
+<copyrightsCaptionResponse formatVersion="0.0.1" xmlns="http://api.Example.com/map/1/copyrights/caption">
+  <copyrightsCaption>©Example</copyrightsCaption>
 </copyrightsCaptionResponse>
 ```
 
 ```json [title=JSON response]
 {
   "formatVersion": "0.0.1",
-  "copyrightsCaption": "©TomTom"
+  "copyrightsCaption": "©Example"
 }
 ```
 
 ```json [title=JSONP response]
 ({
   "formatVersion": "0.0.1",
-  "copyrightsCaption": "©TomTom"
+  "copyrightsCaption": "©Example"
 });
 ```

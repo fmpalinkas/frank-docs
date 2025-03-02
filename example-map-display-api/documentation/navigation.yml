@@ -13,7 +13,7 @@ menu:
         title: Release Notes
       - fileId: /product-information/market-coverage
         title: Market Coverage
-      - url: https://developer.tomtom.com/region-specific-content
+      - url: https://developer.Example.com/region-specific-content
         title: Region-specific content
   - title: Raster 
     items:
@@ -65,7 +65,7 @@ menu:
       - fileId: /mapstyles/map-styler-documentation
         isHidden: true
         title: Map Styler Documentation
-      - url: https://mapmaker.tomtom.com
+      - url: https://mapmaker.Example.com
         title: Launch Map Maker&nbsp; &#10095;
   - title: Zoom Levels
     items: 

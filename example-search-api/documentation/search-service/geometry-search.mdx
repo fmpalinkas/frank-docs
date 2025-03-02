@@ -19,7 +19,7 @@ For performance reasons and large data sets, you may use `Content-Encoding: gzip
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
 
 ## Options
 
@@ -95,7 +95,7 @@ https://{baseURL}/search/{versionNumber}/geometrySearch/{query}.{ext}?key={Your_
 ```
 
 ```shell [type=post] [title=POST URL request example]
-https://api.tomtom.com/search/2/geometrySearch/pizza.json?key={Your_API_Key}&geometryList=[
+https://api.Example.com/search/2/geometrySearch/pizza.json?key={Your_API_Key}&geometryList=[
   {
     "type":"POLYGON",
     "vertices":[
@@ -141,7 +141,7 @@ curl -XPOST -d '{
       "radius":1000
     }
   ]
-}' 'https://api.tomtom.com/search/2/geometrySearch/pizza.json?key={Your_API_Key}'
+}' 'https://api.Example.com/search/2/geometrySearch/pizza.json?key={Your_API_Key}'
 ```
 
 ### HTTPS Method: `GET`
@@ -151,7 +151,7 @@ https://{baseURL}/search/{versionNumber}/geometrySearch/{query}.{ext}?key={Your_
 ```
 
 ```shell [type=get] [title=GET URL request example]
-https://api.tomtom.com/search/2/geometrySearch/pizza.json?key={Your_API_Key}&geometryList=[
+https://api.Example.com/search/2/geometrySearch/pizza.json?key={Your_API_Key}&geometryList=[
   {
     "type":"POLYGON",
     "vertices":[
@@ -175,7 +175,7 @@ https://api.tomtom.com/search/2/geometrySearch/pizza.json?key={Your_API_Key}&geo
 ```  
 
 ```shell [type=get] [title=GET curl command request example]
-curl 'https://api.tomtom.com/search/2/geometrySearch/pizza.json?key={Your_API_Key}&geometryList=[
+curl 'https://api.Example.com/search/2/geometrySearch/pizza.json?key={Your_API_Key}&geometryList=[
   {
     "type":"POLYGON",
     "vertices":[
@@ -223,8 +223,8 @@ The following table describes the parameters that can be used in a request.
         Base URL for calling the API.<br />
        **Values:**
         <ul>
-          <li> `api.tomtom.com` </li>
-          <li> `kr-api.tomtom.com`  (see the  [Region-specific content](/search-api/documentation/product-information/region-specific-content)  page)</li>
+          <li> `api.Example.com` </li>
+          <li> `kr-api.Example.com`  (see the  [Region-specific content](/search-api/documentation/product-information/region-specific-content)  page)</li>
         </ul>
       </td>
     </tr>
@@ -309,12 +309,12 @@ The following table describes the parameters that can be used in a request.
       </th>
       <td>
         Language in which search results should be returned. It should be one of
-        the TomTom IETF
+        the Example IETF
          [Supported Languages](/search-api/documentation/product-information/supported-languages)
         tags, case insensitive. When data in the specified language is not
         available for a specific field or the language is not specified, the
         language best matched with your query is used.<br />
-         **Value:**  A TomTom IETF
+         **Value:**  A Example IETF
          [Supported Languages](/search-api/documentation/product-information/supported-languages)
         tag.
       </td>
@@ -473,12 +473,12 @@ The following table describes the parameters that can be used in a request.
          **Usage examples:**
         <ul>
           <li>
-             `brandSet=Tomtom`  (search Points Of Interest of the
-            "Tomtom" brand)
+             `brandSet=Example`  (search Points Of Interest of the
+            "Example" brand)
           </li>
           <li>
-             `brandSet=Tomtom,Foobar`  (search Points Of Interest of
-            the "Tomtom" brand OR "Foobar" brand)
+             `brandSet=Example,Foobar`  (search Points Of Interest of
+            the "Example" brand OR "Foobar" brand)
           </li>
           <li>
              `brandSet="A,B,C Comma"`  (search Points Of Interest of
@@ -2688,7 +2688,7 @@ The following table contains response headers sent back from an API server.
       <td>
         Ensures that clients implementing the CORS security model are able to
         access the response from this service. <br />
-         **Value:**  An asterisk  `*`  that signifies access to the TomTom
+         **Value:**  An asterisk  `*`  that signifies access to the Example
         API using the Access-Control-Allow-Origin (ACAO) header in its response indicating
         which origin sites are allowed.
       </td>

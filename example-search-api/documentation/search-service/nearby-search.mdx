@@ -13,7 +13,7 @@ If your use case is only retrieving POI (Points of Interest) results around a lo
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
 
 ## Request data
 
@@ -29,11 +29,11 @@ https://{baseURL}/search/{versionNumber}/nearbySearch/.{ext}?key={Your_API_Key}&
 ```
 
 ```shell [type=get] [title=URL request example]
-https://api.tomtom.com/search/2/nearbySearch/.json?key={Your_API_Key}&lat=36.98844&lon=-121.97483
+https://api.Example.com/search/2/nearbySearch/.json?key={Your_API_Key}&lat=36.98844&lon=-121.97483
 ```
 
 ```shell [type=get] [title=curl command request example]
-curl 'https://api.tomtom.com/search/2/nearbySearch/.json?key={Your_API_Key}&lat=36.98844&lon=-121.97483'
+curl 'https://api.Example.com/search/2/nearbySearch/.json?key={Your_API_Key}&lat=36.98844&lon=-121.97483'
 ```
 
 ### Request parameters
@@ -63,10 +63,10 @@ The following table describes the parameters that can be used in a request.
          **Values:**
         <ul>
           <li>
-             `api.tomtom.com`
+             `api.Example.com`
           </li>
           <li>
-             `kr-api.tomtom.com`  (see the
+             `kr-api.Example.com`  (see the
              [Region-specific content](/search-api/documentation/product-information/region-specific-content)
             page)
           </li>
@@ -246,12 +246,12 @@ The following table describes the parameters that can be used in a request.
       </th>
       <td>
         Language in which search results should be returned. Should be one of
-        the TomTom IETF
+        the Example IETF
          [Supported Languages](/search-api/documentation/product-information/supported-languages)
         tags, case insensitive. When data in the specified language is not
         available for a specific field or the language is not specified, the
         default language is used (English).<br />
-         **Value:**  A TomTom IETF
+         **Value:**  A Example IETF
          [Supported Languages](/search-api/documentation/product-information/supported-languages)
         tag.
       </td>
@@ -332,12 +332,12 @@ The following table describes the parameters that can be used in a request.
          **Usage examples:**
         <ul>
           <li>
-             `brandSet=Tomtom`  (search Points Of Interest of the
-            "Tomtom" brand)
+             `brandSet=Example`  (search Points Of Interest of the
+            "Example" brand)
           </li>
           <li>
-             `brandSet=Tomtom,Foobar`  (search Points Of Interest of
-            the "Tomtom" brand OR "Foobar" brand)
+             `brandSet=Example,Foobar`  (search Points Of Interest of
+            the "Example" brand OR "Foobar" brand)
           </li>
           <li>
              `brandSet="A,B,C Comma"`  (search Points Of Interest of
@@ -2169,7 +2169,7 @@ The following table contains response headers sent back from an API server.
       <td>
         Ensures that clients implementing the CORS security model are able to
         access the response from this service. <br />
-         **Value:**  An asterisk  `*`  that signifies access to the TomTom
+         **Value:**  An asterisk  `*`  that signifies access to the Example
         API using the Access-Control-Allow-Origin (ACAO) header in its response indicating
         which origin sites are allowed.
       </td>

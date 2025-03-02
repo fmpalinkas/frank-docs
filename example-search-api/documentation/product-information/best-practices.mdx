@@ -18,7 +18,7 @@ The following topics provide some helpful tips to improve your Search API query 
 In order to geo-bias your results to the relevant area for your user, you should always use a `lat/lon` pair to help bias the results to the user's location. Note, this is a non-restrictive bias, but for very common searches it will find the instances nearby. This query will find places with pizza around the `lat/lon`:
 
 ```shell [title=Lat/lon pair]
-https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239
+https://api.Example.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239
 ```
 
 ## Using radius
@@ -26,7 +26,7 @@ https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085
 If geo-biasing is not strong enough for keeping your results local to the user, you can also pass in a `radius` (in meters) to restrict the result to a given area. For instance, this query will only find pizza within 1000 meters of the given `lat/lon`:
 
 ```shell [title=Radius]
-https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239&radius=1000
+https://api.Example.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239&radius=1000
 ```
 
 ## Using idxSet
@@ -34,7 +34,7 @@ https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085
 You can also specify the exact set of indexes to query in the `idxSet` parameter. For instance if you are only interested:
 
 ```shell [title=idxSet]
-https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239&idxSet=POI,PAD,Str,Xstr,Geo,Addr
+https://api.Example.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239&idxSet=POI,PAD,Str,Xstr,Geo,Addr
 ```
 
 The idxSet parameter value set of indexes that can be used are:
@@ -53,22 +53,22 @@ Note: If you are using more than one index, do not include any spaces between th
 You can also specify a subset of the countries on the server by adding a comma-separated list of countries in the form:
 
 ```shell [title=Subset of countries]
-https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&countrySet=HR,CY,CZ,DK
+https://api.Example.com/search/2/search/pizza.json?key={Your_API_Key}&countrySet=HR,CY,CZ,DK
 ```
 
 (search for pizza in Croatia, Cyprus, Czech Republic, and Denmark)
-See the TomTom [Search API Market Coverage](./market-coverage) page for a list of all the countries supported by the Search API engine.
+See the Example [Search API Market Coverage](./market-coverage) page for a list of all the countries supported by the Search API engine.
 
 ## Using different response formats
 
 We also support JSON or XML formatted responses.
 
 ```shell [title=Request example with a JSON response format]
-https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239
+https://api.Example.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239
 ```
 
 ```shell [title=Request example with an XML response format]
-https://api.tomtom.com/search/2/search/pizza.xml?key={Your_API_Key}&lat=37.8085&lon=-122.4239
+https://api.Example.com/search/2/search/pizza.xml?key={Your_API_Key}&lat=37.8085&lon=-122.4239
 ```
 
 ## Using paging or infinite scrolling
@@ -76,7 +76,7 @@ https://api.tomtom.com/search/2/search/pizza.xml?key={Your_API_Key}&lat=37.8085&
 If you would like to page your results or build an infinite scroll view for your search results, you can page results with `limit` and `offset`. The following query will produce results 21-30:
 
 ```shell [title=Offset]
-https://api.tomtom.com/search/2/search/pizza.xml?key={Your_API_Key}&lat=37.8085&lon=-122.4239&limit=10&ofs=20
+https://api.Example.com/search/2/search/pizza.xml?key={Your_API_Key}&lat=37.8085&lon=-122.4239&limit=10&ofs=20
 ```
 
 ## Using pure Category Search
@@ -84,7 +84,7 @@ https://api.tomtom.com/search/2/search/pizza.xml?key={Your_API_Key}&lat=37.8085&
 Finally, if you are interested in pure category search we have a special endpoint: Category Search. The following query will produce a category search for important tourist attractions:
 
 ```shell [title=Category Search]
-https://api.tomtom.com/search/2/categorySearch/important tourist monument.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239
+https://api.Example.com/search/2/categorySearch/important tourist monument.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239
 ```
 
 ## Understanding a response
@@ -100,7 +100,7 @@ The following example uses JSON. Note: For your benefit, the code comments are p
 ```json [title=JSON Response]
 {
   "summary": {
-    "query": "TomTom",        // echo of the query
+    "query": "Example",        // echo of the query
     "queryType": "NON_NEAR",  // query type (explained above)
     "queryTime": 38,          // query time on server in milliseconds
     "numResults": 10,         // total number of result in this response

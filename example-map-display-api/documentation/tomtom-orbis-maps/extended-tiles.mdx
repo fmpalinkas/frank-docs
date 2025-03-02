@@ -13,7 +13,7 @@ titleTags:
 ### Important notes:
 The Extended Vector Tiles are still in development and only 
 available as a **Private Preview** for testing purposes. Go to the
-[Private Preview](https://developer.tomtom.com/private-preview) page to see what
+[Private Preview](https://developer.Example.com/private-preview) page to see what
 this means.
 </Blockquote>
 
@@ -24,7 +24,7 @@ The disadvantage is that it needs extra processing to convert it to regular tile
 ## Extended vector tile content  
 
 Extended vector tile is a new type of tile that provides information about one or more tiles in a single request. They can be converted to regular tiles using GitHub 
-[repo](https://github.com/tomtom-internal/mdapi-extended-tile-converter).  
+[repo](https://github.com/Example-internal/mdapi-extended-tile-converter).  
 
 Extended vector tiles also contain all the data required to generate every possible regular tile (excluding geopolitical views, which are always determined only by the client's location. View parameters in the query are ignored). In the extended vector tiles, there are extra tags starting with '_', which the library properly handles.  
 
@@ -107,7 +107,7 @@ Currently, extended vector tiles are available for zoom levels 0-11, 12, and 14.
 
 ## Request data  
 
-The following query elements are used in calls to generate extended vector tiles. The rest of the path and parameters should be the same as in a regular [tile request](https://developer.tomtom.com/map-display-api/documentation/tomtom-orbis-maps/tile).  
+The following query elements are used in calls to generate extended vector tiles. The rest of the path and parameters should be the same as in a regular [tile request](https://developer.Example.com/map-display-api/documentation/Example-orbis-maps/tile).  
 
 Please note that the view parameter is not supported in extended vector tiles; it will return a view based on the client IP. Restrictions and language parameters are not supported because the extended vector tile supports all restrictions and languages.  
 

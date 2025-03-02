@@ -5,26 +5,26 @@ titleTags:
     color: grey5
   - label: 'Last edit: 2024.08.02'
     color: grey5
-  - label: TomTom Orbis Maps
+  - label: Example Orbis Maps
     color: brand-cadmium
 ---
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This TomTom Orbis API is in **<a href="https://developer.tomtom.com/public-preview">public preview</a>**.
-- This API is powered by **TomTom Orbis Maps.**
-- See the <a href="/tomtom-orbis-maps/documentation/introduction">TomTom Orbis Maps</a> documentation for more information.
+- This Example Orbis API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example Orbis Maps.**
+- See the <a href="/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.
 </Blockquote>
 
 ## Purpose  
 
-The TomTom Orbis Maps Map Display API Vector Tiles web service suite offers the following services:
+The Example Orbis Maps Map Display API Vector Tiles web service suite offers the following services:
 
 <DocsArticles
   articles={[
     {
       title: 'Vector Tiles',
-      body: 'The TomTom Orbis Maps Vector Tiles endpoint serves data on zoom levels ranging from 0 to 22.',
+      body: 'The Example Orbis Maps Vector Tiles endpoint serves data on zoom levels ranging from 0 to 22.',
       button: {
         label: 'Documentation',
         href: './tile',
@@ -32,7 +32,7 @@ The TomTom Orbis Maps Map Display API Vector Tiles web service suite offers the 
     },
     {
       title: 'Tile Content',
-      body: 'The TomTom Orbis Maps Vector Tiles Content document contains map features (points, lines, road shapes, water polygons, building footprints, etc.) that can be used to visualize map data.',
+      body: 'The Example Orbis Maps Vector Tiles Content document contains map features (points, lines, road shapes, water polygons, building footprints, etc.) that can be used to visualize map data.',
       button: {
         label: 'Documentation',
         href: './content',
@@ -43,7 +43,7 @@ The TomTom Orbis Maps Map Display API Vector Tiles web service suite offers the 
 
 ### Vector Tiles  
 
-TomTom's global digital map content comprises a large volume of data, and to efficiently transmit map images for display over the internet simultaneously to multiple users.
+Example's global digital map content comprises a large volume of data, and to efficiently transmit map images for display over the internet simultaneously to multiple users.
 
 - The tiles are rendered at various sizes and available at 23 different zoom levels, ranging from `0` to `22`.
 - For zoom level `0`, the entire earth is displayed on one single tile, while at zoom level `22`, the world is divided into 2<sup>44</sup> tiles.
@@ -53,6 +53,6 @@ TomTom's global digital map content comprises a large volume of data, and to eff
 
 ### Tile Content  
 
-The TomTom Orbis Maps Vector Tile Content document contains map features (points, lines, road shapes, water polygons, building footprints, etc.) that can be used to visualize map data. The data is divided into multiple protobuf layers. Besides the layers, the protobuf tags are also used to further describe the geographic features.  
+The Example Orbis Maps Vector Tile Content document contains map features (points, lines, road shapes, water polygons, building footprints, etc.) that can be used to visualize map data. The data is divided into multiple protobuf layers. Besides the layers, the protobuf tags are also used to further describe the geographic features.  
 
-![Vector tile property dependencies](https://developer.tomtom.com/assets/images/ProtobufSchemaPNGBig.png)
+![Vector tile property dependencies](https://developer.Example.com/assets/images/ProtobufSchemaPNGBig.png)

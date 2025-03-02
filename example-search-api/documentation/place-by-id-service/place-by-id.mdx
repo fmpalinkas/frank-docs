@@ -25,11 +25,11 @@ https://{baseURL}/search/{versionNumber}/place.{ext}?entityId={Poi_id}&key={Your
 ```
 
 ```shell [type=get] [title=URL request example]
-https://api.tomtom.com/search/2/place.json?entityId=00004e4c-3100-3c00-0000-0000685e23c7&key={Your_API_Key}
+https://api.Example.com/search/2/place.json?entityId=00004e4c-3100-3c00-0000-0000685e23c7&key={Your_API_Key}
 ```
 
 ```shell [type=get] [title=curl command request example]
-curl 'https://api.tomtom.com/search/2/place.json?entityId=00004e4c-3100-3c00-0000-0000685e23c7&key={Your_API_Key}'
+curl 'https://api.Example.com/search/2/place.json?entityId=00004e4c-3100-3c00-0000-0000685e23c7&key={Your_API_Key}'
 ```
 
 ### Request parameters
@@ -57,10 +57,10 @@ The following table describes the parameters that can be used in a request.
         **Values:**
         <ul>
           <li>
-            `api.tomtom.com`
+            `api.Example.com`
           </li>
           <li>
-            `kr-api.tomtom.com` (see the [Region-specific content](/search-api/documentation/product-information/region-specific-content)page.)
+            `kr-api.Example.com` (see the [Region-specific content](/search-api/documentation/product-information/region-specific-content)page.)
           </li>
         </ul>
       </td>
@@ -136,7 +136,7 @@ The following table describes the parameters that can be used in a request.
         information about a specific POI is not available in the requested
         language or the language is not specified, the NGT (neutral ground
         truth) language is used.  
-        **Value:**  One of the TomTom IETF [Supported Languages](/search-api/documentation/product-information/supported-languages) tags except `NGT` and `NGT-Latn`.
+        **Value:**  One of the Example IETF [Supported Languages](/search-api/documentation/product-information/supported-languages) tags except `NGT` and `NGT-Latn`.
       </td>
     </tr>
     <tr>
@@ -1876,7 +1876,7 @@ The following table contains response headers sent back from an API server.
         Ensures that clients implementing the CORS security model are able to
         access the response from this service.  
         **Value:**  An asterisk  `*`  that signifies access to the
-        TomTom API using the Access-Control-Allow-Origin (ACAO) header in its
+        Example API using the Access-Control-Allow-Origin (ACAO) header in its
         response indicating which origin sites are allowed.
       </td>
     </tr>

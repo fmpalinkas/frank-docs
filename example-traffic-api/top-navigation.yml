@@ -1,7 +1,7 @@
-menuTopTitle: TomTom Maps Platform  
+menuTopTitle: Example Maps Platform  
 menu:
   - items:
-      - url: /orbis-api/documentation/product-information/introduction
+      - url: /new-api/documentation/product-information/introduction
         title: Documentation  
 
 

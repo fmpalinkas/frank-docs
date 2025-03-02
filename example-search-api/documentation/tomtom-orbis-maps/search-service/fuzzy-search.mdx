@@ -7,7 +7,7 @@ titleTags:
     color: grey5
   - label: 'PUBLIC PREVIEW'
     color: grey5
-  - label: 'TomTom Orbis Maps'
+  - label: 'Example Orbis Maps'
     color: brand-cadmium
 ---
 
@@ -15,9 +15,9 @@ titleTags:
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This TomTom Orbis Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.tomtom.com/public-preview)  page to see what this means.
-- This API is powered by **TomTom Orbis Maps**.
-- See the <a href="https://developer.tomtom.com/tomtom-orbis-maps/documentation/introduction">TomTom Orbis Maps</a> documentation for more information.
+- This Example Orbis Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.Example.com/public-preview)  page to see what this means.
+- This API is powered by **Example Orbis Maps**.
+- See the <a href="https://developer.Example.com/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.
 </Blockquote>
 
 ## Purpose
@@ -30,7 +30,7 @@ The default behavior will be to search the entire world. If you want the result 
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
 
 ## Request data
 
@@ -43,7 +43,7 @@ For ease of viewing and identification:
 
 **Important note:** this request will only work when the coordinates are the only elements in the `{query}` parameter.<br />
 
-**Important note:** Either `apiVersion` parameter or `TomTom-Api-Version` header needs to be present.
+**Important note:** Either `apiVersion` parameter or `Example-Api-Version` header needs to be present.
 
 
 ```shell [type=get] [title=URL request format]
@@ -52,11 +52,11 @@ https://{baseURL}/maps/orbis/places/search/{query}
 ```  
 
 ```shell [type=get] [title=URL request example]
-https://api.tomtom.com/maps/orbis/places/search/123%20main%20st.json?key={Your_API_Key}&apiVersion=1
+https://api.Example.com/maps/orbis/places/search/123%20main%20st.json?key={Your_API_Key}&apiVersion=1
 ```
 
 ```shell [type=get] [title=curl command request example]
-curl 'https://api.tomtom.com/maps/orbis/places/search/123%20main%20st.json?key={Your_API_Key}&apiVersion=1'
+curl 'https://api.Example.com/maps/orbis/places/search/123%20main%20st.json?key={Your_API_Key}&apiVersion=1'
 ```
 
 ### Request parameters  
@@ -83,7 +83,7 @@ The following table describes the parameters that can be used in a request.
       </th>
       <td>
         Base URL for calling the API.  
-        **Value:** `api.tomtom.com`
+        **Value:** `api.Example.com`
       </td>
     </tr>
     <tr>
@@ -102,7 +102,7 @@ The following table describes the parameters that can be used in a request.
         *string*
       </th>
       <td>
-        An API Key valid for the requested service. See: [How do I get a TomTom API Key?](https://developer.tomtom.com/how-to-get-tomtom-api-key)  
+        An API Key valid for the requested service. See: [How do I get a Example API Key?](https://developer.Example.com/how-to-get-Example-api-key)  
         **Value:**  Your valid API Key.
       </td>
     </tr>
@@ -123,7 +123,7 @@ The following table describes the parameters that can be used in a request.
         *string*
       </th>
       <td>
-        Service version. If the `TomTom-Api-Version` header is not present the `apiVersion` parameter is required.  
+        Service version. If the `Example-Api-Version` header is not present the `apiVersion` parameter is required.  
         **Value:**  A service version value. The current value is `1`.   
       </td>
     </tr>
@@ -350,10 +350,10 @@ The following table describes the parameters that can be used in a request.
         *string*
       </th>
       <td>
-        Language in which search results should be returned. It should be one of the TomTom supported [IETF language tags](../product-information/supported-languages), case insensitive. When data in the specified language is not available
+        Language in which search results should be returned. It should be one of the Example supported [IETF language tags](../product-information/supported-languages), case insensitive. When data in the specified language is not available
         for a specific field or the language is not specified, the language best
         matched with your query is used.  
-        **Value:**  One of the TomTom supported [IETF language tags](../product-information/supported-languages).
+        **Value:**  One of the Example supported [IETF language tags](../product-information/supported-languages).
       </td>
     </tr>
     <tr>
@@ -501,10 +501,10 @@ The following table describes the parameters that can be used in a request.
         **Usage examples:**  
         <ul>
           <li>
-            `brandSet=Tomtom` (search Points Of Interest of the "Tomtom" brand)
+            `brandSet=Example` (search Points Of Interest of the "Example" brand)
           </li>
           <li>
-            `brandSet=Tomtom,Foobar`  (search Points Of Interest of the "Tomtom" brand OR "Foobar" brand)
+            `brandSet=Example,Foobar`  (search Points Of Interest of the "Example" brand OR "Foobar" brand)
           </li>
           <li>
             `brandSet="A,B,C Comma"`  (search Points Of Interest of the "Adam,Batsman,and,Bowling" brand)
@@ -796,9 +796,9 @@ The following table describes the parameters that can be used in a request.
   </thead>
   <tbody>
     <tr>
-      <th>TomTom-Api-Version</th>
+      <th>Example-Api-Version</th>
         <td>
-          Service version. If the `apiVersion` parameter is not present the `TomTom-Api-Version` header is required.  
+          Service version. If the `apiVersion` parameter is not present the `Example-Api-Version` header is required.  
           **Value:** A service version value. The current value is `1`.  
         </td>
     </tr>
@@ -2676,7 +2676,7 @@ The following data table contains response headers sent back from an API server.
         Ensures that clients implementing the [CORS security model](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
         are able to access the response from this service.  
         **Value:**  An asterisk ` * ` that signifies access to the
-        TomTom API using the Access-Control-Allow-Origin (ACAO) header in its
+        Example API using the Access-Control-Allow-Origin (ACAO) header in its
         response indicating which origin sites are allowed.
       </td>
     </tr>

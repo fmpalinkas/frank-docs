@@ -13,15 +13,15 @@ The [Web Map Tile Service (WMTS)](http://www.opengeospatial.org/standards/wmts) 
 
 ### GetCapabilities
 
-The "GetCapabilities" call documented here implements the 1.0.0 version of the WMTS standard. It returns an XML structure containing metadata on both the company hosting the service (in this case, TomTom) and the various layers that the service offers. That metadata is sufficient to allow calling systems to construct calls to Tomtom&#39;s  [Map Display API Raster Tile endpoint](/map-display-api/documentation/raster/tile)  that retrieves individual raster map tiles for a given geographic extent, zoom level, and layer type.
+The "GetCapabilities" call documented here implements the 1.0.0 version of the WMTS standard. It returns an XML structure containing metadata on both the company hosting the service (in this case, Example) and the various layers that the service offers. That metadata is sufficient to allow calling systems to construct calls to Example&#39;s  [Map Display API Raster Tile endpoint](/map-display-api/documentation/raster/tile)  that retrieves individual raster map tiles for a given geographic extent, zoom level, and layer type.
 
 ### GetTile
 
-Because the TomTom WMTS services follow the OGC WMTS specification, it is then easy to use these services via third party tools such as Esri&#39;s ArcGIS Online. While less flexible than the WMS API, WMTS "GetTile" calls are tailored for speed. They retrieve single map tiles and do not aggregate tiles in order to deliver a single composited map image.
+Because the Example WMTS services follow the OGC WMTS specification, it is then easy to use these services via third party tools such as Esri&#39;s ArcGIS Online. While less flexible than the WMS API, WMTS "GetTile" calls are tailored for speed. They retrieve single map tiles and do not aggregate tiles in order to deliver a single composited map image.
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
 
 ## Request data
 
@@ -39,13 +39,13 @@ https://{baseURL}/map/{versionNumber}/wmts/apiKey={Your_API_Key}/{wmtsVersion}/W
 <h4 style={{ fontSize: '1em' }}>Example</h4>
 
 ```shell [type=get] [title=Request example]
-https://api.tomtom.com/map/1/wmts/apiKey={Your_API_Key}/1.0.0/WMTSCapabilities.xml
+https://api.Example.com/map/1/wmts/apiKey={Your_API_Key}/1.0.0/WMTSCapabilities.xml
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```shell [type=get] [title=Request curl command]
-curl 'https://api.tomtom.com/map/1/wmts/apiKey={Your_API_Key}/1.0.0/WMTSCapabilities.xml'
+curl 'https://api.Example.com/map/1/wmts/apiKey={Your_API_Key}/1.0.0/WMTSCapabilities.xml'
 ```
 
 ### Request parameters
@@ -77,9 +77,9 @@ The following table describes all the parameters that can be used in a request.
          *string* 
       </th>
       <td>
-        The base URL for calling TomTom services.
+        The base URL for calling Example services.
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
       </td>
     </tr>
     <tr>
@@ -168,7 +168,7 @@ A  [full schema (XSD)](http://schemas.opengis.net/wmts/1.0/)  for the response i
 <?xml version="1.0" encoding="UTF-8"?>
 <Capabilities xmlns="http&#058;//www.opengis.net/wmts/1.0" xmlns&#058;ows="http&#058;//www.opengis.net/ows/1.1" xmlns&#058;xlink="http&#058;//www.w3.org/1999/xlink" xmlns&#058;xsi="http&#058;//www.w3.org/2001/XMLSchema-instance" xmlns&#058;gml="http&#058;//www.opengis.net/gml" xsi&#058;schemaLocation="http&#058;//www.opengis.net/wmts/1.0 http&#058;//schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd"version="1.0.0">
   <ows&#058;ServiceIdentification>
-    <ows&#058;Title>TomTom Web Map Tile Service</ows&#058;Title>
+    <ows&#058;Title>Example Web Map Tile Service</ows&#058;Title>
     <ows&#058;ServiceType>OGC WMTS</ows&#058;ServiceType>
     <ows&#058;ServiceTypeVersion>1.0.0</ows&#058;ServiceTypeVersion>
     <ows&#058;Fees>none</ows&#058;Fees>
@@ -176,8 +176,8 @@ A  [full schema (XSD)](http://schemas.opengis.net/wmts/1.0/)  for the response i
   </ows&#058;ServiceIdentification>
 
   <ows&#058;ServiceProvider>
-    <ows&#058;ProviderName>TomTom International B.V.</ows&#058;ProviderName>
-    <ows&#058;ProviderSite xlink&#058;href="https&#058;//www.tomtom.com"/>
+    <ows&#058;ProviderName>Example International B.V.</ows&#058;ProviderName>
+    <ows&#058;ProviderSite xlink&#058;href="https&#058;//www.Example.com"/>
     <ows&#058;ServiceContact>
       (...contact information for support of the service...)
     </ows&#058;ServiceContact>
@@ -195,7 +195,7 @@ A  [full schema (XSD)](http://schemas.opengis.net/wmts/1.0/)  for the response i
   <Contents>
     <!-- Basic Map -->
     <Layer>
-      <ows&#058;Title>TomTom Map &mdash; Standard</ows&#058;Title>
+      <ows&#058;Title>Example Map &mdash; Standard</ows&#058;Title>
       <ows&#058;WGS84BoundingBox crs="urn&#058;ogc&#058;def&#058;crs&#058;OGC&#058;2:84">
         <ows&#058;LowerCorner>-180 -85</ows&#058;LowerCorner>
         <ows&#058;UpperCorner>180 85</ows&#058;UpperCorner>
@@ -208,10 +208,10 @@ A  [full schema (XSD)](http://schemas.opengis.net/wmts/1.0/)  for the response i
       <TileMatrixSetLink>
         <TileMatrixSet>google900913</TileMatrixSet>
       </TileMatrixSetLink>
-      <ResourceURL format="image/png" template="https&#058;//a.api.tomtom.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
-      <ResourceURL format="image/png" template="https&#058;//b.api.tomtom.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
-      <ResourceURL format="image/png" template="https&#058;//c.api.tomtom.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
-      <ResourceURL format="image/png" template="https&#058;//d.api.tomtom.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
+      <ResourceURL format="image/png" template="https&#058;//a.api.Example.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
+      <ResourceURL format="image/png" template="https&#058;//b.api.Example.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
+      <ResourceURL format="image/png" template="https&#058;//c.api.Example.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
+      <ResourceURL format="image/png" template="https&#058;//d.api.Example.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
     </Layer>
     <Layer>
       (...metadata on additional layers...)
@@ -238,7 +238,7 @@ A  [full schema (XSD)](http://schemas.opengis.net/wmts/1.0/)  for the response i
         </TileMatrixSet>
       </Contents>
 
-  <ServiceMetadataURL xlink:href="https&#058;//api.tomtom.com/map/1/wmts/apiKey/1.0.0/GetCapabilities.xml"/>
+  <ServiceMetadataURL xlink:href="https&#058;//api.Example.com/map/1/wmts/apiKey/1.0.0/GetCapabilities.xml"/>
 </Capabilities>
 ```
 
@@ -360,7 +360,7 @@ Malformed syntax
          `500` 
       </th>
       <td>
-         **Internal Server Error** : There is a problem with the TomTom WMTS
+         **Internal Server Error** : There is a problem with the Example WMTS
         service.
       </td>
     </tr>

@@ -1,7 +1,7 @@
 platformSwitcherItems:
-  - title: TomTom Maps
+  - title: Example Maps
     fallbackUrl: /map-display-api/documentation/product-information/introduction
     platformRootDirectory: /map-display-api/documentation/
-  - title: TomTom Orbis Maps
-    fallbackUrl: /map-display-api/documentation/tomtom-orbis-maps/introduction
-    platformRootDirectory: /map-display-api/documentation/tomtom-orbis-maps/
+  - title: Example Maps
+    fallbackUrl: /map-display-api/documentation/example-maps/introduction
+    platformRootDirectory: /map-display-api/documentation/example-maps/

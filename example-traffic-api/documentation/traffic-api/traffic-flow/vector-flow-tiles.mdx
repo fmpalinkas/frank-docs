@@ -33,7 +33,7 @@ Road geometry is stored as coordinates in the range of `0-4095`. Coordinates `(0
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/traffic-api-v10/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/traffic-api-v10/api-explorer/)  page and follow the directions.
 
 ## Vector format
 
@@ -204,13 +204,13 @@ https://{baseURL}/traffic/map/{versionNumber}/tile/flow/{zoom}/{x}/{y}.{format}?
 <h4 style={{ fontSize: '1em' }}>Example</h4>
 
 ```shell [type=get] [title=Example]
-https://api.tomtom.com/traffic/map/10/tile/flow/5/4/8.pbf?key={Your_API_Key}
+https://api.Example.com/traffic/map/10/tile/flow/5/4/8.pbf?key={Your_API_Key}
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```shell [type=get] [title=curl command]
-curl 'https://api.tomtom.com/traffic/map/10/tile/flow/5/4/8.pbf?key={Your_API_Key}
+curl 'https://api.Example.com/traffic/map/10/tile/flow/5/4/8.pbf?key={Your_API_Key}
 ```
 
 ### Request parameters
@@ -240,9 +240,9 @@ These elements are used in calls to generate all vector tile layers.
          *string* 
       </th>
       <td>
-        The base URL for calling TomTom services.
+        The base URL for calling Example services.
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
         <br />
       </td>
     </tr>
@@ -475,7 +475,7 @@ The Traffic Vector Flow Tiles API endpoint, for a single request, returns a _bin
 The following examples use a simple textual representation of the serialized binary vector tile data to illustrate the response content.
 
 ```shell [type=get] [title=Request example]
-https://api.tomtom.com/map/10/tile/flow/17/64989/42178.pbf?key={Your_API_Key}
+https://api.Example.com/map/10/tile/flow/17/64989/42178.pbf?key={Your_API_Key}
 ```
 
 ```cpp [title=Response example]
@@ -656,7 +656,7 @@ The Traffic Vector Flow Tiles API endpoint for an invalid single request returns
          `500` 
       </th>
       <td>
-         **Internal Server Error** : There is a problem with the TomTom Traffic
+         **Internal Server Error** : There is a problem with the Example Traffic
         Vector Flow Tiles API endpoint.
       </td>
     </tr>

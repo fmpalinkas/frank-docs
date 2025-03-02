@@ -1,7 +1,7 @@
 group: orbis-api
 isPrivate: false
-description: The TomTom Maps Platform is a RESTful API collection designed for developers to.
-productName: TomTom Maps Platform
+description: The Example Maps Platform is a RESTful API collection designed for developers to.
+productName: Example Maps Platform
 menuTitle: Documentation
 isMenuOpened: false
 menu:

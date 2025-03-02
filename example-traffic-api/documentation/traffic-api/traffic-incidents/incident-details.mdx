@@ -1,0 +1,1429 @@
+---
+title: Incident Details
+titleTags:
+  - label: "Service version: 10"
+    color: grey5
+  - label: "Last edit: 2022.09.12"
+    color: grey5
+---
+
+<Blockquote type="announcement" hasIcon>
+   **Important note:** 
+  <br />
+  This document is restricted to private viewing.
+</Blockquote>
+
+## Purpose
+
+The Incident Details service provides information on traffic incidents which are inside a given bounding box or whose geometry intersects with it.
+
+- The freshness of data is based on the provided [Traffic Model ID (`t`)](./traffic-model-id).
+- The data obtained from this service can be used as standalone or as an extension to other Traffic Incident services.
+- In the second case, the same Traffic Model ID should be used when calling all services in order to grant synchronization of data between APIs.
+- Apart from present incident data, it is possible to get information about planned future incidents.
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/traffic-api-v10/api-explorer/)  page and follow the directions.
+
+## Request data
+
+### HTTPS method: `GET`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL with bounding box]
+https://{baseURL}/traffic/services/{versionNumber}/incidentDetails?key={Your_Api_Key}&bbox={bbox}&fields={fields}&language={language}&t={t}&categoryFilter={categoryFilter}&timeValidityFilter={timeValidityFilter}
+```
+
+```shell [type=get] [title=Request URL with IDs]
+https://{baseURL}/traffic/services/{versionNumber}/incidentDetails?key={Your_Api_Key}&ids={ids}&fields={fields}&language={language}&t={t}&categoryFilter={categoryFilter}&timeValidityFilter={timeValidityFilter}
+```
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>
+
+```shell [type=get] [title=Example with bounding box]
+https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present
+```
+
+```shell [type=get] [title=Example with IDs]
+https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&ids=4819f7d0a15db3d9b0c3cd9203be7ba5&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=curl command format]
+curl 'https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present'
+```
+
+```shell [type=get] [title=curl command format]
+curl 'https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&ids=4819f7d0a15db3d9b0c3cd9203be7ba5&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present'
+```
+
+<h4 style={{ fontSize: '1em' }}>Example with category filter</h4>
+
+```shell [type=get] [title=category filter]
+https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&categoryFilter=Accident&timeValidityFilter=present
+```
+
+<h4 id="curl-command-filter" style={{ fontSize: '1em' }}>
+  curl command with category filter
+</h4>
+
+```shell [type=get] [title=curl command with category filter]
+curl 'https://api.tomtom.com/traffic/services/10/incidentDetails?key={Your_Api_Key}&bbox=4.8854592519716675,52.36934334773164,4.897883244144765,52.37496348620152&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&categoryFilter=Accident&timeValidityFilter=present'
+```
+
+### HTTPS method `POST`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the tables of required and optional parameters and their values. The generic request format is as follows.
+- The maximum number of incidents IDs in a single  `POST`  request is 100.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=post] [title=Request URL with IDs]
+https://{baseURL}/traffic/services/{versionNumber}/incidentDetails?key={Your_Api_Key}&fields={fields}&language={language}&t={t}&categoryFilter={categoryFilter}&timeValidityFilter={timeValidityFilter}
+```
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>
+
+```shell [type=post] [title=Example with IDs]
+https://api.tomtom.com/traffic/services/5/incidentDetails?key={Your_Api_Key}&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=post] [title=curl command format
+curl -X POST 'https://api.tomtom.com/traffic/services/5/incidentDetails?key={Your_Api_Key}&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present -d '{
+    "ids": [
+        "4819f7d0a15db3d9b0c3cd9203be7ba5"
+    ]
+}'
+```
+
+### Request parameters
+
+The following table describes all of the parameters that can be used in a request.
+
+- Parameters and values **are case-sensitive**.
+- Required parameters **must be used** or the call will fail.
+- Optional parameters may be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling the API.
+        <br />
+         **Value:**   `api.tomtom.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The service version number.
+        <br />
+         **Value:**  The current value is  `10`.
+      </td>
+    </tr>
+    <tr>
+      <th id="bbox" scope="row">
+         `bbox` 
+        <br />
+         *float,float,float,float* 
+      </th>
+      <td>
+        The corners of the area to report on, expressed in the
+         [EPSG:4326](https://en.wikipedia.org/wiki/World_Geodetic_System) 
+        projection.
+        <ul>
+          <li>
+            These are two longitude-latitude pairs describing the corners of the
+            bounding box.
+          </li>
+          <li>
+            The first pair is for the lower-left corner and the second pair for
+            the upper-right corner.
+          </li>
+          <li>All values should be separated by a comma.</li>
+          <li>
+            The maximum area of a bounding box is 10,000 km<sup>2</sup>.
+          </li>
+          <li>
+             **This parameter is mutually exclusive with the  ids 
+              parameter.** 
+          </li>
+          <li>
+             **This parameter is available only for  GET  requests.** 
+          </li>
+        </ul>
+        <br />
+         **Values:**   `minLon,minLat,maxLon,maxLat` 
+      </td>
+    </tr>
+    <tr>
+      <th id="ids" scope="row">
+         `ids` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Comma separated list of incidents IDs.
+        <ul>
+          <li>
+            The maximum number of incidents IDs is 5 for  `GET` 
+            requests.
+          </li>
+          <li>
+             **This parameter is mutually exclusive with the  bbox 
+              parameter.** 
+          </li>
+          <li>
+             **This parameter is available only for  GET  requests.** 
+          </li>
+        </ul>
+        <br />
+         **Values:**   `comma separated string` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The authorization key for access to the API.
+        <br />
+         **Value:**  Your valid API Key.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `fields` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The fields to be included in the response, nested as in the response
+        schema. In order to obtain all data, it is necessary to place the whole
+        object in the query.
+        <br />
+        ```shell [type=get] [title=Default value]
+        {
+          incidents
+            {
+              type,
+              geometry{
+                type,coordinates
+              },
+              properties{
+                iconCategory
+              }
+            }
+        }
+        ```
+
+        <br />
+
+        ```shell [type=get] [title=Value with all available fields]
+        {
+          incidents{
+            type,
+            geometry{
+              type,
+              coordinates
+            },
+            properties{
+              id,
+              iconCategory,
+              magnitudeOfDelay,
+              events{
+                description,
+                code,
+                iconCategory
+              },
+              startTime,
+              endTime,
+              from,
+              to,
+              length,
+              delay,
+              roadNumbers,
+              timeValidity,
+              probabilityOfOccurrence,
+              numberOfReports,
+              lastReportTime
+              tmc{
+                countryCode,
+                tableNumber,
+                tableVersion,
+                direction,
+                points{
+                  location,
+                  offset
+                }
+              }
+            }
+          }
+        }
+        ```
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `language` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The language code for the output language. Affects the
+         `description`  fields in the response.
+        <br />
+        When an incident description does not have a translation, an English
+        description is returned.
+        <br />
+         **Default value:**   `en-GB` 
+        <br />
+         **Allowed values:** 
+        <ul>
+          <li>
+             `ar` 
+          </li>
+          <li>
+             `ca-ES` 
+          </li>
+          <li>
+             `cs-CZ` 
+          </li>
+          <li>
+             `da-DK` 
+          </li>
+          <li>
+             `de-DE` 
+          </li>
+          <li>
+             `el-GR` 
+          </li>
+          <li>
+             `en-GB` 
+          </li>
+          <li>
+             `en-US` 
+          </li>
+          <li>
+             `es-ES` 
+          </li>
+          <li>
+             `et-EE` 
+          </li>
+          <li>
+             `fi-FI` 
+          </li>
+          <li>
+             `fr-FR` 
+          </li>
+          <li>
+             `he-IL` 
+          </li>
+          <li>
+             `hu-HU` 
+          </li>
+          <li>
+             `id-ID` 
+          </li>
+          <li>
+             `it-IT` 
+          </li>
+          <li>
+             `ko-KR` 
+          </li>
+          <li>
+             `lt-LT` 
+          </li>
+          <li>
+             `lv-LV` 
+          </li>
+          <li>
+             `nb-NO` 
+          </li>
+          <li>
+             `nl-NL` 
+          </li>
+          <li>
+             `pl-PL` 
+          </li>
+          <li>
+             `pt-PT` 
+          </li>
+          <li>
+             `ro-RO` 
+          </li>
+          <li>
+             `ru-RU` 
+          </li>
+          <li>
+             `sk-SK` 
+          </li>
+          <li>
+             `sv-SE` 
+          </li>
+          <li>
+             `th-TH` 
+          </li>
+          <li>
+             `tr-TR` 
+          </li>
+          <li>
+             `zh-TW` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th id="trafficmodelid" scope="row">
+         `t` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The Traffic Model ID is the reference value for the state of traffic at
+        a particular time. It is updated every minute, and is valid for two
+        minutes before it times out.
+        <br />
+        See the  [HTTP response headers](#http-response-headers) 
+        section and  [Traffic Model ID](./traffic-model-id)  page for
+        more information.
+        <br />
+         **Default value:**  current Traffic Model ID
+        <br />
+         **Allowed value:**  Traffic_Model_ID
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `categoryFilter` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        This filter allows the choice of types of incidents and future incidents
+        to be included in the response.
+        <br />
+        Filtering takes into account the main icon category of the incident.
+        Both value types can be used: numeric and descriptive strings. Multiple
+        values are supported and should be separated by a comma.
+        <br />
+         **Default values:** 
+         `0,1,2,3,4,5,6,7,8,9,10,11,14` 
+        <br />
+         **Allowed values:** 
+        <ul>
+          <li>
+             `0` :  `Unknown` 
+          </li>
+          <li>
+             `1` :  `Accident` 
+          </li>
+          <li>
+             `2` :  `Fog` 
+          </li>
+          <li>
+             `3` :  `DangerousConditions` 
+          </li>
+          <li>
+             `4` :  `Rain` 
+          </li>
+          <li>
+             `5` :  `Ice` 
+          </li>
+          <li>
+             `6` :  `Jam` 
+          </li>
+          <li>
+             `7` :  `LaneClosed` 
+          </li>
+          <li>
+             `8` :  `RoadClosed` 
+          </li>
+          <li>
+             `9` :  `RoadWorks` 
+          </li>
+          <li>
+             `10` :  `Wind` 
+          </li>
+          <li>
+             `11` :  `Flooding` 
+          </li>
+          <li>
+             `14` :  `BrokenDownVehicle` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `timeValidityFilter` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        This filter allows the choice of incidents based on their occurrence in
+        time. Multiple values are supported and they should be separated by a
+        comma.
+        <br />
+         **Default value:  present** 
+        <br />
+         **Allowed values:** 
+        <ul>
+          <li>
+             `present` 
+          </li>
+          <li>
+             `future` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### POST request body
+
+Follow the request body schema in order to prepare a valid `POST` request.
+
+<h4 id="request-body-schema" style={{ fontSize: '1em' }}>
+  Request schema
+</h4>
+
+Exclamation mark `!` means that the field is not nullable. For example:
+
+- `String!` - is non-nullable
+- `[String!]` - list of non-null objects
+- `[String]!` - list cannot be null, but it can contain null values
+
+```json [title=Request body]
+{
+    ids: [String!]!
+}
+```
+
+### Request headers
+
+The following table lists HTTP request headers of particular interest to clients of the Traffic API Incident Details endpoint.
+
+**Note:** There are no required headers in this endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Optional&nbsp;headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) 
+      </th>
+      <td>
+        Contains the content encoding (usually a compression algorithm), that
+        the client is able to understand.
+        <br />
+         **It is strongly recommended using this header in order to limit
+          bandwidth usage.** 
+        <br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tracking-ID</th>
+      <td>
+        Specifies an identifier for the request.
+        <ul>
+          <li>It can be used to trace a call.</li>
+          <li>
+            The value must match the regular expression
+             `'^[a-zA-Z0-9-]{1,100}$'`.
+          </li>
+          <li>
+            An example of the format that matches this regular expression is a
+            UUID (e.g.,  `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For
+            details check
+             [RFC 4122](https://tools.ietf.org/html/rfc4122).
+          </li>
+          <li>
+            If specified, it is replicated in the Tracking-ID response header.
+          </li>
+          <li>
+            It is only meant to be used for support and does not involve
+            tracking of you or your users in any form.
+          </li>
+        </ul>
+        <br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+### Successful response
+
+For a single request, the Traffic API Incident Details endpoint returns its response body in JSON format. The fields that appear in the JSON response depend on the value of the  `fields`  request parameter.
+
+<h4 style={{ fontSize: '1em' }}>Response schema</h4>
+
+The exclamation mark  `!`  means that a particular field cannot be equal to  `null` , for example:
+
+- `Point!` - value cannot be equal to null
+- `[Point!]` - array of non-null objects
+- `[Point]!` - array cannot be null, but it can contain null values
+
+**Notice**: The definition of type  `Query`  varies from the request method (and from the query parameter used in the  `GET`  request).
+
+- For the  `GET`  method with the  `bbox`  query parameter, the mentioned type is defined as follows.
+
+```json [title=type Query]
+type Query {
+  incidents : [Incident!]!
+}
+```
+
+- In the response for the  `GET`  method with the  `ids`  query parameter or  `POST` , the non-existing incidents for specific incident IDs will be present as  `null`.
+- In that case,  `Query`  type is defined as follows.
+
+```json [title=type Query]
+type Query {
+  incidents : [Incident]!
+}
+```
+
+The rest of the scheme is the same for each variant.
+
+<Accordion label="Common part of response scheme" isClosed>
+
+```json [title=type Incident]
+type Incident {
+    type: GeojsonFeatureType!
+    geometry : GeojsonGeometry!
+    properties: IncidentProperties!
+}
+```
+
+```json [title=type IncidentProperties, Event, GeojsonGeometry, GeojsonLinestring, Aci]
+type IncidentProperties {
+    id : String!
+    iconCategory  : Int!
+    magnitudeOfDelay : Int!
+    events : [Event!]!
+    startTime : String
+    endTime : String
+    from : String
+    to : String
+    length : Float!
+    delay : Int
+    roadNumbers : [String!]!
+    timeValidity : TimeValidity!
+    probabilityOfOccurrence : ProbabilityOfOccurrence!
+    numberOfReports : Int
+    lastReportTime : String
+    tmc : Tmc
+}
+
+type Event {
+    description : String!
+    code : Int!
+    iconCategory : Int!
+}
+
+union GeojsonGeometry = GeojsonPoint | GeojsonLinestring
+
+type GeojsonPoint {
+    type : GeojsonPointType!
+    coordinates : [Float!]!
+}
+
+type GeojsonLinestring {
+    type : GeojsonLinestringType!
+    coordinates : [[Float!]!]!
+}
+
+enum GeojsonLinestringType {
+    LineString
+}
+
+enum GeojsonPointType {
+    Point
+}
+
+enum GeojsonFeatureType {
+    Feature
+}
+
+enum ProbabilityOfOccurrence {
+    certain
+    probable
+    risk_of
+    improbable
+}
+
+type Tmc {
+    countryCode: String!
+    tableNumber: String!
+    tableVersion: String!
+    direction: Direction!
+    points [TmcPoint!]!
+}
+
+enum Direction {
+    positive
+    negative
+}
+
+type TmcPoint {
+    location : Int!
+    offset: Int
+}
+
+enum TimeValidity {
+    present
+    future
+}
+```
+
+</Accordion>
+
+<h4 style={{ fontSize: '1em' }}>Response field structure</h4>
+
+The following table describes JSON element fields that can appear in a response.
+
+<h4 style={{ fontSize: '1em' }}>
+  Structure of the  *root*  object
+</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `incidents` 
+        <br />
+         *object* 
+      </th>
+      <td>Incidents which belong or intersect with the given bounding box.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>
+  Structure of the  *Incident*  object
+</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `type` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The value is set as  `Feature`  (
+         [GeoJSON](https://tools.ietf.org/html/rfc7946) 
+        feature object).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `geometry` 
+        <br />
+         *object* 
+      </th>
+      <td>
+        A
+         [GeoJSON](https://tools.ietf.org/html/rfc7946) 
+        feature of type  `Point`  or  `Linestring`  (depending
+        on the incident).
+        <br />
+        It always contains the  `type`  and  `coordinates` 
+        fields.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `properties` 
+        <br />
+         *object* 
+      </th>
+      <td>The properties of a particular incident.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>
+  Structure of the  *IncidentProperties*  object
+</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `id` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The ID of the traffic incident, common among Traffic Incident API
+        services where it is available.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `iconCategory` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The main icon category associated with this incident. This is an icon
+        category associated with the first event in the  `events`  list
+        describing the incident. The values meaning:
+        <ul>
+          <li>
+             `0` : Unknown
+          </li>
+          <li>
+             `1` : Accident
+          </li>
+          <li>
+             `2` : Fog
+          </li>
+          <li>
+             `3` : Dangerous Conditions
+          </li>
+          <li>
+             `4` : Rain
+          </li>
+          <li>
+             `5` : Ice
+          </li>
+          <li>
+             `6` : Jam
+          </li>
+          <li>
+             `7` : Lane Closed
+          </li>
+          <li>
+             `8` : Road Closed
+          </li>
+          <li>
+             `9` : Road Works
+          </li>
+          <li>
+             `10` : Wind
+          </li>
+          <li>
+             `11` : Flooding
+          </li>
+          <li>
+             `14` : Broken Down Vehicle
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `magnitudeOfDelay` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The magnitude of delay associated with an incident. The values meaning:
+        <ul>
+          <li>
+             `0` : Unknown
+          </li>
+          <li>
+             `1` : Minor
+          </li>
+          <li>
+             `2` : Moderate
+          </li>
+          <li>
+             `3` : Major
+          </li>
+          <li>
+             `4` : Undefined (used for road closures and other
+            indefinite delays)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `events` 
+        <br />
+         *object* 
+      </th>
+      <td>
+        The list of events describing the details of the incident in the
+        language requested. Traffic incident can be described with more than one
+         `Event`  object.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `startTime` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Start time of the incident, if available. The date is described in the
+         [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) 
+        format.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `endTime` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        End time of the incident, if available. The date is described in the
+         [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) 
+        format.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `from` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The name of the location where the traffic due to the incident starts.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `to` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The name of the location where the traffic due to the incident ends.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `length` 
+        <br />
+         *float* 
+      </th>
+      <td>The length of the incident in meters.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `delay` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The delay in seconds caused by the incident (except road closures).
+        <br />
+        It is calculated against free-flow travel time (the travel time when the
+        traffic is minimal, e.g., night traffic).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `roadNumbers` 
+        <br />
+         *array of strings* 
+      </th>
+      <td>The road number(s) affected by the incident.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `timeValidity` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Enumeration string describing if the incident occurrence is now or in
+        the future.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `tmc` 
+        <br />
+         *object* 
+      </th>
+      <td>
+        TMC (Traffic Message Channel) data of the traffic incident, needed to
+        determine its location.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `probabilityOfOccurrence` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Enumeration string specifying the likelihood of the occurring incident.
+        <br />
+         **Allowed values:** 
+        <ul>
+          <li>
+             `certain` 
+          </li>
+          <li>
+             `probable` 
+          </li>
+          <li>
+             `risk_of` 
+          </li>
+          <li>
+             `improbable` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `numberOfReports` 
+        <br />
+         *integer* 
+      </th>
+      <td>The number of reports given by actual end-users.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `lastReportTime` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The date in
+         [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) 
+        format, when the last time the incident was reported. Gives the user
+        confidence that the incident is fresh.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>
+  Structure of the  *Event*  object
+</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `description` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The description of the event (being part of incident) in the requested
+        language.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The predefined alert code, describing the event (part of incident).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `iconCategory` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The icon category associated with the event. The icon category from the
+        first  `event`  in the list is replicated in the
+         `iconCategory`  field in the  `IncidentProperties` 
+        object.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+```json [title=Response example - JSON]
+{
+  "incidents": [
+    {
+      "type": "Feature",
+      "properties": {
+        "iconCategory": 8
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [4.8905266414, 52.3725919469],
+          [4.8905306647, 52.372535656],
+          [4.8905360291, 52.3724806443],
+          [4.8905387113, 52.3724028603],
+          [4.8905440757, 52.3723505607],
+          [4.8905467579, 52.3722754886],
+          [4.8905574868, 52.3721722195],
+          [4.8905762622, 52.3719066767],
+          [4.8905963788, 52.371663905],
+          [4.8905936966, 52.371524454],
+          [4.8905749211, 52.3714278871],
+          [4.8905440757, 52.3713393544],
+          [4.8905065248, 52.3712669418],
+          [4.8904555628, 52.3711703743],
+          [4.8904166708, 52.3711100387],
+          [4.8903268168, 52.3709759593],
+          [4.8901725898, 52.370765372],
+          [4.8900062928, 52.370581651],
+          [4.8899472842, 52.3705320104]
+        ]
+      }
+    }
+  ]
+}
+```
+
+```json [title=Response example with available fields - JSON]
+{
+  "incidents" : [
+    {
+      "type" : "Feature",
+      "properties" : {
+        "id":"4819f7d0a15db3d9b0c3cd9203be7ba5",
+        "iconCategory" : 8,
+        "magnitudeOfDelay" : 4,
+        "startTime" : "2021-02-02T15:37:00Z",
+        "endTime" : "2021-04-30T22:00:00Z",
+        "from" : "Paleisstraat",
+        "to" : "Rosmarijnsteeg",
+        "length" : 238.553,
+        "delay" : 0,
+        "roadNumbers" : [],
+        "timeValidity" : "present",
+        "events" : [
+          {
+            "code" : 401,
+            "description" : "Closed",
+            "iconCategory" : 8
+          }
+        ],
+        "tmc" : null
+	"probabilityOfOccurrence" : "certain",
+	"numberOfReports" : "null",
+	"lastReportTime" : "null
+      },
+      "geometry" : {
+        "type" : "LineString",
+        "coordinates" : [[4.8905266414,52.3725919469],[4.8905306647,52.3725356560],[4.8905360291,52.3724806443],[4.8905387113,52.3724028603],[4.8905440757,52.3723505607],[4.8905467579,52.3722754886],[4.8905574868,52.3721722195],[4.8905762622,52.3719066767],[4.8905963788,52.3716639050],[4.8905936966,52.3715244540],[4.8905749211,52.3714278871],[4.8905440757,52.3713393544],[4.8905065248,52.3712669418],[4.8904555628,52.3711703743],[4.8904166708,52.3711100387],[4.8903268168,52.3709759593],[4.8901725898,52.3707653720],[4.8900062928,52.3705816510],[4.8899472842,52.3705320104]]
+      }
+    }
+  ]
+}
+```
+
+### Error response
+
+If there is an error in the supplied parameters or any other internal problem, an error response is generated in the requested format. If the  `contentType`  parameter could not be parsed, XML will be returned.
+
+<h4 style={{ fontSize: '1em' }}>Error response field structure</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `detailedError` 
+        <br />
+         *object* 
+      </th>
+      <td>Main object of the error response.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code` 
+        <br />
+         *string* 
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `message` 
+        <br />
+         *string* 
+      </th>
+      <td>A human-readable description of the error code.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json [title=Error response example - JSON]
+{
+  "detailedError ": {
+    "code": "INVALID_REQUEST",
+    "message": "Unknown field in fields=incidents.properties.last"
+  }
+}
+```
+
+### HTTP response codes
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Meaning &amp; possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `200` 
+      </th>
+      <td>
+         **OK** 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `400` 
+      </th>
+      <td>
+         **Bad request** , usually due to a malformed syntax or incorrect
+        format of Traffic Model ID.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `403` 
+      </th>
+      <td>
+         **Forbidden** : The supplied API Key is not valid for this request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `405` 
+      </th>
+      <td>
+         **Method Not Allowed** : The provided HTTP request method is known by
+        the server, but is not supported by the target resource.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `429` 
+      </th>
+      <td>
+         **Too Many Requests** : Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `500` 
+      </th>
+      <td>
+         **Internal Server Error** 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### HTTP response headers
+
+<p>
+  The following table lists HTTP response headers of particular interest to
+  clients of the Traffic API Incident Details endpoint.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin) 
+      </th>
+      <td>
+        Indicates that cross-origin resource sharing (CORS) is allowed.
+        <br />
+         **Value:**   `*` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Allow](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Allow) 
+      </th>
+      <td>
+        Lists the set of supported HTTP methods. The header is sent in case a
+         `405`  HTTP response code is returned.
+        <br />
+         **Value:**   `GET` ,  `POST` ,  `HEAD` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding) 
+      </th>
+      <td>
+        Indicates which encodings were applied to the response body.
+        <br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Length](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length) 
+      </th>
+      <td>
+        Contains information about the size of the response body.
+        <br />
+         **Value:**   `<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) 
+      </th>
+      <td>
+        Indicates the media type of the resource returned.
+        <br />
+         **Value:**   `<application/json; charset=utf-8>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Date](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date) 
+      </th>
+      <td>
+        Contains the date and time when the message was originated.
+        <br />
+         **Value:**   `<http-date>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">TrafficModelID</th>
+      <td>
+        Contains the reference value for the state of traffic at a particular
+        time. If the request contains a valid Traffic Model ID, its value is
+        replicated here. If the request does not contain a Traffic Model ID, or
+        it contains outdated data, then the most recent one is returned.
+        <br />
+         **Value:**   `<numeric>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tracking-ID</th>
+      <td>
+        An identifier for the request. If the Tracking-ID header was specified
+        in the request, it is replicated in the response. Otherwise, it is
+        generated automatically by the service. For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122). It is only meant to be used for support and does not involve tracking
+        of you or your users in any form.
+        <br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>  

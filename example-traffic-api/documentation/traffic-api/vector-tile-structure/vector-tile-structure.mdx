@@ -1,0 +1,420 @@
+---
+title: Vector Tile Structure
+titleTags:
+  - label: "Service version: 10"
+    color: grey5
+  - label: "Last edit: 2022.03.30"
+    color: grey5
+---
+
+<Blockquote type="announcement" hasIcon>
+   **Important note:** 
+  <br />
+  This document is restricted to private viewing.
+</Blockquote>
+
+## Purpose
+
+Vector Tiles are served in binary format, which uses Google Protocol Buffers as the method of serializing structured data. The serializing algorithm is very effective and as a result Vector Tiles are light-weight.
+
+## Vector Tile structure
+
+### Vector Tile diagram
+
+The following diagram shows dependencies between the properties of vector tile.
+
+<img
+  src="https://developer.tomtom.com/assets/images/ProtobufSchemaPNGBig.png"
+  alt="vector tile property dependencies"
+  width="812"
+  height="812"
+/>
+
+<h4 style={{ fontSize: '1em' }}>Legend</h4> 
+
+<dl>
+  <dt>
+     `Tile` 
+  </dt>
+  <dd>
+    Represents a vector tile as a whole entity. It consists of at least one 
+     `TileLayer`.<br />
+    If the tile does not contain any relevant data, it contains one layer named  `empty`.
+  </dd>
+  <br />
+  <dt>
+     `TileLayer` 
+  </dt>
+  <dd>
+    Part of a  `Tile` , representing one of the layers that can be
+    rendered later. In the Traffic API it can represent all of the traffic flow
+    or all of the traffic incidents.
+    <br />
+    Every  `TileLayer`  contains the following fields:
+    <ul>
+      <li>
+         `name` 
+      </li>
+      <li>
+         `version` 
+      </li>
+      <li>
+         `extent` 
+      </li>
+    </ul>
+    It may also contain the following fields:
+    <ul>
+      <li>
+         `keys`  are an array of unique  `strings`.
+      </li>
+      <li>
+         `values`  are an array of unique  `TileValues`.
+      </li>
+      <li>
+         `features`  are an array of unique  `TileFeatures`.
+      </li>
+    </ul>
+    Arrays of  `keys`  and  `values`  contain the mapping for
+    tags of  `TileFeature.` 
+  </dd>
+  <br />
+  <dt>
+     `TileFeature` 
+  </dt>
+  <dd>
+    Member of an array of  `features`  stored in a 
+     `TileLayer` , containing a geometry representation that can be
+    rendered.
+    <br />
+    It always contains the following fields:
+    <ul>
+      <li>
+         `type`  is a type of geometry. It can be  `point` , 
+         `linestring` , or  `polygon`.
+      </li>
+      <li>
+         `geometry`  is an array of encoded geometry that can be used
+        for rendering. See the 
+         [Decoding tile geometry](#decoding-tile-geometry)  section for
+        details.
+      </li>
+    </ul>
+    It may also contain the following fields:
+    <ul>
+      <li>
+         `tags`  are an array containing properties of feature.
+        <ul>
+          <li>
+            They are a  `TileFeature's`  detailed description which can
+            be used for styling and later rendering the geometry.
+          </li>
+          <li>They are encoded into an array of integers.</li>
+          <li>
+            In order to decode them, the arrays of  `keys`  and 
+             `values` , from corresponding  `TileLayer`  must
+            be used.
+          </li>
+          <li>
+            See the  [Decoding tile tags](#decoding-tile-tags)  section
+            for details.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </dd>
+  <br />
+  <dt>
+     `TileValue` 
+  </dt>
+  <dd>
+    Encoded representation of a string, integer, floating point, or boolean
+    value.
+    <ul>
+      <li>
+        It is stored in a  `values`  array, in a  `TileLayer`.
+      </li>
+      <li>
+        It is used for decoding  `tags`  of a  `TileFeature`  
+        (together with the members of a  `keys`  array).
+      </li>
+      <li>
+        See the  [Decoding tile tags](#decoding-tile-tags)  section for
+        details.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+## Schema data
+
+Formally, the structure of Vector Tile is described by the  [protocol buffer schema](https://developers.google.com/protocol-buffers/docs/overview). It allows the generation of C++, Java, Python, Go, Ruby, Objective-C, and C# code based on  [proto file](https://fileinfo.com/extension/proto).
+
+```cpp [title=Schema proto file]
+package vector_tile
+
+option optimize_for = SPEED;
+
+message Tile {
+
+    enum GeomType {
+        UNKNOWN = 0;
+        POINT = 1;
+        LINESTRING = 2;
+        POLYGON = 3;
+    }
+
+    message Value {
+        optional string string_value = 1;
+        optional float float_value = 2;
+        optional double double_value = 3;
+        optional int64 int_value = 4;
+        optional uint64 uint_value = 5;
+        optional sint64 sint_value = 6;
+        optional bool bool_value = 7;
+        extensions 8 to max;
+    }
+
+    message Feature {
+        optional uint64 id = 1 [ default = 0 ];
+        repeated uint32 tags = 2 [ packed = true ];
+        optional GeomType type = 3 [ default = UNKNOWN ];
+        repeated uint32 geometry = 4 [ packed = true ];
+        optional bytes raster = 5;
+    }
+
+    message Layer {
+        required uint32 version = 15 [ default = 1 ];
+        required string name = 1;
+        repeated Feature features = 2;
+        repeated string keys = 3;
+        repeated Value values = 4;
+        optional uint32 extent = 5 [ default = 4096 ];
+
+        extensions 16 to max;
+    }
+
+    repeated Layer layers = 3;
+
+    extensions 16 to 8191;
+}
+```
+
+## Decoding Vector Tile
+
+### Decoding tile geometry
+
+Vector Tile geometry uses the following coordinate system:
+
+- Coordinates are always integers.
+- The `(0,0)`point is located in the upper-left corner of the tile.
+- The X axis has positive values to the right of the tile.
+- The Y axis has positive values to the bottom of the tile.
+- The tile may have margin, which is a buffer around the tile in the shape of a square frame.
+- In the Traffic API, the size of the margin is by default equal to `0.1` of the width/length of the tile.
+- The extent is equal to `4096`, so the value range for X and Y coordinates is from `0` to `4095`.
+- If the tile has a margin, the coordinates values range is additionally extended with its value in both directions.
+
+Vector Tile geometry is encoded as an array of 32 bit unsigned integers in the `geometry` field, belonging to the `TileFeature`.
+
+Encoded format has the following structure:
+
+```cpp
+[command_and_count][x0][y0]..[xn][yn][command_and_count][x0][y0]..
+```
+
+- `command_and_count` contains encoded values of `command` and `count`.
+- `[x0][y0]..[xn][yn]` are encoded coordinate `(x,y)` pairs.
+
+<h4 style={{ fontSize: '1em' }}>Command</h4> 
+
+The value of `command` is decoded as follows:
+
+```cpp
+command = command_and_count & 0x7
+```
+
+- It can be interpreted as "paint brush movement" during rendering, in relation to point `(0.0)` and previous commands.
+- In the first `TileFeature` `command` "paint brush" starts at point `(0,0)`.
+
+<h4 style={{ fontSize: '1em' }}>Command types</h4> 
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Command</th>
+      <th scope="col">Value</th>
+      <th scope="col">Coordinates</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `MoveTo` 
+      </th>
+      <td>
+         `1` 
+      </td>
+      <td>
+         `x,y` 
+      </td>
+      <td>
+        <ul>
+          <li>
+            It defines the  `(x,y)`  coordinate.
+            <ul>
+              <li>
+                In the case of a  `point`  type geometry, the
+                coordinate is a new point.
+              </li>
+              <li>
+                In the case of a  `linestring`  type geometry, the
+                coordinate is the start vertex of a new line.
+              </li>
+              <li>
+                In the case of a  `polygon`  type geometry, the
+                coordinate is the start vertex of new linear ring.
+              </li>
+            </ul>
+          </li>
+          <li>It moves "paint brush" to a newly defined coordinate.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `LineTo` 
+      </th>
+      <td>
+         `2` 
+      </td>
+      <td>
+         `x,y` 
+      </td>
+      <td>
+        <ul>
+          <li>
+            It defines a segment, starting at the current position of the cursor
+            and ending at  `(x,y)`  coordinate.
+            <ul>
+              <li>
+                In the case of a  `linestring`  type geometry, the
+                segment extends the current line.
+              </li>
+              <li>
+                In the case of a  `polygon`  type geometry, the segment
+                extends the current linear ring.
+              </li>
+            </ul>
+          </li>
+          <li>It moves "paint brush" to a newly defined coordinate.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `ClosePath` 
+      </th>
+      <td>
+         `7` 
+      </td>
+      <td>none</td>
+      <td>
+        <ul>
+          <li>
+            It closes the current linear ring of a  `polygon`  type
+            geometry.
+          </li>
+          <li>
+            It starts and ends at the start vertex of a current linear ring.
+          </li>
+          <li>
+            It does not move "paint brush" to any coordinate, because it has
+            none.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>Count</h4> 
+
+The value of `count` is decoded as follows:
+
+```cpp
+count = command_and_count >> 0x3
+```
+
+- It defines the `n` number of `[xn][yn]` encoded coordinate pairs following the `command_and_count` value.
+- These coordinate pairs must be interpreted according to the preceding `command` type.
+
+<h4 style={{ fontSize: '1em' }}>Coordinates</h4> 
+
+Coordinates `[x0][y0]..[xn][yn]` are encoded in zigzag encoding and are relative to the previous coordinate pair and previous commands. This means that only the first coordinate pair `[x0][y0]` in first command in every `TileFeature` stores absolute values.
+
+The coordinates are decoded as follows:
+
+```cpp [title=Decoded coordinates values]
+decode(x0) = ((x0 >> 0x1) ^ (-(x0 & 0x1)))
+decode(y0) = ((y0 >> 0x1) ^ (-(y0 & 0x1)))
+
+decode(x1) = decode(x0) + ((x1 >> 0x1) ^ (-(x1 & 0x1)))
+decode(y1) = decode(y0) + ((y1 >> 0x1) ^ (-(y1 & 0x1)))
+
+...
+
+decode(xn) = decode(xn-1) + ((xn >> 0x1) ^ (-(xn & 0x1)))
+decode(yn) = decode(yn-1) + ((yn >> 0x1) ^ (-(yn & 0x1)))
+```
+
+```cpp [title=Example of decoded coordinates]
+input :
+layer : 0 :
+    feature : 0 :
+    type : POINT
+    geometry : [9, 1136, 6564]
+
+processing :
+    geometry :
+        command_and_count = 9
+
+        command = 9 & 0x7 = 1
+        count = 9 >> 0x3 = 1
+
+        x0 = 1136, y0 = 6564
+        decode(x0) = ((1136 >> 0x1) ^ (-(1136 & 0x1))) = 568
+        decode(y0) = ((6564 >> 0x1) ^ (-(6564 & 0x1))) = 3282
+
+output :
+layer : 0 :
+    feature : 0
+    geometry : POINT(561, 3282)
+```
+
+### Decoding tile tags
+
+In order to reduce tile size, the properties of each feature are encoded in a `tags` array.
+
+- The `tags` array contains integer values which are indexes of `keys` and `values` arrays belonging to the corresponding layer.
+- The size of a `tags` array is always even.
+- The content of a `tags` array can be grouped into a list of pairs. Each odd element of an array is the first element of a pair, and each even element of an array is the second element of a pair.
+- The first element of each pair should be mapped to a `keys` array.
+- The second element of each pair should be mapped to a `values` array.
+- As a result, we get a decoded list of `tags` where the first element is the tag name and the second element is the tag value in the form of `TileValue`.
+
+```cpp [title=Example]
+input :
+layer : 0 :
+    "keys" : ["road_type", "traffic_road_coverage"],
+    "values" : ["Motorway", "full"]
+    feature : 0 :
+        "tags" : [0,0,1,1]
+
+output :
+layer : 0 :
+    feature : 0 :
+        properties :
+        "road_type" : "Motorway"
+        "traffic_road_coverage" : "full"
+```

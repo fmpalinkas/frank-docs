@@ -1,0 +1,250 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Countermeasure 7. Sharing of Data With a Third Party</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-privacy-7-sharing-of-data-with-third-party">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/7-sharing-data.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">OWASP Top 10 Privacy Risk Countermeasures</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">7. Sharing of Data With a Third Party</h3>
+
+      <section class="api">
+
+        <dl>
+          <dt tabindex="0">Risk Description</dt>
+          <dd>
+            <p>
+              Providing user data to any third-party,
+              without
+              obtaining the user's consent.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Sharing results
+                  either due to transfer or exchanging for a
+                  monetary compensation or otherwise due to
+                  inappropriate use of third-party
+                  resources included in the website like widgets (e.g.,
+                  maps, social networks, buttons), analytics or
+                  web bugs (e.g., beacons).
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">How to check?</dt>
+          <dd>
+            <ol>
+              <li>
+                <p>
+                  Is personal data transferred to third
+                  parties?
+                </p>
+              </li>
+              <li>
+                <p>
+                  Are third party solutions in use (plugins,
+                  buttons, maps, videos, advertising, etc.)
+                  and which ones?
+                </p>
+              </li>
+              <li>
+                <p>
+                  Is third party tracking disclosed (which third
+                  parties and what data).
+                </p>
+              </li>
+              <li><p>Can you provide a list of all third parties?</p></li>
+              <li>
+                <p>
+                  Check each third party against each of the
+                  criteria in this document.
+                </p>
+              </li>
+              <li><p>Did you rate them regarding privacy?</p></li>
+              <li>
+                <p>
+                  Is privacy and handling of personal data
+                  part of the contract and if yes, what
+                  restrictions are in place?
+                </p>
+              </li>
+              <li>
+                <p>
+                  Do you use privacyfriendly
+                  implementations of third party content (if
+                  available)?
+                </p>
+              </li>
+              <li>
+                <p>
+                  Do you use blacklists of third parties that
+                  are forbidden due to privacy concerns?
+                </p>
+              </li>
+              <li><p>Do you audit your third parties?</p></li>
+              <li>
+                <p>
+                  If you transfer data to third parties,
+                  or use
+                  third party
+                  processing, is there a user
+                  consent for sharing data?
+                </p>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Countermeasures</dt>
+          <dd>
+            <p>
+              Personal data is often shared with third parties
+              through the integration of third party content like
+              user tracking code, advertising banners, social
+              network buttons or videos, and third party
+              hosted
+              JavaScript and style sheet libraries.
+            </p>
+            <p>
+              The following measures should be considered for a
+              privacy-friendly
+              use of third party content:
+            </p>
+            <ol>
+              <li>
+                <p>
+                  Use third party content only where it is
+                  required, not by default.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Use your own server as a "proxy" for
+                  content.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Deploy full Do Not Track, to the latest W3C
+                  standard. Prefer the W3C standard over the
+                  unofficial EFF one.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Tokenisation or anonymisation (data
+                  masking) should be considered for use
+                  before sharing of data with a third party.
+                </p>
+              </li>
+              <li>
+                <p>Develop a Third Party Monitoring Strategy:</p>
+                <ol>
+                  <li>
+                    <p>
+                      Gateway release for third party
+                      content (whitelist or blacklist).
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Contractual arrangements
+                      regarding Policies, Data usage,
+                      etc.
+                    </p>
+                  </li>
+                  <li><p>Monitoring of user complaints.</p></li>
+                </ol>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Examples</dt>
+          <dd>
+            <ul>
+              <li>
+                <p>
+                  Social network buttons do not transfer data unless they are clicked on: see <a href="https://github.com/heiseonline/shariff" target="_blank">heiseonline/shariff <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>
+                </p>
+              </li>
+              <li>
+                <p>
+                  Youtube provides the opportunity to enable a
+                  privacy-enhanced
+                  mode, and only transfers
+                  personal data in the case of a click.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">References</dt>
+          <dd>
+            <ul>
+              <li>
+                <p>
+                  <a href="https://www.w3.org/TR/tracking-compliance/" target="_blank">
+                    W3C Working Draft Tracking Compliance and
+                    Scope <img src="bin/images/link.png" class="exlink" alt="- This is an external link." />
+                  </a>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <a href="https://abc4trust.eu/" target="_blank">
+                    Attribute-based
+                    Credentials for Trust:
+                    <img src="bin/images/link.png" class="exlink" alt="- This is an external link." />
+                  </a>
+                </p>
+              </li>
+              <li><p><a href="https://en.wikipedia.org/wiki/Do_Not_Track" target="_blank">Do Not Track <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

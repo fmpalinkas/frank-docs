@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Reference: OWASP 2. Broken Authentication</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-security-2-broken-authentication">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/2-broken-authentication.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 tabindex="0" id="headline">OWASP Top 10 Web App Security Risks - 2017</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">2. Broken Authentication</h3>
+
+      <section class="api">
+        <dl>
+          <dt tabindex="0">Risk Description</dt>
+          <dd>
+            <p>Application functions related to authentication and session management are often implemented incorrectly, allowing attackers to compromise passwords, keys, or session tokens, or to exploit other implementation flaws to assume other users' identities temporarily or permanently.</p>
+          </dd>
+
+          <dt tabindex="0">Attack Vectors</dt>
+          <dd>
+            <p>Attackers have access to hundreds of millions of valid username and password combinations for credential stuffing, default administrative account lists, automated brute force, and dictionary attack tools. Session management attacks are well understood, particularly in relation to unexpired session tokens.</p>
+          </dd>
+
+          <dt tabindex="0">Security Weakness</dt>
+          <dd>
+            <p>
+              The prevalence of broken authentication is widespread due to the design and implementation of most identity and access controls.
+            </p>
+            <ul>
+              <li><p>Session management is the bedrock of authentication and access controls, and is present in all stateful applications.</p></li>
+              <li><p>Attackers can detect broken authentication using manual means and exploit them using automated tools with password lists and dictionary attacks.</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Impacts</dt>
+          <dd>
+            <p>Attackers have to gain access to only a few accounts, or just one admin account to compromise the system. Depending on the domain of the application, this may allow money laundering, social security fraud, and identity theft, or disclose legally protected highly sensitive information.</p>
+          </dd>
+
+          <dt tabindex="0">Vulnerability</dt>
+          <dd>
+            <p>Confirmation of the user's identity, authentication, and session management are critical to protect against authentication-related attacks. There may be authentication weaknesses if the application:</p>
+            <ol>
+              <li><p>Permits automated attacks such as credential stuffing, where the attacker has a list of valid usernames and passwords.</p></li>
+              <li><p>Permits brute force or other automated attacks.</p></li>
+              <li><p>Permits default, weak, or well-known passwords, such as "Password1" or "admin/admin“.</p></li>
+              <li><p>Uses weak or ineffective credential recovery and forgot-password processes, such as "knowledge-based answers", which cannot be made safe.</p></li>
+              <li><p>Uses plain text, encrypted, or weakly hashed passwords (see A3:2017-Sensitive Data Exposure).</p></li>
+              <li><p>Has missing or ineffective multi-factor authentication.</p></li>
+              <li><p>Exposes Session IDs in the URL (e.g., URL rewriting).</p></li>
+              <li><p>Does not rotate Session IDs after successful login.</p></li>
+              <li><p>Does not properly invalidate Session IDs. User sessions or authentication tokens (particularly single sign-on (SSO) tokens) aren't properly invalidated during logout or a period of inactivity.</p></li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Prevention</dt>
+          <dd>
+            <ol>
+              <li><p>Where possible, implement multi-factor authentication to prevent automated, credential stuffing, brute force, and stolen credential re-use attacks.</p></li>
+              <li><p>Do not ship or deploy with any default credentials, particularly for admin users.</p></li>
+              <li><p>Implement weak-password checks, such as testing new or changed passwords against a list of the top 10000 worst passwords.</p></li>
+              <li><p>Align password length, complexity and rotation policies with NIST 800-63 B's guidelines in section 5.1.1 for Memorized Secrets or other modern, evidence based password policies.</p></li>
+              <li><p>Ensure registration, credential recovery, and API pathways are hardened against account enumeration attacks by using the same messages for all outcomes.</p></li>
+              <li><p>Limit or increasingly delay failed login attempts. Log all failures and alert administrators when credential stuffing, brute force, or other attacks are detected.</p></li>
+              <li><p> Use a server-side, secure, built-in session manager that generates a new random session ID with high entropy after login. Session IDs should not be in the URL, be securely stored and invalidated after logout, idle, and absolute timeouts.</p></li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Example Attack Scenarios</dt>
+          <dd>
+            <p><strong>Scenario 1:</strong> Credential stuffing, the use of lists of known passwords, is a common attack. If an application does not implement automated threat or credential stuffing protections, the application can be used as a password oracle to determine if the credentials are valid.</p>
+
+            <p><strong>Scenario 2:</strong> Most authentication attacks occur due to the continued use of passwords as a sole factor.</p>
+            <ul>
+              <li><p>Once considered best practices, password rotation and complexity requirements are viewed as encouraging users to use, and reuse, weak passwords.</p></li>
+              <li><p> Organizations are recommended to stop these practices per NIST 800-63 and use multi-factor authentication.</p></li>
+            </ul>
+
+            <p>
+              <strong>Scenario 3:</strong>  Application session timeouts aren't set properly.
+            </p>
+            <ul>
+              <li><p>A user uses a public computer to access an application.</p></li>
+              <li><p>Instead of selecting “logout” the user simply closes the browser tab and walks away.</p></li>
+              <li><p>An attacker uses the same browser an hour later, and the user is still authenticated.</p></li>
+            </ul>
+          </dd>
+        </dl>
+
+        <dl>
+
+          <dt tabindex="0">OWASP References</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://www.owasp.org/index.php/OWASP_Proactive_Controls#5:_Implement_Identity_and_Authentication_Controls" target="_blank">OWASP Proactive Controls: Implement Identity and Authentication Controls <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project#tab.3DHome" target="_blank">OWASP Application Security Verification Standard: V2 Authentication <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project#tab.3DHome" target="_blank">OWASP Application Security Verification Standard: V3 Session Management <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Testing_for_authentication" target="_blank">OWASP Testing Guide: Identity, Authentication <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Authentication_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Authentication <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Credential_Stuffing_Prevention_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Credential Stuffing <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Forgot_Password_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Forgot Password <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Session_Management_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Session Management <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/OWASP_Automated_Threats_to_Web_Applications" target="_blank">OWASP Automated Threats Handbook <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">
+            Related References
+          </dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://pages.nist.gov/800-63-3/sp800-63b.html#memsecret" target="_blank">NIST (National Institute of Standards and Technology) 800-63b: 5.1.1 Memorized Secrets <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/287.html" target="_blank">CWE-287 (Common Weakness Enumeration): Improper Authentication <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/384.html" target="_blank">CWE-384 (Common Weakness Enumeration): Session Fixation  <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

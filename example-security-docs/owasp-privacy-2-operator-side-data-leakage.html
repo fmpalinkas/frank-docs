@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Countermeasure 2. Operator-side Data Leakage</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-privacy-2-operator-side-data-leakage">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/2-operator-side-data-leakage.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">OWASP Top 10 Privacy Risk Countermeasures</h2>
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">2. Operator-side Data Leakage</h3>
+
+      <section class="api">
+
+        <dl>
+          <dt tabindex="0">Risk Description</dt>
+          <dd>
+            <p>
+              Failure to prevent the leakage of any
+              information containing or related to user data,
+              or the data itself, or to any unauthorized party
+              resulting in loss of data confidentiality.
+            </p>
+            <ul>
+              <li>
+                <p>
+
+                  Introduced either due to intentional malicious
+                  breach or unintentional mistake.
+                </p>
+              </li>
+              <li>
+                <p>
+                  This can be caused
+                  by insufficient access management controls,
+                  insecure storage, duplication of data, or a lack
+                  of awareness.
+                </p>
+              </li>
+            </ul>
+
+          <dt tabindex="0">How to check?</dt>
+          <dd>
+            <ol>
+              <li>
+                <p>
+                  <b>
+                    Research the reputation and reliability ofthe operator
+                  </b>
+                </p>
+                <ol>
+                  <li>
+                    <p>
+                      Have there been former breaches
+                      related to the operator?
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Does the provider proactively prove
+                      privacy and security and if yes, how?
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Is there a bug bounty program to
+                      report vulnerabilities?
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Is the provider certified according to
+                      ISO 27001 or ISO 27018 (cloud
+                      providers)?
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Is the operator located in a country
+                      with high privacy standards?
+                    </p>
+                  </li>
+                </ol>
+              </li>
+
+              <li>
+                <p>
+                  <b>Audit the operator</b>
+                </p>
+                <ol>
+                  <li><p>Are privacy best practices in place?</p></li>
+                  <li>
+                    <p>
+                      Is awareness training mandatory for
+                      all employees?
+                    </p>
+                  </li>
+                  <li><p>Is there a privacy engineering team?</p></li>
+                  <li><p>How is personal data anonymized?</p></li>
+                  <li><p>Is personal data encrypted?</p></li>
+                  <li>
+                    <p>
+                      Who has access to the data
+                      (need-to-know principle)?
+                    </p>
+                  </li>
+                </ol>
+              </li>
+
+              <li>
+                <b>Audit methods</b>
+                <ol>
+                  <li>
+                    <p>
+                      Paperbased
+                      audit (fair)
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Interviewbased
+                      audit (good)
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Onsite
+                      audit and systemchecks
+                    </p>
+                    (best)
+                  </li>
+                </ol>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Countermeasures</dt>
+          <dd>
+            <ol>
+              <li>
+                <p>
+                  Appropriate Identity and Access
+                  Management (physical as well as logical):
+                </p>
+                <ol>
+                  <li><p>Principle of least privilege.</p></li>
+                </ol>
+              </li>
+              <li>
+                <p>
+                  Use strong encryption for all personal data
+                  stored (data at rest) especially on mobile
+                  media:
+                </p>
+                <ol>
+                  <li><p>USB memory sticks</p></li>
+                  <li><p>Laptophard disks</p></li>
+                  <li><p>Tablet and phone local storage</p></li>
+                  <li><p>Backup tapes</p></li>
+                  <li><p>Portable hard disk drives</p></li>
+                </ol>
+              </li>
+              <li>
+                <p>
+                  Awareness training for all employees
+                  regarding handling of personal data.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Implementation of a data classification and
+                  information handling policy.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Monitor and detect classified data when it
+                  leaks from endpoints, web portals and
+                  cloud services (e.g. by Data Leakage
+                  Prevention, SIEM).
+                </p>
+              </li>
+              <li><p>Implement Privacy by Design</p></li>
+              <li>
+                <p>
+                  Anonymisation of personal data:
+                </p>
+                <ol>
+                  <li>
+                    <p>
+                      It is common practice to anonymise
+                      personal data and use it for other purposes
+                      e.g., testing or marketing.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Anonymisation is
+                      not easy (e.g., AOL search data leak ) and
+                      there are many anonymisation theories
+                      which can be very complex.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Pseudonymisation which means that data
+                      can only be connected to a person with the
+                      help of a third party that knows the person
+                      and corresponding pseudonym.
+                    </p>
+                  </li>
+                </ol>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Example</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://www.dhs.gov/publication/handbook-safeguarding-sensitive-personally-identifiable-information" target="_blank">Handbook for Safeguarding Sensitive PII <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">References</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://iapp.org/news/a/looking-to-comply-with-gdpr-heres-a-primer-on-anonymization-and-pseudonymization/" target="_blank">Article 29 Working Party on Anonymization <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.bsi.bund.de/EN/Topics/ITGrundschutz/ITGrundschutzCatalogues/itgrundschutzcatalogues_node.html" target="_blank">IT-Grundschutz Catalogues <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

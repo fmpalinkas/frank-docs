@@ -1,0 +1,2424 @@
+---
+title: Common Routing Parameters
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.15'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+## Purpose
+
+This document provides fundamental route planning parameters and types that can be used, among others, in the:
+
+- [Calculate Route](/routing-api/documentation/Example-maps/calculate-route) service
+- [Calculate Reachable Range](/routing-api/documentation/Example-maps/calculate-reachable-range) service
+
+Please be aware that this document does not specify the complete request or response format. To maintain forward compatibility you must be able to process responses with additional non-documented data fields. Our deprecation policy only covers the documented subset of these formats.
+
+## Types
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '400px' }}>
+        Types subset
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>location</code>  
+        *string*
+      </th>
+      <td>
+        Latitude, longitude pair (in [EPSG:4326](https://spatialreference.org/ref/epsg/4326/
+) projection), with the following constraints:  
+        <ul>
+          <li>
+            Latitude values must be in the range <code>[-90, +90]</code>.
+          </li>
+          <li>
+            Longitude values must be in the range <code>[-180, +180]</code>.
+          </li>
+        </ul>  
+        Example: <code>52.37245,4.89406</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>point</code>  
+        *object*
+      </th>
+      <td>
+        A <code>location</code> represented as a JSON object. The object should contain the two fields <code>latitude</code> and
+        <code>longitude</code> each containing a number, and expressed in the
+        same reference frame and with the same constraints as for the
+        <code>location</code> type.  
+        Example:
+        <code>&#123;"latitude": 52.37245, "longitude": 4.89406&#125;</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>dateTime</code>  
+        *string*
+      </th>
+      <td>
+        A date and time specified in [RFC 3339](https://tools.ietf.org/html/rfc3339) format with an optional time zone offset.  
+        Examples:
+        <ul>
+          <li>
+            <code>2023-12-19T16:39:57</code>
+          </li>
+          <li>
+            <code>2023-12-19T16:39:57-08:00</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>CombustionConstantSpeedConsumptionPair</code>  
+        *string* (contains a pair of two, comma-separated floats)
+      </th>
+      <td>
+        Comma-separated <code>speedInkmh,consumptionInLitersPerHundredkm</code>
+        pair with the following constraint: The <code>speedInkmh</code> values
+        must be in the range <code>[0.0, 255.0]</code>.  
+        Example: <code>15.5,10.0</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ElectricConstantSpeedConsumptionPair</code>  
+        *string* (contains a pair of two, comma-separated floats)
+      </th>
+      <td>
+        Comma-separated <code>speedInkmh,consumptionInkWhPerHundredkm</code>
+        pairs with the following constraint: The <code>speedInkmh</code> values
+        must be in the range <code>[0.0, 255.0]</code>.  
+        Example: <code>15.5,8.0</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Request data
+
+### Request headers
+
+The following data table describes HTTP request headers of particular interest to the [Calculate Route](/routing-api/documentation/Example-maps/calculate-route) and [Calculate Reachable Range](/routing-api/documentation/Example-maps/calculate-reachable-range) service clients.  
+
+- Required headers must be used or the call will fail.
+- Optional headers may be used.
+- The order of request headers is not important.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '250px'  }}>
+        Optional headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="accept-encoding" scope="row">[Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding)</th>
+      <td>
+        Requests that the response be compressed.  
+        Value: <code>gzip</code>
+      </td>
+    </tr>
+    <tr>
+      <th id="content-encoding" scope="row">[Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)</th>
+      <td>
+        Specifies the compression used for the request body. Currently, only
+        <code>gzip</code> is supported. If not specified, no compression is
+        assumed. This is equal to specifying <code>identity</code>.  
+        <b>
+          Note: This header is optional and can only be used for
+          <code>POST</code> requests.
+        </b>  
+        Values:  
+        <ul>
+          <li>
+            <code>identity</code>
+          </li>
+          <li>
+            <code>gzip</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th id="content-type" scope="row">[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)</th>
+      <td>
+        Specifies the MIME type of the body of the request.  
+        <b>
+          Note: This header is required for <code>POST</code> requests.
+        </b>  
+        Value: <code>application/json</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tracking-ID</th>
+      <td>
+        Specifies an identifier for the request.
+        <ul>
+          <li>The value should be unique for each request.</li>
+          <li>
+            The value must match the regular expression
+            <code>&#39;^[a-zA-Z0-9-_\\.]&#123;1,100&#125;$&#39;</code>.
+          </li>
+          <li>
+            If specified, the same value is sent back in the similar-named
+            response header. Otherwise, a generated value may be sent back.
+          </li>
+        </ul>  
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Base path parameters
+
+#### Parameter subset  
+
+The following data table describes a subset of the parameters that can be used in the [Calculate Route](/routing-api/documentation/Example-maps/calculate-route) and [Calculate Reachable Range](/routing-api/documentation/Example-maps/calculate-reachable-range) services.
+
+- Required parameters must be used or the call will fail.
+- Optional parameters may be used.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '220px' }}>
+        Required parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>baseURL</code>  
+        *string*
+      </th>
+      <td>
+        Base URL for calling the API.  
+        Values:  
+        <ul>
+          <li>
+            <code>api.Example.com</code>: The default global API endpoint.
+          </li>
+          <li>
+            <code>kr-api.Example.com</code>: The region-specific endpoint for South Korea. See the [Region-specific content](https://developer.Example.com/region-specific-content) documentation.  
+          </li>  
+        </ul>  
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '220px' }}>
+        Optional parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>contentType</code>  
+        *string*
+      </th>
+      <td>
+        The content type of the response structure.  
+        Possible values:  
+        <ul>
+          <li><code>json</code></li>
+          <li><code>jsonp</code></li>
+        </ul>  
+        Note: If the content type is <code>jsonp</code>, a callback method
+        can be specified in the query parameters.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Request parameters
+
+Request parameters are presented in two sections:
+
+- The [Common Routing Parameters](#section-1-common-routing-parameters) section describes common parameters that affect the routing algorithm in various ways.
+- The [Consumption Model Parameters](#section-2-consumption-model-parameters) section describes a particular subset of parameters that define a detailed Consumption model.
+
+#### Section 1. Common Routing Parameters  
+
+This section presents a set of loosely connected parameters that influence the operation of the routing algorithm. While some of them are associated, the majority can be used independently of the others.  
+
+- Required parameters **must be used** or the call will fail.
+- Optional parameters may be used.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '230px' }}>
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>key</code>  
+        *string*
+      </th>
+      <td>
+        Authorization key to access the API.  
+        Value: Your valid <code>API Key</code>.  
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Optional parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>callback</code>  
+        *string*
+      </th>
+      <td>
+        Specifies the <code>jsonp</code> callback method. Only used when
+        <code>contentType</code> is <code>jsonp</code>.  
+        Default value: <code>callback</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>report</code>  
+        *string*
+      </th>
+      <td>
+        Specifies which data should be reported for diagnostic purposes. A
+        possible value is: <code>effectiveSettings</code>.  
+        <ul>
+          <li>
+            Reports the effective parameters or data used when calling the API.
+          </li>
+          <li>
+            In the case of defaulted parameters, the default will be reflected
+            where the parameter was not specified by the caller.
+          </li>
+        </ul>  
+        Default value: <code>effectiveSettings</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>departAt</code>  
+        *string*
+      </th>
+      <td>
+        The date and time of departure from the origin point.
+        <ul>
+          <li>
+            Departure times apart from now must be specified as a
+            <code>dateTime</code>.
+          </li>
+          <li>
+            When a time zone offset is not specified, it will be assumed to be
+            that of the origin point.
+          </li>
+          <li>
+            The <code>departAt</code> parameter cannot be used in conjunction
+            with <code>arriveAt</code>.
+          </li>
+        </ul>  
+        Default value: <code>now</code>  
+        Other value: <code>dateTime</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>arriveAt</code>  
+        *string*
+      </th>
+      <td>
+        The date and time of arrival at the destination point.  
+        <ul>
+          <li>
+            It must be specified as a <code>dateTime</code>.
+          </li>
+          <li>
+            When a time zone offset is not specified it will be assumed to be
+            that of the destination point.
+          </li>
+        </ul>  
+        The <code>arriveAt</code> parameter cannot be used in conjunction with:
+        <ul>
+          <li>
+            <code>departAt</code>
+          </li>
+          <li>
+            <code>minDeviationDistance</code>
+          </li>
+          <li>
+            <code>minDeviationTime</code>
+          </li>
+        </ul>  
+        It cannot be used in <code>calculateReachableRange</code> requests.  
+        Value: <code>dateTime</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>routeType</code>  
+        *string*
+      </th>
+      <td>
+        Specifies the type of optimization used when calculating routes.  
+        Possible values are:    
+        <ul>
+          <li>
+            <code>fastest</code>: Route calculation is optimized by travel time,
+            while keeping the routes sensible. For example, the calculation may
+            avoid shortcuts along inconvenient side roads or long detours that
+            only save very little time.
+          </li>
+          <li>
+            <code>shortest</code>: Route calculation is optimized by travel
+            distance, while keeping the routes sensible. For example, straight
+            routes are preferred over those incurring turns.
+          </li>
+          <li>
+            <code>short</code>: Route calculation is optimized such that a good
+            compromise between small travel time and short travel distance is
+            achieved.
+          </li>
+          <li>
+            <code>eco</code>: Route calculation is optimized such that a good
+            compromise between small travel time and low fuel or energy
+            consumption is achieved.
+          </li>
+          <li>
+            <code>thrilling</code>: Route calculation is optimized such that
+            routes include interesting or challenging roads and use as few
+            motorways as possible.
+            <ul>
+              <li>
+                You can choose the level of turns included and also the degree
+                of hilliness.
+              </li>
+              <li>
+                See the <code>hilliness</code> and <code>windingness</code>
+                parameters to set this.
+              </li>
+              <li>
+                There is a limit of 900km on routes planned with
+                <code>routeType=thrilling</code>.
+              </li>
+            </ul>
+          </li>
+        </ul>  
+        Default value: <code>fastest</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>traffic</code>  
+        *boolean*  
+      </th>
+      <td>
+        Possible values are:  
+        <ul>
+          <li>
+            <code>true</code>: Do consider all available traffic information
+            during routing.  
+          </li>
+          <li>
+            <code>false</code>: Ignore current traffic data during routing. Note
+            that although the current traffic data is ignored during routing,
+            the effect of historic traffic on effective road speeds is still
+            incorporated.  
+          </li>
+        </ul>  
+        Depending on availability, the Routing API takes road closures and road works
+        into account that are up to 60 days in the future.  
+        Default value: <code>true</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>avoid</code>  
+        *string*  
+      </th>
+      <td>
+        Specifies something that the route calculation should try to avoid when
+        determining the route. The <code>avoid</code> can be specified multiple
+        times (e.g., 
+        <code>...&amp;avoid=motorways&amp;avoid=ferries&amp;...</code>).  
+        Possible values are:
+        <ul>
+          <li>
+            <code>tollRoads</code>: Avoids toll roads.
+          </li>
+          <li>
+            <code>motorways</code>: Avoids motorways.
+          </li>
+          <li>
+            <code>ferries</code>: Avoids ferries.
+          </li>
+          <li>
+            <code>unpavedRoads</code>: Avoids unpaved roads.
+          </li>
+          <li>
+            <code>carpools</code>: Avoids routes that require use of carpool
+            (HOV/High Occupancy Vehicle) lanes.
+          </li>
+          <li>
+            <code>alreadyUsedRoads</code>:
+            <ul>
+              <li>Avoids using the same road multiple times.</li>
+              <li>
+                This is most useful in conjunction with
+                <code>routeType=thrilling</code>.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <code>borderCrossings</code>: Avoids crossing country borders.
+          </li>
+          <li>
+            <code>tunnels</code>: Avoids tunnels.
+          </li>
+          <li>
+            <code>carTrains</code>: Avoids car trains.
+          </li>
+          <li>
+            <code>lowEmissionZones</code>: Avoids low-emission zones.
+          </li>
+        </ul>  
+        Note: In <code>calculateReachableRange</code> requests, the value <code>alreadyUsedRoads</code> must not be used.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>prefer</code>  
+        *string*
+      </th>
+      <td>
+        Specifies something that the route calculation should try to prefer when
+        determining the route.  
+        Possible value:
+        <ul>
+          <li>
+            <code>handsFreeDriving</code>: Prefer stretches that allow for hands-free driving.
+            <ul>
+              <li>If this parameter is set, then <code>handsFreeDrivingCapability</code> must also be set.</li>
+            </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>handsFreeDrivingCapability</code>  
+        *string*
+      </th>
+      <td>
+        Specifies the hands-free driving capability of the vehicle.
+        The available hands-free driving data is matched against <code>handsFreeDrivingCapability</code>
+        in order to filter for the subset of data that applies to the specific capability of the vehicle.
+        <ul>
+          <li>
+            The value must match the regular expression
+            <code>&#39;^[a-zA-Z0-9-:]&#123;1,100&#125;$&#39;</code>.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>travelMode</code>  
+        *string*
+      </th>
+      <td>
+        The mode of travel for the requested route.
+        <ul>
+          <li>
+            Note that the requested <code>travelMode</code> may not be available
+            for the entire route.
+          </li>
+          <li>
+            Where the requested <code>travelMode</code> is not available for a
+            particular section, the <code>travelMode</code> field of the
+            response for that section will be set to &quot;other&quot;.
+          </li>
+        </ul>  
+        Note that travel modes <code>bus</code>, <code>motorcycle</code>, <code>
+          taxi</code>, and <code>van</code> are in BETA functionality.  
+        <ul>
+          <li>Full restriction data is not available in all areas.</li>
+          <li>
+            In <code>calculateReachableRange</code> requests, the values
+            <code>bicycle</code> and <code>pedestrian</code> must not be used.
+          </li>
+        </ul>  
+        Default value: <code>car</code>  
+        Other values:  
+        <ul>
+          <li>
+            <code>truck</code>
+          </li>
+          <li>
+            <code>taxi</code>
+          </li>
+          <li>
+            <code>bus</code>
+          </li>
+          <li>
+            <code>van</code>
+          </li>
+          <li>
+            <code>motorcycle</code>
+          </li>
+          <li>
+            <code>bicycle</code>
+          </li>
+          <li>
+            <code>pedestrian</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>hilliness</code>  
+        *string*
+      </th>
+      <td>
+        Degree of hilliness for a thrilling route.  
+        Note: This parameter can only be used in conjunction with
+        <code>routeType=thrilling</code>.  
+        Default value: <code>normal</code>  
+        Other values:  
+        <ul>
+          <li>
+            <code>low</code>
+          </li>
+          <li>
+            <code>high</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>windingness</code>  
+        *string*
+      </th>
+      <td>
+        Level of turns for <code>thrilling</code> route.  
+        Note: This parameter can only be used in conjunction with
+        <code>routeType=thrilling</code>.  
+        Default value: <code>normal</code>  
+        <b>Other values:</b>  
+        <ul>
+          <li>
+            <code>low</code>
+          </li>
+          <li>
+            <code>high</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleMaxSpeed</code>  
+        *integer*
+      </th>
+      <td>
+        Maximum speed of the vehicle in kilometers/hour.  
+        <ul>
+          <li>
+            Must have a value in the range <code>[0, 250]</code>.
+          </li>
+          <li>
+            A value of <code>0</code> means that an appropriate value for the
+            vehicle will be determined and applied during route planning.
+          </li>
+        </ul>  
+        Default value: <code>0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleWeight</code>  
+        *integer*  
+      </th>
+      <td>
+        Weight of the vehicle in kilograms.  
+        <ul>
+          <li>
+            If a detailed Consumption model is specified, refer to the following [Consumption model parameters](#section-2-consumption-model-parameters) section for the documentation of <code>vehicleWeight</code>.
+          </li>
+          <li>
+            If a detailed Consumption model is not specified, and the value of
+            <code>vehicleWeight</code> is non-zero, then weight restrictions are
+            considered.
+          </li>
+          <li>In all other cases, this parameter is ignored.</li>
+        </ul>  
+        Default value: <code>0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleAxleWeight</code>  
+        *integer*  
+      </th>
+      <td>
+        Weight per axle of the vehicle in kilograms. A value of
+        <code>0</code> means that weight restrictions per axle are not
+        considered.  
+        Default value: <code>0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleNumberOfAxles</code>  
+        *integer*
+      </th>
+      <td>
+        Number of axles of the vehicle. A value of <code>0</code> means that
+        the number of axles restrictions are not considered.  
+        Default value: <code>0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleLength</code>  
+        *float*
+      </th>
+      <td>
+        Length of the vehicle in meters, including the length of any additional
+        equipment, e.g., trailers, bike racks, etc. A value of <code>0</code>
+        means that length restrictions are not considered. Fractional digits are
+        rounded to the closest centimeter while rounding up on a tie.  
+        Default value: <code>0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleWidth</code>   
+        *float*  
+      </th>
+      <td>
+        Width of the vehicle in meters. A value of <code>0</code> means that
+        width restrictions are not considered. Fractional digits are 
+        rounded to the closest centimeter while rounding up on a tie.  
+        Default value: <code>0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleHeight</code>  
+        *float*  
+      </th>
+      <td>
+        Height of the vehicle in meters. A value of <code>0</code> means that
+        height restrictions are not considered. Fractional digits are 
+        rounded to the closest centimeter while rounding up on a tie.  
+        Default value: <code>0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleCommercial</code>  
+        *boolean*
+      </th>
+      <td>
+        Vehicle is used for commercial purposes and thus may not be allowed to
+        drive on some roads.  
+        Default value: <code>false</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleLoadType</code>  
+        *string*
+      </th>
+      <td>
+        Specifies types of cargo that may be classified as hazardous materials
+        and are restricted from some roads. The <code>vehicleLoadType</code>
+        parameter can be specified multiple times (e.g.,
+        <code>
+          ...&amp;vehicleLoadType=USHazmatClass1&amp;vehicleLoadType=USHazmatClass2&amp;vehicleLoadType=USHazmatClass3&amp;...
+        </code>
+        or
+        <code>
+          ...&amp;vehicleLoadType=otherHazmatExplosive&amp;vehicleLoadType=otherHazmatHarmfulToWater&amp;...
+        </code>
+        ).  
+        Available values are:
+        <ul>
+          <li>US Hazmat classes 1 through 9</li>
+          <li>Generic classifications for use in other countries.</li>
+        </ul>  
+        Use these values for routing in the USA:  
+        <ul>
+          <li>
+            <code>USHazmatClass1</code>: Explosives
+          </li>
+          <li>
+            <code>USHazmatClass2</code>: Compressed gas
+          </li>
+          <li>
+            <code>USHazmatClass3</code>: Flammable liquids
+          </li>
+          <li>
+            <code>USHazmatClass4</code>: Flammable solids
+          </li>
+          <li>
+            <code>USHazmatClass5</code>: Oxidizers
+          </li>
+          <li>
+            <code>USHazmatClass6</code>: Poisons
+          </li>
+          <li>
+            <code>USHazmatClass7</code>: Radioactive
+          </li>
+          <li>
+            <code>USHazmatClass8</code>: Corrosives
+          </li>
+          <li>
+            <code>USHazmatClass9</code>: Miscellaneous
+          </li>
+        </ul>  
+        Use these values for routing in all other countries:
+        <ul>
+          <li>
+            <code>otherHazmatExplosive</code>: Explosives
+          </li>
+          <li>
+            <code>otherHazmatGeneral</code>: Miscellaneous
+          </li>
+          <li>
+            <code>otherHazmatHarmfulToWater</code>: Harmful to water
+          </li>
+        </ul>  
+        Notes:  
+        <ul>
+          <li>
+            If <code>travelMode</code> is <code>pedestrian</code> or
+            <code>bicycle</code>,<code>vehicleLoadType</code> is not considered.
+          </li>
+          <li>
+            The <code>vehicleLoadType</code> and
+            <code>vehicleAdrTunnelRestrictionCode</code>
+            parameters are independent; please provide both if applicable.
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleAdrTunnelRestrictionCode</code>  
+        *string*
+      </th>
+      <td>
+        If <code>vehicleAdrTunnelRestrictionCode</code> is specified, the
+        vehicle is subject to ADR tunnel restrictions.
+        <ul>
+          <li>
+            Vehicles with code <code>B</code> are restricted from roads with ADR
+            tunnel categories B, C, D, and E.
+          </li>
+          <li>
+            Vehicles with code <code>C</code> are restricted from roads with ADR
+            tunnel categories C, D, and E.
+          </li>
+          <li>
+            Vehicles with code <code>D</code> are restricted from roads with ADR
+            tunnel categories D and E.
+          </li>
+          <li>
+            Vehicles with code <code>E</code> are restricted from roads with ADR
+            tunnel category E.
+          </li>
+          <li>
+            If <code>vehicleAdrTunnelRestrictionCode</code> is not specified, no
+            ADR tunnel restrictions apply.
+          </li>
+        </ul>  
+        Notes:  
+        <ul>
+          <li>
+            If <code>travelMode</code> is <code>pedestrian</code> or
+            <code>bicycle</code>, <code>vehicleAdrTunnelRestrictionCode</code> is
+            not considered.
+          </li>
+          <li>
+            The <code>vehicleAdrTunnelRestrictionCode</code> and
+            <code>vehicleLoadType</code>
+            parameters are independent; please provide both if applicable.
+          </li>
+        </ul>  
+        Values (specify at most one):
+        <ul>
+          <li>
+            <code>B</code>
+          </li>
+          <li>
+            <code>C</code>
+          </li>
+          <li>
+            <code>D</code>
+          </li>
+          <li>
+            <code>E</code>
+          </li>
+        </ul>   
+        Reference:
+        <ul>
+          <li>
+            [European Agreement Concerning the International Carriage of
+            Dangerous Goods by Road (ADR), United Nations, 2019, section 1.9.5
+            and chapter 8.6](http://www.unece.org/trans/danger/publi/adr/adr_e.html)  
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleHasElectricTollCollectionTransponder</code>
+        *string*
+      </th>
+      <td>
+        Specifies the route calculation should try to avoid ETC-transponder-only toll roads when determining the route if a vehicle does not have an ETC transponder.
+        Possible values are:
+        <ul>
+          <li><code>all</code>: Do not avoid ETC-transponder-only toll roads.</li>
+          <li><code>none</code>: Avoids ETC-transponder-only toll roads.</li>
+        </ul>
+        If this parameter is not specified, ETC-transponder-only toll roads are not avoided.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>coordinatePrecision</code>  
+        *string*
+      </th>
+      <td>
+        Specifies the precision of coordinates in the response.  
+        Possible values are:
+        <ul>
+          <li>
+            <code>default</code>: All coordinates are rounded to 5 digits after
+            the decimal point. Default precision coordinates are targeted
+            towards clients that are sensitive to response sizes. This should be
+            sufficient for most applications.
+          </li>
+          <li>
+            <code>full</code>: All coordinates are rounded to 7 digits after the
+            decimal point. Full precision coordinates are targeted towards
+            applications that require precise polyline visualization at high
+            zoom levels.
+          </li>
+        </ul>  
+        Default value: <code>default</code>  
+        Other value: <code>full</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>reconstructionMode</code>  
+        *string*
+      </th>
+      <td>
+        Specifies how to reconstruct a given polyline or individual legs.
+        Note: this parameter can only be used when a route or legs are provided as part
+        of the request by using <code>supportingPoints</code>. For a description
+        of <code>supportingPoints</code> see the Post Data section of the
+        <a href="/routing-api/documentation/routing/calculate-route" target="_blank">Calculate Route</a> or
+        <a href="/routing-api/documentation/routing/calculate-reachable-range" target="_blank">Calculate Reachable Range</a> document.
+        Possible values are:
+        <ul>
+          <li>
+            <code>normal</code>: Some leeway is allowed when the provided polyline doesn't
+            exactly match the road network, such that a most sensible route is reconstructed.
+            Use this option in case the given polyline comes from a third party source
+            such as a recorded track, a different routing service, or user input.
+            Please consider using the track mode, it is newer and gives better results.
+          </li>
+          <li>
+            <code>strict</code>: Reconstruct the given route as close as possible to the given
+            polyline. This might mean that some driving restrictions are violated in order to closely match the original route.
+            Use this option when reconstructing a route previously received from this service.
+          </li>
+          <li>
+            <code>track</code>: This mode provides flexibility when the provided route polyline does not align well with the road network,
+            allowing the reconstruction of the most sensible route. The input polyline may have inconsistencies such as gaps and loops. 
+            When reconstructing the route using track mode, the algorithm will try to respect the driving restrictions and consider traffic conditions.
+            Use this mode when the given polyline originates from a third-party source such as a recorded track, a different routing service, or user input.
+          </li>
+          <li>
+            <code>update</code>: Reconstruct the given route as close as possible to the provided route polyline, ignoring time-dependent
+            driving and legal restrictions in order to keep the input polyline geometry stable. The input polyline is expected to be
+            normalized, without any loops or gaps. Use this option to refresh dynamic data, as required during navigating along your route.
+            **Notice:** The resulting reconstructed route tries to accurately follow the road network and might result
+            in an illegal route due to potential violation of driving restrictions.
+          </li>
+        </ul>
+        **Note:** In any of the modes, the algorithm might relax certain restrictions near the origin and destination to offer a more sensible route instead of a no-route-found. This ensures that routes planned with our service can be reconstructed.
+        <br />Default value: <code>normal</code>
+        <br />Other values:
+        <ul>
+          <li>
+            <code>strict</code>
+          </li>
+          <li>
+            <code>track</code>
+          </li>
+          <li>
+            <code>update</code>
+          </li>
+        </ul>
+        <br />In short, this table summarizes the differences between the modes and restrictions:
+        <table border="1">
+          <tr>
+            <th>Mode / Restriction</th>
+            <th>traffic</th>
+            <th>no-through</th>
+            <th>time-dependent</th>
+          </tr>
+          <tr>
+            <td><code>normal</code></td>
+            <td>&#10007;</td>
+            <td>&#10007;</td>
+            <td>&#10003;</td>
+          </tr>
+          <tr>
+            <td><code>strict</code></td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+          </tr>
+          <tr>
+            <td><code>track</code></td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+          </tr>
+          <tr>
+            <td><code>update</code></td>
+            <td>&#10003;</td>
+            <td>&#10007;</td>
+            <td>&#10007;</td>
+          </tr>
+      </table>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>arrivalSidePreference</code>  
+        *string*
+      </th>
+      <td>
+        Specifies the preference of roadside on arrival to waypoints and destination. Stop on the road has to be set at least two meters to the preferred side, 
+        otherwise the behavior will default to "anySide".
+        Possible values are:
+        <ul>
+          <li>
+            <code>anySide</code>: Both sides of a road could be used to approach the waypoint and destination. When a vehicle arrives, a stop 
+            could be either on a left side or a right side.
+          </li>
+          <li>
+            <code>curbSide</code>: Ensures a minimal number of road crossings at waypoints or the destination. When a vehicle 
+            arrives, a stop should be on the right for the right-side driving road or on a left for the left-side driving road.
+          </li>
+        </ul>  
+        Default value: <code>anySide</code>  
+        Other value: <code>curbSide</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Section 2. Consumption model parameters  
+
+Routing provides a set of parameters for a detailed description of a vehicle-specific Consumption model.
+
+- These parameters can be specified in a <code>calculateRoute</code> request.
+- They must be specified in a <code>calculateReachableRange</code> request.
+
+Depending on the value of <code>vehicleEngineType</code>, we support two principal Consumption models:
+
+- Combustion consumption model
+- Electric consumption model
+
+**Note:**
+
+- Specifying parameters that belong to different models in the same request is an error.
+- A Consumption model cannot be used with the <code>travelMode</code> values of <code>bicycle</code> and <code>pedestrian</code>.
+
+#### Parameter constraints  
+
+In both Consumption models, explicitly specifying some parameters requires specifying some others as well. In addition, some parameters are mutually exclusive. These are the constraints:
+
+1. All parameters require <code>constantSpeedConsumption*</code> to be specified by the user.
+    - It is an error to specify any other Consumption model parameter (with the exception of <code>vehicleWeight</code>) if <code>constantSpeedConsumption*</code> is not specified.
+2. <code>accelerationEfficiency</code> and <code>decelerationEfficiency</code> must always be specified as a pair (i.e., both or none).
+    - If <code>accelerationEfficiency</code> and <code>decelerationEfficiency</code> are specified, the product of their values must not be greater than <code>1</code> (to prevent perpetual motion).
+3. <code>uphillEfficiency</code> and <code>downhillEfficiency</code> must always be specified as a pair (i.e., both or none).
+    - If <code>uphillEfficiency</code> and <code>downhillEfficiency</code> are specified, the product of their values must not be greater than <code>1</code> (to prevent perpetual motion).
+4. <code>consumptionInkWhPerkmAltitudeGain</code> and <code>recuperationInkWhPerkmAltitudeLoss</code> must always be specified as a pair (i.e., both or none).
+    - If they are specified, <code>recuperationInkWhPerkmAltitudeLoss</code> must not be greater than <code>consumptionInkWhPerkmAltitudeGain</code> (to prevent perpetual motion).
+5. If <code>*Efficiency</code> parameters are specified by the user, then <code>vehicleWeight</code> must also be specified.
+    - When <code>vehicleEngineType</code> is <code>combustion</code>, <code>fuelEnergyDensityInMJoulesPerLiter</code> must be specified as well.
+6. If <code>*Efficiency</code> parameters are specified by the user, then <code>consumptionInkWhPerkmAltitudeGain</code> and <code>recuperationInkWhPerkmAltitudeLoss</code> cannot be specified.
+7. <code>maxChargeInkWh</code> and <code>currentChargeInkWh</code> must always be specified as a pair (i.e., both or none).
+
+Note that if only <code>constantSpeedConsumption*</code> is specified, no other consumption aspects are taken into account, i.e., slopes and vehicle acceleration are not considered for consumption computations.
+
+#### Selecting the Consumption model  
+
+There are two available Consumption models: Combustion and Electric.
+
+- A model is selected by specifying the corresponding <code>constantSpeedConsumption*</code> parameter and possibly further parameters that belong to the same model.
+- The chosen model must match the value of the <code>vehicleEngineType</code> parameter.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '250px' }}>
+        Optional&nbsp;parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>vehicleEngineType</code>  
+        *string*
+      </th>
+      <td>
+        The engine type of the vehicle. When a detailed Consumption model is
+        specified, it must be consistent with the value of
+        <code>vehicleEngineType</code>.  
+        Default value: <code>combustion</code>  
+        Other value: <code>electric</code>  
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## The Combustion consumption model
+
+### Details
+
+The Combustion consumption model is used when the <code>vehicleEngineType</code> value is set to <code>combustion</code>. The following data table describes all of the parameters that can be specified in a request using the Combustion model.
+
+- Required parameters **must be used** or the call will fail.
+- Optional parameters may be used.
+- The order of parameters in a request is not important.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '460px' }}>
+        Required parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>  
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>constantSpeedConsumptionInLitersPerHundredkm</code>  
+        *Colon-delimited list of <code>CombustionConstantSpeedConsumptionPair</code>*
+      </th>
+      <td>
+        Specifies the speed-dependent component of consumption.
+        <ul>
+          <li>
+            Provided as an unordered list of speed/consumption-rate pairs.
+          </li>
+          <li>The list defines points on a consumption curve.</li>
+        </ul>  
+        Consumption rates for speeds not in the list are found as follows:
+        <ul>
+          <li>
+            By linear interpolation, if the given speed lies in between two
+            speeds in the list.
+          </li>
+          <li>
+            By linear extrapolation otherwise, assuming a constant
+            (<code>&Delta;Consumption</code>/<code>&Delta;Speed</code>)
+            determined by the nearest two points in the list.
+          </li>
+        </ul>  
+        The list must contain between 1 and 25 points (inclusive), and may not
+        contain duplicate points for the same speed.
+        <ul>
+          <li>
+            If it only contains a single point, then the consumption rate of
+            that point is used without further processing.
+          </li>
+        </ul>  
+        Consumption specified for the largest speed must be greater than or equal
+        to that of the penultimate largest speed.
+        <ul>
+          <li>
+            This ensures that extrapolation does not lead to negative
+            consumption rates.
+          </li>
+          <li>
+            Similarly, consumption values specified for the two smallest speeds
+            in the list cannot lead to a negative consumption rate for any
+            smaller speed.
+          </li>
+          <li>
+            The minimum and maximum values described here refer to the valid
+            range for the consumption values (expressed in l/100km).
+          </li>
+        </ul>  
+        Minimum value: <code>0.01</code>  
+        Maximum value: <code>100000.0</code>  
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '400px' }}>
+        Optional parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>vehicleWeight</code>  
+        *integer*
+      </th>
+      <td>
+        Weight of the vehicle in kilograms.  
+        Note: it is mandatory if any of the Efficiency parameters are set. 
+        <ul>
+          <li>
+            This is the same parameter as documented in the previous
+            &quot;Common Routing Parameters&quot; section.
+          </li>
+          <li>
+            It must be strictly positive when used in the context of the
+            Consumption model.
+          </li>
+          <li>Weight restrictions are considered.</li>
+        </ul>   
+        Minimum value: <code>1</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>currentFuelInLiters</code>  
+        *float*  
+      </th>
+      <td>
+        Specifies the current supply of fuel in liters.  
+        Minimum value: <code>0.0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>auxiliaryPowerInLitersPerHour</code>  
+        *float*  
+      </th>
+      <td>
+        Specifies the amount of fuel consumed for sustaining auxiliary systems
+        of the vehicle, in liters per hour. It can be used to specify
+        consumption due to devices and systems such as AC systems, radio,
+        heating, etc.  
+        Minimum value: <code>0.0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>fuelEnergyDensityInMJoulesPerLiter</code>  
+        *float*
+      </th>
+      <td>
+        Specifies the amount of chemical energy stored in one liter of fuel in
+        megajoules (MJ).  
+        <ul>
+          <li>
+            It is used in conjunction with the Efficiency parameters for
+            conversions between saved or consumed energy and fuel.
+          </li>
+          <li>
+            For example, energy density is 34.2 MJ/l for gasoline, and 35.8 MJ/l
+            for Diesel fuel.
+          </li>
+          <li>
+            This parameter must be used/required if any *Efficiency parameter is
+            set.
+          </li>
+        </ul>  
+        Minimum value: <code>1.0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>accelerationEfficiency</code>  
+        *float*   
+      </th>
+      <td>
+        Note: This must be paired with <code>decelerationEfficiency</code>.  
+        <ul>
+          <li>Specifies the efficiency of converting chemical energy stored in fuel to
+        kinetic energy when the vehicle accelerates, (i.e.,
+        <code>KineticEnergyGained</code>/<code>ChemicalEnergyConsumed</code>).  </li>
+          <li><code>ChemicalEnergyConsumed</code> is obtained by converting consumed fuel to chemical energy using <code>fuelEnergyDensityInMJoulesPerLiter</code>. </li>
+        </ul>  
+        Minimum value: <code>0.0</code>  
+        Maximum value: <code>1/decelerationEfficiency</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>decelerationEfficiency</code>  
+        *float*
+      </th>
+      <td>
+        Note: This must be paired with <code>accelerationEfficiency</code>.  
+        <ul>
+          <li>Specifies the efficiency of converting kinetic energy to saved (not
+        consumed) fuel when the vehicle decelerates (i.e.,
+        <code>ChemicalEnergySaved</code>/<code>KineticEnergyLost</code>). </li>
+          <li><code>ChemicalEnergySaved</code> is obtained by converting saved (not consumed) fuel to energy using <code>fuelEnergyDensityInMJoulesPerLiter</code>.  </li>
+        </ul>  
+        Minimum value: <code>0.0</code>  
+        Maximum value: <code>1/accelerationEfficiency</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>uphillEfficiency</code>  
+        *float*
+      </th>
+      <td>
+        Note: This must be paired with <code>downhillEfficiency</code>.  
+        <ul>
+          <li>Specifies the efficiency of converting chemical energy stored in fuel to
+        potential energy when the vehicle gains elevation, (i.e.,
+        <code>PotentialEnergyGained</code>/<code>ChemicalEnergyConsumed</code>).  </li>
+          <li><code>ChemicalEnergyConsumed</code> is obtained by converting
+            consumed fuel to chemical energy using
+            <code>fuelEnergyDensityInMJoulesPerLiter</code>.  </li>
+        </ul>  
+        Minimum value: <code>0.0</code>  
+        Maximum value: <code>1/downhillEfficiency</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>downhillEfficiency</code>  
+        *float*
+      </th>
+      <td>
+      Note: This must be paired with <code>uphillEfficiency</code>. 
+      <ul>
+        <li>Specifies the efficiency of converting potential energy to saved (not
+        consumed) fuel when the vehicle loses elevation, (i.e.,
+        <code>ChemicalEnergySaved</code>/<code>PotentialEnergyLost</code>).</li>
+        <li><code>ChemicalEnergySaved</code> is obtained by converting saved
+            (not consumed) fuel to energy using
+            <code>fuelEnergyDensityInMJoulesPerLiter</code>.</li>  
+      </ul>  
+        Minimum value: <code>0.0</code>  
+        Maximum value: <code>1/uphillEfficiency</code>  
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## The Electric Consumption model  
+
+### Details  
+
+The Electric Consumption model is used when <code>vehicleEngineType</code> is set to electric.  
+
+The following data table describes all of the parameters that can be specified in a request using the Electric model.  
+
+- Required parameters **must be used** or the call will fail.  
+- Optional parameters may be used.  
+- The order of parameters in a request is not important.  
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '425px' }}>  
+        Required parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>constantSpeedConsumptionInkWhPerHundredkm</code>  
+        *Colon-delimited list of <code>ElectricConstantSpeedConsumptionPair</code>*
+      </th>
+      <td>
+        Specifies the speed-dependent component of consumption.  
+        <ul>
+          <li>
+            Provided as an unordered list of speed/consumption-rate pairs.
+          </li>
+          <li>The list defines points on a consumption curve.</li>
+        </ul>  
+        Consumption rates for speeds not in the list are found as follows:  
+        <ul>
+          <li>
+            By linear interpolation, if the given speed lies in between two
+            speeds in the list.
+          </li>
+          <li>
+            By linear extrapolation otherwise, assuming a constant
+            (<code>&Delta;Consumption</code>/<code>&Delta;Speed</code>)
+            determined by the nearest two points in the list.
+          </li>
+        </ul>  
+        The list must contain between 1 and 25 points (inclusive), and may not
+        contain duplicate points for the same speed.  
+        <ul>
+          <li>
+            If it only contains a single point, then the consumption rate of
+            that point is used without further processing.
+          </li>
+          <li>
+            Consumption specified for the largest speed must be greater than or
+            equal to that of the penultimate largest speed. This ensures that
+            extrapolation does not lead to negative consumption rates.
+          </li>
+          <li>
+            Similarly, consumption values specified for the two smallest speeds
+            in the list cannot lead to a negative consumption rate for any
+            smaller speed. The minimum and maximum values described here refer
+            to the valid range for the consumption values (expressed in
+            kWh/100km).
+          </li>
+        </ul>  
+        Minimum value: <code>0.01</code>  
+        Maximum value: <code>100000.0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleWeight</code>  
+        *integer*
+      </th>
+      <td>
+        Note: This is only required if any *Efficiency parameter is set.  
+        <ul>
+          <li>
+            This is the same parameter as documented in the previously defined
+        Common Routing Parameters section.  
+          </li>  
+          <li>
+            It must be strictly positive when used in the context of the
+            Consumption model.  
+          </li>  
+          <li>Weight restrictions are considered.</li>  
+        </ul>  
+        Minimum value: <code>1</code>  
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Optional parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>currentChargeInkWh</code>  
+        *float*
+      </th>
+      <td>
+        Specifies the current electric energy supply in kilowatt hours (kWh).  
+        Note: Requires <code>maxChargeInkWh</code> to be set.  
+        Minimum value: <code>0.0</code>  
+        Maximum value: <code>maxChargeInkWh</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>maxChargeInkWh</code>  
+        *float*
+      </th>
+      <td>
+        Specifies the maximum electric energy supply in kilowatt hours (kWh)
+        that may be stored in the vehicle&#39;s battery.  
+        Note: Requires <code>currentChargeInkWh</code> to be set.  
+        Minimum value: <code>currentChargeInkWh</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>auxiliaryPowerInkW</code>        
+        *float*
+      </th>
+      <td>
+        Specifies the amount of power consumed for sustaining auxiliary systems,
+        in kilowatts (kW). It can be used to specify consumption due to devices
+        and systems such as AC systems, radio, heating, etc.  
+        Minimum value: <code>0.0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>accelerationEfficiency</code>  
+        *float*
+      </th>
+      <td>
+        Specifies the efficiency of converting electric energy to kinetic energy
+        when the vehicle accelerates (i.e., <code>KineticEnergyGained</code>/
+        <code>ElectricEnergyConsumed</code>).  
+        Notes:  
+        <ul>
+          <li>It must be paired with <code>decelerationEfficiency</code>. </li>
+          <li>It cannot be used with
+            <code>consumptionInkWhPerkmAltitudeGain</code> or
+            <code>recuperationInkWhPerkmAltitudeLoss</code>.</li>
+        </ul>  
+        Minimum value: <code>0.0</code>  
+        Maximum value: <code>1/decelerationEfficiency</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>decelerationEfficiency</code>  
+        *float*
+      </th>
+      <td>
+        Specifies the efficiency of converting kinetic energy to electric energy
+        when the vehicle decelerates (i.e., <code>ElectricEnergyGained</code>/
+        <code>KineticEnergyLost</code>).  
+        Notes:  
+        <ul>
+          <li>
+            It must be paired with <code>accelerationEfficiency</code>.  
+          </li>
+          <li>
+            It cannot be used with
+            <code>consumptionInkWhPerkmAltitudeGain</code> or
+            <code>recuperationInkWhPerkmAltitudeLoss</code>.  
+          </li>
+        </ul>  
+        Minimum value: <code>0.0</code>  
+        Maximum value: <code>1/accelerationEfficiency</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>uphillEfficiency</code>  
+        *float*
+      </th>
+      <td>
+        Specifies the efficiency of converting electric energy to potential
+        energy when the vehicle gains elevation (i.e.,
+        <code>PotentialEnergyGained</code>/<code>ElectricEnergyConsumed</code>).  
+        Notes:  
+        <ul>
+          <li>
+            It must be paired with <code>downhillEfficiency</code>.  
+          </li>
+          <li>
+            It cannot be used with
+            <code>consumptionInkWhPerkmAltitudeGain</code> or
+            <code>recuperationInkWhPerkmAltitudeLoss</code>.  
+          </li>
+        </ul>  
+        Minimum value: <code>0.0</code>  
+        Maximum value: <code>1/downhillEfficiency</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>downhillEfficiency</code>  
+        *float*
+      </th>
+      <td>
+        Specifies the efficiency of converting potential energy to electric
+        energy when the vehicle loses elevation (i.e,
+        <code>ElectricEnergyGained</code>/<code>PotentialEnergyLost</code>).  
+        Notes:  
+        <ul>
+          <li>
+            It must be paired with <code>uphillEfficiency</code>.  
+          </li>
+          <li>
+            It cannot be used with
+            <code>consumptionInkWhPerkmAltitudeGain</code> or
+            <code>recuperationInkWhPerkmAltitudeLoss</code>.  
+          </li>
+        </ul>  
+        Minimum value: <code>0.0</code>  
+        Maximum value: <code>1/uphillEfficiency</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>consumptionInkWhPerkmAltitudeGain</code>  
+        *float*
+      </th>
+      <td>
+        Specifies the electric energy in kWh consumed by the vehicle through
+        gaining 1000 meters of elevation.  
+        Notes:  
+        <ul>
+          <li>
+            It must be paired with
+            <code>recuperationInkWhPerkmAltitudeLoss</code>.  
+          </li>
+          <li>
+            It cannot be used with <code>accelerationEfficiency</code>,
+            <code>decelerationEfficiency</code>, <code>uphillEfficiency</code>
+            or <code>downhillEfficiency</code>.  
+          </li>
+        </ul>  
+        Minimum value: <code>recuperationInkWhPerkmAltitudeLoss</code>  
+        Maximum value: <code>500.0</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>recuperationInkWhPerkmAltitudeLoss</code>  
+        *float*
+      </th>
+      <td>
+        Specifies the electric energy in kWh gained by the vehicle through
+        losing 1000 meters of elevation.  
+        Notes:  
+        <ul>
+          <li>
+            It must be paired with
+            <code>consumptionInkWhPerkmAltitudeGain</code>.  
+          </li>
+          <li>
+            It cannot be used with <code>accelerationEfficiency</code>,
+            <code>decelerationEfficiency</code>, <code>uphillEfficiency</code>
+            or <code>downhillEfficiency</code>.  
+          </li>
+        </ul>  
+        Minimum value: <code>0.0</code>  
+        Maximum value: <code>consumptionInkWhPerkmAltitudeGain</code>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## Sensible values of consumption parameters
+
+### Details
+
+It is possible that a particular set of consumption parameters is rejected, even though it might fulfill all the explicit requirements specified above. This will happen when the value of a specific parameter, or a combination of values of several parameters, is deemed to lead to unreasonable magnitudes of consumption values.  
+
+If that happens, it most likely indicates an input error, as proper care is taken to accommodate all sensible values of consumption parameters. In case a particular set of consumption parameters is rejected, the accompanying error message will contain a textual explanation of the reason(s).  
+
+#### Example  
+
+To give the feeling of the magnitudes of reasonable parameter values, the following data table provides an example of sensible values for the Combustion and Electric models.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Sensible values by model
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>constantSpeedConsumptionInLitersPerHundredkm</code>  
+        *Colon-delimited list of <code>CombustionConstantSpeedConsumptionPair</code>*
+      </th>
+      <td>
+        <ul>
+          <li>
+            Combustion model: <code>50,6.3:130,11.5</code>
+          </li>
+          <li>Electric model: -</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>constantSpeedConsumptionInkWhPerHundredkm</code>  
+        *Colon-delimited list of <code>ElectricConstantSpeedConsumptionPair</code>*  
+      </th>
+      <td>
+        <ul>
+          <li>Combustion model: -</li>
+          <li>
+            Electric model: <code>50,8.2:130,21.3</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleWeight</code>  
+        *integer*
+      </th>
+      <td>
+        <ul>
+          <li>
+            Combustion model: <code>1600</code>
+          </li>
+          <li>
+            Electric model: <code>1900</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>currentFuelInLiters</code>  
+        *integer*
+      </th>
+      <td>
+        <ul>
+          <li>
+            Combustion model: <code>55</code>
+          </li>
+          <li>Electric model: -</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>currentChargeInkWh</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>Combustion model: -</li>
+          <li>
+            Electric model: <code>43</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>maxChargeInkWh</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>Combustion model: -</li>
+          <li>
+            Electric model: <code>85</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>auxiliaryPowerInLitersPerHour</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>
+            Combustion model: <code>0.2</code>
+          </li>
+          <li>Electric model: -</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>auxiliaryPowerInkW</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>Combustion model: -</li>
+          <li>
+            Electric model: <code>1.7</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>fuelEnergyDensityInMJoulesPerLiter</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>
+            Combustion model: <code>34.2</code>
+          </li>
+          <li>Electric model: -</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>accelerationEfficiency</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>
+            Combustion model: <code>0.33</code>
+          </li>
+          <li>
+            Electric model: <code>0.66</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>decelerationEfficiency</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>
+            Combustion model: <code>0.83</code>
+          </li>
+          <li>
+            Electric model: <code>0.91</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>uphillEfficiency</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>
+            Combustion model: <code>0.27</code>
+          </li>
+          <li>
+            Electric model: <code>0.74</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>downhillEfficiency</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>
+            Combustion model: <code>0.51</code>
+          </li>
+          <li>
+            Electric model: <code>0.73</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>consumptionInkWhPerkmAltitudeGain</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>Combustion model: -</li>
+          <li>
+            Electric model: <code>7.0</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>recuperationInkWhPerkmAltitudeLoss</code>  
+        *float*
+      </th>
+      <td>
+        <ul>
+          <li>Combustion model: -</li>
+          <li>
+            Electric model: <code>3.8</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## POST data parameters  
+
+### Details  
+
+Some parameters can be provided using the HTTP `POST` method.  
+
+- The POST data should be in JSON format, see the [Content-Type](#content-type) header.  
+- All POST data parameters are optional.  
+- It is an error to use the HTTP POST method if no POST data parameters are provided.  
+
+There is an upper limit on the total size of the POST data.  
+
+- Exceeding this limit results in a response with the response code <code>413</code>, indicating invalid POST data.  
+- The client must not rely on the exact value of this limit.  
+- The current limit is 10 MB.  
+
+The following table describes a subset of the parameters that can be used in the [Calculate Route](/routing-api/documentation/Example-maps/calculate-route) and [Calculate Reachable Range](/routing-api/documentation/Example-maps/calculate-reachable-range) services.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>avoidVignette</code>  
+        *array*
+      </th>
+      <td>
+        This is an array of strings. Each string should be a 3-character, ISO
+        3166-1, alpha-3 country code.
+        <ul>
+          <li>
+            The array describes the countries in which all toll roads with
+            vignettes are to be avoided.
+          </li>
+          <li>
+            Toll roads with vignettes in countries not in the array are
+            unaffected.
+          </li>
+        </ul>  
+        Note: It is an error to specify both <code>avoidVignette</code> and
+            <code>allowVignette</code>.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>allowVignette</code>  
+        *array*
+      </th>
+      <td>
+        This is an array of strings. Each string should be a 3-character, ISO
+        3166-1, alpha-3 country code.
+        <ul>
+          <li>
+            The array describes the countries in which toll roads with vignettes
+            are allowed.
+          </li>
+          <li>
+            Specifying <code>allowVignette</code> with an array of countries is
+            equivalent to specifying <code>avoidVignette</code> with the array
+            of all countries other than those specified in
+            <code>allowVignette</code>.
+          </li>
+          <li>
+            Specifying <code>allowVignette</code> with an empty array is the
+            same as avoiding all toll roads with vignettes.
+          </li>
+        </ul>  
+        Note: It is an error to specify both <code>avoidVignette</code> and
+            <code>allowVignette</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>avoidAreas</code>  
+        *object*
+      </th>
+      <td>
+        Defines areas of certain shapes to avoid when planning routes. Supported
+        shapes include <code>rectangles</code>. It can contain one of each
+        supported shapes fields.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>rectangles</code>  
+        *array*
+      </th>
+      <td>
+        This is an array of objects, with a maximum of ten elements. Each object
+        describes an axis-aligned rectangle, defined using the fields
+        <code>southWestCorner</code> and <code>northEastCorner</code>.  
+        <ul>
+          <li>The maximum size of a rectangle is about 160x160 km.</li>
+          <li>It cannot cross the 180th meridian.</li>
+          <li>It must be between -80 and +80 degrees of latitude.</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>southWestCorner</code>  
+        *object*
+      </th>
+      <td>
+        The south-west corner of a rectangle. It is an object consisting of a
+        <code>latitude</code> and a <code>longitude</code> field, each field
+        containing the value in degrees as a number.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>northEastCorner</code>  
+        *object*
+      </th>
+      <td>
+        The north-east corner of a rectangle. It is an object consisting of a
+        <code>latitude</code> and a <code>longitude</code> field, each field
+        containing the value in degrees as a number.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Avoiding roads with usage-based toll collection
+There is special behavior where only roads with usage-based toll collection could be avoided.
+#### Scenario 1:
+  - `avoid = tollRoad`
+  - `"allowVignette": [value]`
+
+`Result:` Roads with usage-based toll collection are avoided. Toll roads requiring vignettes are also avoided, 
+except in selected countries (marked as `value` above) where toll roads with vignettes are allowed.
+`Note:` in this scenario `avoidVignette` has to be `None`.
+
+#### Scenario 2:
+  - `avoid = tollRoad`
+  - `"avoidVignette": [value]`
+
+`Result:` Roads with usage-based toll collection are avoided. Toll roads requiring vignettes are allowed, except
+in selected countries (marked as `value` above) where toll roads with vignettes are avoided.
+`Note:` in this scenario `allowVignette` has to be `None`.
+
+#### Request content example  
+
+```json [type=post] [title=Request content example]
+{
+  "avoidVignette": ["AUS", "CHE"],
+  "avoidAreas": {
+    "rectangles": [
+      {
+        "southWestCorner": {
+          "latitude": 48.81851,
+          "longitude": 2.26593
+        },
+        "northEastCorner": {
+          "latitude": 48.90309,
+          "longitude": 2.41115
+        }
+      }
+    ]
+  }
+}
+```
+
+## Response data
+
+### Response headers
+
+The following data table describes HTTP response headers of particular interest to [Calculate Route](/routing-api/documentation/Example-maps/calculate-route) and [Calculate Reachable Range](/routing-api/documentation/Example-maps/calculate-reachable-range) service clients.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>  
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">[Access-Control-Expose-Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers)</th>
+      <td>
+        The service whitelists response headers that browsers are allowed to
+        access.  
+        Value: <code>Content-Length</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)</th>
+      <td>
+        The service allows cross-origin resource sharing.  
+        Value: <code>*</code> (wildcard)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)</th>
+      <td>
+        The service supports HTTP compression, if requested by the client.  
+        Value: <code>gzip</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)</th>
+      <td>
+        The format of the response. The service supports specifying the desired
+        response format. See the <code>contentType</code> parameter.  
+        Values:  
+        <ul>
+          <li>
+            <code>application/json; charset=utf-8</code>
+          </li>
+          <li>
+            <code>application/javascript; charset=utf-8</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control)</th>
+      <td>
+        The Cache-Control general-header field is used to specify directives
+        that must be obeyed by all caching mechanisms along the request/response
+        chain. It is supported by HTTP/1.1 clients. It may not be supported by
+        HTTP/1.0 clients.  
+        Values:  
+        <ul>
+          <li>
+            <code>no-cache</code>
+          </li>
+          <li>
+            <code>no-transform</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Pragma](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Pragma)</th>
+      <td>
+        The Pragma general-header field is used to specify directives that might
+        apply to any recipient along the request/response chain. It is supported
+        by HTTP/1.0 client.  
+        Value: <code>no-cache</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tracking-ID</th>
+      <td>
+        This is an identifier for the request. If <code>Tracking-ID</code> was
+        specified in the request headers, it contains the same value. Otherwise
+        it may contain a generated value.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Warning](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Warning)</th>
+      <td>
+        This may be sent for deprecated features.  
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Response codes
+
+The following table describes HTTP response codes of particular interest to [Calculate Route](/routing-api/documentation/routing/calculate-route) and [Calculate Reachable Range](/routing-api/documentation/routing/calculate-reachable-range) service clients.  
+
+<table>
+  <thead>
+    <tr>
+      <th
+        scope="col"
+        style={{ fontSize: '1em', textAlign: 'center', fontWeight: 'bold' }}>
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Meaning &amp; possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>200</code>
+      </th>
+      <td>
+        OK: A route or range was calculated and the body of the response
+        contains the data for a successful response.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>400</code>
+      </th>
+      <td>
+        Bad request:
+        <ul>
+          <li>One or more parameters were incorrectly specified.</li>
+          <li>Some parameters are mutually exclusive.</li>
+          <li>
+            The points in the route request are not connected by the road
+            network.
+          </li>
+          <li>The points in the request are not near enough to a road.</li>
+          <li>
+            A reachable range consistent with the given parameters could
+            not be found.
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>403</code>
+      </th>
+      <td>
+        Permission, capacity, or authentication issues:
+        <ul>
+          <li>Forbidden</li>
+          <li>Not authorized</li>
+          <li>Account inactive</li>
+          <li>Account over queries per second limit</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>404</code>
+      </th>
+      <td>
+        Not Found: The requested resource could not be found, but it may
+        be available again in the future.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>405</code>
+      </th>
+      <td>
+        Method Not Allowed: The client used a HTTP method other than GET
+        or POST.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>408</code>
+      </th>
+      <td>
+        Request timeout: The client took too long to transmit the
+        request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>414</code>
+      </th>
+      <td>
+        Requested uri is too long.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>415</code>
+      </th>
+      <td>
+        Unsupported Media Type.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>429</code>
+      </th>
+      <td>
+        Too Many Requests: Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>500</code>
+      </th>
+      <td>
+        An error occurred while processing the request. Please try again
+        later. This can also indicate that the request reached an internal computation
+        time threshold and timed out.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>502</code>
+      </th>
+      <td>
+        Internal network connectivity issue.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>503</code>
+      </th>
+      <td>
+        Service currently unavailable.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>504</code>
+      </th>
+      <td>
+        Internal network connectivity issue.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>596</code>
+      </th>
+      <td>
+        Service not found.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## Route geometry representation formats
+
+Certain request and response fields that describe route geometry as a polyline support two alternative representation formats:
+
+* An array of points defined as raw decimal coordinates, such as the `supportingPoints` field in requests and the `points` field in responses.
+* An encoded polyline string, such as the `encodedPolyline` field in both requests and responses.
+
+Where documented, either of the two representations can be used.
+This is purely a matter of representation and is independent of any other statements about route geometry.
+The field containing the array of points is used as a stand-in for the concern of route geometry.
+For brevity, any references and constraints related to the polyline are stated using the stand-in only.  
+
+Using encoded polylines can significantly reduce the data size of requests and responses.
+
+## Encoded polyline format
+
+For efficient representation of polylines as encoded polyline strings, this service uses an extended version of the
+<a href="https://developers.google.com/maps/documentation/utilities/polylinealgorithm" target="_blank">Encoded Polyline Algorithm Format</a>.  
+The original algorithm limits coordinate precision to 5 decimal places by using a multiplier of `1e5` for the decimal values.
+The extension allows using multipliers of both `1e5` and `1e7`.
+These multipliers correspond to precisions of 5 and 7 decimal places.
+Please note that each field in the encoded polyline format may have limitations on its supported precisions.  
+Since the encoded polyline string doesn't contain information of the precision or multiplier used, this information must be provided separately alongside each encoded polyline string.  
+We recommend taking special care when using the higher precision, as some encoding implementations may suffer internal overflows with the higher multiplier.
+
+### Encoding
+
+When encoding a polyline, select a supported precision and use the respective multiplier for the decimal value instead of the fixed `1e5` multiplier in the original algorithm (refer to the following table).  
+Otherwise, the encoding process remains the same as in the original algorithm.
+Ensure to send the precision used alongside each encoded polyline string in the request.
+
+### Decoding
+
+When decoding a received polyline, use the provided precision next to the encoded polyline string to determine the appropriate multiplier for the decimal value instead of the fixed `1e5` multiplier in the original algorithm (refer to the following table).
+Otherwise, the decoding process remains the same as in the original algorithm.
+Note that each encoded polyline string is accompanied by the precision used for its encoding.
+
+### Precisions and multipliers
+
+The following table illustrates the relationship between precision and multiplier:
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Precision
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Multiplier
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">
+        <code>5</code>  
+      </td>
+      <td>
+        <code>1e5</code>
+      </td>
+    </tr>
+    <tr>
+      <td scope="row">
+        <code>7</code>  
+      </td>
+      <td>
+        <code>1e7</code>
+      </td>
+    </tr>
+  </tbody>
+</table>

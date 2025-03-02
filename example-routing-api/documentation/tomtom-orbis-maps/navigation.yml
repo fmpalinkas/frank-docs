@@ -1,0 +1,43 @@
+group: routing-api-and-extended-routing-api
+isPrivate: false
+description: Routing is a suite of web services designed for developers to use our latest, scalable, online Routing engine.
+productName: Routing API
+menuTitle: Documentation
+isMenuOpened: false
+menu:
+  - title: Product Information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+      - fileId: /product-information/release-notes
+        title: Release Notes
+      - fileId: /product-information/migration-guide
+        title: Migration Guide
+      - fileId: /product-information/market-coverage
+        title: Market Coverage
+  - title: Routing API
+    items:
+      - fileId: /routing-service
+        title: Routing service
+        isPrivate: false
+      - fileId: /calculate-route
+        title: Calculate Route
+        suffix: get/post
+        isPrivate: false
+  - title: Private APIs
+    items:
+      - fileId: /calculate-route-New-v1
+        title: Calculate Route v1
+        suffix: get/post
+        isPrivate: true
+      - fileId: /calculate-route-New-v2
+        title: Calculate Route v2
+        suffix: get/post
+        isPrivate: true
+      - fileId: /guidance-instructions-v2
+        title: Guidance Instructions v2
+        isPrivate: true
+      - fileId: /calculate-reachable-range
+        title: Calculate Reachable Range
+        suffix: get/post
+        isPrivate: true

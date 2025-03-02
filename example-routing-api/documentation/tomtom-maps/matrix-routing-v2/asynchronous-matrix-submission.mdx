@@ -1,0 +1,1258 @@
+---
+title: Asynchronous Matrix Submission  
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2022.07.15'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5   
+---
+
+## Purpose
+
+This endpoint enables the submission of a new matrix job for asynchronous processing. It responds with a unique job id which can be used to check the job status and download its result when available.  
+
+## API Limitations  
+
+- The Freemium and Pay as you grow pricing plans support up to  **2500**  items (the number of origins multiplied by the number of destinations) in a single matrix.
+- The Enterprise pricing plan supports up to  **100M**  items in a single matrix.
+- Matrices don't need to be square.  
+
+<table id="apiLimitationsTable">
+  <thead>
+    <tr>
+      <th style={{ fontSize: '1em', textAlign: 'center' }}>Max matrix<br />size</th>
+      <th style={{ fontSize: '1em', textAlign: 'center' }}>Max number<br />of origins</th>
+      <th style={{ fontSize: '1em', textAlign: 'center' }}>Max number<br />of destinations</th>
+      <th style={{ fontSize: '1em' }}>Additional limits</th>
+    </tr>
+  </thead>
+  <tr>
+    <td style={{ textAlign: 'center' }}>
+      `2500`
+    </td>
+    <td style={{ textAlign: 'center' }}>
+      `1000`
+    </td>
+    <td style={{ textAlign: 'center' }}>
+      `1000`
+    </td>
+    <td>
+      <ul>
+        <li>
+          All origins and destinations should be contained in an axis-aligned
+          400&nbsp;km&nbsp;x&nbsp;400&nbsp;km bounding box. Otherwise some
+          matrix cells will be resolved as [`OUT_OF_REGION`](#outOfRegionCode).
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td style={{ textAlign: 'center' }}>
+      `100M`
+    </td>
+    <td style={{ textAlign: 'center' }}>
+      `10000`
+    </td>
+    <td style={{ textAlign: 'center' }}>
+      `10000`
+    </td>
+    <td>
+      <ul>
+        <li>
+          [`departAt`](#post-body-field-departat)
+          or
+          [`arriveAt`](#post-body-field-arriveat) must be  `any`.
+        </li>
+        <li>
+          [`traffic`](#post-body-field-traffic) must be  `historical`.
+        </li>
+        <li>
+          [`routeType`](#post-body-field-routetype) must be  `fastest`.
+        </li>
+        <li>
+          [`travelMode`](#post-body-field-travelmode) must be either  `car`  or  `truck`.
+        </li>
+        <li>No other parameters can be used explicitly.</li>
+      </ul>
+    </td>
+  </tr>
+</table>  
+
+Check our  [Pricing](https://developer.Example.com/store/maps-api)  and  [Contact Sales](https://developer.Example.com/contact-sales)  for quotas tailored based on your needs.  
+
+## Types  
+
+The following data table describes the complex data types that can be used in the Matrix Routing v2 service.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Type
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="types-point" scope="row">
+         `point`<br />
+         *object*
+      </th>
+      <td>
+        Latitude, longitude pair (in
+         [EPSG:4326](https://spatialreference.org/ref/epsg/4326/
+)
+        projection), with the following constraints:
+        <ul>
+          <li>
+            Latitude values must be in the range  `[-90, +90]`.
+          </li>
+          <li>
+            Longitude values must be in the range  `[-180, +180]`.
+          </li>
+        </ul>
+        Example:
+         `{"latitude": 52.37245, "longitude": 4.89406}`
+      </td>
+    </tr>
+    <tr>
+      <th id="types-dateTime" scope="row">
+         `dateTime`<br />
+         *string*
+      </th>
+      <td>
+        A date and time specified in
+         [RFC 3339](https://tools.ietf.org/html/rfc3339)
+        format with an optional time zone offset.<br />
+        Example:
+        <ul>
+          <li>
+             `2022-12-19T16:39:57`
+          </li>
+          <li>
+             `2022-12-19T16:39:57-08:00`
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Request data
+
+### HTTPS method: `POST`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL request format</h4>  
+
+All of the following parameters are required:  
+
+```shell [type=post] [title=URL request format]
+https://{baseURL}/routing/matrix/{versionNumber}/async?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>  
+
+```shell [type=post] [title=URL request example]
+https://api.Example.com/routing/matrix/2/async?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command request format</h4>  
+
+```shell [type=post] [title=curl command request format]
+curl -XPOST 'https://{baseURL}/routing/matrix/{versionNumber}/async?key={Your_API_Key}'
+```
+
+### Request headers  
+
+The following table describes HTTP request headers of particular interest to Matrix Routing v2 service clients.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)</th>
+      <td>
+        Specifies the MIME type of the body of the request.<br />
+        **Value:**   `application/json`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="trackingid-request" scope="row">Tracking-ID</th>
+      <td>
+        Specifies an identifier for the request.
+        <ul>
+          <li>It can be used to trace a call.</li>
+          <li>
+            The value must match the regular expression `'^[a-zA-Z0-9-]{1,100}$'`.
+          </li>
+          <li>
+            An example of the format that matches this regular expression is
+            UUID: (e.g.,  `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For
+            details check [RFC 4122](https://tools.ietf.org/html/rfc4122).
+          </li>
+          <li>
+            If specified, it is replicated in the [Tracking-ID](#trackingid-response)  response header.
+          </li>
+          <li>
+            It is only meant to be used for support and does not involve
+            tracking of you or your users in any form.
+          </li>
+        </ul>  
+        **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Request parameters  
+
+The following table describes the request parameters.  
+
+- Required parameters **must be used** or the call will fail.
+- A parameter&#39;s data type is beneath its name.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `baseURL`<br />
+        *string*
+      </th>
+      <td>
+        Base URL for calling the API.<br />
+        **Values:**
+        <ul>
+          <li>
+            `api.Example.com`: The default global API endpoint.
+          </li>
+          <li>
+            `kr-api.Example.com`: The region-specific endpoint for
+            South Korea. See the [region-specific content documentation](https://developer.Example.com/region-specific-content)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `versionNumber`<br />
+        *string*
+      </th>
+      <td>
+        Service version.<br />
+        **Value:**  The current value is  `2`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `key`<br />
+         *string*
+      </th>
+      <td>
+        An API Key valid for the requested service.<br />
+        **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### POST request body - JSON  
+
+The POST body of a matrix request should contain a set of items which will be used to calculate a matrix of route summaries.  
+
+```json [type=post] [title=POST request body - JSON]
+{
+  "origins": [
+    {
+      "point": {"latitude": latitudeValue,"longitude": longitudeValue}
+    },
+    ...,
+    {
+      "point": {"latitude": latitudeValue,"longitude": longitudeValue}
+    }
+  ],
+  "destinations": [
+    {
+      "point": {"latitude": latitudeValue,"longitude": longitudeValue}
+    },
+    ...,
+    {
+      "point": {"latitude": latitudeValue,"longitude": longitudeValue}
+    }
+  ],
+  "options": {
+    "departAt": dateTime | "any" | "now",
+    "arriveAt": dateTime | "any",
+    "routeType": "fastest" | "shortest",
+    "traffic": "historical" | "live",
+    "travelMode": "car" | "truck" | "pedestrian",
+    "vehicleMaxSpeed": integer,
+    "vehicleWeight": integer,
+    "vehicleAxleWeight": integer,
+    "vehicleLength": float,
+    "vehicleWidth": float,
+    "vehicleHeight": float,
+    "vehicleCommercial": boolean,
+    "vehicleLoadType": [ string, ... ],
+    "vehicleAdrTunnelRestrictionCode": string,
+    "avoid": [ string, ... ]
+  }
+}
+```
+
+### POST request body fields  
+
+This section contains the detailed description of allowed fields in the POST body.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `origins`<br />
+        *array*
+      </th>
+      <td>
+        A non-empty list of origin locations represented by [points](#types-point).<br />
+        **Value:**  An array of locations (latitude, longitude pairs).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `destinations`<br />
+        *array*
+      </th>
+      <td>
+        A non-empty list of destination locations represented by [points](#types-point).<br />
+        **Value:**  An array of locations (latitude, longitude pairs).
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Mutually&nbsp;exclusive&nbsp;fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" id="post-body-field-departat">
+        `departAt`<br />
+        *string*
+      </th>
+      <td>
+        The date and time of departure from the origin point.<br />
+        <ul>
+          <li>
+            Departure times apart from  `any`  and  `now`
+            must be specified as a [`dateTime`](#types-dateTime)
+            in the future.
+          </li>
+          <li>
+            When a time zone offset is not specified, it will be assumed to be
+            that of the origin point for each individual cell.
+          </li>
+          <li>
+            Specifying a value for the  `departAt`  parameter or using
+            the default value is recommended for matrices having multiple
+            destinations.
+          </li>
+          <li>
+            The  `departAt`  parameter  **cannot be used**  in
+            conjunction with  `arriveAt`.
+          </li>
+        </ul>  
+        **Default value:**   `any`  if  `arriveAt`  is not specified.<br />
+        **Values:**
+        <ul>
+          <li>
+            `any`  - This mode is tailored to the use case where the
+            time context is irrelevant. The  `traffic=live`  parameter
+            value  **cannot be used**  together with  `any`.
+          </li>
+          <li>
+            `now`  - The departure time will be set to the processing
+            time of each individual cell. Processing time may be any time
+            between the matrix job submission and its completion. This mode is
+            best used together with  `traffic=live`, as the service
+            will then always consider the most recent available traffic
+            information during routing.
+          </li>
+          <li>[`dateTime`](#types-dateTime)</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="post-body-field-arriveat">
+        `arriveAt`<br />
+        *string*
+      </th>
+      <td>
+        The date and time of arrival at the destination point.<br />
+        <ul>
+          <li>
+            Departure times apart from  `any`  must be specified as a [`dateTime`](#types-dateTime) in the future.
+          </li>
+          <li>
+            When a time zone offset is not specified, it will be assumed to be
+            that of the destination point for each individual cell.
+          </li>
+          <li>
+            Specifying a value for  `arriveAt`  parameter is
+            recommended for matrices having multiple origins.
+          </li>
+          <li>
+            The  `arriveAt`  parameter  **cannot be used**  in
+            conjunction with  `departAt`.
+          </li>
+        </ul>  
+        **Values:**
+        <ul>
+          <li>
+            `any`  - See  `departAt=any`  for details.
+          </li>
+          <li>
+            [`dateTime`](#types-dateTime)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="post-body-field-traffic">
+        `traffic`<br />
+        *string*
+      </th>
+      <td>
+        Decides how traffic is considered for computing routes.<br />
+        **Default value:**   `historical`<br />
+        **Values:**
+        <ul>
+          <li>
+            `historical`  - Routing and estimated travel time consider
+            historical travel times and long term closures. Traffic jams and
+            short-term closures during the travel time window do not influence
+            routing or travel time.
+          </li>
+          <li>
+            `live`  - In addition to historical travel times, routing
+            and estimated travel time consider traffic jams and short- and
+            long-term closures during the travel time window.
+            <br />
+             **Note:**   `traffic=live`  may not be used in
+            conjunction with travel time  `any`, also see
+            `arriveAt`  and  `departAt`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" id="post-body-field-routetype">
+        `routeType`<br />
+        *string*
+      </th>
+      <td>
+        The type of route requested.<br />
+        **Default value:**   `fastest`<br />
+        **Values:**
+        <ul>
+          <li>
+            `fastest`: Route calculation is optimized by travel time,
+            while keeping the routes sensible. For example, the calculation may
+            avoid shortcuts along inconvenient side roads or long detours that
+            only save very little time.
+          </li>
+          <li>
+            `shortest`: Route calculation is optimized by travel
+            distance, while keeping the routes sensible. For example, straight
+            routes are preferred over those incurring turns.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="post-body-field-travelmode">
+        `travelMode`<br />
+        *string*
+      </th>
+      <td>
+        The mode of travel for the requested route.<br />
+        **Default value:**   `car`<br />
+        **Other values:**   `truck`,  `pedestrian`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `vehicleMaxSpeed`<br />
+        *integer*
+      </th>
+      <td>
+        Maximum speed of the vehicle in kilometers/hour.
+        <ul>
+          <li>
+            Must have a value in the range  `[0, 250]`.
+          </li>
+          <li>
+            A value of  `0`  means that an appropriate value for the
+            vehicle will be determined and applied during route planning.
+          </li>
+        </ul>  
+         **Default value:**   `0`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `vehicleWeight`<br />
+        *integer*
+      </th>
+      <td>
+        Weight of the vehicle in kilograms. A value of  `0`  means that
+        weight restrictions are not considered.<br />
+        **Default value:**   `0`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `vehicleAxleWeight`<br />
+        *integer*
+      </th>
+      <td>
+        Weight per axle of the vehicle in kilograms. A value of  `0`
+        means that weight restrictions per axle are not considered.<br />
+        **Default value:**   `0`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `vehicleLength`<br />
+        *float*
+      </th>
+      <td>
+        Length of the vehicle in meters. A value of  `0`  means that
+        length restrictions are not considered.<br />
+        **Default value:**   `0`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `vehicleWidth`<br />
+        *float*
+      </th>
+      <td>
+        Width of the vehicle in meters. A value of  `0`  means that
+        width restrictions are not considered.<br />
+        **Default value:**   `0`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `vehicleHeight`<br />
+        *float*
+      </th>
+      <td>
+        Height of the vehicle in meters. A value of  `0`  means that
+        height restrictions are not considered.<br />
+        **Default value:**   `0`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `vehicleCommercial`<br />
+        *boolean*
+      </th>
+      <td>
+        Vehicle is used for commercial purposes and thus may not be allowed to
+        drive on some roads.<br />
+        **Default value:**   `false`<br />
+        **Other values:**   `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `vehicleLoadType`<br />
+        *array*
+      </th>
+      <td>
+        Specifies types of cargo that may be classified as hazardous materials
+        and are restricted from some roads.<br />
+        Available values are:
+        <ul>
+          <li>US Hazmat classes 1 through 9</li>
+          <li>Generic classifications for use in other countries.</li>
+        </ul><br />
+        Use these values for routing in the USA:
+        <ul>
+          <li>
+            `USHazmatClass1`: Explosives
+          </li>
+          <li>
+            `USHazmatClass2`: Compressed gas
+          </li>
+          <li>
+            `USHazmatClass3`: Flammable liquids
+          </li>
+          <li>
+            `USHazmatClass4`: Flammable solids
+          </li>
+          <li>
+            `USHazmatClass5`: Oxidizers
+          </li>
+          <li>
+            `USHazmatClass6`: Poisons
+          </li>
+          <li>
+            `USHazmatClass7`: Radioactive
+          </li>
+          <li>
+            `USHazmatClass8`: Corrosives
+          </li>
+          <li>
+            `USHazmatClass9`: Miscellaneous
+          </li>
+        </ul><br />
+        Use these values for routing in all other countries:
+        <ul>
+          <li>
+            `otherHazmatExplosive`: Explosives
+          </li>
+          <li>
+            `otherHazmatGeneral`: Miscellaneous
+          </li>
+          <li>
+            `otherHazmatHarmfulToWater`: Harmful to water
+          </li>
+        </ul><br />
+         **Notes:**
+        <ul>
+          <li>
+            The  `vehicleLoadType`  and `vehicleAdrTunnelRestrictionCode`
+            parameters are independent; please provide both if applicable.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `vehicleAdrTunnelRestrictionCode`<br />
+        *string*
+      </th>
+      <td>
+        If  `vehicleAdrTunnelRestrictionCode`  is specified, the
+        vehicle is subject to ADR tunnel restrictions.
+        <ul>
+          <li>
+            Vehicles with code  `B`  are restricted from roads with ADR
+            tunnel categories B, C, D, and E.
+          </li>
+          <li>
+            Vehicles with code  `C`  are restricted from roads with ADR
+            tunnel categories C, D, and E.
+          </li>
+          <li>
+            Vehicles with code  `D`  are restricted from roads with ADR
+            tunnel categories D and E.
+          </li>
+          <li>
+            Vehicles with code  `E`  are restricted from roads with ADR
+            tunnel category E.
+          </li>
+          <li>
+            If  `vehicleAdrTunnelRestrictionCode`  is not specified, no
+            ADR tunnel restrictions apply.
+          </li>
+        </ul><br />
+         **Notes:**
+        <ul>
+          <li>
+            The  `vehicleAdrTunnelRestrictionCode`  and
+            `vehicleLoadType`  parameters are independent; please
+            provide both if applicable.
+          </li>
+        </ul>
+        **Values**  (specify at most one):
+        <ul>
+          <li>
+            `B`
+          </li>
+          <li>
+            `C`
+          </li>
+          <li>
+            `D`
+          </li>
+          <li>
+            `E`
+          </li>
+        </ul><br />
+        **Reference:**<br />[European Agreement Concerning the International Carriage of Dangerous Goods by Road (ADR), United Nations, 2019, section 1.9.5 and chapter 8.6](http://www.unece.org/trans/danger/publi/adr/adr_e.html)  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `avoid`<br />
+        *array*
+      </th>
+      <td>
+        Specifies something that the route calculation should try to avoid when
+        determining the route.<br />
+        Available values are:
+        <ul>
+          <li>
+            `tollRoads`: Avoids toll roads.
+          </li>
+          <li>
+            `unpavedRoads`: Avoids unpaved roads.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### POST request body example
+
+```json [type=post] [title=POST request body example - JSON]
+{
+  "origins": [
+    {
+      "point": { "latitude": 45.458545, "longitude": 9.15049 }
+    },
+    {
+      "point": { "latitude": 45.403337, "longitude": 11.050541 }
+    }
+  ],
+  "destinations": [
+    {
+      "point": { "latitude": 48.149853, "longitude": 11.499931 }
+    },
+    {
+      "point": { "latitude": 50.033688, "longitude": 14.538226 }
+    }
+  ],
+  "options": {
+    "departAt": "2022-12-19T16:39:57",
+    "routeType": "fastest",
+    "traffic": "historical",
+    "travelMode": "truck",
+    "vehicleMaxSpeed": 90,
+    "vehicleWeight": 12000,
+    "vehicleAxleWeight": 4000,
+    "vehicleLength": 13.6,
+    "vehicleWidth": 2.42,
+    "vehicleHeight": 2.4,
+    "vehicleCommercial": true,
+    "vehicleLoadType": ["otherHazmatExplosive", "otherHazmatGeneral"],
+    "vehicleAdrTunnelRestrictionCode": "C",
+    "avoid": ["unpavedRoads"]
+  }
+}
+```
+
+## Response data  
+
+### Matrix Submission response  
+
+On a successful matrix request submission, the Matrix Routing v2 service responds with an HTTP `202`.  
+
+The response contains a matrix job ID which can be used to check the matrix job status using the  [Asynchronous Matrix Status](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-status)  endpoint and download the result of the matrix processing after its completion using the  [Asynchronous Matrix Download](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-download)  endpoint. The response also contains the current status of the matrix job.  
+
+### HTTP status codes  
+
+<table>
+  <thead>
+    <tr>
+      <th
+        scope="col" style={{ fontSize: '1em', textAlign: 'center' }}>Code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Meaning and possible causes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`202`</th>
+      <td>
+        **Accepted**: Request successful, information about the matrix job's
+        Id and current status will be returned to the client.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`400`</th>
+      <td>
+        **Bad Request**: Request cannot be processed correctly, e.g., due to
+        invalid header values.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`403`</th>
+      <td>
+        **Forbidden**: The API Key is missing, inactive, invalid, not
+        entitled to use Matrix Routing v2 API, or exceeded the available quota.
+        This can also occur when using HTTP instead of HTTPS.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`404`</th>
+      <td>
+        **Not Found**: The requested resource could not be found, but it may
+        be available again in the future.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`405`</th>
+      <td>
+        **Method Not Allowed**: The client used an HTTP method other than POST.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`414`</th>
+      <td>
+        **Requested URI is too long**: Indicates that the URI requested by
+        the client is longer than the server is willing to interpret.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`415`</th>
+      <td>
+        **Unsupported Media Type**: The client used an unsupported media
+        type.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`429`</th>
+      <td>
+        **Too Many Requests**: Quota was exceeded for the API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`500`</th>
+      <td>
+        **An error occurred while processing the request**. Please try again
+        later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`502`</th>
+      <td>
+        **Internal network connectivity issue**. Please try again later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`503`</th>
+      <td>
+        **Service currently unavailable**. Please try again later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`504`</th>
+      <td>
+        **Internal network connectivity issue or a request that has taken too
+          long to complete**. Please try again later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`596`</th>
+      <td>
+        **Service not found**. Request contains an incorrect FQDN and/or
+        path.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response headers  
+
+The following table lists HTTP response headers of particular interest to the Matrix Routing v2 service clients.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">[Access-Control-Expose-Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Access-Control-Expose-Headers)</th>
+      <td>
+        A comma separated list of HTTP header names that browsers are allowed to
+        access.<br />
+        **Value:**   `Content-Length`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin)</th>
+      <td>
+        A header instructing browsers to allow customer websites to contact the
+        Matrix Routing v2 service.<br />
+        **Value:**   `*`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)</th>
+      <td>
+        The Matrix Routing v2 service applies gzip compression to the response
+        if it is requested by the client with the [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding)
+        header.<br />
+        **Value:**   `gzip`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)</th>
+      <td>
+        The format of the response.<br />
+        **Value:**   `application/json;charset=utf-8`
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">Tracking-ID</th>
+      <td>
+        An identifier for the request.
+        <ul>
+          <li>
+            If the  [Tracking-ID](#trackingid-request)  header was
+            specified, it is replicated in the response.
+          </li>
+          <li>Otherwise, it is generated automatically by the service.</li>
+          <li>
+            It is only meant to be used for support and does not involve
+            tracking of you or your users in any form.
+          </li>
+        </ul><br />
+         **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Successful response format  
+
+```json [title=Response format - JSON]
+HTTP 200 OK
+{
+  "jobId": "unique matrix job id",
+  "state": "Submitted"
+}
+```
+
+### Successful response example  
+
+```json [title=Response example - JSON]
+HTTP 200 OK
+{
+  "jobId": "00-00000000-0000-0000-0000-000000000000-0000",
+  "state": "Submitted"
+}
+```
+
+### Successful response fields  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Primary&nbsp;fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `jobId`<br />
+        *string*
+      </th>
+      <td>
+        The matrix job ID which can be used to check the matrix job status using
+        the [Asynchronous Matrix Status](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-status)
+        endpoint and download the result of the matrix processing after its
+        completion using the [Asynchronous Matrix Download](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-download)
+        endpoint. The response also contains the current status of the matrix
+        job.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `state`<br />
+        *string*
+      </th>
+      <td>Current state of the matrix job.</td>
+    </tr>
+  </tbody>
+</table>  
+
+### Error response example  
+
+```json [title=Error response example - JSON]
+{
+  "detailedError": {
+    "code": "BAD_REQUEST",
+    "message": "Bad Request",
+    "details": [
+      {
+        "code": "BAD_ARGUMENT",
+        "message": "Tracking-ID must match ^[a-zA-Z0-9-]{1,100}$ pattern.",
+        "target": "trackingId",
+        "innerError": {
+          "code": "INVALID_PARAMETER_VALUE"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Error response fields  
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>Primary fields</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `detailedError`<br />
+        *object*
+      </th>
+      <td>
+        Detailed information about the error.<br />
+        [`detailedError`](#detailederror-object) object
+      </td>
+    </tr>
+    <tr>
+      <th id="detailederror-object" colspan="2" style={{ fontSize: '1em' }}>detailedError object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`<br />
+        *string*
+      </th>
+      <td>
+        One of the defined  [error codes](#error-code-hierarchy).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `message`<br />
+        *string*
+      </th>
+      <td>
+        A human-readable description of the error code. It is intended as an aid
+        to developers and is not suitable for exposure to end users.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `target`<br />
+        *string*
+      </th>
+      <td>
+        Optional. Target of the particular error. For example, a parameter name, a path to
+        a JSON property, and others. Contents of this field may change over
+        time.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `details`<br />
+        *array*
+      </th>
+      <td>
+        Optional.<br />
+        An array of root causes (more detailed errors) that led to this error.<br />
+        [`detailedError`](#detailederror-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `innerError`<br />
+        *object*
+      </th>
+      <td>
+        Optional.<br />
+        A higher level of details about this error.<br />
+        [`innerError`](#innererror-object) object
+      </td>
+    </tr>
+    <tr>
+      <th id="innererror-object" colspan="2" style={{ fontSize: '1em' }}>innerError object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`<br />
+        *string*
+      </th>
+      <td>
+        One of the defined  [error codes](#error-code-hierarchy).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `message`<br />
+        *string*
+      </th>
+      <td>
+        Optional. A human-readable representation of the error code. It is intended
+        as an aid to developers and is not suitable for exposure to end users.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `innerError`<br />
+        *object*
+      </th>
+      <td>
+        Optional.<br />
+        A higher level of details about this error.<br />
+        [`innerError`](#innererror-object) object
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Error code hierarchy 
+
+List of predefined, hierarchical, human-readable error codes.  
+
+- Top level codes relate to HTTP error codes.
+- They may be refined by error codes in `details` or `innerError`.
+- Further levels of refinement are possible by nesting `innerError` inside `innerError`.
+
+In the future, the list may be extended with additional codes. New or existing codes may be introduced as children of codes already present in the hierarchy. The application must be ready for the occurrence of an unknown error code (e.g., by stopping error processing at the last understood level of detail).  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Error code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>`NOT_FOUND`</th>
+      <td>
+        Top level code for requests which failed with an HTTP  `404`
+        status code, caused by providing an incorrect request path.
+      </td>
+    </tr>
+    <tr>
+      <th>`BAD_REQUEST`</th>
+      <td>
+        Top level code for requests which failed with an HTTP  `400`
+        status code.<br />
+        Current possible details:  `BAD_ARGUMENT`
+      </td>
+    </tr>
+    <tr>
+      <th>`INTERNAL_SERVER_ERROR`</th>
+      <td>
+        Top level code for requests which failed with an HTTP  `500`
+        status code. The service cannot handle the request right now, an
+        unexpected condition was encountered.
+      </td>
+    </tr>
+    <tr>
+      <th>`SERVICE_UNAVAILABLE`</th>
+      <td>
+        Top level code for requests which failed with an HTTP  `503`
+        status code. The service cannot handle the request right now, this is
+        certainly a temporary state.
+      </td>
+    </tr>
+    <tr>
+      <th>`FORBIDDEN`</th>
+      <td>
+        Top level code for requests which failed with an HTTP  `403`
+        status code.<br />
+        Current possible details:  `OVER_TRANSACTION_LIMIT`
+      </td>
+    </tr>
+    <tr>
+      <th>`BAD_ARGUMENT`</th>
+      <td>
+        One of the request parameters did not pass validation. The optional
+         **target**  field may contain the name of the related parameter, or
+        the location inside the JSON object in the request POST body.<br />
+        Current possible inner errors:  `INVALID_PARAMETER_VALUE`
+      </td>
+    </tr>
+    <tr>
+      <th>`MISSING_REQUIRED_PARAMETER`</th>
+      <td>One of the required parameters was not provided.</td>
+    </tr>
+    <tr>
+      <th>`INVALID_PARAMETER_VALUE`</th>
+      <td>The value of one of the parameters is invalid.</td>
+    </tr>
+    <tr>
+      <th>`OVER_TRANSACTION_LIMIT`</th>
+      <td>Client has exceeded the transaction limit.</td>
+    </tr>
+    <tr>
+      <th id="outOfRegionCode">`OUT_OF_REGION`</th>
+      <td>
+        The distance between the given origin and destination pair is too long
+        to calculate the route, considering other requested options.<br />
+        See the  [API Limitations table](#apiLimitationsTable)  for
+        more information.
+      </td>
+    </tr>
+  </tbody>
+</table>  

@@ -7,7 +7,7 @@ titleTags:
     color: grey5
   - label: 'PUBLIC PREVIEW'
     color: grey5
-  - label: 'Example Orbis Maps'
+  - label: 'Example New Maps'
     color: brand-cadmium
 ---
 
@@ -15,9 +15,9 @@ titleTags:
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This Example Orbis Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.Example.com/public-preview)  page to see what this means.
-- This API is powered by **Example Orbis Maps**.
-- See the <a href="https://developer.Example.com/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.  
+- This Example New Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.Example.com/public-preview)  page to see what this means.
+- This API is powered by **Example New Maps**.
+- See the <a href="https://developer.Example.com/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.  
 </Blockquote>  
 
 ## Purpose  
@@ -106,11 +106,11 @@ For ease of viewing and identification:
 **Important note:** Either `apiVersion` parameter or `Example-Api-Version` header needs to be present.  
 
 ```shell [type=post] [title=POST URL request format]
-https://{baseURL}/maps/orbis/places/geometrySearch/{query}.{ext}?key={Your_API_Key}&apiVersion={apiVersion}&geometryList={geometryList}&limit={limit}&language={language}&idxSet={idxSet}&extendedPostalCodesFor={extendedPostalCodesFor}&categorySet={categorySet}&brandSet={brandSet}&connectorSet={connectorSet}&fuelSet={fuelSet}&vehicleTypeSet={vehicleTypeSet}&view={view}&openingHours={openingHours}&timeZone={timeZone}&mapcodes={mapcodes}&minPowerKW={minPowerKW}&maxPowerKW={maxPowerKW}&entityTypeSet={entityTypeSet}
+https://{baseURL}/maps/New/places/geometrySearch/{query}.{ext}?key={Your_API_Key}&apiVersion={apiVersion}&geometryList={geometryList}&limit={limit}&language={language}&idxSet={idxSet}&extendedPostalCodesFor={extendedPostalCodesFor}&categorySet={categorySet}&brandSet={brandSet}&connectorSet={connectorSet}&fuelSet={fuelSet}&vehicleTypeSet={vehicleTypeSet}&view={view}&openingHours={openingHours}&timeZone={timeZone}&mapcodes={mapcodes}&minPowerKW={minPowerKW}&maxPowerKW={maxPowerKW}&entityTypeSet={entityTypeSet}
 ```
 
 ```shell [type=post] [title=POST URL request example]
-https://api.Example.com/maps/orbis/places/geometrySearch/pizza.json?key={Your_API_Key}&apiVersion=1&geometryList=[
+https://api.Example.com/maps/New/places/geometrySearch/pizza.json?key={Your_API_Key}&apiVersion=1&geometryList=[
   {
     "type":"POLYGON",
     "vertices":[
@@ -156,17 +156,17 @@ curl -XPOST -d '{
       "radius":1000
     }
   ]
-}' 'https://api.Example.com/maps/orbis/places/geometrySearch/pizza.json?key={Your_API_Key}&apiVersion=1'
+}' 'https://api.Example.com/maps/New/places/geometrySearch/pizza.json?key={Your_API_Key}&apiVersion=1'
 ```
 
 ### HTTPS Method: `GET`
 
 ```shell [type=get] [title=GET URL request format]
-https://{baseURL}/maps/orbis/places/geometrySearch/{query}.{ext}?key={Your_API_Key}&apiVersion={apiVersion}&lat={lat}&lon={lon}&geometryList={geometryList}&limit={limit}&language={language}&idxSet={idxSet}&extendedPostalCodesFor={extendedPostalCodesFor}&categorySet={categorySet}&brandSet={brandSet}&connectorSet={connectorSet}&fuelSet={fuelSet}&view={view}&openingHours={openingHours}&timeZone={timeZone}&mapcodes={mapcodes}&minPowerKW={minPowerKW}&maxPowerKW={maxPowerKW}&entityTypeSet={entityTypeSet}
+https://{baseURL}/maps/New/places/geometrySearch/{query}.{ext}?key={Your_API_Key}&apiVersion={apiVersion}&lat={lat}&lon={lon}&geometryList={geometryList}&limit={limit}&language={language}&idxSet={idxSet}&extendedPostalCodesFor={extendedPostalCodesFor}&categorySet={categorySet}&brandSet={brandSet}&connectorSet={connectorSet}&fuelSet={fuelSet}&view={view}&openingHours={openingHours}&timeZone={timeZone}&mapcodes={mapcodes}&minPowerKW={minPowerKW}&maxPowerKW={maxPowerKW}&entityTypeSet={entityTypeSet}
 ```
 
 ```shell [type=get] [title=GET URL request example]
-https://api.Example.com/maps/orbis/places/geometrySearch/pizza.json?key={Your_API_Key}&apiVersion=1&geometryList=[
+https://api.Example.com/maps/New/places/geometrySearch/pizza.json?key={Your_API_Key}&apiVersion=1&geometryList=[
   {
     "type":"POLYGON",
     "vertices":[
@@ -190,7 +190,7 @@ https://api.Example.com/maps/orbis/places/geometrySearch/pizza.json?key={Your_AP
 ```  
 
 ```shell [type=get] [title=GET curl command request example]
-curl 'https://api.Example.com/maps/orbis/places/geometrySearch/pizza.json?key={Your_API_Key}&apiVersion=1&geometryList=[
+curl 'https://api.Example.com/maps/New/places/geometrySearch/pizza.json?key={Your_API_Key}&apiVersion=1&geometryList=[
   {
     "type":"POLYGON",
     "vertices":[
@@ -2302,7 +2302,7 @@ Fields are listed by the response section they belong to, and in the order that 
       </th>
       <td>
         Pass this as  `fuelPrice`  to the
-        [Fuel Prices](https://developer.Example.com/fuel-prices-api/documentation/Example-orbis-maps/product-information/introduction) service to fetch fuel price 
+        [Fuel Prices](https://developer.Example.com/fuel-prices-api/documentation/Example-New-maps/product-information/introduction) service to fetch fuel price 
         information for this result.
       </td>
     </tr>

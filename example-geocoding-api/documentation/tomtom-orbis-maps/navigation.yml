@@ -1,0 +1,42 @@
+group: geocoding-api
+isPrivate: false
+description: Geocoding only gets addresses as results (no POIs). 
+productName: Geocoding API
+menuTitle: Documentation
+isMenuOpened: true  
+isExpanded: true   
+menu:
+  - title: Product Information
+    is Private: false
+    isExpanded: false
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+        is Private: false
+      - fileId: /product-information/best-practices
+        title: Best practices
+        is Private: false
+      - fileId: /product-information/release-notes
+        title: Release notes
+        is Private: false
+      - fileId: /product-information/market-coverage
+        title: Market Coverage
+        is Private: false
+      - fileId: /product-information/migration-guide
+        title: Migration Guide
+        isPrivate: false
+      - fileId: /product-information/supported-languages
+        title: Supported Languages
+        is Private: false
+      - fileId: /product-information/copyrights
+        title: Copyrights
+        is Private: false
+  - title: Geocoding
+    isExpanded: false
+    is Private: false
+    items:
+      - fileId: /geocode
+        title: Geocode
+        is Private: false
+        suffix: get
+  

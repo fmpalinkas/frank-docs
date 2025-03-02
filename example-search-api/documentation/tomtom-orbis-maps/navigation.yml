@@ -1,7 +1,7 @@
 group: search-api
 isPrivate: false
 description: Search is a RESTful API designed for developers allowing single-line fuzzy search for addresses and POIs. Search assigns a latitude/longitude to a specific address, cross street, geographic feature, or point of interest (POI).
-productName: Orbis Search API
+productName: New Search API
 menuTitle: Documentation
 isMenuOpened: false
 menu:

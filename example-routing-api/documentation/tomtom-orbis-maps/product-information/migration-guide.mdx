@@ -1,0 +1,95 @@
+---
+title: Migration Guide
+titleTags:
+  - label: 'Last edit: 2024.06.04'
+    color: grey5
+---
+
+## Where do I find the new end points
+
+The Orbis Routing API end point is:
+
+```shell [type=get] [title=URL request format]
+https://{baseURL}/maps/orbis/routing/calculateRoute/{routePlanningLocations}/{contentType}?key={Your_API_Key}&apiVersion={apiVersion}&{param=value}
+```
+
+## Changes in the parameters or responses
+
+- Either `apiVersion` query parameter or `Example-Api-Version` header needs to be present.
+- The query parameter `sectionType` has no default in Orbis.
+  - Please request `travelMode` sections as needed in Orbis.
+- The query parameter `routeType` has a new set of values in Orbis: `fast`, `short`, `efficient`, and `thrilling`.
+  - Please use `fast` instead of `fastest`, `short` instead of `shortest`, and `efficient` instead of `eco`.
+- The POST data parameter `routeType` in the `legs` object has a new set of values in Orbis: `fast`, `short`, `efficient`, and `thrilling`.
+  - Please use `fast` instead of `fastest`, `short` instead of `shortest`, and `efficient` instead of `eco`.
+- The query parameter `traffic` has a new set of values in Orbis: `live` and `historical`.
+  - Please use `live` instead of `true` and `historical` instead of `false`.
+- The query parameter `travelMode` only supports `car` in Orbis.
+
+## Changes in the features
+
+- Only the `calculateRoute` service is available in Orbis.
+- Only JSON responses are supported in Orbis.
+  - The base path parameter `contentType` must be set to `json` in Orbis.
+    - As a consequence, the `statusCode` field is not provided in the response in Orbis.
+  - The query parameter `callback` has been removed in Orbis.
+- Only the electric detailed consumption model is supported in Orbis.
+  - The query parameter `constantSpeedConsumptionInLitersPerHundredkm` has been removed in Orbis.
+    - As a consequence, the `fuelConsumptionInLiters` field is not provided in the response in Orbis.
+  - The query parameter `currentFuelInLiters` has been removed in Orbis.
+  - The query parameter `auxiliaryPowerInLitersPerHour` has been removed in Orbis.
+  - The query parameter `fuelEnergyDensityInMJoulesPerLiter` has been removed in Orbis.
+- Guidance instructions including lanes sections are not supported in Orbis.
+  - The query parameter `instructionsType` has been removed in Orbis.
+    - As a consequence, the `guidance` field is not provided in the response in Orbis.
+  - The query parameter `language` has been removed in Orbis.
+  - The query parameter `instructionAnnouncementPoints` has been removed in Orbis.
+  - The query parameter `instructionPhonetics` has been removed in Orbis.
+  - The query parameter `instructionRoadShieldReferences` has been removed in Orbis.
+    - As a consequence, the `roadShieldAtlasReference` field is not provided in the response in Orbis.
+  - The query parameter `sectionType` does not support `lanes` in Orbis.
+    - As a consequence, sections with `sectionType` `LANES` are not provided in the response in Orbis.
+- The query parameter `sectionType` does not support `roadShields` in Orbis.
+  - As a consequence, sections with `sectionType` `ROAD_SHIELDS` are not provided in the response in Orbis.
+  - As a consequence, the `roadShieldAtlasReference` field is not provided in the response in Orbis.
+- The query parameter `sectionType` does not support `tollRoads` and `tollVignette` in Orbis.
+  - As a consequence, sections with `sectionType` `TOLL_ROAD` are not provided in the response in Orbis.
+  - As a consequence, sections with `sectionType` `TOLL_VIGNETTE` are not provided in the response in Orbis.
+  - As a consequence, sections with `sectionType` `TOLL` provide sections which include either a usage-based toll or toll vignette, in the response in Orbis.
+- The base path parameter `routePlanningLocations` does not support `circle` waypoints in Orbis.
+- The query parameter `coordinatePrecision` has been removed in Orbis.
+  - Responses contain full precision coordinates in Orbis.
+- The query parameter `computeBestOrder` has been removed in Orbis.
+  - As a consequence, the `optimizedWaypoints` field is not provided in the response in Orbis.
+- The query parameter `routeRepresentation` has been removed in Orbis.
+- The query parameter `computeTravelTimeFor` has been removed in Orbis.
+  - As a consequence, the `noTrafficTravelTimeInSeconds`, `historicTrafficTravelTimeInSeconds`, and `liveTrafficIncidentsTravelTimeInSeconds` fields are not provided in the response in Orbis.
+- The query parameter `report` has been removed in Orbis.
+  - As a consequence, the `effectiveSettings` field is not provided in the response in Orbis.
+- The query parameter `departAt` has been removed in Orbis.
+- The query parameter `arriveAt` has been removed in Orbis.
+- The query parameter `prefer` has been removed in Orbis.
+- The query parameter `sectionType` does not support `handsFreeDriving` in Orbis.
+  - As a consequence, sections with `sectionType` `HANDS_FREE_DRIVING` are not provided in the response in Orbis.
+- The query parameter `handsFreeDrivingCapability` has been removed in Orbis.
+- The query parameter `hilliness` has been removed in Orbis.
+- The query parameter `windingness` has been removed in Orbis.
+- The query parameter `vehicleMaxSpeed` has been removed in Orbis.
+- The query parameter `vehicleAxleWeight` has been removed in Orbis.
+- The query parameter `vehicleNumberOfAxles` has been removed in Orbis.
+- The query parameter `vehicleLength` has been removed in Orbis.
+- The query parameter `vehicleWidth` has been removed in Orbis.
+- The query parameter `vehicleHeight` has been removed in Orbis.
+- The query parameter `vehicleCommercial` has been removed in Orbis.
+- The query parameter `vehicleLoadType` has been removed in Orbis.
+- The query parameter `vehicleAdrTunnelRestrictionCode` has been removed in Orbis.
+- The query parameter `chargeMarginsInkWh` has been removed in Orbis.
+  - As a consequence, the `reachableRouteOffsets` field is not provided in the response in Orbis.
+- The query parameter `arrivalSidePreference` has been removed in Orbis.
+- The query parameter `reconstructionMode` has been removed in Orbis.
+- The POST data parameter `avoidVignette` has been removed in Orbis.
+- The POST data parameter `allowVignette` has been removed in Orbis.
+- The POST data parameter `reassessmentParameterSets` has been removed in Orbis.
+  - As a consequence, the `routeReassessments` field is not provided in the response in Orbis.
+- The POST data parameter `hilliness` in the `legs` object has been removed in Orbis.
+- The POST data parameter `windingness` in the `legs` object has been removed in Orbis.

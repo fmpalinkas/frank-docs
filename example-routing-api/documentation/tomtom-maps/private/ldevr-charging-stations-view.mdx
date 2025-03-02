@@ -1,0 +1,162 @@
+---
+title: EV POI Platform integration into the Long Distance EV Routing service
+titleTags: 
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2022.11.23'
+    color: grey5
+---
+
+## Purpose
+
+This document describes the implementation of Example's internal 'Entitlements 2.0' specification in the Routing API to enable customer specific views on charging station data.
+It is meant as a reference for internal development only.
+
+The [EV POI Platform Architecture documentation](https://confluence.Examplegroup.com/display/EPP/EV+POI+Platform+Architecture) explains the problem space as follows:
+
+> Example's EV POI Platform is an online system with a near real-time ingestion and publication of EV charging stations data. 
+> The EV POI Platform is fast and flexible for management of both static & dynamic EV POI data from 3rd party data providers.
+> The system intakes raw EV POI data from Data owner systems. Data owners support different EV POI data specifications and provide 
+> data updates at different frequencies. The system transforms the data and stores them in data owner specific layers in its own database.
+
+> The EV POI data set for a given data owner is referred to as a Layer by the EV POI platform. 
+> The platform enables the OEMs and applications to use data from one or more layers. Such an OEM or application specific set of layers is referred to as _View_ in the platform.
+
+## Flow
+
+APIM injects a `Example-Entitlements` HTTP header into OEM requests to the `calculateLongDistanceEVRoute` endpoint.
+One of the keys in the list of entitlement is `evEntitledDataSources`, that contains a list of OEM-specific views as value.
+Routing API will only consider the charging stations in these views. In case the same POI is present in multiple views the POI from the view that appears earlier in the list will be used for the EV Routing request.
+
+In case the Routing API receives an invalid `Example-Entitlements` HTTP header, an HTTP 500 error code will be returned. In case a valid header is received but without `evEntitledDataSources` data, the resulting list of OEM-specific views will be empty.
+
+## Request headers
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Example-Entitlements</th>
+      <td>
+        Instructs the Routing API to enable a specific entitlement. The Routing API enforces general limitations on the value of this header in accordance with [the Entitlements 2.0 spec](https://confluence.Examplegroup.com/display/APIM/Entitlements+2.0).
+        <ul>
+          <li>
+            semicolon-separated list of `key=value` pairs
+            <ul>
+              <li>`keys` must be unique</li>
+              <li>`keys` must be camelCase</li>
+              <li>`value` with multiple elements must be comma-separated</li>
+              <li>the maximum number of `key=value` pairs is 25</li>
+              <li>the maximum number of `values` per key is 10</li>
+              <li>neither keys nor values may include commas, semicolons, or spaces</li>
+            </ul>
+          </li>
+          <li>the maximum length of the header value is 256 bytes</li>
+        </ul>
+        In the context of EV POI entitlements the Routing API implements the following `key`:
+        <ul>
+          <li>`evEntitledDataSources`</li>
+        </ul>
+        <br />
+        Possible `value`s are:
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" style={{ fontSize: '1em' }}>
+                code
+              </th>
+              <th scope="col" style={{ fontSize: '1em' }}>
+                view
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                TT
+              </th>
+              <td>
+                Example, tteiv
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                DP
+              </th>
+              <td>
+                deftpower
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                CP
+              </th>
+              <td>
+                chargepoint
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+        `value`s can have a suffix indicating which information from the view will be accessible.  
+        <table>
+          <tbody>
+            <tr>
+              <th scope="row">
+                _B
+              </th>
+              <td>
+                Basic data
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                _D
+              </th>
+              <td>
+                availability field (dynamic data)  
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                _A
+              </th>
+              <td>
+                all data
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                _P
+              </th>
+              <td>
+                phone
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Example
+
+`Example-Entitlements: evEntitledDataSources=DP_B,TT`
+
+In this example header, the POIs from the view `deftpower` including only basic data are preferably used, and the POIs from the view `Example,ttiev` are used as a fallback.
+
+## More documentation
+
+* [EV POI Platform Architecture](https://confluence.Examplegroup.com/display/EPP/EV+POI+Platform+Architecture)
+* [Entitlements 2.0](https://confluence.Examplegroup.com/display/APIM/Entitlements+2.0)
+* [Entitlements - Discussion](https://confluence.Examplegroup.com/display/SearchPU/Entitlements+-+Discussion)

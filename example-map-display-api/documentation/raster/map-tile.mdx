@@ -1,0 +1,1480 @@
+---
+title: Map Tile
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2023.08.01'
+    color: grey5
+---
+
+## Purpose
+
+The Maps Raster Tile API endpoint renders map data that is divided into gridded sections called tiles. Tiles are square images in various sizes which are available at 23 different zoom levels, ranging from 0 to 22. For zoom level 0, the entire earth is displayed on one single tile, while at zoom level 22, the world is divided into 2<sup>44</sup> tiles. See the  [Zoom Levels and Tile Grid](/map-display-api/documentation/zoom-levels-and-tile-grid).
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+
+## Tile layers and styles
+
+The Maps Raster service supports the following tile layers: **basic**, **hybrid**, and **labels**. Each can be served in two different styles: **main** and **night**.
+
+Basic tiles contain mapping data such as polygons, road shapes, borders and labels. In addition to the basic map tiles, the service provides overlay tiles. These are partially transparent tiles containing map geometry or labels but not the full map. They can be layered with other TomTom or third party map tiles to create consolidated views:
+
+- The **labels** overlay provides the same label information as the standard map tile. It can be used in situations where traffic tubes or other overlaid information covers the labels on the base map layer. The labels are precisely placed to align with the labels on the standard layer.
+- The **hybrid** overlay provides all the features from the map data except geographic polygons. It contains borders, roads, and labels, and can be overlaid on other tiles (such as satellite imagery) to produce hybrid tiles displaying TomTom map data.
+
+Because _overlaying requires transparency_, all overlay tiles must be requested with a format of **png**.
+
+## Tile Sizes
+
+The following tiles sizes are currently supported:
+
+- **256 x 256 pixels:** This is better suited for lower resolution displays and clients sensitive to internet data transfer usage.
+- **512 x 512 pixels:** This is created for displays with high resolutions.
+
+## Request data
+
+### HTTPS method: `GET`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/map/{versionNumber}/tile/{layer}/{style}/{zoom}/{X}/{Y}.{format}?key={Your_API_Key}&tileSize={tileSize}&view={geopoliticalView}&language={language}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://{baseURL}/map/{versionNumber}/tile/{layer}/{style}/{zoom}/{X}/{Y}.{format}?key={Your_API_Key}&tileSize={tileSize}&view={geopoliticalView}&language={language}'
+```
+
+### Request parameters
+
+These parameters are used in calls to generate all tile layers.
+
+- Required parameters **must be used** or the call will fail.
+- Parameters and values are case-sensitive.
+- Optional parameters may be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling TomTom services.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `api.tomtom.com` 
+          </li>
+          <li>
+             `[a|b|c|d].api.tomtom.com`  (see the
+             [Host Name Cycling section](#host-name-cycling)  for
+            details on aliases)
+          </li>
+          <li>
+             `kr-api.tomtom.com`  (see the
+             [Region-specific content](/region-specific-content) 
+            page)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `layer` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Layer of the tile to be rendered.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `basic` 
+          </li>
+          <li>
+             `hybrid` 
+          </li>
+          <li>
+             `labels` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `style` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Style of the tile to be rendered.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `main` 
+          </li>
+          <li>
+             `night` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `zoom` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        Zoom level of the tile to be rendered.
+        <br />
+         **Value:**   `0..22` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `X` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The x coordinate of the tile on a zoom grid.
+        <br />
+         **Value:**  0..2 <sup>zoom</sup> -1
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `Y` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The y coordinate of the tile on a zoom grid.
+        <br />
+         **Value:**  0..2 <sup>zoom</sup> -1
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `format` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The format of the response.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `jpg` 
+          </li>
+          <li>
+             `png` 
+          </li>
+        </ul>
+        <br />
+         **Note:**  The  **jpg**  format is only supported for  `layer=basic` ,  `style=main` , and  `zoom<7`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        An API Key valid for the requested service.
+        <br />
+         **Value:**  Your valid API Key.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `tileSize` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The tile size dimension in pixels.
+        <br />
+         **Default value:**   `256` 
+        <br />
+         **Other value:**   `512` 
+        <br />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `view` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        A geopolitical view. Usage of a value outside of the given set will
+        result in the server sending a HTTP 400 response.
+        <br />
+         **Default value:**  See the following
+         [Default view mapping](#default-view-mapping)  section.
+        <br />
+         **Other values:** 
+        <ul>
+          <li>
+             `Unified` 
+          </li>
+          <li>
+             `IL` 
+          </li>
+          <li>
+             `IN` 
+          </li>
+          <li>
+             `MA` 
+          </li>
+          <li>
+             `PK` 
+          </li>
+          <li>
+             `AR` 
+          </li>
+          <li>
+             `Arabic` 
+          </li>
+          <li>
+             `RU` 
+          </li>
+          <li>
+             `TR` 
+          </li>
+          <li>
+             `CN` 
+          </li>
+          <li>
+             `KR` 
+            <sup>*</sup>
+          </li>
+        </ul>
+        <br />* Only available under  *kr-api.tomtom.com* , see  [Available region specific contents](/region-specific-content#available-region-specific-contents).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `language` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The language to be used for labels returned in the response. It should
+        be one of the supported
+         [IETF language code tags described here](https://datahub.io/core/language-codes) 
+        or one of the custom language tags. When data in a specified language is
+        not available for a specific label, the default language is used.
+        <br />
+         **Default value:**   `NGT`  (Neutral Ground Truth)
+        <br />
+         **Other values:**  See the following
+         [List of supported languages.](#list-of-supported-languages) 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Request headers
+
+The following table lists HTTP request headers of particular interest to clients of the Maps Raster Tile API endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) 
+      </th>
+      <td>
+        Contains the content encoding (usually a compression algorithm), that
+        the client is able to understand.
+        <br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [If-None-Match](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match) 
+      </th>
+      <td>
+        Contains an identifier for a specific version of resource. The server
+        will send back the requested resource, with a 200 HTTP status code, only
+        if it doesn't have an ETag matching the given one.
+        <br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-request" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        Specifies an identifier for the request. It can be used to trace a call.
+        The value must match the regular expression
+         `'^[a-zA-Z0-9-]{1,100}$'`. An example of the format
+        that matches this regular expression is a UUID (e.g.,
+         `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122). If specified, it is replicated in the
+         [Tracking-ID](#trackingid-response)  response header.
+        <br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Default language algorithm
+
+The best match will be chosen based on following algorithm.
+
+1. Every IETF language subtag provided in the  `language`  parameter is being matched from left to right. A partial match is allowed. For example:
+   - All requested language subtags exactly match when the requested language is selected.
+   - If the requested primary language subtag  *does not have a match for a region* , but a script subtag is available for other primary language subtags, then this other laguage will be used.
+2. If there are multiple matches for a region, then the one with the highest priority is used.
+3. If there is no match then  `NGT`  (Neutral Ground Truth) is used.
+
+## List of supported languages
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="350px;">
+        Language name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Language tag
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Neutral Ground Truth (custom)</th>
+      <td>
+         `NGT` 
+        <br />
+        Official languages for all regions in local scripts if available.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Neutral Ground Truth - Latin exonyms (custom)</th>
+      <td>
+         `NGT-Latn` 
+        <br />
+        Latin script will be used if available.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Arabic</th>
+      <td>
+         `ar` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Bulgarian</th>
+      <td>
+         `bg-BG` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Chinese (Taiwan)</th>
+      <td>
+         `zh-TW` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Chinese (Simplified)</th>
+      <td>
+         `zh-CN` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Czech</th>
+      <td>
+         `cs-CZ` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Danish</th>
+      <td>
+         `da-DK` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Dutch</th>
+      <td>
+         `nl-NL` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Australia)</th>
+      <td>
+         `en-AU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Canada)</th>
+      <td>
+         `en-CA` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Great Britain)</th>
+      <td>
+         `en-GB` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (New Zealand)</th>
+      <td>
+         `en-NZ` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (USA)</th>
+      <td>
+         `en-US` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Finnish</th>
+      <td>
+         `fi-FI` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">French</th>
+      <td>
+         `fr-FR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">German</th>
+      <td>
+         `de-DE` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Greek</th>
+      <td>
+         `el-GR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Hungarian</th>
+      <td>
+         `hu-HU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Indonesian</th>
+      <td>
+         `id-ID` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Italian</th>
+      <td>
+         `it-IT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Korean</th>
+      <td>
+         `ko-KR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Lithuanian</th>
+      <td>
+         `lt-LT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Malay</th>
+      <td>
+         `ms-MY` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Norwegian</th>
+      <td>
+         `nb-NO` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Polish</th>
+      <td>
+         `pl-PL` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese (Brazil)</th>
+      <td>
+         `pt-BR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese (Portugal)</th>
+      <td>
+         `pt-PT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russian written in the Cyrillic script.</th>
+      <td>
+         `ru-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russian written in the Latin script.</th>
+      <td>
+         `ru-Latn-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Russian written in the Cyrillic script.
+        <br />
+        Cyrillic script used where possible.
+      </th>
+      <td>
+         `ru-Cyrl-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Slovak</th>
+      <td>
+         `sk-SK` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Slovenian</th>
+      <td>
+         `sl-SI` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish (Castilian)</th>
+      <td>
+         `es-ES` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish (Mexico)</th>
+      <td>
+         `es-MX` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Swedish</th>
+      <td>
+         `sv-SE` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Thai</th>
+      <td>
+         `th-TH` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Turkish</th>
+      <td>
+         `tr-TR` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Default view mapping
+
+Default view is recognised based on the country the request came from.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Country
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default view
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Argentina</th>
+      <td>
+         `AR` 
+        <br />
+         **Other available views:**   `Arabic` ,  `CN` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">India</th>
+      <td>
+         `IN` 
+        <br />
+         **Other available views:**  None
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Morocco</th>
+      <td>
+         `MA` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Pakistan</th>
+      <td>
+         `PK` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russia</th>
+      <td>
+         `RU` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Türkiye</th>
+      <td>
+         `TR` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">China</th>
+      <td>
+         `CN` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Bahrain, Kuwait, Oman, Qatar,
+        <br />
+        Saudi Arabia, the United Arab Emirates
+      </th>
+      <td>
+         `Arabic` 
+        <br />
+         **Other available views:**   `AR` ,  `CN` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Others</th>
+      <td>
+         `Unified` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+* Only available under  *kr-api.tomtom.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+<br />
+
+## Host Name Cycling
+
+Most web browsers have a default limitation on the number of active connections that can be allowed to each host. This means if map tiles are being loaded via the api.tomtom.com host name, they will be loaded one at a time. A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases. These host names are:
+
+- **a.api.tomtom.com**
+- **b.api.tomtom.com**
+- **c.api.tomtom.com**
+- **d.api.tomtom.com**
+
+By cycling through these four different host names, the web browser will be tricked into retrieving four map tiles at a time rather than just one. This will significantly speed up the performance of map rendering.
+
+For instance, if four map tiles are being requested at zoom level one, you would request the first one as:
+
+```shell [type=get] [title=Request URL using a.api.tomtom.com]
+https://a.api.tomtom.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
+```
+
+The second would be:
+
+```shell [type=get] [title=Request URL using b.api.tomtom.com]
+https://b.api.tomtom.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
+```
+
+and so on up until **d.api.tomtom.com**. When more than four tiles are being requested, start back again at **a.api.tomtom.com**.
+
+## Response data
+
+The Maps Raster API, for a single request, _returns one square tile_ in **png** or **jpg** format.
+
+### 256 x 256 pixels
+
+<table>
+  <thead>
+    <tr colspan="3">
+      <th scope="col" style={{ fontSize: '1em' }} width="150px;">
+        Layer
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Main
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Night
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">basic</th>
+      <td>
+        <img
+          alt="basic main view"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/basic_main.png"
+          width="256"
+        />
+      </td>
+      <td>
+        <img
+          alt="basic night view"
+          src="https://developer.tomtom.com/assets/images/maps-api/basic_night.png"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hybrid</th>
+      <td>
+        <img
+          alt="hybrid main view"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_main.png"
+          width="256"
+        />
+      </td>
+      <td>
+        <img
+          alt="hybrid night view"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_night.png"
+          width="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">labels</th>
+      <td>
+        <img
+          alt="labels main view"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/labels_main.png"
+          width="256"
+        />
+      </td>
+      <td>
+        <img
+          alt="labels night view"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/labels_night.png"
+          width="256"
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### 512 x 512 pixels
+
+<table>
+  <thead>
+    <tr colspan="2">
+      <th scope="col" style={{ fontSize: '1em' }} width="150px;">
+        Layer
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Main
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">basic</th>
+      <td>
+        <img
+          alt="basic main 512"
+          height="512"
+          src="https://developer.tomtom.com/assets/images/maps-api/basic_main_512.png"
+          width="512"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">labels</th>
+      <td>
+        <img
+          alt="labels main 512"
+          height="512"
+          src="https://developer.tomtom.com/assets/images/maps-api/labels_main_512.png"
+          width="512"
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Response examples
+
+<h4 style={{ fontSize: '1em' }}>Example 1</h4>
+
+**Whole world at zoom =  `0` **
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Request
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Response
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        Basic main zoom = 0:
+        <br />
+         `https://api.tomtom.com/map/1/tile/basic/main/0/0/0.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="basic main zoom 0"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/basic_main_zoom0.png"
+          width="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Basic night zoom = 0:
+        <br />
+         `https://api.tomtom.com/map/1/tile/basic/night/0/0/0.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="basic night zoom 0"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/basic_night_zoom0.png"
+          width="256"
+        />
+        <br />
+         **Note:**  There is no data for labels and roads at this zoom level,
+        so any different combination of layer and style will cause a transparent
+        tile to be returned.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+<h4 style={{ fontSize: '1em' }}>Example 2</h4>
+
+**Europe at zoom =  `4` **
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Request
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Response
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        Basic main zoom = 4:
+        <br />
+         `https://api.tomtom.com/map/1/tile/basic/main/4/8/5.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="basic main zoom 4"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/basic_main_zoom4.png"
+          width="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Hybrid main zoom = 4:
+        <br />
+         `https://api.tomtom.com/map/1/tile/hybrid/main/4/8/5.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="hybrid main zoom 4"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_main_zoom4.png"
+          width="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Labels main zoom = 4:
+        <br />
+         `https://api.tomtom.com/map/1/tile/labels/main/4/8/5.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="labels main zoom 4"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/labels_main_zoom4.png"
+          width="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Basic night zoom = 4:
+        <br />
+         `https://api.tomtom.com/map/1/tile/basic/night/4/8/5.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="basic night zoom 4"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/basic_night_zoom4.png"
+          width="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Hybrid night zoom = 4:
+        <br />
+         `https://api.tomtom.com/map/1/tile/hybrid/night/4/8/5.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="hybrid night zoom 4"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_night_zoom4.png"
+          width="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Labels night zoom = 4:
+        <br />
+         `https://api.tomtom.com/map/1/tile/labels/night/4/8/5.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="labels night zoom 4"
+          height="256"
+          src="https://developer.tomtom.com/assets/images/maps-api/labels_night_zoom4.png"
+          width="256"
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+<h4 style={{ fontSize: '1em' }}>Example 3</h4>
+
+**Amsterdam at zoom =  `17` **
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Request
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Response
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        Basic main zoom = 17:
+        <br />
+         `https://api.tomtom.com/map/1/tile/basic/main/17/67296/43062.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="basic main zoom = 17"
+          src="https://developer.tomtom.com/assets/images/maps-api/basic_main_zoom17.png"
+          width="256"
+          height="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Hybrid main zoom = 17:
+        <br />
+         `https://api.tomtom.com/map/1/tile/hybrid/main/17/67296/43062.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="hybrid main zoom = 17"
+          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_main_zoom17.png"
+          width="256"
+          height="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Labels main zoom = 17:
+        <br />
+         `https://api.tomtom.com/map/1/tile/labels/main/17/67296/43062.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="labels main zoom = 17"
+          src="https://developer.tomtom.com/assets/images/maps-api/labels_main_zoom17.png"
+          width="256"
+          height="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Basic night zoom = 17:
+        <br />
+         `https://api.tomtom.com/map/1/tile/basic/night/17/67296/43062.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="basic night zoom = 17"
+          src="https://developer.tomtom.com/assets/images/maps-api/basic_night_zoom17.png"
+          width="256"
+          height="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Hybrid night zoom = 17:
+        <br />
+         `https://api.tomtom.com/map/1/tile/hybrid/night/17/67296/43062.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="hybrid night zoom = 17"
+          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_night_zoom17.png"
+          width="256"
+          height="256"
+        />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Labels night zoom = 17:
+        <br />
+         `https://api.tomtom.com/map/1/tile/labels/night/17/67296/43062.png?key={Your_API_Key}` 
+      </th>
+      <td>
+        <img
+          alt="labels night zoom = 17"
+          src="https://developer.tomtom.com/assets/images/maps-api/labels_night_zoom17.png"
+          width="256"
+          height="256"
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+### Error response
+
+The Map Display API Raster service for an invalid request returns a response body in XML or JSON format. The XML format is returned by default. To have an error response returned in JSON format,  `application/json`  has to be specified in the  `Accept`  HTTP request header.
+
+<h4 style={{ fontSize: '1em' }}>Error response field structure</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `detailedError` 
+        <br />
+         *object* 
+      </th>
+      <td>Main object of the error response.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code` 
+        <br />
+         *string* 
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `message` 
+        <br />
+         *string* 
+      </th>
+      <td>A human-readable description of the error code.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Error response example
+
+```json [title=Error response example - JSON]
+{
+  "detailedError": {
+    "code": "BAD_REQUEST",
+    "message": "Invalid tile position arguments"
+  }
+}
+```
+
+```xml [title=Error response example - XML]
+<errorResponse description="Invalid tile position arguments" errorCode="400" version="1.0.54-mascoma">
+    <code>BAD_REQUEST</code>
+    <message>Invalid tile position arguments</message>
+  </detailedError>
+</errorResponse>
+```
+
+### Response codes
+
+<table>
+  <thead>
+    <tr>
+      <th
+        scope="col"
+        style={{ fontSize: '1em', textAlign: 'center' }}
+        width="250px;"
+      >
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Meaning &amp; possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `200` 
+      </th>
+      <td>
+         **OK** 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `304` 
+      </th>
+      <td>
+         **Not Modified** : The tile has not been modified. This code is
+        returned when the  `If-None-Match`  request header is used and
+        its value matches the ETag of the requested tile.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `400` 
+      </th>
+      <td>
+         **Bad request** : Probably malformed syntax.
+        <ul>
+          <li>
+            The combination of layer, style, and query parameters is not
+            supported.
+          </li>
+          <li>
+            Zoom  *n*  is out of range 0 &lt;= zoom &lt;= 22: The requested
+            zoom level is out of the possible range.
+          </li>
+          <li>
+            x  *n*  is out of range [0, *m* ]: The requested x
+            coordinate is out of the possible range (the value of  *m* 
+            will vary depending on the zoom level).
+          </li>
+          <li>
+            y  *n*  is out of range [0, *m* ]: The requested y
+            coordinate is out of the possible range (the value of  *m* 
+            will vary depending on the zoom level).
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `403` 
+      </th>
+      <td>
+         **Forbidden** : The supplied API Key is not valid for this request.
+        The requested view is not available in the country from where the
+        request was sent.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `429` 
+      </th>
+      <td>
+         **Too Many Requests** : Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `500` 
+      </th>
+      <td>
+         **Internal Server Error** : There is a problem with the TomTom Maps
+        Raster Tile service.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `503` 
+      </th>
+      <td>
+         **Service currently unavailable**.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Response headers</h3>
+
+The following table lists HTTP response headers of particular interest to clients of the Map Display API Raster Tile endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin) 
+      </th>
+      <td>
+        The Maps Raster Tile API allows cross-origin resource sharing (CORS).
+        <br />
+         **Value:**   `*` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) 
+      </th>
+      <td>
+        Contains directives for a caching mechanism.
+        <br />
+         **Value:**   `max-age=<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding) 
+      </th>
+      <td>
+        Indicates which encodings were applied to the Response body.
+        <br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Length](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length) 
+      </th>
+      <td>
+        Contains information about the size of the response body.
+        <br />
+         **Value:**   `<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) 
+      </th>
+      <td>
+        Indicates the media type of the resource returned.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `image/png` 
+          </li>
+          <li>
+             `image/jpeg` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Date](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date) 
+      </th>
+      <td>
+        Contains the date and time at which the message was originated.
+        <br />
+         **Value:**   `<http-date>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) 
+      </th>
+      <td>
+        Contains an identifier for a specific version of resource.
+        <br />
+         **Value:**   `W/"2fdbd61f30456"` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Expires](https://developer.mozilla.org/en/docs/Web/HTTP/Headers/Expires) 
+      </th>
+      <td>
+        Contains the date after which the response is considered outdated.
+        <br />
+         **Value:**   `http-date` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Transfer-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding) 
+      </th>
+      <td>
+        Specifies the form of encoding used to safely transfer Response to the
+        user. If this header is specified, Content-Length header will be absent.
+        <br />
+         **Value:**   `chunked` 
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        An identifier for the request. If the
+         [Tracking-ID](#trackingid-request)  header was specified in
+        the request, it is replicated in the response. Otherwise, it is
+        generated automatically by the service. For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122). **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>

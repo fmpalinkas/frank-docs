@@ -1,0 +1,1348 @@
+---
+title: Static Image
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2023.08.01'
+    color: grey5
+---
+
+## Purpose
+
+The Static Image service renders a user-defined, rectangular image containing a map section. A user can select one of 23 zoom levels ranging from  `0`  to  `22`  for it.
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+
+## Layers and styles
+
+A user can select from predefined [layers](#layers) and [styles](#styles) for the map. The Static Image service supports the following layers:
+
+- **basic** layer
+- **hybrid** layer
+- **labels** layer
+
+Each layer can be served in two different styles: **main** style and **night** style.
+
+### Layers
+
+<h4 style={{ fontSize: '1em' }}>Basic</h4>
+
+Contains full map data, i.e., polygons, roads, borders, and labels.
+
+<h4 style={{ fontSize: '1em' }}>Hybrid</h4>
+
+Contains borders, roads, and labels (all the map features, except geographic polygons). It can be overlaid on another map layer (such as satellite imagery) in order to produce a hybrid map.
+
+<h4 style={{ fontSize: '1em' }}>Labels</h4>
+
+Only provides **label information** (the same as the basic map layer). It can be used in situations where traffic tubes or other overlaid information cover labels of the base map layer. The labels are precisely placed in order to align with the labels on the basic layer. Because _overlaying requires transparency_, all overlay images must be requested in **png format**.
+
+### Styles
+
+Styles define two colour schemes:
+
+<ul>
+  <li>
+     **main** : Defines the general full-colour scheme with default TomTom
+    colours.
+  </li>
+  <li>
+     **night** : Defines the modification of the main theme, it is changed to
+    be less invasive than main while using it at night.
+  </li>
+</ul>
+
+## Request data
+
+### HTTPS method: `GET`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/map/{versionNumber}/staticimage?key={Your_API_Key}&center={centerPointCoords}&bbox={boundingBox}&zoom={zoom}&width={width}&height={height}&format={format}&layer={layer}&style={style}&view={geopoliticalView}
+```
+
+<h4 style={{ fontSize: '1em' }}>Examples</h4>
+
+```shell [type=get] [title=Example request URL]
+https://api.tomtom.com/map/1/staticimage?key={Your_API_Key}&zoom=9&center=13.567893,46.112341&format=jpg&layer=basic&style=main&width=1305&height=748&view=Unified&language=en-GB
+```
+
+```shell [type=get] [title=Example request URL]
+https://api.tomtom.com/map/1/staticimage?key={Your_API_Key}&zoom=9&bbox=23.355233,55.982261,24.980233,56.526017&format=png&layer=labels&style=night&view=IN&language=en-GB
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=curl request URL]
+curl 'https://api.tomtom.com/map/1/staticimage?key={Your_API_Key}&zoom=9&center=13.567893,46.112341&format=jpg&layer=basic&style=main&width=1305&height=748  &view=Unified  &language=en-GB'
+```
+
+### Request parameters
+
+The following data table describes the parameters that can be used in a request. Required parameters **must be used** or the call will fail.
+
+**Important:** the `center` parameter and the `bbox` parameter are **mutually exclusive**. Either of these parameters are **required** in a request, but _not both_. If you use both of these parameters in the same request, **the call will fail with a 400 error**. See the [Mutually exclusive parameters](#mutually-exclusive-parameters) section in the following table for more information.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling TomTom services.
+        <br />
+         **Value:**   `api.tomtom.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The Authorization key for access to the API.
+        <br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th
+        id="mutually-exclusive-parameters"
+        scope="col"
+        style={{ fontSize: '1em' }}
+        width="300px;"
+      >
+        Mutually exclusive parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `center` 
+        <br />
+         *float* 
+      </th>
+      <td>
+        Center point coordinates. Usage of  `center`  is mutually
+        exclusive with the usage of  `bbox`. If both are used, the
+        service will return a HTTP  `400`  error response.
+         [EPSG:3857 projection](https://epsg.io/3857) 
+        is used. (Note that EPSG:3857 is functionally equivalent to
+        EPSG:900913/EPSG:3785)
+        <br />
+         **Value:**   `lon,lat` 
+        <ul>
+          <li>
+            Longitude within range:  `-180;180` 
+          </li>
+          <li>
+            Latitude within range:  `-85;85` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `bbox` 
+        <br />
+         *float* 
+      </th>
+      <td>
+        Bounding box. Usage of  `bbox`  is mutually exclusive with the
+        usage of  `center`. If both are used, the service will return
+        a HTTP  `400`  error response. EPSG:3857 projection is used.
+        (Note that EPSG:3857 is functionally equivalent to
+        EPSG:900913/EPSG:3785)  **Values have to be in this exact order:** 
+         `minLon` ,  `minLat` ,  `maxLon` ,
+         `maxLat` , and  `maxLat`  &gt;  `minLat`.
+        Otherwise, the service will return a HTTP  `400`  error
+        response. You can ask for longitudes on both sides of the 180th
+        meridian; thus, all combinations of  `minLon`  and
+         `maxLon`  are valid.
+        <br />
+         **Values:**   `minLon,minLat,maxLon,maxLat` 
+        <ul>
+          <li>
+            Longitude within range:  `-180;180` 
+          </li>
+          <li>
+            Latitude within range:  `-85;85` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `layer` 
+        <br />
+         *string* 
+      </th>
+      <td>
+         **Default value:**   `basic` 
+        <br />
+         **Other values:**   `hybrid`  and  `labels`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `style` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The map style to be returned. Usage of a value outside of the given set
+        will result in the server sending a HTTP  `400`  response.
+        <br />
+         **Default value:**   `main` 
+        <br />
+         **Other value:**   `night` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `format` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The image format to be returned. Usage of a value outside of the given
+        set will result in the server sending a HTTP  `400`  response.
+        <br />
+         **Default value:**   `png` 
+        <br />
+         **Other values:**   `jpg`  and  `jpeg`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `zoom` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The desired zoom level of the map. Zoom must be within the range of:
+         `0-20` , otherwise a HTTP  `400`  response will be
+        sent.
+        <br />
+         **Default value:**   `12` 
+        <br />
+         **Other values:**   `0`  -  `22` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `width` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The width of the resulting image, in pixels. Width must be a positive
+        integer in the range of  `1`  to  `8192` , otherwise a
+        HTTP  `400`  response will be sent.
+        <br />
+         **Default value:**   `512` 
+        <br />
+         **Other values:**  A positive integer within the range of:
+         `1-8192`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `height` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The height of the resulting image, in pixels. Height must be a positive
+        integer in the range of  `1`  to  `8192` , otherwise a
+        HTTP  `400`  response will be sent.
+        <br />
+         **Default value:**   `512` 
+        <br />
+         **Other values:**  A positive integer within the range of:
+         `1-8192`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `view` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The geopolitical view. Usage of a value outside of the given set will
+        result in the server sending a HTTP  `400`  response.
+        <br />
+         **Default value:**  See the following
+         [Default view mapping](#default-view-mapping)  section.
+        <br />
+         **Other values:**   `Unified` ,  `IL` ,
+         `IN` ,  `MA` ,  `PK` ,  `AR` ,
+         `Arabic` ,  `RU` ,  `TR` ,  `CN` ,
+         `KR` 
+        <sup>*</sup>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `language` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The language to be used for labels returned in the response. It should
+        be one of the supported
+         [IETF language code tags described here](https://datahub.io/core/language-codes) 
+        or one of the custom language tags. When data in a specified language is
+        not available for a specific label, the default language is used.
+        <br />
+         **Default value:**   `NGT`  (Neutral Ground Truth)
+        <br />
+         **Other values:**  See the following
+         [List of supported languages.](#list-of-supported-languages) 
+      </td>
+    </tr>
+  </tbody>
+</table>
+* Only available under  *kr-api.tomtom.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+<br />
+
+### Request headers
+
+The following table lists HTTP request headers of particular interest to clients of the Maps Static Image API endpoint. **Note:** There are no required headers in this endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="trackingid-request" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        Specifies an identifier for the request. It can be used to trace a call.
+        The value must match the regular expression
+         `'^[a-zA-Z0-9-]{1,100}$'`. An example of the format
+        that matches this regular expression is a UUID (e.g.,
+         `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122).If specified, it is replicated in the
+         [Tracking-ID](#trackingid-response)  response header.
+        <br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Default language algorithm
+
+The best match will be chosen based on the following algorithm.
+
+
+<ol>
+  <li>
+    Every IETF language subtag provided in the  `language`  parameter
+    is being matched from left to right. A partial match is allowed. For
+    example:
+    <ul>
+      <li>
+        All requested language subtags exactly match when the requested language
+        is selected.
+      </li>
+      <li>
+        If the requested primary language subtag
+         *does not have a match for a region* , but a script subtag is
+        available for other primary language subtags, then this other laguage
+        will be used.
+      </li>
+    </ul>
+  </li>
+  <li>
+    If there are multiple matches for a region, then the one with the highest
+    priority is used.
+  </li>
+  <li>
+    If there is no match then  `NGT`  (Neutral Ground Truth) is used.
+  </li>
+</ol>
+
+## List of supported languages
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="350px;">
+        Language name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Language tag
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Neutral Ground Truth (custom)</th>
+      <td>
+         `NGT` 
+        <br />
+        Official languages for all regions in local scripts if available.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Neutral Ground Truth - Latin exonyms (custom)</th>
+      <td>
+         `NGT-Latn` 
+        <br />
+        Latin script will be used if available.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Arabic</th>
+      <td>
+         `ar` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Bulgarian</th>
+      <td>
+         `bg-BG` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Chinese (Taiwan)</th>
+      <td>
+         `zh-TW` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Chinese (Simplified)</th>
+      <td>
+         `zh-CN` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Czech</th>
+      <td>
+         `cs-CZ` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Danish</th>
+      <td>
+         `da-DK` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Dutch</th>
+      <td>
+         `nl-NL` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Australia)</th>
+      <td>
+         `en-AU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Canada)</th>
+      <td>
+         `en-CA` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Great Britain)</th>
+      <td>
+         `en-GB` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (New Zealand)</th>
+      <td>
+         `en-NZ` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (USA)</th>
+      <td>
+         `en-US` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Finnish</th>
+      <td>
+         `fi-FI` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">French</th>
+      <td>
+         `fr-FR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">German</th>
+      <td>
+         `de-DE` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Greek</th>
+      <td>
+         `el-GR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Hungarian</th>
+      <td>
+         `hu-HU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Indonesian</th>
+      <td>
+         `id-ID` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Italian</th>
+      <td>
+         `it-IT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Korean</th>
+      <td>
+         `ko-KR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Lithuanian</th>
+      <td>
+         `lt-LT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Malay</th>
+      <td>
+         `ms-MY` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Norwegian</th>
+      <td>
+         `nb-NO` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Polish</th>
+      <td>
+         `pl-PL` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese (Brazil)</th>
+      <td>
+         `pt-BR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese (Portugal)</th>
+      <td>
+         `pt-PT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russian written in the Cyrillic script.</th>
+      <td>
+         `ru-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russian written in the Latin script.</th>
+      <td>
+         `ru-Latn-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Russian written in the Cyrillic script.
+        <br />
+        Cyrillic script used where possible.
+      </th>
+      <td>
+         `ru-Cyrl-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Slovak</th>
+      <td>
+         `sk-SK` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Slovenian</th>
+      <td>
+         `sl-SI` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish (Castilian)</th>
+      <td>
+         `es-ES` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish (Mexico)</th>
+      <td>
+         `es-MX` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Swedish</th>
+      <td>
+         `sv-SE` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Thai</th>
+      <td>
+         `th-TH` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Turkish</th>
+      <td>
+         `tr-TR` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Default view mapping
+
+Default view is recognised based on the country the request came from.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Country
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default view
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Argentina</th>
+      <td>
+         `AR` 
+        <br />
+         **Other available views:**   `Arabic` ,  `CN` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">India</th>
+      <td>
+         `IN` 
+        <br />
+         **Other available views:**  None
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Morocco</th>
+      <td>
+         `MA` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Pakistan</th>
+      <td>
+         `PK` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russia</th>
+      <td>
+         `RU` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Türkiye</th>
+      <td>
+         `TR` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">China</th>
+      <td>
+         `CN` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Bahrain, Kuwait, Oman, Qatar,
+        <br />
+        Saudi Arabia, the United Arab Emirates
+      </th>
+      <td>
+         `Arabic` 
+        <br />
+         **Other available views:**   `AR` ,  `CN` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Others</th>
+      <td>
+         `Unified` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+* Only available under  *kr-api.tomtom.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+<br />
+
+## Allowed zoom level / bbox combinations
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Zoom level
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Max <span class="brown">longitude</span> difference
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Max <span class="brown">latitude</span> difference
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `0` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `360` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `170` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `1` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `360` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `170` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `2` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `360` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `170` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `3` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `360` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `170` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `4` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `360` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `170` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `5` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `180` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `85` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `6` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `90` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `42.5` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `7` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `45` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `21.25` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `8` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `22.5` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `10.625` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `9` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `11.25` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `5.3125` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `10` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `5.625` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `2.65625` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `11` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `2.8125` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `1.328125` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `12` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `1.40625` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.6640625` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `13` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `0.703125` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.33203125` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `14` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `0.3515625` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.166015625` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `15` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `0.17578125` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.0830078125` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `16` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `0.087890625` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.0415039063` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `17` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `0.0439453125` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.0207519531` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `18` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `0.0219726563` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.0103759766` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `19` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `0.0109863281` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.0051879883` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `20` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `0.0054931641` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.0025939941` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `21` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `0.00274658205` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.00129699705` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `22` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `0.00137329102` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `0.00064849852` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Examples
+
+```shell [type=get] [title=Correct request URL uses &bbox=-180,-85,0,0]
+https://api.tomtom.com/map/1/staticimage?key={Your_API_Key}&zoom=5&bbox=-180,-85,0,0&format=jpg&layer=basic&style=main&view=Unified
+```
+
+```shell [type=get] [title=Incorrect request URL uses &bbox=-180,-85,1,0]
+https://api.tomtom.com/map/1/staticimage?key={Your_API_Key}&zoom=5&bbox=-180,-85,1,0&format=jpg&layer=basic&style=main&view=Unified
+```
+
+## Response data
+
+### Error response
+
+The Map Display API Static Map service for an invalid request returns a response body in plain text or JSON format. The plain text format is returned by default. To have an error response returned in JSON format,  `application/json`  has to be specified in the  `Accept`  HTTP request header.
+
+<h4 style={{ fontSize: '1em' }}>Plain text format</h4>
+
+```shell
+Bad request
+```
+
+<h4 style={{ fontSize: '1em' }}>Error response field structure</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `detailedError` 
+        <br />
+         *object* 
+      </th>
+      <td>
+        Main  `object`  of the error response.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code` 
+        <br />
+         *string* 
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `message` 
+        <br />
+         *string* 
+      </th>
+      <td>A human-readable description of the error code.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `details` 
+        <br />
+         *array* 
+      </th>
+      <td>
+         *Optional field.*  Details about an error. Contains objects which
+        have the following properties:
+        <ul>
+          <li>
+             `code` 
+          </li>
+          <li>
+             `message` 
+          </li>
+          <li>
+             `target` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `target` 
+        <br />
+         *string* 
+      </th>
+      <td>Name of an invalid parameter.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>Error response example</h4>
+
+```json [title=Error response - JSON]
+{
+  "detailedError": {
+    "code": "BAD_REQUEST",
+    "message": "Bad request",
+    "details": [
+      {
+        "code": "OUT_OF_RANGE_VALUE",
+        "message": "Invalid zoom 23. Expected zoom in range 0-22.",
+        "target": "zoom"
+      },
+      {
+        "code": "INVALID_PARAM",
+        "message": "Invalid format png2. Supported formats are: png, jpg, jpeg.",
+        "target": "format"
+      }
+    ]
+  }
+}
+```
+
+### Response codes
+
+<table>
+  <thead>
+    <tr>
+      <th
+        scope="col"
+        style={{ fontSize: '1em', textAlign: 'center' }}
+        width="250px;"
+      >
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Meaning and possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `200` 
+      </th>
+      <td>
+         **OK** 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `400` 
+      </th>
+      <td>
+         **Bad Request** : Received by the interface, but there is an error in
+        the request, such as:
+        <ul>
+          <li>One or more of the required parameters is missing.</li>
+          <li>Unsupported or unrecognized parameter value.</li>
+          <li>
+            Two or more mutually exclusive parameters are used in one query.
+          </li>
+          <li>
+            When max- and min- values are  *switched*  in the
+             `bbox`  parameter for  `latitude`.
+          </li>
+          <li>
+            A layer containing an alpha channel is requested in a format not
+            supporting the alpha channel.
+          </li>
+        </ul>
+        <br />
+        This HTTP response code is returned if the required parameters of the request
+        were malformed. A detailed exception explanation is returned in a response
+        in the form of a Service Exception Report.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `403` 
+      </th>
+      <td>
+         **Forbidden** :
+        <ul>
+          <li>The supplied API Key is not valid for the request.</li>
+          <li>
+            The requested view is not available in the country from where the
+            request was sent.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `429` 
+      </th>
+      <td>
+         **Too Many Requests** : Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `500` 
+      </th>
+      <td>
+         **Internal Server Error** : There is a problem with the Static Map
+        Service.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `503` 
+      </th>
+      <td>
+         **Service currently unavailable** 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Response headers
+
+The following data table lists HTTP response headers of particular interest to clients of the Maps Static Image API endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin) 
+      </th>
+      <td>
+        The Static Image Service allows cross-origin resource sharing (CORS).
+         **Value:**   `*` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Length](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length) 
+      </th>
+      <td>
+        Contains information about the size of the response body.
+        <br />
+         **Value:**   `<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) 
+      </th>
+      <td>
+        Indicates the media type of the resource returned.
+        <br />
+         **Values:**   `image/png`  and  `image/jpeg`.
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        An identifier for the request. If the
+         [Tracking-ID](#trackingid-request)  header was specified in
+        the request, it is replicated in the response. Otherwise, it is
+        generated automatically by the service. For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122).<br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>

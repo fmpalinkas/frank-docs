@@ -1,0 +1,81 @@
+group: map-display-api
+isPrivate: false
+description: The Map Display API is a suite of web services designed for developers to create web and mobile applications around mapping. These web services can be used via RESTful APIs.
+productName: Map Display API
+menuTitle: Documentation
+isMenuOpened: false 
+menu:
+  - title: Product Information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+      - fileId: /product-information/release-notes
+        title: Release Notes
+      - fileId: /product-information/market-coverage
+        title: Market Coverage
+      - url: https://developer.tomtom.com/region-specific-content
+        title: Region-specific content
+  - title: Raster 
+    items:
+      - fileId: /raster/raster-service
+        title: Raster service
+      - fileId: /raster/map-tile
+        title: Map Tile
+        suffix: get
+      - fileId: /raster/satellite-tile
+        title: Satellite Tile
+        suffix: get
+      - fileId: /raster/hillshade-tile
+        title: Hillshade Tile
+        suffix: get
+      - fileId: /raster/wms
+        title: WMS
+        suffix: get
+      - fileId: /raster/wmts
+        title: WMTS
+        suffix: get
+      - fileId: /raster/static-image
+        title: Static Image
+        suffix: get
+  - title: Vector 
+    items:
+      - fileId: /vector/vector-service
+        title: Vector service
+      - fileId: /vector/tile
+        title: Tile 
+        suffix: get 
+      - fileId: /vector/tile-v2
+        title: Tile v2
+        suffix: get
+      - fileId: /vector/content
+        title: Content
+      - fileId: /vector/content-v2
+        title: Content v2
+  - title: Map Styles
+    items:
+      - fileId: /mapstyles/map-styles
+        title: Map Styles
+        suffix: get 
+      - fileId: /mapstyles/map-styles-v2
+        title: Map Styles v2
+        suffix: get
+      - fileId: /mapstyles/map-style-specification
+        isHidden: true
+        title: Map Style Specification
+      - fileId: /mapstyles/map-styler-documentation
+        isHidden: true
+        title: Map Styler Documentation
+      - url: https://mapmaker.tomtom.com
+        title: Launch Map Maker&nbsp; &#10095;
+  - title: Zoom Levels
+    items: 
+      - fileId: /zoom-levels-and-tile-grid
+        title: Zoom Levels and Tile Grid
+  - title: Copyrights
+    items:    
+      - fileId: /copyrights
+        title: Copyrights
+        suffix: get
+      - fileId: /copyrights-deprecated
+        title: Copyrights (Deprecated)
+        suffix: get 

@@ -1,0 +1,119 @@
+---
+title: Map Styler Documentation
+noIndex: true
+titleTags:
+  - label: 'Service version: 2.0'
+    color: grey5
+  - label: 'Last edit: 2023.08.01'
+    color: grey5
+---
+
+<Blockquote type="announcement" hasIcon>
+  Map Styler has been deprecated. Please use the <a href="https://developer.tomtom.com/map-maker" target="_blank">TomTom Map Maker</a> instead.
+
+  With Map Maker you can create application-specific styles, using an intuitive user interface for real-time previews, customizable style URL integration, and one-click deployment.
+</Blockquote>
+
+## Purpose
+
+The Customization Tool helps you modify a default TomTom style for vector maps. You are able to build your own map, edit its style, and export the result.
+
+Click the following button to open the TomTom Map Styler customization tool web page.
+
+<Button
+  size="small"
+  label="Launch Map Styler"
+  href="https://developer.tomtom.com/maps-api/map-styler"
+  target="_blank"
+  icon="arrow"
+/>
+<br />
+
+## Top Menu
+
+### Open
+
+Styles can be imported into the Customization Tool for editing from the Open section in the Top Menu. Here you can select a JSON file from local storage, provide a URL, or choose one of the predefined formats.
+
+### Export
+
+A JSON file with styles can be downloaded locally using the Export menu item from the top menu.
+
+### Data sources
+
+The Customization Tool supports Vector Tiles as a data source. It is also possible to provide your own source URL in the following formats: GeoJSON, XYZ, or TileJSON. Data sources can be configured from the Data Sources section in the Top Menu.
+
+### Style Settings
+
+URLs for Glyphs and Sprites can be set at the Style Settings section in the Top Menu.
+
+### Inspect Mode
+
+There are six view modes:
+
+- **Map**, which just displays the map with applied styles.
+- **Inspect**, which allows you to see all of the data layers on the map.
+- Four modes that simulate different color vision deficiencies:
+  - **Map (deuteranopia)**
+  - **Map (protanopia)**
+  - **Map (tritanopia)**
+  - **Map (achromatopsia)**
+
+### Undo
+
+Reverts the recent change made in the editor.
+
+### Redo
+
+Restores an action that has been previously undone using an Undo.
+
+## Layers
+
+A new layer can be added using the **Add Layer** button. Layers are displayed in the same order as they are arranged in the layers tree in the left panel of the Customization Tool.
+
+### Layer attributes
+
+Each layer in the Customization Tool has following attributes:
+
+- **ID**: The name of the layer.
+- **Type**: This can have one of the following values:
+  - Fill
+  - Line
+  - Symbol
+  - Raster
+  - Circle
+  - Fill Extrusion
+  - Hillshade
+  - Heatmap
+- **Source**: The source of map data.
+- **Source Layer**: The map layer or entity to which the style should be applied.
+- **Minzoom** (optional): The minimum zoom level for the layer. At zoom levels less than the minzoom, the layer will be hidden.
+- **Maxzoom** (optional): The maximum zoom level for the layer. At zoom levels equal to or greater than the maxzoom, the layer will be hidden.
+
+### Source layer
+
+There are multiple entities you can choose from depending on the Layer type. For further information see  [TomTom&#39;s Vector Tiles V2 documentation](/map-display-api/documentation/vector/tile-v2) , which is the default vector tile service used in the Customization Tool. If you have a map style based on the Vector Tiles V1 service, see  [TomTom&#39;s Vector Tiles V1 documentation](/map-display-api/documentation/vector/tile).
+
+### Layer types
+
+- **Background**: Represents the map&#39;s background.
+- **Fill**: An area-related feature.
+- **Line**: A line-related feature.
+- **Symbol**: Text or a special graphical symbol (like an arrow).
+- **Raster**: Raster map textures such as satellite imagery.
+- **Circle**: A filled circle.
+- **Fill Extrusion**: An extruded (3D) area.
+- **Hillshade**: Client-side hillshading visualization based on DEM data.
+- **Heatmap**: A heatmap visualization.
+
+### Layer properties
+
+For the detailed specification of each layer in the style, visit the:  [Map Style Specification](/map-display-api/documentation/mapstyles/map-style-specification).
+
+## Release notes
+
+### v 2.0 - 20.07.2022
+
+- Migrating to MapLibre V2.
+- Filter expression bug fix.
+- Adding a new monochrome map style.

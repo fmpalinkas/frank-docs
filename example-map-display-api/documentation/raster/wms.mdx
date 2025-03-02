@@ -1,0 +1,926 @@
+---
+title: WMS
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2023.08.01'
+    color: grey5
+---
+
+## Purpose  
+
+This is the TomTom  **Web Map Service**  (WMS) implementation. All of the calls in this service are compliant with the [WMS 1.1.1 standard](https://www.opengeospatial.org/standards/wms).
+
+The service consists of:
+
+- **GIS Software URL** endpoint: This is suitable for entering required parameters into GIS applications.
+- **GetCapabilities** endpoint: This describes the available services.
+- **GetMap** endpoint: This is used to retrieve map tiles.
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+
+## Request data
+
+## GIS Software URL endpoint
+
+This Maps WMS API endpoint can be provided for GIS software that manages the interaction with WMS services itself, such as ArcGIS and Quantum GIS. Specific requirements on where to enter this URL will vary by GIS software product. Check the GIS system&#39;s own help for details.
+
+### HTTPS method: `GET`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/map/{versionNumber}/wms/?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>
+
+```shell [type=get] [title=Example request URL]
+https://api.tomtom.com/map/1/wms/?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl -XGET 'https://api.tomtom.com/map/1/wms/?key={Your_API_Key}'
+```
+
+### Request parameters
+
+The following data table describes the parameters that can be used in a request.
+
+- Required parameters **must be used** or the call will fail.
+- Optional parameters may be used.
+
+**Note:** There are no optional parameters in this endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="400px;">
+        Required&nbsp;parameters (GIS Software URL)
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling TomTom services.
+        <br />
+         **Value:**   `api.tomtom.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The authorization key for access to the API.
+        <br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## GetCapabilities endpoint
+
+The GetCapabilities call is used to describe the different calls that are available through TomTom&#39;s implementation of version 1.1.1 of the [Web Map Service](http://www.opengeospatial.org/standards/wms).
+
+### HTTPS method: `GET`
+
+See the following [Request parameters](#request-parameters-getcapabilities) section with the required and optional parameters tables for these values.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/map/{versionNumber}/wms/?key={Your_API_Key}&service={service}&request={request}&version={version}
+```
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>
+
+```shell [type=get] [title=Request example]
+https://api.tomtom.com/map/1/wms/?key={Your_API_Key}&service=WMS&request=GetCapabilities&version=1.1.1
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://api.tomtom.com/map/1/wms/?key={Your_API_Key}&service=WMS&request=GetCapabilities&version=1.1.1'
+```
+
+### Request parameters
+
+In accordance with WMS standards, parameter labels _are not case-sensitive_, but case should be respected in parameter values.
+
+- Required parameters **must be used** or the call will fail.
+- Optional parameters may be used.
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+
+The following data table describes the parameters that can be used in a request.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="450px;">
+        Required&nbsp;parameters (GetCapabilities endpoint)
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling TomTom services.
+        <br />
+         **Value:**   `api.tomtom.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The authorization key for access to the API.
+        <br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `service` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The service type.
+        <br />
+         **Value:**   `WMS` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `request` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The request type.
+        <br />
+         **Value:**   `GetCapabilities` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="450px;">
+        Optional&nbsp;parameters (GetCapabilities endpoint)
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `version` 
+        <br />
+         *float* 
+      </th>
+      <td>
+        The WMS service version.
+        <br />
+         **Default value:**   `1.1.1` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## GetMap endpoint
+
+The GetMap call implements the [Web Map Service 1.1.1 standard](http://www.opengeospatial.org/standards/wms) to access TomTom map tiles. This service is described in the meta-data provided by the GetCapabilities call&#39;s response.
+
+### HTTPS method: `GET`
+
+See the following [Request parameters](#request-parameters-getmap) section with the required and optional parameters tables for these values.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/map/{versionNumber}/wms/?key={Your_API_Key}&request={request}&bbox={boundingBox}&srs={srs}&width={width}&height={height}&format={format}&layers={layers}&styles={styles}&service={service}&version={version}
+```
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>
+
+```shell [type=get] [title=Request example]
+https://api.tomtom.com/map/1/wms/?key={Your_API_Key}&service=WMS&version=1.1.1&request=GetMap&bbox=1.355233,42.982261,24.980233,56.526017&srs=EPSG:4326&width=1305&height=748&layers=basic
+&styles=&format=image/png
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://api.tomtom.com/map/1/wms/?key={Your_API_Key}&service=WMS&version=1.1.1&request=GetMap&bbox=1.355233,42.982261,24.980233,56.526017&srs=EPSG:4326&width=1305&height=748&layers=basic&styles=&format=image/png'
+```
+
+### Request parameters
+
+The following table describes the parameters that can be used in a request.
+
+- Required parameters **must be used** or the call will fail.
+- Optional parameters may be used.
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="450px;">
+        Required&nbsp;parameters (GetMap endpoint)
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling TomTom services.
+        <br />
+         **Value:**   `api.tomtom.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The authorization key for access to the API.
+        <br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `request` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The request type.
+        <br />
+         **Value:**   `GetMap` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `srs` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        A projection used in describing the  **bbox**  (bounding box).
+        <ul>
+          <li>
+             **EPSG:3857**  is recommended, particularly at higher zoom levels.
+          </li>
+          <li>
+            Note that EPSG:3857 is functionally equivalent to
+            EPSG:900913/EPSG:3785
+          </li>
+        </ul>
+         **Values:** 
+        <ul>
+          <li>
+             [EPSG:3857](http://spatialreference.org/ref/sr-org/6864/) 
+          </li>
+          <li>
+             [EPSG:4326](http://spatialreference.org/ref/epsg/4326/) 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `bbox` 
+        <br />
+         *float* 
+      </th>
+      <td>
+        The bounding box in the projection stated in  **srs**.<br />
+         **Value:**   `minLon,minLat,maxLon,maxLat` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `width` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The width of the resulting image, in pixels.
+        <br />
+         **Maximum value:**   `2048` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `height` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The height of the resulting image, in pixels.
+        <br />
+         **Maximum value:**   `2048` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `format` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The image format to be returned.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `image/jpeg` 
+          </li>
+          <li>
+             `image/png` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `layers` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The map layers requested. Currently only the
+         `**basic**` 
+        layer is available.
+        <br />
+         **Value:**   `basic` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `styles` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The map styles to be returned.
+        <ul>
+          <li>This parameter is present for forward compatibility.</li>
+          <li>
+             **It must be used and left blank.** 
+          </li>
+        </ul>
+        <br />
+         **Value:**  Leave this blank: currently, no styles are available.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="450px;">
+        Optional&nbsp;parameters (GetMap endpoint)
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `service` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The service type.
+        <br />
+         **Value:**   `WMS` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `version` 
+        <br />
+         *float* 
+      </th>
+      <td>
+        The WMS service version.
+        <br />
+         **Default value:**   `1.1.1` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Host Name Cycling
+
+Most web browsers have a default limitation on the number of active connections that can be allowed to each host. This means if map tiles are being loaded via the api.tomtom.com host name, they will be loaded one at a time. A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases. These host names are:
+
+-  **a.api.tomtom.com** 
+-  **b.api.tomtom.com** 
+-  **c.api.tomtom.com** 
+-  **d.api.tomtom.com** 
+
+By cycling through these four different host names, the web browser will be tricked into retrieving four map tiles at a time rather than just one. This will significantly speed up the performance of map rendering.
+
+For instance, if four map tiles are being requested at zoom level one, you would request the first one as:
+
+```shell [type=get] [title=Request URL using a.api.tomtom.com]
+https://a.api.tomtom.com/traffic/map/4/tile/flow/relative/1/0/0.pbf?key={Your_API_Key}
+```
+
+The second would be:
+
+```shell [type=get] [title=Request URL using b.api.tomtom.com]
+https://b.api.tomtom.com/traffic/map/4/tile/flow/relative/1/0/0.pbf?key={Your_API_Key}
+```
+
+and so on up until `d.api.tomtom.com`. When more than four tiles are being requested, start back again at `a.api.tomtom.com`.
+
+### Request headers
+
+The following data table lists HTTP Request headers of particular interest to clients of the Maps WMS API endpoint. **Note:** There are no required headers in this endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <th id="trackingid-request" scope="row">
+      Tracking-Id
+    </th>
+    <td>
+      Specifies an identifier for the request. It can be used to trace a call.
+      The value must match the regular expression
+       `'^[a-zA-Z0-9-]{1,100}$'`. An example of the format
+      that matches this regular expression is a UUID (e.g.,
+       `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For details check
+       [RFC 4122](https://tools.ietf.org/html/rfc4122). If specified, it is replicated in the
+       [Tracking-Id](#trackingid-response)  response header.
+      <br />
+       **Value:**   `<string>` 
+    </td>
+  </tbody>
+</table>
+
+## Response data
+
+### GIS Software URL endpoint
+
+If this URL is entered correctly, WMS calls will operate within the software. If the GIS software is reporting errors on WMS calls, the causes may be as described in the following [Response codes](#response-codes) section.
+
+### GetCapabilities endpoint
+
+Responses will use the response codes listed in the following table, and implement the [WMS 1.1.1 exception document type definition](http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd). A [full schema of the 1.1.1 WMS GetCapabilities call](http://schemas.opengis.net/wms/1.1.1/capabilities_1_1_1.xml) is available online.
+
+The following response XML code block is an example of a successful response returned by this specific call. For the meanings and use of the different elements, please refer to the [schema](http://schemas.opengis.net/wms/1.1.1/capabilities_1_1_1.xml).
+
+```xml [title=Response body - XML]
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE WMT_MS_Capabilities SYSTEM "http://schemas.opengis.net/wms/1.1.1/capabilities_1_1_1.dtd">
+<WMT_MS_Capabilities version="1.1.1">
+  <Service>
+    <Name>OGC:WMS</Name>
+    <Title>TomTom WMS</Title>
+    <Abstract>The TomTom Web Map Server (WMS) provides and Open Geospatial Consortium (OGC) compliant Web Map Service interface as an online mapping service.</Abstract>
+    <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://api.tomtom.com/map/1/wms/?key=<apiKey>"/>
+    <ContactInformation>
+      (...contact information for support of the service)
+    </ContactInformation>
+    <Fees>none</Fees>
+    <AccessConstraints>none</AccessConstraints>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>application/vnd.ogc.wms_xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://api.tomtom.com/map/1/wms/?key=<apiKey>&amp;"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/jpeg</Format>
+        <Format>image/png</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://api.tomtom.com/map/1/wms/?key=<apiKey>&amp;"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+    </Request>
+    <Exception>
+      <Format>application/vnd.ogc.se_xml</Format>
+    </Exception>
+    <Layer>
+      <Title>World Map</Title>
+      <SRS>EPSG:4326</SRS>
+      <SRS>EPSG:3857</SRS>
+      <SRS>EPSG:900913</SRS>
+      <LatLonBoundingBox minx="-180" miny="-85.0511287798" maxx="180" maxy="85.0511287798"/>
+      <BoundingBox SRS="EPSG:3857" minx="-20037508.34" miny="-20037508.34" maxx="20037508.34" maxy="20037508.34"/>
+
+      <Layer queryable="0" opaque="1">
+        <Name>basic</Name>
+        <Title>TomTom Map</Title>
+        <BoundingBox SRS="EPSG:4326" minx="-180.0" miny="-85.0511287798" maxx="180.0" maxy="85.0511287798"/>
+        <ScaleHint min="0" max="124000"/>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMT_MS_Capabilities>
+```
+
+### GetMap endpoint
+
+The response to a successful call will be the requested tile. Exception responses will use the response codes described in the following HTTP response codes section and implement the [WMS 1.1.1 exception document type definition](http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd).
+
+### Error response
+
+The Map Display API WMS service for an invalid request returns a response body in XML or JSON format. The XML format is returned by default. To have an error response returned in JSON format, `application/json` has to be specified in the **Accept** HTTP request header.
+
+<h4 style={{ fontSize: '1em' }}>Plain text format</h4>
+
+```shell
+Bad request
+```
+
+<h4 style={{ fontSize: '1em' }}>Error response field structure</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `detailedError` 
+        <br />
+         *object* 
+      </th>
+      <td>
+        Main object of the error response;  **JSON format only**.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `ServiceExceptionReport` 
+        <br />
+         *object* 
+      </th>
+      <td>
+        Main object of the error response;  **XML format only**.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code` 
+        <br />
+         *string* 
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `message` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        A human-readable description of the error code;  **JSON format only**.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `ServiceException` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        A human-readable description of the error code;  **XML format only**.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `details` 
+        <br />
+         *array* 
+      </th>
+      <td>
+         *Optional field.*  Details about an error;  **JSON format only**. Contains objects which have following properties:
+        <ul>
+          <li>code</li>
+          <li>message</li>
+          <li>target</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `target` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Name of an invalid parameter;  **JSON format only**.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `version` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        WMS service version;  **XML format only**.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+```json [title=Error response example - JSON]
+{
+  "detailedError": {
+    "code": "BAD_REQUEST",
+    "message": "Bad request",
+    "details": [
+      {
+        "code": "INVALID_PARAM",
+        "message": "Invalid request value GetMap1. Supported request value is 'GetMap'",
+        "target": "request"
+      }
+    ]
+  }
+}
+```
+
+```xml [title=Error response format - XML]
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<ServiceExceptionReport version="1.1.1">
+  <ServiceException code="MALFORMED_REQUEST">Invalid request value GetMap1. Supported request value is 'GetMap'</ServiceException>
+</ServiceExceptionReport>
+```
+
+### Response codes
+
+<table>
+  <thead>
+    <tr>
+      <th
+        scope="col"
+        style={{ fontSize: '1em', textAlign: 'center' }}
+        width="250px;"
+      >
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Meaning &amp; possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `200` 
+      </th>
+      <td>
+         **OK** 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `202` 
+      </th>
+      <td>
+         **Accepted** : Received by the interface, but there is a WMS exception
+        in processing it. Possible causes include:
+        <ul>
+          <li>One or more required parameters is missing.</li>
+          <li>An unsupported or unrecognized parameter value.</li>
+          <li>A malformed bounding box was requested.</li>
+          <li>Invalid map dimensions were requested.</li>
+        </ul>
+        <br />
+        This code is returned if the parameters of the WMS request were malformed.
+        A detailed exception explanation is returned in a response in the form of
+        a Service Exception Report.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `403` 
+      </th>
+      <td>
+         **Unauthorized** : The supplied API Key is not valid for the request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `429` 
+      </th>
+      <td>
+         **Too Many Requests** : Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `500` 
+      </th>
+      <td>
+         **Internal Server Error** : There is a problem with the TomTom WMS
+        service.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Response headers
+
+The following table lists HTTP response headers of particular interest to clients of the Maps WMS API endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin) 
+      </th>
+      <td>
+        The Maps WMS API allows cross-origin resource sharing (CORS).
+        <br />
+         **Value:**   `*` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Length](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length) 
+      </th>
+      <td>
+        Contains information about the size of the response body.
+        <br />
+         **Value:**   `<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) 
+      </th>
+      <td>
+        Indicates the media type of the resource returned.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `image/png` 
+          </li>
+          <li>
+             `image/jpeg` 
+          </li>
+          <li>
+             `application/vnd.ogc.wms_xml` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Date](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date) 
+      </th>
+      <td>
+        Contains the date and time at which the message was originated.
+        <br />
+         **Value:**   `<http-date>` 
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">
+        Tracking-Id
+      </th>
+      <td>
+        An identifier for the request. If the
+         [Tracking-Id](#trackingid-request)  header was specified in
+        the request, it is replicated in the response. Otherwise, it is
+        generated automatically by the service. For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122).<br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>

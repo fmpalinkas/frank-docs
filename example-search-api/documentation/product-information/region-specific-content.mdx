@@ -1,0 +1,128 @@
+---
+title: Region-specific content
+titleTags:
+  - label: 'Last edit: 2022.12.13'
+    color: grey5
+---
+
+Some parts of TomTom data are subject to additional legal terms and conditions. When used, the customer must agree to and follow these additional conditions. Also, for some regions our APIs can have differences in requests and responses compared to the default API behavior. Customers should be aware of these differences before using the region-specific content.
+
+## Available region-specific contents
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px">Hostname</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `kr-api.tomtom.com` 
+      </th>
+      <td>
+        <ul>
+          <li>Hostname, where detailed South Korea data is available.</li>
+          <li>
+            Detailed South Korean data is processed and hosted in South Korea.
+            <ul>
+              <li>
+                It may impact the latency for requests sent from outside of
+                South Korea.
+              </li>
+            </ul>
+          </li>
+          <li>
+            The service customers  **are not allowed**  to download, store,
+            cache nor host the South Korean data outside of South Korea (except
+            for web browser cache).
+          </li>
+          <li>
+            The service customers  **are not allowed**  to display any
+            coordinates of any place within South Korea.
+          </li>
+          <li>
+            Response data for South Korea can have
+             [additional response data](#response-data-for-south-korea).
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Region-specific API changes
+
+### Response data for South Korea
+
+South Korea switched from a land lot-based addressing format to a street name-based format in 2011. The old format is still widely used and therefore supported by the Search API, which means both address formats can be found and returned by various Search APIs (geocode, search, and reverse geocode).
+
+Changes to the API response only apply to results of type `Point Address`. The Search API supports `Point Address` results with
+
+1. only a street name-based address
+2. both a street name-based address and a land lot-based address
+
+### Street name-based address only
+
+For a `Point Address` with only a street name-based address, the API response is identical to the default API response.
+
+### Both address formats
+
+Most street name-based addresses have a matching land lot-based address linked to it. To support this dual-addressing scheme, the API response contains the `address` field, as well as an additional field `linkedAddress`. The `address` field contains the street name-based address, while the region-specific `linkedAddress` field contains the land lot-based address.
+The `linkedAddress` response object mostly follows the default `address` object, except for the addition of the following two fields.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ fontSize: '1em' }} width="250px;">Field</th>
+      <th style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+         `landCode` <br />
+         *string*
+      </th>
+      <td>Land-lot number.</td>
+    </tr>
+    <tr>
+      <th>
+         `dependentLocalName` <br />
+         *string*
+      </th>
+      <td>
+        Neighborhood ( *dong* ).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+A `Point Address` element in the `results` array with both address formats present is represented in JSON as follows:
+
+```json [title=RESULTS ARRAY ELEMENTS FORMAT - JSON]
+{
+  "type": "Point Address",
+  "id": "KR/PAD/p0/763729",
+  "score": 3.9,
+  "address": {.. 11 Items ..},
+  "linkedAddress": {
+    "dependentLocalName": "향소리",
+    "landCode": "167-3",
+    "streetName": "석산로119번길",
+    "municipalitySubdivision": "단월면",
+    "municipality": "양평군",
+    "countrySubdivision": "경기도",
+    "postalCode": "12528",
+    "countryCode": "KR",
+    "country": "대한민국",
+    "countryCodeISO3": "KOR",
+    "freeformAddress": "12528 경기도 양평군 단월면 향소리 167-3",
+    "localName": "단월면"
+  },
+  "position": {.. 2 Items ..},
+  "viewport": {.. 2 Items ..},
+  "entryPoints": [.. 1 Item ..]
+}
+```

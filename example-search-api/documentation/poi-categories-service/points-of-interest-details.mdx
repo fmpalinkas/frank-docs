@@ -1,0 +1,919 @@
+﻿---
+title: Points of Interest Details  
+titleTags:  
+  - label: 'Service version: 2'  
+    color: grey5  
+  - label: 'Last edit: 2023.09.29'  
+    color: grey5 
+  - label: 'Automtive only'
+    color: brand-cadmium 
+---  
+
+## Purpose  
+
+The Points of Interest (POI) Details API provides additional information about the POIs including: rating, price range, photo IDs, and user reviews.  
+
+## Request data  
+
+### HTTPS methods: `GET`&nbsp;`HEAD`  
+
+For ease of viewing and identification:  
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.  
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.  
+
+```shell [type=get] [title=Request URL format]
+https://{baseURL}/search/{versionNumber}/poiDetails.{ext}?key={Your_API_Key}&id={id}&sourceName={sourceName}
+```  
+
+```shell [type=get] [title=Request curl command format]
+curl 'https://{baseURL}/search/{versionNumber}/poiDetails.{ext}?key={Your_API_Key}&id={id}&sourceName={sourceName}'
+```  
+
+### Request parameters
+
+The following table describes the parameters that can be used in a request.
+
+- Required parameters **must be used** or the call will fail.
+- Parameters and values are case-sensitive.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Required parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL`<br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling the API.<br />
+         **Value:**   `api.tomtom.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber`<br />
+         *string* 
+      </th>
+      <td>
+        The service version.<br />
+         **Value:**  The current value is  `2`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `ext`<br />
+         *string* 
+      </th>
+      <td>
+        The response format of the API request. The valid response format is
+        JSON or XML.<br />
+         **Value:**   `json`  or  `xml` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key`<br />
+         *string* 
+      </th>
+      <td>
+        An API Key valid for the requested service.<br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `id`<br />
+         *string* 
+      </th>
+      <td>
+        POI id, previously retrieved from the poiDetails section at the bottom
+        of the
+         [Search response](/search-api/documentation/search-service/points-of-interest-search).<br />
+         **Value:**  Example:  `Rm91cnNxdWFyZTo1NTExYWY3MTQ5OGUwZjc4OWNkODRhZjI=` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Optional parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `sourceName`<br />
+         *string* 
+      </th>
+      <td>
+        Name of an external data provider. This parameter is required only for
+        MultiNet-R customers. Customers using the Search API should not include
+        this parameter in the request.<br />
+         **Value:**  Example:  `TripAdvisor`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Request headers
+
+The following table describes HTTP request headers.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Optional headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="accept-encoding" scope="row">
+         [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) 
+      </th>
+      <td>
+        Should contain a list of encodings acceptable by the client. Used to
+        demand a compressed response.<br />
+        If specified, the Content-Encoding response header is returned.<br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-request" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        Specifies an identifier for the request. It can be used to trace a call.
+        The value must match the regular expression
+         `'^[a-zA-Z0-9-]{1,100}$'`.  An example of
+        the format that matches this regular expression is UUID (e.g.,
+         `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122). If specified, it is replicated in the
+         [Tracking-ID](#trackingid-response)  response header. It is
+        only meant to be used for support and does not involve tracking of you
+        or your users in any form.<br />
+         **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+### Response body
+
+If the `<ext>` parameter value is set to `json`, the response will be a JSON object with the following structure:
+
+<Accordion label="Response body with the request URL <ext> parameter value set to 'json'" isClosed>
+
+```json
+{
+  "id": "test-id",
+  "result": {
+    "description": {
+      "value": "Melkweg stands for pop culture in the most broad of senses. Each year, hundreds of concerts, club nights, films and music films, theatre performances, expositions and multidisciplinary events together attract more than 400,000 visitors. The venue is located in the only surviving factory building on the Amsterdam canal ring, a former sugar and, later, milk factory. This historical building houses two concert halls, a cinema, a theatre, and an exposition space, which each can be used separately or combined together. In the Melkweg, established names can be seen alongside new talent and emerging styles get the chance to reach a broader audience. The diversity of its programming and visitors, together with its different spaces and special location, have for years made the Melkweg a unique place.",
+      "language": "en-US"
+    },
+    "rating": {
+      "scale": {
+        "min": 0,
+        "max": 5
+      },
+      "totalRatings": 136,
+      "value": 4.5,
+      "imageId": "image-id-1"
+    },
+    "priceRange": {
+      "scaledRange": {
+        "scale": {
+          "min": 1,
+          "max": 4
+        },
+        "start": {
+          "label": "$$",
+          "value": 2
+        },
+        "end": {
+          "label": "$$$",
+          "value": 3
+        }
+      },
+      "explicitRange": {
+        "start": 100,
+        "end": 200,
+        "currency": "USD"
+      }
+    },
+    "photos": [
+      {
+        "id": "photo-id-1"
+      },
+      {
+        "id": "photo-id-2"
+      }
+    ],
+    "reviews": [
+      {
+        "text": "De Melkweg – or Milky Way – has a long reputation as a live venue and will never let you down. A must-see on your night out in Amsterdam!",
+        "date": "2022-02-16",
+        "language": "en-US"
+      },
+      {
+        "text": "Friday May 31st at Melkweg: Lovebirds Amsterdam, featuring DJ's D-Rok (NL) & Simbad (UK) with a warm mix of soul, funk, hiphop, jazz, boogie, disco and house.",
+        "date": "2022-03-05"
+      },
+      {
+        "text": "Su bedava olsun",
+        "date": "2022-11-01",
+        "language": "tr-TR"
+      },
+      {
+        "text": "Offers a program that unites five artistic disciplines under one roof: dance/theatre, film, photography, and media art.",
+        "date": "2022-01-23"
+      }
+    ]
+  }
+}
+```
+
+</Accordion><br />
+
+If the `<ext>` parameter value is set to `xml`, the response will be an XML format with the following structure:
+
+<Accordion label="Response body with the request URL <ext> parameter value set to 'xml'" isClosed>
+
+```xml
+<?xml version='1.0' encoding='UTF-8'?>
+<response>
+    <id>test-id</id>
+    <result>
+        <description>
+           <value>Melkweg stands for pop culture in the most broad of senses. Each year, hundreds of concerts, club nights, films and music films, theatre performances, expositions and multidisciplinary events together attract more than 400,000 visitors. The venue is located in the only surviving factory building on the Amsterdam canal ring, a former sugar and, later, milk factory. This historical building houses two concert halls, a cinema, a theatre, and an exposition space, which each can be used separately or combined together. In the Melkweg, established names can be seen alongside new talent and emerging styles get the chance to reach a broader audience. The diversity of its programming and visitors, together with its different spaces and special location, have for years made the Melkweg a unique place.</value>
+           <language>en-US</language>
+        </description>
+        <rating>
+            <scale>
+                <min>0</min>
+                <max>5</max>
+            </scale>
+            <totalRatings>136</totalRatings>
+            <value>4.5</value>
+            <imageId>image-id-1</imageId>
+        </rating>
+        <priceRange>
+           <scaledRange>
+              <scale>
+                 <min>1</min>
+                 <max>4</max>
+              </scale>
+              <start>
+                 <label>$$</label>
+                 <value>2</value>
+              </start>
+              <end>
+                 <label>$$$</label>
+                 <value>3</value>
+              </end>
+           </scaledRange>
+           <explicitRange>
+                 <start>100</start>
+                 <end>200</end>
+                 <currency>USD</currency>
+           </explicitRange>
+        </priceRange>
+        <photos>
+            <photo>
+                <id>photo-id-1</id>
+            </photo>
+            <photo>
+                <id>photo-id-2</id>
+            </photo>
+        </photos>
+        <reviews>
+            <review>
+                <text>De Melkweg – or Milky Way – has a long reputation as a live venue and will never let you down. A must-see on your night out in Amsterdam!</text>
+                <date>2022-02-16</date>
+                <language>en-US</language>
+            </review>
+            <review>
+                <text>"Friday May 31st at Melkweg: Lovebirds Amsterdam, featuring DJ's D-Rok (NL) & Simbad (UK) with a warm mix of soul, funk, hiphop, jazz, boogie, disco and house."</text>
+                <date>2022-03-05</date>
+            </review>
+            <review>
+                <text>Su bedava olsun</text>
+                <date>2022-11-01</date>
+                <language>tr-TR</language>
+            </review>
+            <review>
+                <text>"Offers a program that unites five artistic disciplines under one roof: dance/theatre, film, photography, and media art."</text>
+                <date>2022-01-23</date>            
+            </review>         
+        </reviews>
+    </result>
+</response>
+```
+
+</Accordion><br />
+
+### Usage of Points of Interest Details
+
+With respect to the Points of Interest Details API, the following applies:
+
+<ul>
+  <li>
+    Rich Content shall not be provided to Enterprise Customers under any circumstances.
+  </li>
+  <li>
+    Upon expiry or termination of this Agreement (or as it relates to the expiry or termination of a
+Commercial Agreement): (i) all of Partner’s and Customers rights regarding Rich Content shall extinguish, (ii)
+all use of Rich Content shall cease, and (iii) all Rich Content shall be returned or destroyed. 
+  </li>
+  <li>
+    Partner shall ensure that Tripadvisor’s logos and ratings bars will be served directly from Tripadvisor
+URLs, and that it shall not store and/or locally serve Tripadvisor logos. Partner will make all displays of Rich
+Content on Partner Product non-indexable by search engines, unless otherwise agreed in a Commercial
+Agreement.
+  </li>
+  <li>
+    See the
+     [Branding guidelines](https://www.tripadvisor.com/pdfs/cprc/BrandGuidelinesForPartners.pdf) 
+    for more details.
+  </li>
+</ul>
+
+### Response fields
+
+The following table describes all of the fields that can appear in a response. Fields are listed by the response section they belong to and in the order that they appear in the response.
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>Primary fields</th>
+    </tr>
+    <tr>
+      <th scope="col" width="250px;">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `id`<br />
+         *string* 
+      </th>
+      <td>The ID of the returned entity.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `result`<br />
+         *object* 
+      </th>
+      <td>
+        An object that contains the result of the request.<br />
+         [result](#result-object) 
+        object
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="result-object" style={{ fontSize: '1em' }}>result object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `description`<br />
+         *object* 
+      </th>
+      <td>
+        Description of the POI.<br />
+        [description](#description-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `rating`<br />
+         *object* 
+      </th>
+      <td>
+        An object that contains rating information.<br />
+         [rating](#rating-object) 
+        object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `priceRange`<br />
+         *object* 
+      </th>
+      <td>
+        An object that contains price range information.<br />
+         [priceRange](#pricerange-object) 
+        object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `photos`<br />
+         *array* 
+      </th>
+      <td>
+        Photo ids of the POI.<br />
+        array of
+         [photo](#photo-object) 
+        objects
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `reviews`<br />
+         *array* 
+      </th>
+      <td>
+        User reviews about the POI.<br />
+        array of
+         [review](#review-object) 
+        objects
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="description-object" style={{ fontSize: '1em' }}>description object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `value`<br />
+         *string* 
+      </th>
+      <td>Description of the POI.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `language`<br />
+         *string* 
+      </th>
+      <td>Language in which search results should be returned. It should be one of the TomTom supported [IETF language tags](https://developer.tomtom.com/search-api/documentation/product-information/supported-languages) , case insensitive. When data in the specified language is not available for a specific field or the language is not specified, the language best matched with your query is used.</td>
+    </tr>
+    <tr>
+      <th colspan="2" id="rating-object" style={{ fontSize: '1em' }}>rating object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `scale`<br />
+         *object* 
+      </th>
+      <td>
+        Scale object with min/max values.<br />
+         [scale](#scale-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `totalRatings`<br />
+         *integer* 
+      </th>
+      <td>Total number of ratings.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `value`<br />
+         *double* 
+      </th>
+      <td>Rating value, between scale min and max values inclusive.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `imageId`<br />
+         *string* 
+      </th>
+      <td>Id of the rating bars image. To be used in the [Points of Interest Photos API](/poi-photos-api/documentation/poi-photos-api/poi-photos). IMPORTANT: The image is a mandatory element when the rating is displayed. Displaying the rating in a different style will breach the license agreement. For more details, please relate to [TripAdvisor Brand Guidelines For Partners](https://www.tripadvisor.com/pdfs/cprc/BrandGuidelinesForPartners.pdf)</td>
+    </tr>
+    <tr>
+      <th colspan="2" id="pricerange-object" style={{ fontSize: '1em' }}>priceRange object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `scaledRange`<br />
+         *object* 
+      </th>
+      <td>
+        Scaled range object.<br />
+         [scaledRange](#scaledrange-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `explicitRange`<br />
+         *object* 
+      </th>
+      <td>
+        Explicit range object.<br />
+         [explicitRange](#explicitrange-object) object
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="scaledrange-object" style={{ fontSize: '1em' }}>scaledRange object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `scale`<br />
+         *object* 
+      </th>
+      <td>
+        Scale object with min/max values.<br />
+         [scale](#scale-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `start`<br />
+         *object* 
+      </th>
+      <td>
+        Start of the scaled range.<br />
+         [start](#start-object) object within scale min/max values inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `end`<br />
+         *object* 
+      </th>
+      <td>
+        End of the scaled range.<br />
+         [end](#start-object) object within scale min/max values inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="explicitrange-object" style={{ fontSize: '1em' }}>explicitRange object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `start`<br />
+         *double* 
+      </th>
+      <td>Start of the explicit range.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `end`<br />
+         *double* 
+      </th>
+      <td>End of the explicit range.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `currency`<br />
+         *string* 
+      </th>
+      <td>The currency of the price range in [ISO 4217](https://nl.wikipedia.org/wiki/ISO_4217) representation. Available values: ARS, AUD, BAM, BGN, BRL, CAD, CHF, CLP, CZK, DKK, EUR, GBP, HKD, HRK, HUF, MXN, NOK, PLN, RON, RSD, RUB, SEK, TRY, TWD, USD</td>
+    </tr>
+    <tr>
+      <th colspan="2" id="start-object" style={{ fontSize: '1em' }}>start, end object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `value`<br />
+         *double* 
+      </th>
+      <td>Value of the range.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `label`<br />
+         *string* 
+      </th>
+      <td>Label of the range.</td>
+    </tr>
+    <tr>
+      <th colspan="2" id="scale-object" style={{ fontSize: '1em' }}>scale object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `min`<br />
+         *double* 
+      </th>
+      <td>'min' value of the scale.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `max`<br />
+         *double* 
+      </th>
+      <td>'max' value of the scale.</td>
+    </tr>
+    <tr>
+      <th colspan="2" id="photo-object" style={{ fontSize: '1em' }}>photo object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `id`<br />
+         *string* 
+      </th>
+      <td>
+        Id of the photo. To be used in the
+         [Points of Interest Photos API](/poi-photos-api/documentation/poi-photos-api/poi-photos).
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="review-object" style={{ fontSize: '1em' }}>review object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text`<br />
+         *string* 
+      </th>
+      <td>Content of the review.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `date`<br />
+         *string* 
+      </th>
+      <td>
+        Date of the review, YYYY-MM-DD format
+         [ISO_8601](https://en.wikipedia.org/wiki/ISO_8601) 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `language`<br />
+         *string* 
+      </th>
+      <td>Language in which search results should be returned. It should be one of the TomTom supported [IETF language tags](https://developer.tomtom.com/search-api/documentation/product-information/supported-languages) , case insensitive. When data in the specified language is not available for a specific field or the language is not specified, the language best matched with your query is used.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Response codes
+
+<table id="response-codes">
+  <thead>
+    <tr>
+      <th scope="col" style={{'fontSize':'1em'}} width="250px;">Code</th>
+      <th scope="col" style={{'fontSize':'1em'}}>Meaning &amp; possible causes</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+<th id="code200" scope="row"> `200`</th>
+<td>
+ **OK** : If the given  `POI`  was found, the body of the response will contain the data. Otherwise, the response will contain an empty  `result`  object/empty  `<result></result>`  result element in the response body. For example:<br />
+
+```json [title=Code 200 response body - JSON]
+{
+  "id": "Rm91cnNxdWFyZTo0YTI3MDNjOGY5NjRhNTIwNjY4NTFmZTM=",
+  "result": {}
+}
+```
+
+```xml [title=Code 200 response body - XML]
+<response>
+  <id>Rm91cnNxdWFyZTo0YTI3MDNjOGY5NjRhNTIwNjY4NTFmZTM=</id>
+  <result></result>
+</response>
+```
+
+</td>
+</tr>
+    <tr>
+      <th scope="row"> `400` </th>
+      <td> **Bad request** : one or more parameters were incorrectly specified or are out of range.</td>
+    </tr>
+    <tr>
+      <th scope="row"> `403` </th>
+      <td>
+         **Forbidden** : Possible causes include:
+        <ul>
+          <li>Service requires SSL</li>
+          <li>Not authorized</li>
+          <li>Rate or volume limit exceeded</li>
+          <li>Unknown referer</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"> `404` </th>
+      <td> **Not Found** : The requested resource could not be found, but it may be available again in the future.</td>
+    </tr>
+    <tr>
+      <th scope="row"> `405` </th>
+      <td> **Method Not Allowed**.</td>
+    </tr>
+    <tr>
+      <th scope="row"> `429` </th>
+      <td> **Too Many Requests** : The API Key is over QPS (Queries per second).</td>
+    </tr>
+    <tr>
+      <th scope="row"> `5xx` </th>
+      <td> **Server Error** : The service was unable to process your request. Contact support to resolve the issue.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Response headers
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin) 
+      </th>
+      <td>
+        Ensures that clients implementing the CORS security model are able to
+        access the response from this service.<br />
+         **Value:**   `*`  This asterisk signifies access to the
+        TomTom API using the Access-Control-Allow-Origin (ACAO) header in its
+        response, indicating which origin sites are allowed.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding) 
+      </th>
+      <td>
+        The service applies gzip compression to the responses if it is requested
+        by the client with the Accept-Encoding header.<br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) 
+      </th>
+      <td>
+        The Cache-Control general-header field is used to specify directives
+        that must be obeyed by all caching mechanisms along the request/response
+        chain.
+        <ul>
+          <li>Supported by HTTP/1.1 clients.</li>
+          <li>May not be supported by HTTP/1.0 clients.</li>
+        </ul>
+         **Value:**   `no-cache` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) 
+      </th>
+      <td>
+        Indicates the format of the response as chosen by the client. Format:
+         `type/subtype; charset=utf-8`<br />
+         **Value:**  type/subtype:
+        <ul>
+          <li>
+             `application/json` 
+          </li>
+          <li>
+             `application/xml` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        An identifier for the request. If the
+         [Tracking-ID](#trackingid-request)  header was specified, it
+        is replicated in the response. Otherwise, it is generated automatically
+        by the service. It is only meant to be used for support and does not
+        involve tracking of you or your users in any form.<br />
+         **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Error response
+
+The error response content type depends on the `ext` parameter.
+
+```json [title=Response body with the request URL <ext> parameter value set to "json"]
+{
+  "message": "Missing parameter 'parameterName'",
+  "detailedError": {
+    "code": "MissingParameter",
+    "message": "Missing required parameter 'parameterName'."
+  },
+  "httpStatusCode": "400"
+}
+```
+
+```xml [title=Response body with the request URL <ext> parameter value set to "xml"]
+<ErrorEvResponse>
+  <message>Missing parameter 'parameterName'</message>
+  <detailedError>
+    <code>MissingParameter</code>
+    <message>Missing required parameter 'parameterName'.</message>
+  </detailedError>
+</ErrorEvResponse>
+```
+
+### Error response fields
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Primary fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `message`<br />
+         *string* 
+      </th>
+      <td>A human-readable description of the error.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `detailedError`<br />
+         *object* 
+      </th>
+      <td>
+        Detailed information about the error.<br />
+         [detailedError](#detailederror-object) 
+        object
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="detailederror-object" style={{ fontSize: '1em' }}>detailedError object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code`<br />
+         *string* 
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `message`<br />
+         *string* 
+      </th>
+      <td>
+        A human-readable description of the error code.<br />
+        It is intended as an aid to developers and is not suitable for exposure
+        to end users.
+      </td>
+    </tr>
+  </tbody>
+</table>  

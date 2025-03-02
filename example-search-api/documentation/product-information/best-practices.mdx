@@ -1,0 +1,119 @@
+---
+title: 'Best practices'
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2022.12.13'
+    color: grey5
+---
+
+## Purpose
+
+The following topics provide some helpful tips to improve your Search API query results.
+
+**Note:** Constants and parameters enclosed in curly brackets `{ }` must be replaced with their values.
+
+## Using geo-biasing with a lat/lon pair
+
+In order to geo-bias your results to the relevant area for your user, you should always use a `lat/lon` pair to help bias the results to the user's location. Note, this is a non-restrictive bias, but for very common searches it will find the instances nearby. This query will find places with pizza around the `lat/lon`:
+
+```shell [title=Lat/lon pair]
+https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239
+```
+
+## Using radius
+
+If geo-biasing is not strong enough for keeping your results local to the user, you can also pass in a `radius` (in meters) to restrict the result to a given area. For instance, this query will only find pizza within 1000 meters of the given `lat/lon`:
+
+```shell [title=Radius]
+https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239&radius=1000
+```
+
+## Using idxSet
+
+You can also specify the exact set of indexes to query in the `idxSet` parameter. For instance if you are only interested:
+
+```shell [title=idxSet]
+https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239&idxSet=POI,PAD,Str,Xstr,Geo,Addr
+```
+
+The idxSet parameter value set of indexes that can be used are:
+
+- `POI` = Points of interest
+- `PAD` = Point Addresses
+- `Str` = Streets
+- `Geo` = Geographies
+- `Xstr` = Cross Streets (intersections)
+- `Addr` = Address range interpolation (when there is no PAD)
+
+Note: If you are using more than one index, do not include any spaces between them in the comma-separated string.
+
+## Using a subset of countries
+
+You can also specify a subset of the countries on the server by adding a comma-separated list of countries in the form:
+
+```shell [title=Subset of countries]
+https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&countrySet=HR,CY,CZ,DK
+```
+
+(search for pizza in Croatia, Cyprus, Czech Republic, and Denmark)
+See the TomTom [Search API Market Coverage](./market-coverage) page for a list of all the countries supported by the Search API engine.
+
+## Using different response formats
+
+We also support JSON or XML formatted responses.
+
+```shell [title=Request example with a JSON response format]
+https://api.tomtom.com/search/2/search/pizza.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239
+```
+
+```shell [title=Request example with an XML response format]
+https://api.tomtom.com/search/2/search/pizza.xml?key={Your_API_Key}&lat=37.8085&lon=-122.4239
+```
+
+## Using paging or infinite scrolling
+
+If you would like to page your results or build an infinite scroll view for your search results, you can page results with `limit` and `offset`. The following query will produce results 21-30:
+
+```shell [title=Offset]
+https://api.tomtom.com/search/2/search/pizza.xml?key={Your_API_Key}&lat=37.8085&lon=-122.4239&limit=10&ofs=20
+```
+
+## Using pure Category Search
+
+Finally, if you are interested in pure category search we have a special endpoint: Category Search. The following query will produce a category search for important tourist attractions:
+
+```shell [title=Category Search]
+https://api.tomtom.com/search/2/categorySearch/important tourist monument.json?key={Your_API_Key}&lat=37.8085&lon=-122.4239
+```
+
+## Understanding a response
+
+In a response, the query type can either be `NON_NEAR` or `POI_NEAR_{X}` where `X` is the name of one of the indexes, `GEO`, `POI`, `PAD`, etc. That is, `POI_NEAR_GEO` might be "coffee near san jose ca" or `POI_NEAR_POI` will happen for queries like "parking near sfo".
+
+Also, when using the `typeAhead` feature, you might see non-concrete results coming back in the special form `POI_NEAR_ENTITY`, in which case you present the results to the user and they select one which fires a second query to get the concrete results. This is a very UI dependent feature.
+
+## Understanding a response summary
+
+The following example uses JSON. Note: For your benefit, the code comments are preceded by // and are not part of the actual JSON.
+
+```json [title=JSON Response]
+{
+  "summary": {
+    "query": "TomTom",        // echo of the query
+    "queryType": "NON_NEAR",  // query type (explained above)
+    "queryTime": 38,          // query time on server in milliseconds
+    "numResults": 10,         // total number of result in this response
+    "offset": 0,              // if limit and offset are being used for paging
+    "totalResults": 51,       // total number of hits within the entire database
+    "fuzzyLevel": 1           // range of 2-4 indicating depth of strategies used
+                              // to find matches, e.g. 1 means more accurate and 4 means less
+  },
+  "results": [
+    {
+      "type": "POI",  // responses type (see table of types above)
+      "id": 50422,    // non-stable id for this document (might change in subsequent release)
+      "score": 4,     // score of this document relative to other scores in same response
+      "poi": {
+        ...
+```

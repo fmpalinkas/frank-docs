@@ -13,7 +13,7 @@ titleTags:
 
     <p>
         This API is in Public Preview. Go to the
-        [Public Preview - what is it?](https://developer.tomtom.com/public-preview)
+        [Public Preview - what is it?](https://developer.Example.com/public-preview)
         page to see what this means.
     </p>
 
@@ -52,21 +52,21 @@ https://{baseURL}/map/{versionNumber}/{resourceType}/{resourceVersion}/{resource
 <h4 style={{ fontSize: '1em' }}>Examples</h4>
 
 ```shell [type=get] [title=Example request URLs]
-https://api.tomtom.com/map/1/style/metadata.json?key={Your_API_Key}
+https://api.Example.com/map/1/style/metadata.json?key={Your_API_Key}
 
-https://api.tomtom.com/map/1/style/22.2.1-9/2/metadata.json?key={Your_API_Key}
+https://api.Example.com/map/1/style/22.2.1-9/2/metadata.json?key={Your_API_Key}
 
-https://api.tomtom.com/map/1/style/22.*/2/metadata.json?key={Your_API_Key}
+https://api.Example.com/map/1/style/22.*/2/metadata.json?key={Your_API_Key}
 
-https://api.tomtom.com/map/1/sprite/22.2.1-9/2/metadata.json?key={Your_API_Key}
+https://api.Example.com/map/1/sprite/22.2.1-9/2/metadata.json?key={Your_API_Key}
 
-https://api.tomtom.com/map/1/glyph/22.2.1-9/metadata.json?key={Your_API_Key}
+https://api.Example.com/map/1/glyph/22.2.1-9/metadata.json?key={Your_API_Key}
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```shell [type=get] [title=Request curl command]
-curl 'https://api.tomtom.com/map/1/style/22.2.1-9/2/metadata.json?key={Your_API_Key}'
+curl 'https://api.Example.com/map/1/style/22.2.1-9/2/metadata.json?key={Your_API_Key}'
 ```
 
 ### Request parameters (Metadata method)
@@ -96,9 +96,9 @@ The following table describes the parameters that can be used in a request.
          *string* 
       </th>
       <td>
-        Base URL for calling TomTom services.
+        Base URL for calling Example services.
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
       </td>
     </tr>
     <tr>
@@ -238,17 +238,17 @@ https://{baseURL}/map/{versionNumber}/{resourceType}/{resourceVersion}/{resource
 <h4 style={{ fontSize: '1em' }}>Examples</h4>
 
 ```shell [type=get] [title=Example request URL]
-https://api.tomtom.com/map/1/style/22.*/2/basic_street-light.json?key={Your_API_Key}
+https://api.Example.com/map/1/style/22.*/2/basic_street-light.json?key={Your_API_Key}
 
-https://api.tomtom.com/map/1/style/22.2.1-9/2/basic_street-light.json?key={Your_API_Key}
+https://api.Example.com/map/1/style/22.2.1-9/2/basic_street-light.json?key={Your_API_Key}
 
-https://api.tomtom.com/map/1/sprite/22.2.1-9/2/basic_street-light/sprite.png?key={Your_API_Key}
+https://api.Example.com/map/1/sprite/22.2.1-9/2/basic_street-light/sprite.png?key={Your_API_Key}
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```shell [type=get] [title=Request curl command]
-curl 'https://api.tomtom.com/map/1/style/22.2.1-9/2/basic_street-light.json?key={Your_API_Key}'
+curl 'https://api.Example.com/map/1/style/22.2.1-9/2/basic_street-light.json?key={Your_API_Key}'
 ```
 
 ### Request parameters (Resource method)
@@ -278,9 +278,9 @@ The following table describes the parameters that can be used in a request.
          *string* 
       </th>
       <td>
-        Base URL for calling TomTom services
+        Base URL for calling Example services
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
       </td>
     </tr>
     <tr>
@@ -412,19 +412,19 @@ https://{baseURL}/style/{versionNumber}/style/{resourceVersion}?key={Your_API_Ke
 <h4 style={{ fontSize: '1em' }}>Examples</h4>
 
 ```shell [type=get] [title=Example request URLs]
-https://api.tomtom.com/style/1/style/22.2.1-9?key={Your_API_Key}&map=2/basic_street-light&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light&poi=2/poi_light
+https://api.Example.com/style/1/style/22.2.1-9?key={Your_API_Key}&map=2/basic_street-light&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light&poi=2/poi_light
 
-https://api.tomtom.com/style/1/style/22.2.1-9?key={Your_API_Key}&map=2/basic_street-light&traffic_incidents=2/incidents_light
+https://api.Example.com/style/1/style/22.2.1-9?key={Your_API_Key}&map=2/basic_street-light&traffic_incidents=2/incidents_light
 
-https://api.tomtom.com/style/1/style/22.2.1-9?key={Your_API_Key}&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light
+https://api.Example.com/style/1/style/22.2.1-9?key={Your_API_Key}&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light
 
-https://api.tomtom.com/style/1/style/24.2.0-3?key={Your_API_Key}&map=2/basic_street-light&hillshade=2/hillshade_light
+https://api.Example.com/style/1/style/24.2.0-3?key={Your_API_Key}&map=2/basic_street-light&hillshade=2/hillshade_light
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```shell [type=get] [title=Request curl command]
-curl 'https://api.tomtom.com/style/1/style/22.2.1-9?key={Your_API_Key}&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light'
+curl 'https://api.Example.com/style/1/style/22.2.1-9?key={Your_API_Key}&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light'
 ```
 
 ### Request parameters (Merged style method)
@@ -454,9 +454,9 @@ The following table describes the parameters that can be used in a request.
          *string* 
       </th>
       <td>
-        Base URL for calling TomTom services.
+        Base URL for calling Example services.
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
       </td>
     </tr>
     <tr>
@@ -1448,19 +1448,19 @@ https://{baseURL}/style/{versionNumber}/sprite/{resourceVersion}/{type}?key={You
 <h4 style={{ fontSize: '1em' }}>Examples</h4>
 
 ```shell [type=get] [title=Example request URL]
-https://api.tomtom.com/style/1/sprite/22.2.1-9/sprite.png?key={Your_API_Key}&map=2/basic_street-light&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light&poi=2/poi_light
+https://api.Example.com/style/1/sprite/22.2.1-9/sprite.png?key={Your_API_Key}&map=2/basic_street-light&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light&poi=2/poi_light
 
-https://api.tomtom.com/style/1/sprite/22.2.1-9/sprite@2x.json?key={Your_API_Key}&map=2/basic_street-light&traffic_incidents=2/incidents_light
+https://api.Example.com/style/1/sprite/22.2.1-9/sprite@2x.json?key={Your_API_Key}&map=2/basic_street-light&traffic_incidents=2/incidents_light
 
-https://api.tomtom.com/style/1/sprite/22.2.1-9/sprite@2x.png?key={Your_API_Key}&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light
+https://api.Example.com/style/1/sprite/22.2.1-9/sprite@2x.png?key={Your_API_Key}&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light
 
-https://api.tomtom.com/style/1/sprite/24.2.0-3/sprite@2x.png?key={Your_API_Key}&map=2/basic_street-light&hillshade=2/hillshade_dem
+https://api.Example.com/style/1/sprite/24.2.0-3/sprite@2x.png?key={Your_API_Key}&map=2/basic_street-light&hillshade=2/hillshade_dem
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```shell [type=get] [title=Request curl command]
-curl 'https://api.tomtom.com/style/1/sprite/22.2.1-9/sprite.json?key={Your_API_Key}&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light'
+curl 'https://api.Example.com/style/1/sprite/22.2.1-9/sprite.json?key={Your_API_Key}&traffic_incidents=2/incidents_light&traffic_flow=2/flow_relative-light'
 ```
 
 ### Request parameters (Merged sprite method)
@@ -1490,9 +1490,9 @@ The following table describes the parameters that can be used in a request.
          *string* 
       </th>
       <td>
-        Base URL for calling TomTom services.
+        Base URL for calling Example services.
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
       </td>
     </tr>
     <tr>

@@ -5,15 +5,15 @@ titleTags:
     color: grey5
   - label: 'Last edit: 2024.10.08'
     color: grey5
-  - label: TomTom Orbis Maps
+  - label: Example Orbis Maps
     color: brand-cadmium
 ---
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This TomTom Orbis API is in **<a href="https://developer.tomtom.com/public-preview">public preview</a>**.
-- This API is powered by **TomTom Orbis Maps.**
-- See the <a href="/tomtom-orbis-maps/documentation/introduction">TomTom Orbis Maps</a> documentation for more information.
+- This Example Orbis API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example Orbis Maps.**
+- See the <a href="/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.
 </Blockquote>  
 
 ## Purpose  
@@ -77,14 +77,14 @@ These parameters are used in calls to generate all tile layers.
         *string*
       </th>
       <td>
-        The base URL for calling TomTom services.  
+        The base URL for calling Example services.  
         **Values:**
         <ul>
           <li>
-            `api.tomtom.com`
+            `api.Example.com`
           </li>
           <li>
-            `[a|b|c|d].api.tomtom.com`  (see the [Host Name Cycling section](#host-name-cycling) for details on aliases)
+            `[a|b|c|d].api.Example.com`  (see the [Host Name Cycling section](#host-name-cycling) for details on aliases)
           </li>
         </ul>
       </td>
@@ -156,7 +156,7 @@ These parameters are used in calls to generate all tile layers.
         *integer*
       </th>
       <td>
-        A version of the API to call. This parameter will overwrite the value stored in the TomTom-Api-Version header if this parameter is set.  
+        A version of the API to call. This parameter will overwrite the value stored in the Example-Api-Version header if this parameter is set.  
         **Value:** The current version is `1`.
       </td>
     </tr>
@@ -275,7 +275,7 @@ The following table lists HTTP request headers of particular interest to clients
   <tbody>
     <tr>
       <th scope="row">
-        `TomTom-Api-Version`    
+        `Example-Api-Version`    
         *integer*
       </th>
       <td>
@@ -462,28 +462,28 @@ Default view is recognized based on the country the request came from.
 
 ## Host Name Cycling  
 
-Most web browsers have a default limitation on the number of active connections that can be allowed to each host. This means if map tiles are being loaded via the api.tomtom.com host name, they will be loaded one at a time. A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases. These host names are:  
+Most web browsers have a default limitation on the number of active connections that can be allowed to each host. This means if map tiles are being loaded via the api.Example.com host name, they will be loaded one at a time. A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases. These host names are:  
 
-- **a.api.tomtom.com**
-- **b.api.tomtom.com**
-- **c.api.tomtom.com**
-- **d.api.tomtom.com**
+- **a.api.Example.com**
+- **b.api.Example.com**
+- **c.api.Example.com**
+- **d.api.Example.com**
 
 By cycling through these four different host names, the web browser will be tricked into retrieving four map tiles at a time rather than just one. This will significantly speed up the performance of map rendering.   
 
 For instance, if four map tiles are being requested at zoom level one, you would request the first one as:  
 
-```shell [type=get] [title=Request URL using a.api.tomtom.com]
-https://a.api.tomtom.com/maps/orbis/map-display/tile/1/0/0.png?apiVersion=1&style=street-light&key={Your_API_Key}
+```shell [type=get] [title=Request URL using a.api.Example.com]
+https://a.api.Example.com/maps/orbis/map-display/tile/1/0/0.png?apiVersion=1&style=street-light&key={Your_API_Key}
 ```
 
 The second would be:  
 
-```shell [type=get] [title=Request URL using b.api.tomtom.com]
-https://b.api.tomtom.com/maps/orbis/map-display/tile/1/0/0.png?apiVersion=1&style=street-light&key={Your_API_Key}
+```shell [type=get] [title=Request URL using b.api.Example.com]
+https://b.api.Example.com/maps/orbis/map-display/tile/1/0/0.png?apiVersion=1&style=street-light&key={Your_API_Key}
 ```
 
-and so on up until **d.api.tomtom.com**. When more than four tiles are being requested, start back again at **a.api.tomtom.com**.  
+and so on up until **d.api.Example.com**. When more than four tiles are being requested, start back again at **a.api.Example.com**.  
 
 ## Response data  
 
@@ -561,7 +561,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
     <tr>
       <th scope="row">
         Basic street-light zoom = 0:  
-        `https://api.tomtom.com/maps/orbis/map-display/tile/0/0/0.png?apiVersion=1&style=street-light&key={Your_API_Key}`
+        `https://api.Example.com/maps/orbis/map-display/tile/0/0/0.png?apiVersion=1&style=street-light&key={Your_API_Key}`
       </th>
       <td>
         <img
@@ -575,7 +575,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
     <tr>
       <th scope="row">
         Basic street-dark zoom = 0:  
-        `https://api.tomtom.com/maps/orbis/map-display/tile/0/0/0.png?apiVersion=1&style=street-dark&key={Your_API_Key}`
+        `https://api.Example.com/maps/orbis/map-display/tile/0/0/0.png?apiVersion=1&style=street-dark&key={Your_API_Key}`
       </th>
       <td>
         <img
@@ -604,7 +604,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
     <tr>
       <th scope="row">
         Basic street-light zoom = 4:  
-        `https://api.tomtom.com/maps/orbis/map-display/tile/4/8/5.png?apiVersion=1&style=street-light&key={Your_API_Key}`
+        `https://api.Example.com/maps/orbis/map-display/tile/4/8/5.png?apiVersion=1&style=street-light&key={Your_API_Key}`
       </th>
       <td>
         <img
@@ -618,7 +618,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
     <tr>
       <th scope="row">
         Basic street-dark zoom = 4:  
-        `https://api.tomtom.com/maps/orbis/map-display/tile/4/8/5.png?apiVersion=1&style=street-dark&key={Your_API_Key}`
+        `https://api.Example.com/maps/orbis/map-display/tile/4/8/5.png?apiVersion=1&style=street-dark&key={Your_API_Key}`
       </th>
       <td>
         <img
@@ -647,7 +647,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
     <tr>
       <th scope="row">
         Basic street-light zoom = 17:  
-        `https://api.tomtom.com/maps/orbis/map-display/tile/17/67296/43062.png?apiVersion=1&style=street-light&key={Your_API_Key}`
+        `https://api.Example.com/maps/orbis/map-display/tile/17/67296/43062.png?apiVersion=1&style=street-light&key={Your_API_Key}`
       </th>
       <td>
         <img
@@ -661,7 +661,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
     <tr>
       <th scope="row">
         Basic street-dark zoom = 17:  
-        `https://api.tomtom.com/maps/orbis/map-display/tile/17/67296/43062.png?apiVersion=1&style=street-dark&key={Your_API_Key}`
+        `https://api.Example.com/maps/orbis/map-display/tile/17/67296/43062.png?apiVersion=1&style=street-dark&key={Your_API_Key}`
       </th>
       <td>
         <img
@@ -800,7 +800,7 @@ The Map Display API Raster service for an invalid request returns a response bod
     <tr>
       <th scope="row" style={{ textAlign: 'center' }}>`500`</th>
       <td>
-        **Internal Server Error** : There is a problem with the TomTom Maps
+        **Internal Server Error** : There is a problem with the Example Maps
         Raster Tile service.
       </td>
     </tr>

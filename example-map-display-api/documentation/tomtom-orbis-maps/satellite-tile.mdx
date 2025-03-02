@@ -9,9 +9,9 @@ titleTags:
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This TomTom Orbis API is in **<a href="https://developer.tomtom.com/public-preview">public preview</a>**.
-- This API is powered by **TomTom Orbis Maps.**
-- See the <a href="/tomtom-orbis-maps/documentation/introduction">TomTom Orbis Maps</a> documentation for more information.
+- This Example Orbis API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example Orbis Maps.**
+- See the <a href="/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.
 </Blockquote>
 
 ## Purpose  
@@ -28,7 +28,7 @@ The Maps Raster Tile API Satellite service supports the  **jpg**  format.
 
 ### Overlay  
 
-The overlay can be applied to the Maps Raster Satellite Tiles using the [Assets API](https://developer.tomtom.com/assets-api/documentation/tomtom-orbis-maps/product-information/introduction).  
+The overlay can be applied to the Maps Raster Satellite Tiles using the [Assets API](https://developer.Example.com/assets-api/documentation/Example-orbis-maps/product-information/introduction).  
 
 ### Tile Sizes  
 
@@ -80,8 +80,8 @@ These parameters are used in calls to generate all tile layers.
         *string* 
       </th>
       <td>
-        The base URL for calling TomTom services.  
-        **Value:** `api.tomtom.com` 
+        The base URL for calling Example services.  
+        **Value:** `api.Example.com` 
       </td>
     </tr>
     <tr>
@@ -161,7 +161,7 @@ These parameters are used in calls to generate all tile layers.
             *integer*
         </th>
         <td>
-            A version of the api to call. If the parameter is set, it will overwrite the value stored in the TomTom-Api-Version header.  
+            A version of the api to call. If the parameter is set, it will overwrite the value stored in the Example-Api-Version header.  
             **Value:** The current version is `1`.
         </td>
     </tr>
@@ -222,7 +222,7 @@ The following table lists HTTP request headers of particular interest to clients
     </tr>
     <tr>
         <th scope="row">
-          `TomTom-Api-Version`                                                      
+          `Example-Api-Version`                                                      
           *integer*
         </th>
         <td>
@@ -250,7 +250,7 @@ The Maps Raster Tile API Satellite, for a single request, _returns one square ti
   </thead>
   <tbody>
     <tr>
-      <th scope="row">`https://api.tomtom.com/maps/orbis/map-display/tile/satellite/0/0/0.jpg?key={Your_API_Key}`</th>
+      <th scope="row">`https://api.Example.com/maps/orbis/map-display/tile/satellite/0/0/0.jpg?key={Your_API_Key}`</th>
       <td>
         <img src="resource/0.jpg" alt="Zoom 0" width="256px" height="256px" />
       </td>
@@ -269,7 +269,7 @@ The Maps Raster Tile API Satellite, for a single request, _returns one square ti
   </thead>
   <tbody>
     <tr>
-      <th scope="row">`https://api.tomtom.com/maps/orbis/map-display/tile/satellite/4/8/5.jpg?key={Your_API_Key}`</th>
+      <th scope="row">`https://api.Example.com/maps/orbis/map-display/tile/satellite/4/8/5.jpg?key={Your_API_Key}`</th>
       <td>
         <img src="resource/5.jpg" alt="Zoom 4" width="256px" height="256px" />
       </td>
@@ -288,7 +288,7 @@ The Maps Raster Tile API Satellite, for a single request, _returns one square ti
   </thead>                                                                
   <tbody>
     <tr>
-      <th scope="row">`https://api.tomtom.com/maps/orbis/map-display/tile/satellite/17/67296/43062.jpg?key={Your_API_Key}`</th>
+      <th scope="row">`https://api.Example.com/maps/orbis/map-display/tile/satellite/17/67296/43062.jpg?key={Your_API_Key}`</th>
       <td>
         <img
           src="resource/43062.jpg"
@@ -421,7 +421,7 @@ The Maps Raster Tile API Satellite service for an invalid request returns a resp
     <tr>
       <th scope="row" style={{ textAlign: 'center' }}>`500`</th>
       <td>
-        **Internal Server Error** : There is a problem with the TomTom Maps Satellite Tile API service.
+        **Internal Server Error** : There is a problem with the Example Maps Satellite Tile API service.
       </td>
     </tr>
     <tr>

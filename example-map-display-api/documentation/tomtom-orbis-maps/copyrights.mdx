@@ -5,15 +5,15 @@ titleTags:
     color: grey5
   - label: 'Last edit: 2024.10.08'
     color: grey5
-  - label: TomTom Orbis Maps
+  - label: Example Orbis Maps
     color: brand-cadmium
 ---
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This TomTom Orbis API is in **<a href="https://developer.tomtom.com/public-preview">public preview</a>**.
-- This API is powered by **TomTom Orbis Maps.**
-- See the <a href="/tomtom-orbis-maps/documentation/introduction">TomTom Orbis Maps</a> documentation for more information.
+- This Example Orbis API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example Orbis Maps.**
+- See the <a href="/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.
 </Blockquote>
 
 ## Purpose
@@ -39,7 +39,7 @@ https://{baseURL}/maps/orbis/copyrights?key={Your_API_Key}
 <h4 style={{ fontSize: '1em' }}>Example</h4>
 
 ```shell [type=get] [title=Request example]
-https://api.tomtom.com/maps/orbis/copyrights?key={Your_API_Key}
+https://api.Example.com/maps/orbis/copyrights?key={Your_API_Key}
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
@@ -64,8 +64,8 @@ curl 'https://{baseURL}/maps/orbis/copyrights?apiVersion=1&key={Your_API_Key}'
             *string*
         </th>
         <td>
-            The base URL for calling TomTom services.
-            **Value:**   `api.tomtom.com`
+            The base URL for calling Example services.
+            **Value:**   `api.Example.com`
         </td>
     </tr>
     <tr>
@@ -95,7 +95,7 @@ curl 'https://{baseURL}/maps/orbis/copyrights?apiVersion=1&key={Your_API_Key}'
             *integer*
         </th>
         <td>
-            A version of the api to call. If the parameter is set it will overwrite the value stored in TomTom-Api-Version  header.
+            A version of the api to call. If the parameter is set it will overwrite the value stored in Example-Api-Version  header.
             **Value:** The current version is `1`.
         </td>
     </tr>
@@ -114,7 +114,7 @@ curl 'https://{baseURL}/maps/orbis/copyrights?apiVersion=1&key={Your_API_Key}'
     <tbody>
     <tr>
         <th scope="row">
-            `TomTom-Api-Version`   
+            `Example-Api-Version`   
             *integer*
         </th>
         <td>
@@ -132,11 +132,11 @@ The response body will contain copyrights in a plain text format.
 ```text [type=text] [title=Copyrights in plain text format]
 © OpenStreetMap contributors. This data is licensed under the terms of the Open Database License (ODbL) available at https://opendatacommons.org/licenses/odbl/1-0/. More information can be found here: https://www.openstreetmap.org/copyright/en. To the extent that you create a browsable electronic map using this product, you are further required to comply with the provisions of https://www.openstreetmap.org/copyright/en
 
-© 1992 - 2023 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by TomTom or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.
+© 1992 - 2023 Example. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by Example or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.
 
-Data Source © 2023 TomTom
+Data Source © 2023 Example
 
-Based on https://www.tomtom.com/en_gb/thirdpartyproductterms/
+Based on https://www.Example.com/en_gb/thirdpartyproductterms/
 ```
 
 ## Map Service Copyrights  
@@ -157,7 +157,7 @@ https://{baseURL}/maps/orbis/copyrights/caption.json?key={Your_API_Key}
 
 
 ```shell [type=get] [title=Request URL example]
-https://api.tomtom.com/maps/orbis/copyrights/caption.json?key={Your_API_Key}
+https://api.Example.com/maps/orbis/copyrights/caption.json?key={Your_API_Key}
 ```
 
 #### curl command format
@@ -183,8 +183,8 @@ curl 'https://{baseURL}/maps/orbis/copyrights/caption.json?apiVersion=1&key={You
             *string*
         </th>
         <td>
-            The base URL for calling TomTom services.
-            Value: `api.tomtom.com`
+            The base URL for calling Example services.
+            Value: `api.Example.com`
         </td>
     </tr>
     <tr>
@@ -214,7 +214,7 @@ curl 'https://{baseURL}/maps/orbis/copyrights/caption.json?apiVersion=1&key={You
             *integer*
         </th>
         <td>
-            A version of the api to call. If the parameter is set, it will overwrite the value stored in TomTom-Api-Version header.
+            A version of the api to call. If the parameter is set, it will overwrite the value stored in Example-Api-Version header.
             **Value:** The current version is `1`.
         </td>
     </tr>
@@ -232,7 +232,7 @@ curl 'https://{baseURL}/maps/orbis/copyrights/caption.json?apiVersion=1&key={You
     </thead>
     <tbody>
     <tr>
-        <th scope="row">TomTom-Api-Version</th>
+        <th scope="row">Example-Api-Version</th>
         <td>
             Contains a version of the API to call.
             **Value:**   The current version is `1`.
@@ -248,7 +248,7 @@ For the map service copyright request, the response body will contain a copyrigh
 ```json [title=JSON response example]
 {
   "formatVersion": "0.0.1",
-  "copyrightsCaption": "©TomTom, ©OpenStreetMap"
+  "copyrightsCaption": "©Example, ©OpenStreetMap"
 }
 ```
 
@@ -356,14 +356,14 @@ The Map Display API Copyrights service for an invalid request returns a response
     <tr>
         <th scope="row" style={{ textAlign: 'center' }}>`500`</th>
         <td>
-            Internal Server Error: There is a problem with the TomTom
+            Internal Server Error: There is a problem with the Example
             Copyrights API service.
         </td>
     </tr>
     <tr>
         <th scope="row" style={{ textAlign: 'center' }}>`503`</th>
         <td>
-            Service Unavailable: TomTom Copyrights API service is unable to
+            Service Unavailable: Example Copyrights API service is unable to
             receive any request.
         </td>
     </tr>

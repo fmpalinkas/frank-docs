@@ -13,16 +13,16 @@ The Maps Raster Tile API endpoint renders map data that is divided into gridded 
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
 
 ## Tile layers and styles
 
 The Maps Raster service supports the following tile layers: **basic**, **hybrid**, and **labels**. Each can be served in two different styles: **main** and **night**.
 
-Basic tiles contain mapping data such as polygons, road shapes, borders and labels. In addition to the basic map tiles, the service provides overlay tiles. These are partially transparent tiles containing map geometry or labels but not the full map. They can be layered with other TomTom or third party map tiles to create consolidated views:
+Basic tiles contain mapping data such as polygons, road shapes, borders and labels. In addition to the basic map tiles, the service provides overlay tiles. These are partially transparent tiles containing map geometry or labels but not the full map. They can be layered with other Example or third party map tiles to create consolidated views:
 
 - The **labels** overlay provides the same label information as the standard map tile. It can be used in situations where traffic tubes or other overlaid information covers the labels on the base map layer. The labels are precisely placed to align with the labels on the standard layer.
-- The **hybrid** overlay provides all the features from the map data except geographic polygons. It contains borders, roads, and labels, and can be overlaid on other tiles (such as satellite imagery) to produce hybrid tiles displaying TomTom map data.
+- The **hybrid** overlay provides all the features from the map data except geographic polygons. It contains borders, roads, and labels, and can be overlaid on other tiles (such as satellite imagery) to produce hybrid tiles displaying Example map data.
 
 Because _overlaying requires transparency_, all overlay tiles must be requested with a format of **png**.
 
@@ -79,20 +79,20 @@ These parameters are used in calls to generate all tile layers.
          *string* 
       </th>
       <td>
-        The base URL for calling TomTom services.
+        The base URL for calling Example services.
         <br />
          **Values:** 
         <ul>
           <li>
-             `api.tomtom.com` 
+             `api.Example.com` 
           </li>
           <li>
-             `[a|b|c|d].api.tomtom.com`  (see the
+             `[a|b|c|d].api.Example.com`  (see the
              [Host Name Cycling section](#host-name-cycling)  for
             details on aliases)
           </li>
           <li>
-             `kr-api.tomtom.com`  (see the
+             `kr-api.Example.com`  (see the
              [Region-specific content](/region-specific-content) 
             page)
           </li>
@@ -304,7 +304,7 @@ These parameters are used in calls to generate all tile layers.
             <sup>*</sup>
           </li>
         </ul>
-        <br />* Only available under  *kr-api.tomtom.com* , see  [Available region specific contents](/region-specific-content#available-region-specific-contents).
+        <br />* Only available under  *kr-api.Example.com* , see  [Available region specific contents](/region-specific-content#available-region-specific-contents).
       </td>
     </tr>
     <tr>
@@ -760,33 +760,33 @@ Default view is recognised based on the country the request came from.
     </tr>
   </tbody>
 </table>
-* Only available under  *kr-api.tomtom.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+* Only available under  *kr-api.Example.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
 <br />
 
 ## Host Name Cycling
 
-Most web browsers have a default limitation on the number of active connections that can be allowed to each host. This means if map tiles are being loaded via the api.tomtom.com host name, they will be loaded one at a time. A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases. These host names are:
+Most web browsers have a default limitation on the number of active connections that can be allowed to each host. This means if map tiles are being loaded via the api.Example.com host name, they will be loaded one at a time. A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases. These host names are:
 
-- **a.api.tomtom.com**
-- **b.api.tomtom.com**
-- **c.api.tomtom.com**
-- **d.api.tomtom.com**
+- **a.api.Example.com**
+- **b.api.Example.com**
+- **c.api.Example.com**
+- **d.api.Example.com**
 
 By cycling through these four different host names, the web browser will be tricked into retrieving four map tiles at a time rather than just one. This will significantly speed up the performance of map rendering.
 
 For instance, if four map tiles are being requested at zoom level one, you would request the first one as:
 
-```shell [type=get] [title=Request URL using a.api.tomtom.com]
-https://a.api.tomtom.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
+```shell [type=get] [title=Request URL using a.api.Example.com]
+https://a.api.Example.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
 ```
 
 The second would be:
 
-```shell [type=get] [title=Request URL using b.api.tomtom.com]
-https://b.api.tomtom.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
+```shell [type=get] [title=Request URL using b.api.Example.com]
+https://b.api.Example.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
 ```
 
-and so on up until **d.api.tomtom.com**. When more than four tiles are being requested, start back again at **a.api.tomtom.com**.
+and so on up until **d.api.Example.com**. When more than four tiles are being requested, start back again at **a.api.Example.com**.
 
 ## Response data
 
@@ -815,14 +815,14 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
         <img
           alt="basic main view"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/basic_main.png"
+          src="https://developer.Example.com/assets/images/maps-api/basic_main.png"
           width="256"
         />
       </td>
       <td>
         <img
           alt="basic night view"
-          src="https://developer.tomtom.com/assets/images/maps-api/basic_night.png"
+          src="https://developer.Example.com/assets/images/maps-api/basic_night.png"
         />
       </td>
     </tr>
@@ -832,7 +832,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
         <img
           alt="hybrid main view"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_main.png"
+          src="https://developer.Example.com/assets/images/maps-api/hybrid_main.png"
           width="256"
         />
       </td>
@@ -840,7 +840,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
         <img
           alt="hybrid night view"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_night.png"
+          src="https://developer.Example.com/assets/images/maps-api/hybrid_night.png"
           width="256"
         />
       </td>
@@ -851,7 +851,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
         <img
           alt="labels main view"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/labels_main.png"
+          src="https://developer.Example.com/assets/images/maps-api/labels_main.png"
           width="256"
         />
       </td>
@@ -859,7 +859,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
         <img
           alt="labels night view"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/labels_night.png"
+          src="https://developer.Example.com/assets/images/maps-api/labels_night.png"
           width="256"
         />
       </td>
@@ -887,7 +887,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
         <img
           alt="basic main 512"
           height="512"
-          src="https://developer.tomtom.com/assets/images/maps-api/basic_main_512.png"
+          src="https://developer.Example.com/assets/images/maps-api/basic_main_512.png"
           width="512"
         />
       </td>
@@ -898,7 +898,7 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
         <img
           alt="labels main 512"
           height="512"
-          src="https://developer.tomtom.com/assets/images/maps-api/labels_main_512.png"
+          src="https://developer.Example.com/assets/images/maps-api/labels_main_512.png"
           width="512"
         />
       </td>
@@ -928,13 +928,13 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Basic main zoom = 0:
         <br />
-         `https://api.tomtom.com/map/1/tile/basic/main/0/0/0.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/basic/main/0/0/0.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="basic main zoom 0"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/basic_main_zoom0.png"
+          src="https://developer.Example.com/assets/images/maps-api/basic_main_zoom0.png"
           width="256"
         />
       </td>
@@ -943,13 +943,13 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Basic night zoom = 0:
         <br />
-         `https://api.tomtom.com/map/1/tile/basic/night/0/0/0.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/basic/night/0/0/0.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="basic night zoom 0"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/basic_night_zoom0.png"
+          src="https://developer.Example.com/assets/images/maps-api/basic_night_zoom0.png"
           width="256"
         />
         <br />
@@ -982,13 +982,13 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Basic main zoom = 4:
         <br />
-         `https://api.tomtom.com/map/1/tile/basic/main/4/8/5.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/basic/main/4/8/5.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="basic main zoom 4"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/basic_main_zoom4.png"
+          src="https://developer.Example.com/assets/images/maps-api/basic_main_zoom4.png"
           width="256"
         />
       </td>
@@ -997,13 +997,13 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Hybrid main zoom = 4:
         <br />
-         `https://api.tomtom.com/map/1/tile/hybrid/main/4/8/5.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/hybrid/main/4/8/5.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="hybrid main zoom 4"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_main_zoom4.png"
+          src="https://developer.Example.com/assets/images/maps-api/hybrid_main_zoom4.png"
           width="256"
         />
       </td>
@@ -1012,13 +1012,13 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Labels main zoom = 4:
         <br />
-         `https://api.tomtom.com/map/1/tile/labels/main/4/8/5.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/labels/main/4/8/5.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="labels main zoom 4"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/labels_main_zoom4.png"
+          src="https://developer.Example.com/assets/images/maps-api/labels_main_zoom4.png"
           width="256"
         />
       </td>
@@ -1027,13 +1027,13 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Basic night zoom = 4:
         <br />
-         `https://api.tomtom.com/map/1/tile/basic/night/4/8/5.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/basic/night/4/8/5.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="basic night zoom 4"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/basic_night_zoom4.png"
+          src="https://developer.Example.com/assets/images/maps-api/basic_night_zoom4.png"
           width="256"
         />
       </td>
@@ -1042,13 +1042,13 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Hybrid night zoom = 4:
         <br />
-         `https://api.tomtom.com/map/1/tile/hybrid/night/4/8/5.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/hybrid/night/4/8/5.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="hybrid night zoom 4"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_night_zoom4.png"
+          src="https://developer.Example.com/assets/images/maps-api/hybrid_night_zoom4.png"
           width="256"
         />
       </td>
@@ -1057,13 +1057,13 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Labels night zoom = 4:
         <br />
-         `https://api.tomtom.com/map/1/tile/labels/night/4/8/5.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/labels/night/4/8/5.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="labels night zoom 4"
           height="256"
-          src="https://developer.tomtom.com/assets/images/maps-api/labels_night_zoom4.png"
+          src="https://developer.Example.com/assets/images/maps-api/labels_night_zoom4.png"
           width="256"
         />
       </td>
@@ -1092,12 +1092,12 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Basic main zoom = 17:
         <br />
-         `https://api.tomtom.com/map/1/tile/basic/main/17/67296/43062.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/basic/main/17/67296/43062.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="basic main zoom = 17"
-          src="https://developer.tomtom.com/assets/images/maps-api/basic_main_zoom17.png"
+          src="https://developer.Example.com/assets/images/maps-api/basic_main_zoom17.png"
           width="256"
           height="256"
         />
@@ -1107,12 +1107,12 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Hybrid main zoom = 17:
         <br />
-         `https://api.tomtom.com/map/1/tile/hybrid/main/17/67296/43062.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/hybrid/main/17/67296/43062.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="hybrid main zoom = 17"
-          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_main_zoom17.png"
+          src="https://developer.Example.com/assets/images/maps-api/hybrid_main_zoom17.png"
           width="256"
           height="256"
         />
@@ -1122,12 +1122,12 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Labels main zoom = 17:
         <br />
-         `https://api.tomtom.com/map/1/tile/labels/main/17/67296/43062.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/labels/main/17/67296/43062.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="labels main zoom = 17"
-          src="https://developer.tomtom.com/assets/images/maps-api/labels_main_zoom17.png"
+          src="https://developer.Example.com/assets/images/maps-api/labels_main_zoom17.png"
           width="256"
           height="256"
         />
@@ -1137,12 +1137,12 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Basic night zoom = 17:
         <br />
-         `https://api.tomtom.com/map/1/tile/basic/night/17/67296/43062.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/basic/night/17/67296/43062.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="basic night zoom = 17"
-          src="https://developer.tomtom.com/assets/images/maps-api/basic_night_zoom17.png"
+          src="https://developer.Example.com/assets/images/maps-api/basic_night_zoom17.png"
           width="256"
           height="256"
         />
@@ -1152,12 +1152,12 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Hybrid night zoom = 17:
         <br />
-         `https://api.tomtom.com/map/1/tile/hybrid/night/17/67296/43062.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/hybrid/night/17/67296/43062.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="hybrid night zoom = 17"
-          src="https://developer.tomtom.com/assets/images/maps-api/hybrid_night_zoom17.png"
+          src="https://developer.Example.com/assets/images/maps-api/hybrid_night_zoom17.png"
           width="256"
           height="256"
         />
@@ -1167,12 +1167,12 @@ The Maps Raster API, for a single request, _returns one square tile_ in **png** 
       <th scope="row">
         Labels night zoom = 17:
         <br />
-         `https://api.tomtom.com/map/1/tile/labels/night/17/67296/43062.png?key={Your_API_Key}` 
+         `https://api.Example.com/map/1/tile/labels/night/17/67296/43062.png?key={Your_API_Key}` 
       </th>
       <td>
         <img
           alt="labels night zoom = 17"
-          src="https://developer.tomtom.com/assets/images/maps-api/labels_night_zoom17.png"
+          src="https://developer.Example.com/assets/images/maps-api/labels_night_zoom17.png"
           width="256"
           height="256"
         />
@@ -1334,7 +1334,7 @@ The Map Display API Raster service for an invalid request returns a response bod
          `500` 
       </th>
       <td>
-         **Internal Server Error** : There is a problem with the TomTom Maps
+         **Internal Server Error** : There is a problem with the Example Maps
         Raster Tile service.
       </td>
     </tr>

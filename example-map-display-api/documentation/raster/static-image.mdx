@@ -13,7 +13,7 @@ The Static Image service renders a user-defined, rectangular image containing a 
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
 
 ## Layers and styles
 
@@ -45,7 +45,7 @@ Styles define two colour schemes:
 
 <ul>
   <li>
-     **main** : Defines the general full-colour scheme with default TomTom
+     **main** : Defines the general full-colour scheme with default Example
     colours.
   </li>
   <li>
@@ -70,17 +70,17 @@ https://{baseURL}/map/{versionNumber}/staticimage?key={Your_API_Key}&center={cen
 <h4 style={{ fontSize: '1em' }}>Examples</h4>
 
 ```shell [type=get] [title=Example request URL]
-https://api.tomtom.com/map/1/staticimage?key={Your_API_Key}&zoom=9&center=13.567893,46.112341&format=jpg&layer=basic&style=main&width=1305&height=748&view=Unified&language=en-GB
+https://api.Example.com/map/1/staticimage?key={Your_API_Key}&zoom=9&center=13.567893,46.112341&format=jpg&layer=basic&style=main&width=1305&height=748&view=Unified&language=en-GB
 ```
 
 ```shell [type=get] [title=Example request URL]
-https://api.tomtom.com/map/1/staticimage?key={Your_API_Key}&zoom=9&bbox=23.355233,55.982261,24.980233,56.526017&format=png&layer=labels&style=night&view=IN&language=en-GB
+https://api.Example.com/map/1/staticimage?key={Your_API_Key}&zoom=9&bbox=23.355233,55.982261,24.980233,56.526017&format=png&layer=labels&style=night&view=IN&language=en-GB
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```shell [type=get] [title=curl request URL]
-curl 'https://api.tomtom.com/map/1/staticimage?key={Your_API_Key}&zoom=9&center=13.567893,46.112341&format=jpg&layer=basic&style=main&width=1305&height=748  &view=Unified  &language=en-GB'
+curl 'https://api.Example.com/map/1/staticimage?key={Your_API_Key}&zoom=9&center=13.567893,46.112341&format=jpg&layer=basic&style=main&width=1305&height=748  &view=Unified  &language=en-GB'
 ```
 
 ### Request parameters
@@ -108,9 +108,9 @@ The following data table describes the parameters that can be used in a request.
          *string* 
       </th>
       <td>
-        The base URL for calling TomTom services.
+        The base URL for calling Example services.
         <br />
-         **Value:**   `api.tomtom.com` 
+         **Value:**   `api.Example.com` 
       </td>
     </tr>
     <tr>
@@ -360,7 +360,7 @@ The following data table describes the parameters that can be used in a request.
     </tr>
   </tbody>
 </table>
-* Only available under  *kr-api.tomtom.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+* Only available under  *kr-api.Example.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
 <br />
 
 ### Request headers
@@ -794,7 +794,7 @@ Default view is recognised based on the country the request came from.
     </tr>
   </tbody>
 </table>
-* Only available under  *kr-api.tomtom.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+* Only available under  *kr-api.Example.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
 <br />
 
 ## Allowed zoom level / bbox combinations
@@ -1073,11 +1073,11 @@ Default view is recognised based on the country the request came from.
 ### Examples
 
 ```shell [type=get] [title=Correct request URL uses &bbox=-180,-85,0,0]
-https://api.tomtom.com/map/1/staticimage?key={Your_API_Key}&zoom=5&bbox=-180,-85,0,0&format=jpg&layer=basic&style=main&view=Unified
+https://api.Example.com/map/1/staticimage?key={Your_API_Key}&zoom=5&bbox=-180,-85,0,0&format=jpg&layer=basic&style=main&view=Unified
 ```
 
 ```shell [type=get] [title=Incorrect request URL uses &bbox=-180,-85,1,0]
-https://api.tomtom.com/map/1/staticimage?key={Your_API_Key}&zoom=5&bbox=-180,-85,1,0&format=jpg&layer=basic&style=main&view=Unified
+https://api.Example.com/map/1/staticimage?key={Your_API_Key}&zoom=5&bbox=-180,-85,1,0&format=jpg&layer=basic&style=main&view=Unified
 ```
 
 ## Response data

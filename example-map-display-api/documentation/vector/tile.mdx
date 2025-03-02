@@ -34,7 +34,7 @@ Visible geometry is stored as coordinates in the range `0-4095`. Coordinate `0,0
 
 ### Run this endpoint
 
-You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
 
 ## Request data
 
@@ -78,20 +78,20 @@ The following elements are used in calls to generate all vector tile layers.
          *string* 
       </th>
       <td>
-        The base URL for calling TomTom services.
+        The base URL for calling Example services.
         <br />
          **Values:** 
         <ul>
           <li>
-             `api.tomtom.com` 
+             `api.Example.com` 
           </li>
           <li>
-             `[a|b|c|d].api.tomtom.com`  (see the
+             `[a|b|c|d].api.Example.com`  (see the
              [Host Name Cycling section](#host-name-cycling)  for
             details on aliases)
           </li>
           <li>
-             `kr-api.tomtom.com`  (see the
+             `kr-api.Example.com`  (see the
              [Region-specific content](/region-specific-content) 
             page)
           </li>
@@ -266,7 +266,7 @@ The following elements are used in calls to generate all vector tile layers.
   </tbody>
 </table>
 
-* Only available under  *kr-api.tomtom.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+* Only available under  *kr-api.Example.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
 <br />
 
 ### HTTP request headers
@@ -449,7 +449,7 @@ Default view is recognised based on the country the request came from.
     </tr>
   </tbody>
 </table>
-* Only available under  *kr-api.tomtom.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+* Only available under  *kr-api.Example.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
 <br />
 
 ## List of supported languages
@@ -707,28 +707,28 @@ Default view is recognised based on the country the request came from.
 
 ## Host Name Cycling
 
-Most web browsers have a default limitation on the number of active connections that can be allowed to each host. This means if map tiles are being loaded via the api.tomtom.com host name, they will be loaded one at a time. A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases. These host names are:
+Most web browsers have a default limitation on the number of active connections that can be allowed to each host. This means if map tiles are being loaded via the api.Example.com host name, they will be loaded one at a time. A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases. These host names are:
 
-- **a.api.tomtom.com**
-- **b.api.tomtom.com**
-- **c.api.tomtom.com**
-- **d.api.tomtom.com**
+- **a.api.Example.com**
+- **b.api.Example.com**
+- **c.api.Example.com**
+- **d.api.Example.com**
 
 By cycling through these four different host names, the web browser will be tricked into retrieving four map tiles at a time rather than just one. This will significantly speed up the performance of map rendering.
 
 For instance, if four map tiles are being requested at zoom level one, you would request the first one as:
 
-```shell [type=get] [title=Request URL using a.api.tomtom.com]
-https://a.api.tomtom.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
+```shell [type=get] [title=Request URL using a.api.Example.com]
+https://a.api.Example.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
 ```
 
 The second would be:
 
-```shell [type=get] [title=Request URL using b.api.tomtom.com]
-https://b.api.tomtom.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
+```shell [type=get] [title=Request URL using b.api.Example.com]
+https://b.api.Example.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
 ```
 
-and so on up until **d.api.tomtom.com**. When more than four tiles are being requested, start back again at **a.api.tomtom.com**.
+and so on up until **d.api.Example.com**. When more than four tiles are being requested, start back again at **a.api.Example.com**.
 
 ## Response data
 
@@ -750,7 +750,7 @@ The Vector Maps API, for a single request, returns a binary response body which 
 	<tbody>
 		<tr>
 			<th scope="row">
-			 `https://api.tomtom.com/map/1/tile/basic/main/0/0/0.pbf?key={Your_API_Key}` 
+			 `https://api.Example.com/map/1/tile/basic/main/0/0/0.pbf?key={Your_API_Key}` 
 			</th>
 <td>
 
@@ -819,7 +819,7 @@ layers:3
 	<tbody>
 		<tr>
 			<th scope="row">
-			 `https://api.tomtom.com/map/1/tile/hybrid/main/5/4/8.pbf?key={Your_API_Key}` 
+			 `https://api.Example.com/map/1/tile/hybrid/main/5/4/8.pbf?key={Your_API_Key}` 
 			</th>
 <td>
 
@@ -860,7 +860,7 @@ state border:
 	<tbody>
 		<tr>
 			<th scope="row">
-			 `https://api.tomtom.com/map/1/tile/labels/main/4/9/5.pbf?key={Your_API_Key}` 
+			 `https://api.Example.com/map/1/tile/labels/main/4/9/5.pbf?key={Your_API_Key}` 
 			</th>
 <td>
 
@@ -1072,7 +1072,7 @@ The Map Display API Vector service for an invalid request returns a response bod
          `500` 
       </th>
       <td>
-         **Internal Server Error** : There is a problem with the TomTom Maps
+         **Internal Server Error** : There is a problem with the Example Maps
         Vector Tile service.
       </td>
     </tr>

@@ -5,15 +5,15 @@ titleTags:
     color: grey5
   - label: 'Last edit: 2024.10.08'
     color: grey5
-  - label: TomTom Orbis Maps
+  - label: Example Orbis Maps
     color: brand-cadmium
 ---
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This TomTom Orbis API is in **<a href="https://developer.tomtom.com/public-preview">public preview</a>**.
-- This API is powered by **TomTom Orbis Maps.**
-- See the <a href="/tomtom-orbis-maps/documentation/introduction">TomTom Orbis Maps</a> documentation for more information.
+- This Example Orbis API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example Orbis Maps.**
+- See the <a href="/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.
 </Blockquote>
 
 ## Purpose  
@@ -23,7 +23,7 @@ The **Map Display API Vector Tiles endpoint** serves data on zoom levels ranging
 - For zoom level `0`, the entire earth is displayed on a single tile.
 - At zoom level `22`, the world is divided into 2<sup>44</sup> tiles. See the [Zoom Levels and Tile Grid](./zoom-levels-and-tile-grid).
 
-The TomTom Orbis Maps Vector Tiles endpoint delivers geographic map data packaged in a vector representation of squared sections called **vector tiles**.
+The Example Orbis Maps Vector Tiles endpoint delivers geographic map data packaged in a vector representation of squared sections called **vector tiles**.
 
 - Each tile includes pre-defined collections of map features (points, lines, road shapes, water polygons, building footprints, etc.) delivered in one of the specified vector formats.
 - The format of the tile is formally described using the  [protobuf schema](./content#schema-data).
@@ -31,7 +31,7 @@ The TomTom Orbis Maps Vector Tiles endpoint delivers geographic map data package
 
 ### Tiles Layers and Styles
 
-The TomTom Orbis Maps Vector Tiles endpoint supports the following tile layers: `basic`. The vector data consists of layers with their own names and geometry. The client determines how to present this data to the end user, for example which colors to use for which features.
+The Example Orbis Maps Vector Tiles endpoint supports the following tile layers: `basic`. The vector data consists of layers with their own names and geometry. The client determines how to present this data to the end user, for example which colors to use for which features.
 
 - The `basic` vector tiles contain mapping data such as polygons, road shapes, borders, labels, and road icons.
 
@@ -76,14 +76,14 @@ The following elements are used in calls to generate all vector tile layers.
         *string* 
       </th>
       <td>
-        The base URL for calling TomTom services.  
+        The base URL for calling Example services.  
         **Values:**  
         <ul>
           <li>
-            `api.tomtom.com` 
+            `api.Example.com` 
           </li>
           <li>
-            `[a|b|c|d].api.tomtom.com` (see the
+            `[a|b|c|d].api.Example.com` (see the
             [Host Name Cycling section](#host-name-cycling)  for
             details on aliases)
           </li>
@@ -157,7 +157,7 @@ The following elements are used in calls to generate all vector tile layers.
         *integer* 
       </th>
       <td>
-        A version of the api to call. If the parameter is set, it will overwrite the value stored in TomTom-Api-Version header.  
+        A version of the api to call. If the parameter is set, it will overwrite the value stored in Example-Api-Version header.  
         **Value:** The current version is `1`.
       </td>
     </tr>
@@ -252,7 +252,7 @@ The following table lists HTTP request headers of particular interest to clients
   <tbody>
     <tr>
       <th scope="row">
-        `TomTom-Api-Version`    
+        `Example-Api-Version`    
         *integer* 
       </th>
       <td>
@@ -442,29 +442,29 @@ Default view is recognized based on the country the request came from.
 
 Most web browsers have a default limitation on the number of active connections that can be allowed to each host.  
 
-- This means if map tiles are being loaded via the api.tomtom.com host name, they will be loaded one at a time.  
+- This means if map tiles are being loaded via the api.Example.com host name, they will be loaded one at a time.  
 - A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases.  
   - These host names are:
-    - `a.api.tomtom.com`
-    - `b.api.tomtom.com`
-    - `c.api.tomtom.com`
-    - `d.api.tomtom.com`
+    - `a.api.Example.com`
+    - `b.api.Example.com`
+    - `c.api.Example.com`
+    - `d.api.Example.com`
 - By cycling through these four different host names, the web browser will be tricked into retrieving four map tiles at a time rather than just one.  
 - This will significantly speed up the performance of map rendering.  
 
 For instance, if four map tiles are being requested at zoom level one, you would request the first one as:  
 
 ```shell
-https://a.api.tomtom.com/maps/orbis/map-display/tile/1/0/0.pbf?key={Your_API_Key}
+https://a.api.Example.com/maps/orbis/map-display/tile/1/0/0.pbf?key={Your_API_Key}
 ```
 
 The second would be:  
 
 ```shell
-https://b.api.tomtom.com/maps/orbis/map-display/tile/1/0/0.pbf?key=Your_API_Key
+https://b.api.Example.com/maps/orbis/map-display/tile/1/0/0.pbf?key=Your_API_Key
 ```
 
-and so on up until `d.api.tomtom.com`. When more than four tiles are being requested, start back again at `a.api.tomtom.com`.  
+and so on up until `d.api.Example.com`. When more than four tiles are being requested, start back again at `a.api.Example.com`.  
 
 ## Response data  
 
@@ -485,7 +485,7 @@ Whole world at zoom = `0`, basic layer.
   </thead>
   <tbody>
     <tr>
-      <th scope="row">`https://api.tomtom.com/maps/orbis/map-display/tile/0/0/0.pbf?key={Your_API_Key}`</th>
+      <th scope="row">`https://api.Example.com/maps/orbis/map-display/tile/0/0/0.pbf?key={Your_API_Key}`</th>
 <td>
 
 ```json
@@ -653,7 +653,7 @@ The Map Display API Vector service endpoint for an invalid request returns a res
     <tr>
       <th scope="row" style={{ textAlign: 'center' }}>`500`</th>
       <td>
-        **Internal Server Error** : There is a problem with the TomTom Orbis Maps
+        **Internal Server Error** : There is a problem with the Example Orbis Maps
         Vector Tile service.
       </td>
     </tr>

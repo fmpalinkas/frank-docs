@@ -70,7 +70,7 @@ menu:
   - title: Map Styling
     isPrivate: false
     items:
-      - url: https://developer.tomtom.com/assets-api/documentation/tomtom-orbis-maps/product-information/introduction
+      - url: https://developer.Example.com/assets-api/documentation/Example-orbis-maps/product-information/introduction
         title: Assets API
         isPrivate: false
   - title: Copyrights

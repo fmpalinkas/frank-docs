@@ -1,0 +1,4853 @@
+---
+title: Content
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2024.09.19'
+    color: grey5
+---
+
+## Public Preview Notice  
+
+<Blockquote type="announcement" hasIcon>
+
+<p>
+  This API is in Public Preview. Go to the [Public Preview - what is it?](https://developer.tomtom.com/public-preview) page to see what this means.
+</p>
+
+</Blockquote>
+
+## TomTom Vector Format
+
+TomTom Vector tiles contain map features (points, lines, road shapes, water polygons, building footprints, etc.) that can be used to visualize map data. The data is divided into multiple protobuf layers. Besides the layers, the protobuf tags are also used to further describe the geographic features.
+
+![Vector tile property dependencies](https://developer.tomtom.com/assets/images/ProtobufSchemaPNGBig.png)
+
+<h4 style={{ fontSize: '1em' }}>Legend</h4>
+
+<dl>
+  <dt>
+     `Tile` 
+  </dt>
+  <dd>
+    Represents a vector tile as a whole entity. It consists of at least one
+     `TileLayer`.<br />
+    If the tile does not contain any relevant data, it contains one layer named  `empty`.
+  </dd>
+  <br />
+  <dt>
+     `TileLayer` 
+  </dt>
+  <dd>
+    Part of a  `Tile` , representing one of the layers that can be
+    rendered later. One layer consists of e.g., all Parks, Roads, Built-up
+    areas, or Points of interest.
+    <br />
+    Each  `TileLayer`  contains geometries of the same type. A geometry
+    in the vector tile can be one of three types:  `POINT` ,
+     `LINESTRING` , or  `POLYGON`. Every
+     `TileLayer`  contains the following fields:
+    <ul>
+      <li>
+         `name` 
+      </li>
+      <li>
+         `version` 
+      </li>
+      <li>
+         `extent` 
+      </li>
+    </ul>
+    <br />
+    It may also contain the following fields:
+    <ul>
+      <li>
+         `keys`  is an array of unique  `strings`.
+      </li>
+      <li>
+         `values`  is an array of unique  `TileValues`.
+      </li>
+      <li>
+         `features`  is an array of unique  `TileFeatures`.
+      </li>
+    </ul>
+    <br />
+    Arrays of  `keys`  and  `values`  contain the mapping for
+    tags of  `TileFeature.` 
+  </dd>
+  <br />
+  <dt>
+     `TileFeature` 
+  </dt>
+  <dd>
+    Member of an array of  `features`  stored in a
+     `TileLayer` , containing a geometry representation that can be
+    rendered.
+    <br />
+    It always contains the following fields:
+    <ul>
+      <li>
+         `type`  is a type of geometry. It can be  `POINT` ,
+         `LINESTRING` , or  `POLYGON`.
+      </li>
+      <li>
+         `geometry`  is an array of encoded geometry that can be used
+        for rendering. See the
+         [Decoding tile geometry](#decoding-tile-geometry)  section for
+        details.
+      </li>
+    </ul>
+    <br />
+    It may also contain the following fields:
+    <ul>
+      <li>
+         `tags`  is an array containing properties of feature.
+        <ul>
+          <li>
+            They are a  `TileFeature's`  detailed description which can
+            be used for styling and later rendering the geometry.
+          </li>
+          <li>They are encoded into an array of integers.</li>
+          <li>
+            In order to decode them, the arrays of  `keys`  and
+             `values`  from a corresponding  `TileLayer`  must
+            be used.
+          </li>
+          <li>
+            See the
+             [Decoding feature tile tags](#decoding-feature-tags) 
+            section for details.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </dd>
+  <br />
+  <dt>
+     `TileValue` 
+  </dt>
+  <dd>
+    Encoded representation of a string, integer, floating point, or boolean
+    value.
+    <ul>
+      <li>
+        It is stored in a  `values`  array, in a  `TileLayer`.
+      </li>
+      <li>
+        It is used for decoding  `tags`  of a  `TileFeature` 
+        (together with the members of a  `keys`  array).
+      </li>
+      <li>
+        See the  [Decoding feature tile tags](#decoding-feature-tags) 
+        section for details.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+## TomTom Vector Schema
+
+### Schema data
+
+Formally, the structure of a vector tile is described by the  [protocol buffer schema](https://developers.google.com/protocol-buffers/docs/overview). It allows the generation of C++, Java, Python, Go, Ruby, Objective-C, and C# code based on the proto file.
+
+```cpp
+package vector_tile
+
+option optimize_for = LITE_RUNTIME;
+
+message Tile {
+
+  enum GeomType {
+    UNKNOWN = 0;
+    POINT = 1;
+    LINESTRING = 2;
+    POLYGON = 3;
+  }
+
+  message Value {
+    optional string string_value = 1;
+    optional float float_value = 2;
+    optional double double_value = 3;
+    optional int64 int_value = 4;
+    optional uint64 uint_value = 5;
+    optional sint64 sint_value = 6;
+    optional bool bool_value = 7;
+    extensions 8 to max;
+  }
+
+  message Feature {
+    optional uint64 id = 1 [ default = 0 ];
+    repeated uint32 tags = 2 [ packed = true ];
+    optional GeomType type = 3 [ default = UNKNOWN ];
+    repeated uint32 geometry = 4 [ packed = true ];
+    optional bytes raster = 5;
+  }
+
+  message Layer {
+    required uint32 version = 15 [ default = 1 ];
+    required string name = 1;
+    repeated Feature features = 2;
+    repeated string keys = 3;
+    repeated Value values = 4;
+    optional uint32 extent = 5 [ default = 4096 ];
+
+    extensions 16 to max;
+  }
+
+  repeated Layer layers = 3;
+
+  extensions 16 to 8191;
+}
+```
+
+### Decoding tile geometry
+
+Vector Tile geometry uses the following coordinate system:
+
+- Coordinates are always integers.
+- The `(0,0)` point is located in the upper-left corner of the tile.
+- The X axis has values increasing towards the right of the tile.
+- The Y axis has values increasing towards the bottom of the tile.
+- The tile may have margin, which is a buffer around the tile in the shape of a square frame. The size of the margin is by default equal to 10&#37; of the width/length of the tile.
+- The extent is equal to  `4096` , so the value range for X and Y coordinates is from  `0`  to  `4095`  for visible points.
+- If the tile has a margin, the coordinates values range is extended by its size in both directions. This may cause coordinate values for points in the left or upper margin to be negative.
+
+Vector Tile geometry is encoded as an array of 32 bit unsigned integers in the `geometry` array field of the `TileFeature`.
+
+Encoded format has the following structure:
+
+```shell
+[command_and_count][x0][y0]..[xn][yn][command_and_count][x0][y0]..
+```
+
+- `command_and_count` contains encoded values of  `command`  and `count`.
+-  `[x0][y0]..[xn][yn]`  are  `(x,y)`  coordinate pairs.
+
+### Command
+
+The value of `command` is decoded as follows:
+
+```shell
+command = command_and_count & 0x7
+```
+
+Commands are to be executed relative to previous path coordinates or the point `(0,0)` if it is the first command.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Command&nbsp;type
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Coordinates
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `MoveTo` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `1` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `x,y` 
+      </td>
+      <td>
+        It defines the  `(x,y)`  coordinate.
+        <ul>
+          <li>
+            In the case of a  `POINT`  type geometry, the coordinate is
+            a new point.
+          </li>
+          <li>
+            In the case of a  `LINESTRING`  or  `POLYGON` 
+            type geometry, the coordinate is the start of a new shape.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `LineTo` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `2` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+         `x,y` 
+      </td>
+      <td>
+        It defines a new segment, starting at the current position of the cursor
+        and ending at the  `(x,y)`  coordinate.
+        <ul>
+          <li>
+            In the case of a  `LINESTRING`  type geometry, the segment
+            extends the current line.
+          </li>
+          <li>
+            In the case of a  `POLYGON`  type geometry, the segment
+            extends the current linear ring.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `ClosePath` 
+      </th>
+      <td style={{ textAlign: 'center' }}>
+         `7` 
+      </td>
+      <td style={{ textAlign: 'center' }}>none</td>
+      <td>
+        It closes the current linear ring of a  `POLYGON`  type
+        geometry.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Count
+
+The value of `count` is decoded as follows:
+
+```cpp
+count = command_and_count >> 0x3
+```
+
+- It defines the `n` number of `[xn][yn]` encoded coordinate pairs following the `command_and_count` value.
+- These coordinate pairs must be interpreted according to the preceding `command` type.
+
+### Coordinates
+
+Coordinates `[x0][y0]..[xn][yn]` are encoded in zigzag encoding and are relative to the previous coordinate pair. This means that only the first coordinate pair `[x0][y0]` in the first command in every `TileFeature` stores absolute values.
+
+The coordinates are decoded as follows:
+
+```cpp
+decode(x0) = ((x0 >> 0x1) ^ (-(x0 & 0x1)))
+decode(y0) = ((y0 >> 0x1) ^ (-(y0 & 0x1)))
+
+decode(x1) = decode(x0) + ((x1 >> 0x1) ^ (-(x1 & 0x1)))
+decode(y1) = decode(y0) + ((y1 >> 0x1) ^ (-(y1 & 0x1)))
+
+...
+
+decode(xn) = decode(xn-1) + ((xn >> 0x1) ^ (-(xn & 0x1)))
+decode(yn) = decode(yn-1) + ((yn >> 0x1) ^ (-(yn & 0x1)))
+```
+
+### Examples
+
+<h4 style={{ fontSize: '1em' }}>
+  For a  `POINT`  type feature:
+</h4>
+
+#### Input:
+
+```cpp
+layer: 0
+  feature: 0
+    type: POINT
+    geometry: [9, 1136, 6564]
+```
+
+#### Decoding:
+
+```cpp
+geometry:
+  command_and_count = 9
+  command = 9 & 0x7 = 1
+  count = 9 >> 0x3 = 1
+
+  x= 1136, y0 = 6564
+  decode(x0) = ((1136 >> 0x1) ^ (-(1136 & 0x1))) = 568
+  decode(y0) = ((6564 >> 0x1) ^ (-(6564 & 0x1))) = 3282
+```
+
+#### Output:
+
+```cpp
+layer: 0
+  feature: 0
+  geometry: POINT(561, 3282)
+```
+
+<h4 style={{ fontSize: '1em' }}>
+  For a  `LINESTRING`  type feature:
+</h4>
+
+#### Input:
+
+```cpp
+layer: 0
+    feature: 0
+        type: LINESTRING
+        geometry: [9, 846, 2312, 10, 652, 1938]
+```
+
+#### Decoding:
+
+```cpp
+geometry:
+  1:
+    command_and_count = 9
+    command = 9 & 0x7 = 1
+    count = 9 >> 0x3 = 1
+
+    x0' = 846, y0' = 2312
+    decode(x0') = ((846 >> 0x1) ^ (-(846 & 0x1))) = 423
+    decode(y0') = ((2312 >> 0x1) ^ (-(2312 & 0x1))) = 1156
+  2:
+    command_and_count = 10
+    command = 10 & 0x7 = 2
+    count = 10 >> 0x3 = 1
+
+    x0 = 652, y0 = 1938
+    decode(x0) = decode(x0') + ((x0 >> 0x1) ^ (-(x0 & 0x1)))
+    decode(y0) = decode(y0') + ((y0 >> 0x1) ^ (-(y0 & 0x1)))
+    decode(x0) = 423 + ((652 >> 0x1) ^ (-(652 & 0x1))) = 749
+    decode(y0) = 1156 + ((1938 >> 0x1) ^ (-(1938 & 0x1))) = 2125
+```
+
+#### Output:
+
+```cpp
+layer: 0
+  feature: 0
+  geometry: LINESTRING[(423, 1156), (749, 2125)]
+```
+
+<h4 style={{ fontSize: '1em' }}>
+  For a  `POLYGON`  type feature:
+</h4>
+
+#### Input:
+
+```cpp
+layer: 0
+  feature: 0
+    type: POLYGON
+    geometry: [9, 1320, 5622, 26, 416, 707, 68, 612, 483, 96, 7]
+```
+
+#### Decoding:
+
+```cpp
+geometry:
+  1:
+    command_and_count = 9
+    command = 9 & 0x7 = 1
+    count = 9 >> 0x3 = 1
+
+    x0' = 1320, y0' = 5622
+    decode(x0') = ((1320 >> 0x1) ^ (-(1320 & 0x1))) = 660
+    decode(y0') = ((5622 >> 0x1) ^ (-(5622 & 0x1))) = 2811
+  2:
+    command_and_count = 26
+    command = 26 & 0x7 = 2
+    count = 26 >> 0x3 = 3
+
+    x0 = 1736, y0 = 4914
+    decode(x0) = decode(x0') + ((416 >> 0x1) ^ (-(416 & 0x1))) = 660 + 208 = 868
+    decode(y0) = decode(y0') + ((707 >> 0x1) ^ (-(707 & 0x1))) = 2811 + (-354) = 2457
+
+    x1 = 68, y1 = 612
+    decode(x1) = decode(x0) + ((68 >> 0x1) ^ (-(68 & 0x1))) = 902
+    decode(y1) = decode(y0) + ((612 >> 0x1) ^ (-(612 & 0x1))) = 2763
+
+    x2 = 483, y2 = 96
+    decode(x2) = decode(x1) + ((483 >> 0x1) ^ (-(483 & 0x1))) = 660
+    decode(y2) = decode(y1) + ((96 >> 0x1) ^ (-(96 & 0x1))) = 2811
+  3:
+    command_and_count = 7
+    command = 7 & 0x7 = 7
+    count = 7 >> 0x3 = 0
+```
+
+#### Output:
+
+```cpp
+layer: 0
+  feature: 0
+  geometry: POLYGON[(660, 2811), (868, 2457), (902, 2763), (660, 2811)]
+```
+
+### Decoding feature tags
+
+In order to reduce tile size, the properties of each feature are encoded in a  `tags`  array.
+
+- The `tags` array contains integer values which are indexes of `keys` and `values` arrays belonging to the corresponding layer.
+- The size of a `tags` array is always even.
+- The content of a `tags` array can be grouped into a list of pairs. Each odd element of an array is the first element of a pair, and each even element of an array is the second element of a pair.
+- The first element of each pair should be mapped to a `keys` array.
+- The second element of each pair should be mapped to a `values` array.
+- As a result, we get a decoded list of `tags` where the first element is the tag name and the second element is the tag value in the form of `TileValue`.
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>
+
+Below is an example of what an encoded tile may look like.
+
+```cpp
+layer: 0
+  keys: ["country_code", "icon_text"],
+  values: ["SWE", "E4"]
+  feature: 0
+    tags : [0,0,1,1]
+```
+
+After decoding it has to be read like this:
+
+```cpp
+layer: 0
+  feature: 0
+    properties:
+      country_code : "SWE"
+      icon_text : "E4"
+```
+
+## Tile Layers
+
+The data in TomTom Vector Tiles is organized in layers. The following section provides detailed information about:
+
+- Available layers.
+- Tags that typically appear in features from a given layer.
+
+### earth_cover
+
+Earth cover refers to the generalized surface cover of the earth, whether vegetation, sand, ice, or other.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `POLYGON` 
+</h4>
+
+<table summary="land_cover tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        earth_cover tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `cropland` 
+        <br />
+         `herbaceous` 
+        <br />
+         `ice_and_snow` 
+        <br />
+         `sand` 
+        <br />
+         `woody` 
+      </td>
+      <td>This tag specifies to which category a given feature belongs.</td>
+    </tr>
+  </tbody>
+</table>
+
+### land_cover
+
+Land cover refers to the surface cover on the ground, whether vegetation, urban infrastructure, or other; it does not describe the use of land, and the use of land may be different for lands with the same cover type. For instance, a land cover type of forest may be used for timber production, wildlife management, or recreation; it might be private land, a protected watershed, or a popular state park.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `POLYGON` 
+</h4>
+
+<table summary="land_cover tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        land_cover tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `beach_or_dune` 
+        <br />
+         `moor_or_heathland` 
+        <br />
+         `sand` 
+        <br />
+      </td>
+      <td>This tag specifies to which category a given feature belongs.</td>
+    </tr>
+  </tbody>
+</table>
+
+### land_use
+
+The land use refers to the purpose the land serves, for example, recreation, wildlife habitat or agriculture; it does not describe the surface cover on the ground. For example, a recreational land use could occur in a forest, shrubland, grasslands, or on manicured lawns.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `POLYGON` 
+</h4>
+
+<table summary="land_use tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        land_use tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `built_up_area` 
+        <br />
+         `airport` 
+        <br />
+         `cemetery` 
+        <br />
+         `city_park` 
+        <br />
+         `company` 
+        <br />
+         `education` 
+        <br />
+         `forest` 
+        <br />
+         `golf_course` 
+        <br />
+         `grass` 
+        <br />
+         `greens` 
+        <br />
+         `hospital` 
+        <br />
+         `industrial` 
+        <br />
+         `institution` 
+        <br />
+         `marine_park` 
+        <br />
+         `military` 
+        <br />
+         `park` 
+        <br />
+         `parking` 
+        <br />
+         `playing_field` 
+        <br />
+         `railway` 
+        <br />
+         `reservation` 
+        <br />
+         `shopping_center` 
+        <br />
+         `stadium` 
+        <br />
+         `tourism` 
+        <br />
+         `low_emission_zone`
+        <br />
+      </td>
+      <td>This tag specifies to which category a given feature belongs.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        subcategory
+        <br />
+         *string* 
+      </th>
+      <td>
+        For category  `park` :
+        <ul>
+          <li>
+             `national` 
+          </li>
+          <li>
+             `regional` 
+          </li>
+          <li>
+             `state_or_province` 
+          </li>
+          <li>
+             `county` 
+          </li>
+        </ul>
+        For category  `marine_park` :
+        <ul>
+          <li>
+             `national` 
+          </li>
+          <li>
+             `state_or_province` 
+          </li>
+        </ul>
+        For category  `airport` :
+        <ul>
+          <li>
+             `ground` 
+          </li>
+          <li>
+             `runway` 
+          </li>
+        </ul>
+        For category  `education` :
+        <ul>
+          <li>
+             `college_or_university` 
+          </li>
+          <li>
+             `school` 
+          </li>
+        </ul>
+        For category  `industrial` :
+        <ul>
+          <li>
+             `area` 
+          </li>
+          <li>
+             `harbor` 
+          </li>
+        </ul>
+        For category  `military` :
+        <ul>
+          <li>
+             `ground` 
+          </li>
+        </ul>
+        For category  `tourism` :
+        <ul>
+          <li>
+             `amusement_park` 
+          </li>
+          <li>
+             `zoo` 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between land uses in the same category.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        surface
+        <br />
+         *string* 
+      </th>
+      <td>
+        For  `park`  and  `playing_field`  categories:
+        <ul>
+          <li>
+             `grass` 
+          </li>
+          <li>
+             `gravel` 
+          </li>
+          <li>
+             `paved` 
+          </li>
+          <li>
+             `sand` 
+          </li>
+        </ul>
+      </td>
+      <td>This tag represents the dominant cover of a land use feature.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        protected
+        <br />
+         *boolean* 
+      </th>
+      <td>
+        For  `park`  category:
+        <ul>
+          <li>
+             `true` 
+          </li>
+        </ul>
+      </td>
+      <td>This tag indicates that the selected area is protected.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        urban
+        <br />
+         *boolean* 
+      </th>
+      <td>
+        For  `cemetery` ,  `company` ,  `hospital` ,
+         `industrial` ,  `institution` ,
+         `education` ,  `shopping_center` ,
+         `stadium`  and  `tourism`  categories:
+        <ul>
+          <li>
+             `true` 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag indicates that the selected area is part of an urban area.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        leisure
+        <br />
+         *boolean* 
+      </th>
+      <td>
+        For  `city_park` ,  `playing_field`  and
+         `golf_course`  categories:
+        <ul>
+          <li>
+             `true` 
+          </li>
+        </ul>
+      </td>
+      <td>This tag indicates that the selected area is a leisure area.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        transportation
+        <br />
+         *boolean* 
+      </th>
+      <td>
+        For  `railway`  and  `parking`  categories:
+        <ul>
+          <li>
+             `true` 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag indicates that the selected area is related to transportation.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        vegetation
+        <br />
+         *boolean* 
+      </th>
+      <td>
+        For  `forest` ,  `grass`  and  `greens` 
+        categories:
+        <ul>
+          <li>
+             `true` 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag indicates that the selected area belongs to the vegetation
+        group.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        has_ban
+        <br />
+         *boolean*
+      </th>
+      <td>
+        For  `low_emission_zone` category:
+        <ul>
+          <li>
+             `true`
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag indicates that there is a zone with a ban regulation. 'Ban' indicates that access to a zone is prohibited when a vehicle matches the characteristics defined in the Emission Regulation. Exceptions may be made for vehicles involved in specific activities, e.g., construction or goods delivery, with appropriate documentation. This restriction cannot be mitigated by paying some charge.
+        This tag only contains a `true` value, otherwise the tag is absent.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        has_fee
+        <br />
+         *boolean*
+      </th>
+      <td>
+        For  `low_emission_zone` category:
+        <ul>
+          <li>
+             `true`
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag indicates that there is a zone with a fee regulation. 'Fee' indicates that access to a zone is allowed upon paying a fee when a vehicle matches the characteristics defined in the Emission Regulation. The fee can be charged on a recurring, short-period basis (e.g., daily or per entry), with the amount often dependent on the vehicle's emission class, e.g., higher polluting vehicles are charged a larger fee.
+        This tag only contains a `true` value, otherwise the tag is absent.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        has_license
+        <br />
+         *boolean*
+      </th>
+      <td>
+        For  `low_emission_zone` category:
+        <ul>
+          <li>
+             `true`
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag indicates that there is a zone with a license plate regulation.
+        This tag only contains a `true` value, otherwise the tag is absent.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        allow_category
+        <br />
+         *integer*
+      </th>
+      <td>
+        For  `low_emission_zone` category:
+        <ul>
+          <li>
+             `1` - not allowed
+          </li>
+          <li>
+             `2` - not currently allowed (a time restriction, e.g., not allowed now, but allowed in 1h).
+          </li>
+          <li>
+             `3` - currently allowed (due to a time restriction)
+          </li>
+        </ul>
+      </td>
+      <td>
+        Tag indicates the status of a zone restriction.
+        The lack of this tag means that a zone entry is allowed.
+      </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            requires_vignette
+            <br />
+            *boolean*
+        </th>
+        <td>
+            For  `low_emission_zone` category:
+            <ul>
+                <li>
+                    true
+                </li>
+            </ul>
+        </td>
+        <td>
+            This tag indicates that access to low emission zone is restricted
+            to vehicles that have an officially-issued vignette.
+            This tag only contains a `true` value, otherwise the tag is absent.
+        </td>
+    </tr>
+  </tbody>
+</table>
+
+### water
+
+The water layer contains area geometries that represent oceans, seas, lakes, and other water bodies.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `POLYGON` 
+</h4>
+
+<table summary="water tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        water tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `permanent_water` 
+        <br />
+         `intermittent_water` 
+      </td>
+      <td>This tag specifies to which category a given feature belongs.</td>
+    </tr>
+  </tbody>
+</table>
+
+### buildings
+
+This layer represents building footprints.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `POLYGON` 
+</h4>
+
+<table summary="buildings tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        buildings tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `cultural` 
+        <br />
+         `industrial` 
+        <br />
+         `government` 
+        <br />
+         `hospital` 
+        <br />
+         `hotel` 
+        <br />
+         `place_of_worship` 
+        <br />
+         `railway_station` 
+        <br />
+         `subway_station` 
+        <br />
+         `education` 
+        <br />
+      </td>
+      <td>This tag specifies to which category a given feature belongs.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        subcategory
+        <br />
+         *string* 
+      </th>
+      <td>
+        For category  `education` :
+        <ul>
+          <li>
+             `school` 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling,
+        and provides a distinction between land uses in the same category.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        height
+        <br />
+         *float* 
+      </th>
+      <td>-</td>
+      <td>
+        Building height represents the height of the Building Footprint measured
+        from the ground level to the top of the structure. When a Building
+        Footprint has a ground height, building height represents the height of
+        the actual structure. The height is represented in meters.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        ground_height
+        <br />
+         *float* 
+      </th>
+      <td>-</td>
+      <td>
+        Ground height represents the height of the Building Footprint measured
+        from the ground level to the bottom of the structure. The height is
+        represented in meters.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### water_lines
+
+The water_lines layer contains line geometries that represent river and stream center lines.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `LINESTRING` 
+</h4>
+
+<table summary="water_lines tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        water_lines tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `permanent_water` 
+      </td>
+      <td>This tag specifies to which category a given feature belongs.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        subcategory
+        <br />
+         *string* 
+      </th>
+      <td>
+        For category  `permanent_water` :
+        <ul>
+          <li>
+             `river` 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between places in the same category. Please
+        note that the river subcategory is also present in the
+         `carto_labels` 
+        layer. The river feature from  `water_lines`  layer represents a
+        river of line-type geometry with its data.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>A feature name in a NGT (Neutral Ground Truth) language.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name_[language]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in a language specified in a [language] suffix.
+        <br />
+         [List of supported languages](#list-of-supported-languages).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### places
+
+This layer contains points for labeling places including countries, states, cities, and towns.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `POINT` 
+</h4>
+
+<table summary="places tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        places tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `country` 
+        <br />
+         `state` 
+        <br />
+         `settlement` 
+        <br />
+         `settlement_division` 
+        <br />
+         `address_point` 
+      </td>
+      <td>This tag specifies to which category a given feature belongs.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        subcategory
+        <br />
+         *string* 
+      </th>
+      <td>
+        For category  `settlement` :
+        <ul>
+          <li>
+             `city` 
+          </li>
+          <li>
+             `town` 
+          </li>
+          <li>
+             `village` 
+          </li>
+          <li>
+             `hamlet` 
+          </li>
+        </ul>
+        For category  `settlement_division` :
+        <ul>
+          <li>
+             `neighbourhood` 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between places in the same category.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name_[language]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in a language specified in a [language] suffix.
+         [List of supported languages](#list-of-supported-languages).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        abbr
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        This tag provides an abbreviation of the state name. It will only be
+        present for features with category state.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        capital
+        <br />
+         *string* 
+      </th>
+      <td>
+         `country` 
+        <br />
+         `state` 
+      </td>
+      <td>This tag value indicates the administrative importance of point.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        priority
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        The tag value represents a priority of the city which is based on the
+        combination of the population of the city and its administrative
+        importance. The lower the value of this tag the more important the city
+        is.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        admin_class
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        The tag value represents the administrative importance of a place.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        display_class
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        The tag value represents a classification of places based on their
+        importance with respect to map display.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        icon
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        The identifier of the icon asset in the TomTom styles that should be
+        used for the visualization purpose of the Point of Interest.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        id
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        A unique place identifier that can be used across other TomTom services.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        number
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        Address point (house) number. Available only when the
+         `category`  is  `address_point`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### poi_basic
+
+The POI layers represent points of interest. The difference between the  `poi_basic`  and the  `poi_extended`  layer is the amount of available categories.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `POINT` 
+</h4>
+
+<table summary="poi_basic tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        poi_basic tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `industrial_building` 
+        <br />
+         `college_or_university` 
+        <br />
+         `fire_station_or_brigade` 
+        <br />
+         `government_office` 
+        <br />
+         `library` 
+        <br />
+         `military_installation` 
+        <br />
+         `native_reservation` 
+        <br />
+         `police_station` 
+        <br />
+         `post_office` 
+        <br />
+         `prison_or_correctional_facility` 
+        <br />
+         `school` 
+        <br />
+         `hospital` 
+        <br />
+         `amusement_park` 
+        <br />
+         `museum` 
+        <br />
+         `park_and_recreation_area` 
+        <br />
+         `zoo_arboreta_and_botanical_garden` 
+        <br />
+         `shopping_center` 
+        <br />
+         `golf_course` 
+        <br />
+         `stadium` 
+        <br />
+         `tourist_attraction` 
+        <br />
+         `place_of_worship` 
+        <br />
+         `airport` 
+        <br />
+         `ferry_terminal` 
+        <br />
+         `public_transportation_stop` 
+        <br />
+         `railroad_station` 
+        <br />
+         `geographic_feature` 
+      </td>
+      <td>
+        This tag groups Points of Interest into broad categories that can be
+        used for styling purposes.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        subcategory
+        <br />
+         *string* 
+      </th>
+      <td>
+        For category  `park_and_recreation_area` :
+        <ul>
+          <li>
+             `national_park` 
+          </li>
+          <li>
+             `cemetery` 
+          </li>
+        </ul>
+        For category  `place_of_worship` :
+        <ul>
+          <li>
+             `church` 
+          </li>
+          <li>
+             `mosque` 
+          </li>
+          <li>
+             `synagogue` 
+          </li>
+          <li>
+             `temple` 
+          </li>
+          <li>
+             `gurudwara` 
+          </li>
+          <li>
+             `ashram` 
+          </li>
+          <li>
+             `pagoda` 
+          </li>
+        </ul>
+        For category  `public_transportation_stop` :
+        <ul>
+          <li>
+             `bus_stop` 
+          </li>
+          <li>
+             `taxi_stand` 
+          </li>
+          <li>
+             `coach_stop` 
+          </li>
+          <li>
+             `streetcar_stop` 
+          </li>
+        </ul>
+        For category  `railroad_station` :
+        <ul>
+          <li>
+             `international_railroad_station` 
+          </li>
+          <li>
+             `national_railroad_station` 
+          </li>
+          <li>
+             `subway_station` 
+          </li>
+        </ul>
+        For category  `geographic_feature` :
+        <ul>
+          <li>
+             `mountain_peak` 
+          </li>
+          <li>
+             `ridge` 
+          </li>
+          <li>
+             `valley` 
+          </li>
+          <li>
+             `reef` 
+          </li>
+          <li>
+             `hill` 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag narrows down the category values allowing fine grained styling
+        and provides a distinction between places in the same category.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name_[language]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in a language specified in a [language] suffix.
+         [List of supported languages](#list-of-supported-languages).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        id
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A unique Point of Interest identifier that can be used across other
+        TomTom services.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        category_id
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        An identifier representing a category. Either a 4 digits integer for
+        Points of Interest without subcategory or a 7 digits integer for Points
+        of Interest with subcategory (where the first 4 digits identify a
+        category). It can be used across other TomTom services.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        priority
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        The tag value represents a priority of the Point of Interest. The lower
+        the value of this tag the more important the Point of Interest is.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        icon
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        The identifier of the icon asset in the TomTom styles that should be
+        used for the visualization purpose of the Point of Interest.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        sub_text
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        The additional information about POIs, i.e., if available, for a hill it
+        contains its height in meters, in the countries where imperial units are
+        used the height is in feet.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+The Category ID and Subcategory ID in the following table correspond to the ID in [poiCategories in the Search API](/search-api/documentation/poi-categories-service/poi-categories).
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Category
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Category ID
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Possible subcategories
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Subcategory ID
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">industrial_building</th>
+      <th scope="row">9383</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">college_or_university</th>
+      <th scope="row">7377</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">fire_station_or_brigade</th>
+      <th scope="row">7392</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">government_office</th>
+      <th scope="row">7367</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">library</th>
+      <th scope="row">9913</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">military_installation</th>
+      <th scope="row">9388</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">native_reservation</th>
+      <th scope="row">9389</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">police_station</th>
+      <th scope="row">7322</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">post_office</th>
+      <th scope="row">7324</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">prison_or_correctional_facility</th>
+      <th scope="row">9154</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">school</th>
+      <th scope="row">7372</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">hospital</th>
+      <th scope="row">7321</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">amusement_park</th>
+      <th scope="row">9902</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">museum</th>
+      <th scope="row">7317</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">park_and_recreation_area</th>
+      <th scope="row">9362</th>
+      <td>
+        national_park
+        <br />
+        cemetery
+      </td>
+      <td>
+        9362008
+        <br />
+        9362003
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">zoo_arboreta_and_botanical_garden</th>
+      <th scope="row">9927</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">shopping_center</th>
+      <th scope="row">7373</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">golf_course</th>
+      <th scope="row">9911</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">stadium</th>
+      <th scope="row">7374</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">tourist_attraction</th>
+      <th scope="row">7376</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">place_of_worship</th>
+      <th scope="row">7339</th>
+      <td>
+        church
+        <br />
+        mosque
+        <br />
+        synagogue
+        <br />
+        temple
+        <br />
+        gurudwara
+        <br />
+        ashram
+        <br />
+        pagoda
+      </td>
+      <td>
+        7339002
+        <br />
+        7339003
+        <br />
+        7339004
+        <br />
+        7339005
+        <br />
+        7339006
+        <br />
+        7339007
+        <br />
+        7339008
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">airport</th>
+      <th scope="row">7383</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">ferry_terminal</th>
+      <th scope="row">7352</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">public_transportation_stop</th>
+      <th scope="row">9942</th>
+      <td>
+        bus_stop
+        <br />
+        taxi_stand
+        <br />
+        coach_stop
+        <br />
+        streetcar_stop
+      </td>
+      <td>
+        9942002
+        <br />
+        9942003
+        <br />
+        9942005
+        <br />
+        9942004
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">railroad_station</th>
+      <th scope="row">7380</th>
+      <td>
+        international_railroad_station
+        <br />
+        national_railroad_station
+        <br />
+        subway_station
+      </td>
+      <td>
+        738002
+        <br />
+        738003
+        <br />
+        738005
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">geographic_feature</th>
+      <th scope="row">8099</th>
+      <td>
+        mountain_peak
+        <br />
+        ridge
+        <br />
+        valley
+        <br />
+        reef
+        <br />
+        hill
+      </td>
+      <td>
+        8099002
+        <br />
+        8099004
+        <br />
+        8099006
+        <br />
+        8099014
+        <br />
+        8099025
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### poi_extended
+
+The POI layers represent points of interest. The difference between the  `poi_basic`  and the  `poi_extended`  layer is the amount of available categories.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `POINT` 
+</h4>
+
+<table summary="poi_extended tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        poi_extended tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `automotive_dealer` 
+        <br />
+         `car_wash` 
+        <br />
+         `electric_vehicle_station` 
+        <br />
+         `motoring_organization_office` 
+        <br />
+         `open_parking_area` 
+        <br />
+         `parking_garage` 
+        <br />
+         `gas_station` 
+        <br />
+         `rent_a_car_facility` 
+        <br />
+         `rent_a_car_parking` 
+        <br />
+         `repair_facility` 
+        <br />
+         `rest_area` 
+        <br />
+         `toll_gate` 
+        <br />
+         `truck_stop` 
+        <br />
+         `weigh_station` 
+        <br />
+         `agriculture_business` 
+        <br />
+         `bank` 
+        <br />
+         `business_park` 
+        <br />
+         `atm` 
+        <br />
+         `commercial_building` 
+        <br />
+         `company` 
+        <br />
+         `courier_drop_box` 
+        <br />
+         `emergency_medical_service` 
+        <br />
+         `exchange` 
+        <br />
+         `exhibition_and_convention_center` 
+        <br />
+         `industrial_building` 
+        <br />
+         `manufacturing_facility` 
+        <br />
+         `media_facility` 
+        <br />
+         `research_facility` 
+        <br />
+         `cafe_or_pub` 
+        <br />
+         `restaurant` 
+        <br />
+         `restaurant_area` 
+        <br />
+         `college_or_university` 
+        <br />
+         `courthouse` 
+        <br />
+         `embassy` 
+        <br />
+         `fire_station_or_brigade` 
+        <br />
+         `government_office` 
+        <br />
+         `library` 
+        <br />
+         `military_installation` 
+        <br />
+         `native_reservation` 
+        <br />
+         `non_governmental_organization` 
+        <br />
+         `police_station` 
+        <br />
+         `post_office` 
+        <br />
+         `primary_resource_or_utility` 
+        <br />
+         `prison_or_correctional_facility` 
+        <br />
+         `public_amenity` 
+        <br />
+         `school` 
+        <br />
+         `traffic_service_center` 
+        <br />
+         `transport_authority_or_vehicle_registration` 
+        <br />
+         `welfare_organization` 
+        <br />
+         `dentist` 
+        <br />
+         `doctor` 
+        <br />
+         `emergency_room` 
+        <br />
+         `health_care_service` 
+        <br />
+         `hospital` 
+        <br />
+         `pharmacy` 
+        <br />
+         `veterinarian` 
+        <br />
+         `amusement_park` 
+        <br />
+         `casino` 
+        <br />
+         `movie_theater` 
+        <br />
+         `club_and_association` 
+        <br />
+         `community_center` 
+        <br />
+         `cultural_center` 
+        <br />
+         `entertainment` 
+        <br />
+         `leisure_center` 
+        <br />
+         `marina` 
+        <br />
+         `museum` 
+        <br />
+         `nightlife` 
+        <br />
+         `park_and_recreation_area` 
+        <br />
+         `theater` 
+        <br />
+         `trail_system` 
+        <br />
+         `winery` 
+        <br />
+         `zoo_arboreta_and_botanical_garden` 
+        <br />
+         `camping_ground` 
+        <br />
+         `vacation_rental` 
+        <br />
+         `hotel_or_motel` 
+        <br />
+         `residential_accommodations` 
+        <br />
+         `department_store` 
+        <br />
+         `market` 
+        <br />
+         `shop` 
+        <br />
+         `shopping_center` 
+        <br />
+         `golf_course` 
+        <br />
+         `ice_skating_rink` 
+        <br />
+         `sports_center` 
+        <br />
+         `stadium` 
+        <br />
+         `swimming_pool` 
+        <br />
+         `tennis_court` 
+        <br />
+         `water_sport` 
+        <br />
+         `adventure_sports_venue` 
+        <br />
+         `beach` 
+        <br />
+         `tourist_attraction` 
+        <br />
+         `place_of_worship` 
+        <br />
+         `scenic_or_panoramic_view` 
+        <br />
+         `tourist_information_office` 
+        <br />
+         `access_gateway` 
+        <br />
+         `airport` 
+        <br />
+         `checkpoint` 
+        <br />
+         `ferry_terminal` 
+        <br />
+         `frontier_crossing` 
+        <br />
+         `helipad` 
+        <br />
+         `mountain_pass` 
+        <br />
+         `port_or_warehouse_facility` 
+        <br />
+         `public_transportation_stop` 
+        <br />
+         `railroad_station` 
+        <br />
+         `geographic_feature` 
+      </td>
+      <td>
+        This tag groups Points of Interest into broad categories that can be
+        used for styling purposes.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        subcategory
+        <br />
+         *string* 
+      </th>
+      <td>
+        For category  `cafe_or_pub` :
+        <ul>
+          <li>
+             `cafe` 
+          </li>
+          <li>
+             `pub` 
+          </li>
+          <li>
+             `internet_cafe` 
+          </li>
+          <li>
+             `tea_house` 
+          </li>
+          <li>
+             `coffee_shop` 
+          </li>
+          <li>
+             `microbrewery` 
+          </li>
+        </ul>
+        For category  `park_and_recreation_area` :
+        <ul>
+          <li>
+             `national_park` 
+          </li>
+          <li>
+             `cemetery` 
+          </li>
+        </ul>
+        For category  `place_of_worship` :
+        <ul>
+          <li>
+             `church` 
+          </li>
+          <li>
+             `mosque` 
+          </li>
+          <li>
+             `synagogue` 
+          </li>
+          <li>
+             `temple` 
+          </li>
+          <li>
+             `gurudwara` 
+          </li>
+          <li>
+             `ashram` 
+          </li>
+          <li>
+             `pagoda` 
+          </li>
+        </ul>
+        For category  `public_transportation_stop` :
+        <ul>
+          <li>
+             `bus_stop` 
+          </li>
+          <li>
+             `taxi_stand` 
+          </li>
+          <li>
+             `coach_stop` 
+          </li>
+          <li>
+             `streetcar_stop` 
+          </li>
+        </ul>
+        For category  `railroad_station` :
+        <ul>
+          <li>
+             `international_railroad_station` 
+          </li>
+          <li>
+             `national_railroad_station` 
+          </li>
+          <li>
+             `subway_station` 
+          </li>
+        </ul>
+        For category  `geographic_feature` :
+        <ul>
+          <li>
+             `mountain_peak` 
+          </li>
+          <li>
+             `cave` 
+          </li>
+          <li>
+             `ridge` 
+          </li>
+          <li>
+             `dune` 
+          </li>
+          <li>
+             `valley` 
+          </li>
+          <li>
+             `plain_or_flat` 
+          </li>
+          <li>
+             `plateau` 
+          </li>
+          <li>
+             `pan` 
+          </li>
+          <li>
+             `well` 
+          </li>
+          <li>
+             `oasis` 
+          </li>
+          <li>
+             `rocks` 
+          </li>
+          <li>
+             `reservoir` 
+          </li>
+          <li>
+             `reef` 
+          </li>
+          <li>
+             `rapids` 
+          </li>
+          <li>
+             `bay` 
+          </li>
+          <li>
+             `cove` 
+          </li>
+          <li>
+             `harbor` 
+          </li>
+          <li>
+             `lagoon` 
+          </li>
+          <li>
+             `cape` 
+          </li>
+          <li>
+             `mineral_or_hot_springs` 
+          </li>
+          <li>
+             `island` 
+          </li>
+          <li>
+             `marsh` 
+          </li>
+          <li>
+             `river_crossing` 
+          </li>
+          <li>
+             `hill` 
+          </li>
+          <li>
+             `quarry` 
+          </li>
+          <li>
+             `locale` 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between places in the same category.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name_[language]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in a language specified in a [language] suffix.
+         [List of supported languages](#list-of-supported-languages).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        id
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A unique Point of Interest identifier that can be used across other
+        TomTom services.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        category_id
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        An identifier representing category. Either 4 digits integer for Points
+        of Interest without subcategory or 7 digits integer for Points of
+        Interest with subcategory (where the first 4 digits identify a
+        category). It can be used across other TomTom services.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        priority
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        The tag value represents a priority of the Point of Interest. The lower
+        the value of this tag the more important the Point of Interest is.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        icon
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        The identifier of the icon asset in the TomTom styles that should be
+        used for the visualization purpose of the Point of Interest.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+The Category ID and Subcategory ID in the following table correspond to the ID in [poiCategories in the Search API](/search-api/documentation/poi-categories-service/poi-categories).
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Category
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Category ID
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Possible subcategories
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Subcategory ID
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">automotive_dealer</th>
+      <th scope="row">9910</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">car_wash</th>
+      <th scope="row">9155</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">electric_vehicle_station</th>
+      <th scope="row">7309</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">motoring_organization_office</th>
+      <th scope="row">7368</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">open_parking_area</th>
+      <th scope="row">7369</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">parking_garage</th>
+      <th scope="row">7313</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">gas_station</th>
+      <th scope="row">7311</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">rent_a_car_facility</th>
+      <th scope="row">7312</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">rent_a_car_parking</th>
+      <th scope="row">9930</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">repair_facility</th>
+      <th scope="row">7310</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">rest_area</th>
+      <th scope="row">7395</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">toll_gate</th>
+      <th scope="row">7375</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">truck_stop</th>
+      <th scope="row">7358</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">weigh_station</th>
+      <th scope="row">7359</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">agriculture_business</th>
+      <th scope="row">7335</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">bank</th>
+      <th scope="row">7328</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">business_park</th>
+      <th scope="row">7378</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">atm</th>
+      <th scope="row">7397</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">commercial_building</th>
+      <th scope="row">9382</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">company</th>
+      <th scope="row">9352</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">courier_drop_box</th>
+      <th scope="row">7388</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">emergency_medical_service</th>
+      <th scope="row">7391</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">exchange</th>
+      <th scope="row">9160</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">exhibition_and_convention_center</th>
+      <th scope="row">9377</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">industrial_building</th>
+      <th scope="row">9383</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">manufacturing_facility</th>
+      <th scope="row">9156</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">media_facility</th>
+      <th scope="row">9158</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">research_facility</th>
+      <th scope="row">9157</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">cafe_or_pub</th>
+      <th scope="row">9376</th>
+      <td>
+        cafe
+        <br />
+        pub
+        <br />
+        internet_cafe
+        <br />
+        tea_house
+        <br />
+        coffee_shop
+        <br />
+        microbrewery
+      </td>
+      <td>
+        9376002
+        <br />
+        9376003
+        <br />
+        9376004
+        <br />
+        9376005
+        <br />
+        9376006
+        <br />
+        9376007
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">restaurant</th>
+      <th scope="row">7315</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">restaurant_area</th>
+      <th scope="row">9359</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">college_or_university</th>
+      <th scope="row">7377</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">courthouse</th>
+      <th scope="row">9363</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">embassy</th>
+      <th scope="row">7365</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">fire_station_or_brigade</th>
+      <th scope="row">7392</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">government_office</th>
+      <th scope="row">7367</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">library</th>
+      <th scope="row">9913</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">military_installation</th>
+      <th scope="row">9388</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">native_reservation</th>
+      <th scope="row">9389</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">non_governmental_organization</th>
+      <th scope="row">9152</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">police_station</th>
+      <th scope="row">7322</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">post_office</th>
+      <th scope="row">7324</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">primary_resource_or_utility</th>
+      <th scope="row">9150</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">prison_or_correctional_facility</th>
+      <th scope="row">9154</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">public_amenity</th>
+      <th scope="row">9932</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">school</th>
+      <th scope="row">7372</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">traffic_service_center</th>
+      <th scope="row">7301</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">transport_authority_or_vehicle_registration</th>
+      <th scope="row">9151</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">welfare_organization</th>
+      <th scope="row">9153</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">dentist</th>
+      <th scope="row">9374</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">doctor</th>
+      <th scope="row">9373</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">emergency_room</th>
+      <th scope="row">9956</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">health_care_service</th>
+      <th scope="row">9663</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">hospital</th>
+      <th scope="row">7321</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">pharmacy</th>
+      <th scope="row">7326</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">veterinarian</th>
+      <th scope="row">9375</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">amusement_park</th>
+      <th scope="row">9902</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">casino</th>
+      <th scope="row">7341</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">movie_theater</th>
+      <th scope="row">7342</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">club_and_association</th>
+      <th scope="row">9937</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">community_center</th>
+      <th scope="row">7363</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">cultural_center</th>
+      <th scope="row">7319</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">entertainment</th>
+      <th scope="row">9900</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">leisure_center</th>
+      <th scope="row">9378</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">marina</th>
+      <th scope="row">7347</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">museum</th>
+      <th scope="row">7317</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">nightlife</th>
+      <th scope="row">9379</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">park_and_recreation_area</th>
+      <th scope="row">9362</th>
+      <td>
+        national_park
+        <br />
+        cemetery
+      </td>
+      <td>
+        9362008
+        <br />
+        9362003
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">theater</th>
+      <th scope="row">7318</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">trail_system</th>
+      <th scope="row">7302</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">winery</th>
+      <th scope="row">7349</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">zoo_arboreta_and_botanical_garden</th>
+      <th scope="row">9927</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">camping_ground</th>
+      <th scope="row">7360</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">vacation_rental</th>
+      <th scope="row">7304</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">hotel_or_motel</th>
+      <th scope="row">7314</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">residential_accommodations</th>
+      <th scope="row">7303</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">department_store</th>
+      <th scope="row">7327</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">market</th>
+      <th scope="row">7332</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">shop</th>
+      <th scope="row">9361</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">shopping_center</th>
+      <th scope="row">7373</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">golf_course</th>
+      <th scope="row">9911</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">ice_skating_rink</th>
+      <th scope="row">9360</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">sports_center</th>
+      <th scope="row">7320</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">stadium</th>
+      <th scope="row">7374</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">swimming_pool</th>
+      <th scope="row">7338</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">tennis_court</th>
+      <th scope="row">9369</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">water_sport</th>
+      <th scope="row">9371</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">adventure_sports_venue</th>
+      <th scope="row">7305</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">beach</th>
+      <th scope="row">9357</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">tourist_attraction</th>
+      <th scope="row">7376</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">place_of_worship</th>
+      <th scope="row">7339</th>
+      <td>
+        church
+        <br />
+        mosque
+        <br />
+        synagogue
+        <br />
+        temple
+        <br />
+        gurudwara
+        <br />
+        ashram
+        <br />
+        pagoda
+      </td>
+      <td>
+        7339002
+        <br />
+        7339003
+        <br />
+        7339004
+        <br />
+        7339005
+        <br />
+        7339006
+        <br />
+        7339007
+        <br />
+        7339008
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">scenic_or_panoramic_view</th>
+      <th scope="row">7337</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">tourist_information_office</th>
+      <th scope="row">7316</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">access_gateway</th>
+      <th scope="row">7389</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">airport</th>
+      <th scope="row">7383</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">checkpoint</th>
+      <th scope="row">9955</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">ferry_terminal</th>
+      <th scope="row">7352</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">frontier_crossing</th>
+      <th scope="row">7366</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">helipad</th>
+      <th scope="row">7308</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">mountain_pass</th>
+      <th scope="row">9935</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">port_or_warehouse_facility</th>
+      <th scope="row">9159</th>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <th scope="row">public_transportation_stop</th>
+      <th scope="row">9942</th>
+      <td>
+        bus_stop
+        <br />
+        taxi_stand
+        <br />
+        coach_stop
+        <br />
+        streetcar_stop
+      </td>
+      <td>
+        9942002
+        <br />
+        9942003
+        <br />
+        9942005
+        <br />
+        9942004
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">railroad_station</th>
+      <th scope="row">7380</th>
+      <td>
+        international_railroad_station
+        <br />
+        national_railroad_station
+        <br />
+        subway_station
+      </td>
+      <td>
+        738002
+        <br />
+        738003
+        <br />
+        738005
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">geographic_feature</th>
+      <th scope="row">8099</th>
+      <td>
+        mountain_peak
+        <br />
+        cave
+        <br />
+        ridge
+        <br />
+        dune
+        <br />
+        valley
+        <br />
+        plain_or_flat
+        <br />
+        plateau
+        <br />
+        pan
+        <br />
+        well
+        <br />
+        oasis
+        <br />
+        rocks
+        <br />
+        reservoir
+        <br />
+        reef
+        <br />
+        rapids
+        <br />
+        bay
+        <br />
+        cove
+        <br />
+        harbor
+        <br />
+        lagoon
+        <br />
+        cape
+        <br />
+        mineral_or_hot_springs
+        <br />
+        island
+        <br />
+        marsh
+        <br />
+        river_crossing
+        <br />
+        hill
+        <br />
+        quarry
+        <br />
+        locale
+      </td>
+      <td>
+        8099002
+        <br />
+        8099003
+        <br />
+        8099004
+        <br />
+        8099005
+        <br />
+        8099006
+        <br />
+        8099007
+        <br />
+        8099008
+        <br />
+        8099009
+        <br />
+        8099010
+        <br />
+        8099011
+        <br />
+        8099012
+        <br />
+        8099013
+        <br />
+        8099014
+        <br />
+        8099015
+        <br />
+        8099016
+        <br />
+        8099017
+        <br />
+        8099018
+        <br />
+        8099019
+        <br />
+        8099020
+        <br />
+        8099021
+        <br />
+        8099022
+        <br />
+        8099023
+        <br />
+        8099024
+        <br />
+        8099025
+        <br />
+        8099026
+        <br />
+        8099027
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### carto_labels
+
+The carto_labels layer includes points that represent cartographic labels. It also includes lines for some features like river that can be used to place a label along the geometry of the river.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `POINT` ,  `LINESTRING` 
+</h4>
+
+<table summary="carto_labels">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        carto_labels tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `permanent_water` :  *POINT* 
+        <br />
+         `intermittent_water` :  *POINT* 
+        <br />
+         `woodland` :  *POINT* 
+        <br />
+         `island` :  *POINT* 
+      </td>
+      <td>This tag specifies to which category a given feature belongs.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        subcategory
+        <br />
+         *string* 
+      </th>
+      <td>
+        For category  `permanent_water` :
+        <ul>
+          <li>
+             `ocean` :  *POINT* 
+          </li>
+          <li>
+             `sea` :  *POINT* 
+          </li>
+          <li>
+             `river` :  *LINESTRING* 
+          </li>
+          <li>
+             `lake` :  *POINT* 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between places in the same category. Please
+        note that the river subcategory is also present in the
+         `water_lines` 
+        layer. The river feature from the  `carto_labels`  layer represents
+        a water center line of river of polygon- type geometry with its data.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        id
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A unique Point of Interest identifier that can be used across other
+        TomTom services.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        icon
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        The identifier of the icon asset in the TomTom styles that should be
+        used for the visualization purpose of the Point of Interest.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name_[language]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in a language specified in a [language] suffix.
+         [List of supported languages](#list-of-supported-languages).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### roads
+
+The roads layers include lines that can be used for drawing roads.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `LINESTRING` 
+</h4>
+
+<table summary="roads">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        roads tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `motorway` 
+        <br />
+         `trunk` 
+        <br />
+         `primary` 
+        <br />
+         `secondary` 
+        <br />
+         `tertiary` 
+        <br />
+         `street` 
+        <br />
+         `minor` 
+        <br />
+         `path` 
+        <br />
+         `ferry` 
+        <br />
+         `railway` 
+      </td>
+      <td>This tag specifies to which category a given feature belongs.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        subcategory
+        <br />
+         *string* 
+      </th>
+      <td>
+        For category  `tertiary` :
+        <ul>
+          <li>
+             `connecting` 
+          </li>
+          <li>
+             `major_local` 
+          </li>
+        </ul>
+        For category  `street` :
+        <ul>
+          <li>
+             `local` 
+          </li>
+          <li>
+             `minor_local` 
+          </li>
+        </ul>
+        For category  `minor` :
+        <ul>
+          <li>
+             `parking` 
+          </li>
+          <li>
+             `pedestrian` 
+          </li>
+          <li>
+             `restricted` 
+          </li>
+          <li>
+             `service` 
+          </li>
+        </ul>
+        For category  `path` :
+        <ul>
+          <li>
+             `walkway` 
+          </li>
+        </ul>
+        For category  `ferry` :
+        <ul>
+          <li>
+             `rail` 
+          </li>
+          <li>
+             `boat` 
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between places in the same category.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        tunnel
+        <br />
+         *boolean* 
+      </th>
+      <td>
+         `true` 
+      </td>
+      <td>
+        This tag indicates that the road is part of a tunnel. The value is
+        always true. If the road is not a part of a tunnel, then this tag is
+        absent.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        toll
+        <br />
+         *boolean* 
+      </th>
+      <td>
+         `true` 
+      </td>
+      <td>
+        This tag indicates that it is necessary to pay a toll to use a road. The
+        value is always true. If the road is not paid, the this tag is absent.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        under_construction
+        <br />
+         *boolean* 
+      </th>
+      <td>
+         `true` 
+      </td>
+      <td>
+        This tag indicates that the road is under construction. The value is
+        always true. If the road is not under construction, then this tag is
+        absent.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        bridge
+        <br />
+         *boolean* 
+      </th>
+      <td>
+         `true` 
+      </td>
+      <td>
+        This tag indicates that the road is part of a bridge. The value is
+        always true. If the road is not a part of a bridge, then this tag is
+        absent.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        direction
+        <br />
+         *integer* 
+      </th>
+      <td>
+         `1` 
+        <br />
+         `-1` 
+      </td>
+      <td>
+        This tag indicates that traffic on a road is one-way. Value 1 indicates
+        that the traffic flows in the same direction as geometry of the road,
+        and the value -1 indicates that the traffic flows in the opposite
+        direction to the geometry of the road.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        shield_icon_[0-4]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        The name of the road shield icon associated with the road. For easier
+        referencing and implementation, the name of a roadshield follows one of
+        two formats:
+        <ul>
+          <li>
+            shapeType-fillColor-strokeColor-numOfChars: For shields to be reused
+            by many countries.
+          </li>
+          <li>
+            countryName-stateCode-shieldType-numOfChars: For country or region
+            specific shields.
+          </li>
+        </ul>
+        <br />
+        See the  [Shield icon shape types](#shape-types)  section for existing
+        shape types.
+        <br />
+        See the  [Shield icon fill and stroke colors](#colors)  section
+        for existing shield colors.
+        <br />
+        See the  [Shield icon countries and states](#countries)  section
+        for details on country names and state codes.
+        <br />
+        numOfChars is a number in the range 1-7.
+        <br />
+        shieldType is a unique shield ID.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        shield_icon_text_[0-4]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        Text to be placed on the road shield icon with the corresponding
+        shield_icon idx.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        shield_icon_text_color_[0-4]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        The color of the text on the road shield icon with the corresponding
+        shield_icon idx. Should be used in day mode.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        shield_icon_text_color_night_[0-4]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        The color of the text on the road shield icon with the corresponding
+        shield_icon idx. Should be used in night mode.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        z_level
+        <br />
+         *integer* 
+      </th>
+      <td>-</td>
+      <td>
+        The integer value used to determine the drawing order of overlapping
+        road segments. The values are in the range -3, 3 inclusive. Note: This
+        tag is currently sent from zoom level 13 inclusive up to zoom level 22.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name_[language]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in a language specified in a [language] suffix.
+         [List of supported languages](#list-of-supported-languages).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        &lt;restriction&gt;
+        <br />
+        *string*
+      </th>
+      <td>-</td>
+      <td>
+        Value of restriction. The unit of this value is provided in the tag <code>&lt;restriction&gt;_unit</code>.
+        <br /> See:
+        <a href="#list-of-supported-restrictions">List of restrictions</a>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        &lt;restriction&gt;_unit
+        <br />
+        *integer*
+      </th>
+      <td>-</td>
+      <td>
+        Unit of restriction value.
+        Value is provided in the tag <code>&lt;restriction&gt;</code>.
+        <br />
+        See:
+        <br />
+        <a href="#list-of-supported-units">List of units</a>.
+        <br />
+        <a href="#list-of-supported-restrictions">List of restrictions</a>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        &lt;restriction&gt;_icon
+        <br />
+        *string*
+      </th>
+      <td>-</td>
+      <td>
+        Road sign restriction icon.
+        <br /> See:
+        <a href="#list-of-supported-restrictions">List of restrictions</a>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        &lt;restriction&gt;_priority
+        <br />
+        *integer*
+      </th>
+      <td>-</td>
+      <td>
+        Priority of restriction road sign.
+        <br /> See:
+        <a href="#list-of-supported-restrictions">List of restrictions</a>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        &lt;restriction&gt;_period
+        <br />
+        *string*
+      </th>
+      <td>-</td>
+      <td>
+        Validity period in human-readable form.
+        If the restriction starts or ends in the nearest 24 hours, then the tag contains a string with restriction validity hours.
+        It contains a period in 12h or 24h format.
+        <br /> Examples:
+        <br />"08:00-14:00"
+        <br />"08:00am-02:00pm"
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        &lt;restriction&gt;_max_weight
+        <br />
+        *float*
+      </th>
+      <td>-</td>
+      <td>
+        Max weight.
+        <br />
+        <a href="#list-of-supported-restrictions">List of restrictions</a>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        allow_category
+        <br />
+        *integer*
+      </th>
+      <td>
+        <code>1</code> - not allowed.
+        <br />
+        <code>2</code> - not currently allowed (time restriction, e.g., not allowed now, but allowed in 1h).
+        <br />
+        <code>3</code> - currently allowed (due to time restriction).
+      </td>
+      <td>
+        Tag indicates the status of restriction.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        restriction_direction
+        <br />
+        *integer*
+      </th>
+      <td>
+        <code>1</code>
+        <br />
+        <code>-1</code>
+      </td>
+      <td>
+        The aggregated value of a restriction's direction.
+        This tag indicates that all restrictions on the road are one-way. Value 1 indicates
+        that all restrictions flow in the same direction as the geometry of the road,
+        and the value -1 indicates that all restrictions flow in the opposite
+        direction to the geometry of the road.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        left_hand_traffic
+        <br />
+        *boolean*
+      </th>
+      <td>
+        <ul>
+          <li>
+             `true`
+          </li>
+        </ul>
+      </td>
+      <td>
+        This tag indicates that traffic is on the left side of the road.
+        This tag is present only together with tag `restriction_direction`.
+        The value is always true. If the road has the tag `restriction_direction` and traffic is on the right side, then this tag is absent.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="shape-types" style={{ fontSize: '1em' }}>
+  Shield icon shape types
+</h4>
+
+<table>
+  <tbody>
+    <tr>
+      <td>rectangle</td>
+      <td>hexagon</td>
+      <td>hexagon2</td>
+      <td>octagon</td>
+      <td>special01</td>
+      <td>special02</td>
+      <td>special03</td>
+      <td>special04</td>
+    </tr>
+    <tr>
+      <td>shield01</td>
+      <td>shield02</td>
+      <td>shield03</td>
+      <td>shield04</td>
+      <td>shield05</td>
+      <td>shield06</td>
+      <td>shield07</td>
+      <td>shield08</td>
+    </tr>
+    <tr>
+      <td>shield09</td>
+      <td>shield10</td>
+      <td>shield11</td>
+      <td>shield12</td>
+      <td>pentagon</td>
+      <td>circle</td>
+      <td>pill</td>
+      <td>us1</td>
+    </tr>
+    <tr>
+      <td>us2</td>
+      <td>us3</td>
+      <td>oval</td>
+      <td>diamond</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="colors" style={{ fontSize: '1em' }}>
+  Shield icon fill and stroke colors
+</h4>
+
+<table>
+  <tbody>
+    <tr>
+      <td>white</td>
+      <td>yellow1</td>
+      <td>yellow2</td>
+      <td>yellow3</td>
+      <td>orange</td>
+      <td>green1</td>
+      <td>green2</td>
+      <td>green3</td>
+      <td>blue1</td>
+    </tr>
+    <tr>
+      <td>blue2</td>
+      <td>blue3</td>
+      <td>brown1</td>
+      <td>brown2</td>
+      <td>red</td>
+      <td>grey</td>
+      <td>anthracite</td>
+      <td>black</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="countries" style={{ fontSize: '1em' }}>
+  Shield icon countries and states
+</h4>
+
+Possible values of the _countryName_ part of a name are listed in the following table.
+
+- For Canada shields, the _stateCode_ part of the shield's name is either a two-letter province name abbreviation or empty.
+- For USA shields, the _stateCode_ may be a two-letter ISO-3166 state name abbreviation, `highway`, `county`, or empty.
+- For other country shields the _stateCode_ is empty.
+
+<table>
+  <tbody>
+    <tr>
+      <td>colombia</td>
+      <td>south</td>
+      <td>mexico</td>
+      <td>indonesia</td>
+      <td>taiwan</td>
+      <td>canada</td>
+      <td>usa</td>
+      <td>venezuela</td>
+      <td>southafrica</td>
+    </tr>
+    <tr>
+      <td>cuba</td>
+      <td>india</td>
+      <td>australia</td>
+      <td>argentina</td>
+      <td>saudiarabia</td>
+      <td>uae</td>
+      <td>peru</td>
+      <td>korea</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+### boundaries
+
+The boundaries layer includes boundary lines for national and subnational administrative units.
+
+<h4 style={{ fontSize: '1em' }}>
+  Geometry type:  `LINESTRING` 
+</h4>
+
+<table summary="boundaries">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        boundaries&nbsp;tags
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Values
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        category
+        <br />
+         *string* 
+      </th>
+      <td>
+         `country` 
+        <br />
+         `state` 
+      </td>
+      <td>This tag specifies to which category a given feature belongs.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        treaty
+        <br />
+         *boolean* 
+      </th>
+      <td>
+         `true` 
+      </td>
+      <td>
+        This tag indicates that the border is the result of an agreement under
+        international law entered by sovereign states and international
+        organizations but is still experienced as a very sensitive geopolitical
+        matter.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        disputed
+        <br />
+         *boolean* 
+      </th>
+      <td>
+         `true` 
+      </td>
+      <td>
+        This tag indicates that the border is the subject of a dispute between
+        two or more countries. It does not give information about the nature of
+        the dispute.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        name_[language]
+        <br />
+         *string* 
+      </th>
+      <td>-</td>
+      <td>
+        A feature name in a language specified in a [language] suffix.
+         [List of supported languages](#list-of-supported-languages).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## List of supported languages
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Language name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Language tag
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Neutral Ground Truth (custom)</th>
+      <td>
+         `ngt` 
+        <br />
+        Official languages for all regions in local scripts if available.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Neutral Ground Truth - Latin exonyms (custom)</th>
+      <td>
+         `ngt-Latn` 
+        <br />
+        Latin script will be used if available.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Arabic</th>
+      <td>
+         `ar` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Bulgarian</th>
+      <td>
+         `bg-BG` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Chinese (Taiwan)</th>
+      <td>
+         `zh-TW` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Chinese (Simplified)</th>
+      <td>
+         `zh-CN` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Czech</th>
+      <td>
+         `cs-CZ` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Danish</th>
+      <td>
+         `da-DK` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Dutch</th>
+      <td>
+         `nl-NL` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Australia)</th>
+      <td>
+         `en-AU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Canada)</th>
+      <td>
+         `en-CA` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Great Britain)</th>
+      <td>
+         `en-GB` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (New Zealand)</th>
+      <td>
+         `en-NZ` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (USA)</th>
+      <td>
+         `en-US` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Finnish</th>
+      <td>
+         `fi-FI` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">French</th>
+      <td>
+         `fr-FR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">German</th>
+      <td>
+         `de-DE` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Greek</th>
+      <td>
+         `el-GR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Hungarian</th>
+      <td>
+         `hu-HU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Indonesian</th>
+      <td>
+         `id-ID` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Italian</th>
+      <td>
+         `it-IT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Korean</th>
+      <td>
+         `ko-KR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Korean written in the Latin script.</th>
+      <td>
+         `ko-Latn-KR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Lithuanian</th>
+      <td>
+         `lt-LT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Malay</th>
+      <td>
+         `ms-MY` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Norwegian</th>
+      <td>
+         `nb-NO` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Polish</th>
+      <td>
+         `pl-PL` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese (Brazil)</th>
+      <td>
+         `pt-BR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese (Portugal)</th>
+      <td>
+         `pt-PT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russian written in the Cyrillic script.</th>
+      <td>
+         `ru-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russian written in the Latin script.</th>
+      <td>
+         `ru-Latn-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Russian written in the Cyrillic script.
+        <br />
+        Cyrillic script used where possible.
+      </th>
+      <td>
+         `ru-Cyrl-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Slovak</th>
+      <td>
+         `sk-SK` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Slovenian</th>
+      <td>
+         `sl-SI` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish (Castilian)</th>
+      <td>
+         `es-ES` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish (Mexico)</th>
+      <td>
+         `es-MX` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Swedish</th>
+      <td>
+         `sv-SE` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Thai</th>
+      <td>
+         `th-TH` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Turkish</th>
+      <td>
+         `tr-TR` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Default language algorithm
+
+The best match will be chosen based on the following algorithm.
+
+<ol>
+  <li>
+    Every  `name`  and  `name_[language]`  tag provided in the
+    tile is being matched from left to right. Partial match is allowed. For
+    example:
+    <ul>
+      <li>
+        If  `[language]`  exactly match, the language is selected.
+      </li>
+      <li>
+        If  `[language]`  does not have a match for a region, but a
+        script subtag is available for another primary language subtag, then
+        this other language will be used.
+      </li>
+    </ul>
+  </li>
+  <li>
+    If there are multiple matches for a region, then the one with highest
+    priority is used.
+  </li>
+  <li>If there is no match then NGT (Neutral Ground Truth) is used.</li>
+</ol>
+
+## Handling label translations
+
+Version 2 tiles contain all available translations for suitable layers and features, i.e.,  *POINT*  features in the places layer. These translations can be used in style files to change the label language. In order to use translations, you need to modify the desired layer in the style file by replacing the value of the  `text-field`  key with the following expression:
+
+<ul>
+  <li>
+     `["coalesce",["get", "name_[language]"],["get", "name"]]` 
+  </li>
+</ul>
+
+The `[language]` part in `name_[language]` needs to be replaced by one of the [supported languages](#list-of-supported-languages).
+
+Example:
+
+```
+{
+    ...
+    "id": "Places - Capital",
+    "layout": {
+        "text-anchor": "center",
+        "text-field": ["coalesce",["get", "name_en-GB"],["get", "name"]],
+        "text-font": ["Noto-Bold"],
+        "text-justify": "auto",
+        "text-letter-spacing": 0.05,
+        ...
+    }
+    ...
+}
+```
+
+To combine the translated label with other tags the following expression can be used:
+
+<ul>
+  <li>
+     `["concat",["coalesce",["get", "name_[language]"],["get", "name"]], ["get",
+      "[tag_name]"]]` 
+  </li>
+</ul>
+
+- The `[language]` part in `name_[language]` needs to be replaced by one of the [supported languages](#list-of-supported-languages).
+- The `[tag_name]` should be replaced by one of the tags available in the version 2 tile.
+
+Example:
+
+```
+{
+    ...
+    "id": "POI",
+    "layout": {
+        "text-anchor": "center",
+        "text-field": ["concat",["coalesce",["get', "name_pl-PL"],["get", "name"]], "\n", ["get", "sub_text"]],
+        "text-font": ["Noto-Bold"],
+        "text-justify": "auto",
+        "text-letter-spacing": 0.05,
+        ...
+    }
+    ...
+}
+```
+
+## List of supported restrictions
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Restriction
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">max_weight</th>
+      <td>
+        Max gross (total) weight.
+        <br />
+        <em>float</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">max_axle_weight</th>
+      <td>
+        Max weight per axle.
+        <br />
+        <em>float</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">max_height</th>
+      <td>
+        Maximum height allowed.
+        <br />
+        <em>float</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">max_axle_count</th>
+      <td>
+        Maximum number of axles.
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">no_entry</th>
+      <td>
+        No entry of a specified vehicle type.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">max_width</th>
+      <td>
+        Maximum width allowed.
+        <br />
+        <em>float</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">max_length</th>
+      <td>
+        Maximum length allowed.
+        <br />
+        <em>float</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">speed_limit</th>
+      <td>
+        Maximum speed allowed.
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hazmat_restriction</th>
+      <td>
+        Type of general hazmat restriction.
+        See:
+        <a href="#general-load-type-mapping" target="_blank">
+          General load type mapping section
+        </a>
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hazmat_class_explosives</th>
+      <td>
+        Hazmat restriction with explosives dangerous goods class.
+        See:
+        <a href="#dangerous-goods-load-type-mapping" target="_blank">
+          Vehicle dangerous goods load type mapping section
+        </a>
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hazmat_class_gases</th>
+      <td>
+        Hazmat restriction with the gases dangerous goods class.
+        See:
+        <a href="#dangerous-goods-load-type-mapping" target="_blank">
+          Vehicle dangerous goods load type mapping section
+        </a>
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hazmat_class_flammable_liquids</th>
+      <td>
+        Hazmat restriction with the flammable liquids dangerous goods class.
+        See:
+        <a href="#dangerous-goods-load-type-mapping" target="_blank">
+          Vehicle dangerous goods load type mapping section
+        </a>
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hazmat_class_flammable_solids</th>
+      <td>
+        Hazmat restriction with the flammable solids dangerous goods class.
+        See:
+        <a href="#dangerous-goods-load-type-mapping" target="_blank">
+          Vehicle dangerous goods load type mapping section
+        </a>
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hazmat_class_oxidizing_and_organic</th>
+      <td>
+        Hazmat restriction with the oxidizing and organic dangerous goods class.
+        See:
+        <a href="#dangerous-goods-load-type-mapping" target="_blank">
+          Vehicle dangerous goods load type mapping section
+        </a>
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hazmat_class_toxic_and_infectious</th>
+      <td>
+        Hazmat restriction with the toxic and infectious dangerous goods class.
+        See:
+        <a href="#dangerous-goods-load-type-mapping" target="_blank">
+          Vehicle dangerous goods load type mapping section
+        </a>
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hazmat_class_radioactive</th>
+      <td>
+        Hazmat restriction with the radioactive dangerous goods class.
+        See:
+        <a href="#dangerous-goods-load-type-mapping" target="_blank">
+          Vehicle dangerous goods load type mapping section
+        </a>
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hazmat_class_corrosives</th>
+      <td>
+        Hazmat restriction with the corrosives dangerous goods class.
+        See:
+        <a href="#dangerous-goods-load-type-mapping" target="_blank">
+          Vehicle dangerous goods load type mapping section
+        </a>
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">hazmat_class_miscellaneous</th>
+      <td>
+        Hazmat restriction with the miscellaneous dangerous goods class.
+        See:
+        <a href="#dangerous-goods-load-type-mapping" target="_blank">
+          Vehicle dangerous goods load type mapping section
+        </a>
+        <br />
+        <em>integer</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">adr_restriction_category</th>
+      <td>
+        Vehicle ADR category.
+        See:
+        <a href="#adr-category-type-mapping" target="_blank">
+          Vehicle ADR category type mapping section
+        </a>
+        <br />
+        <em>string</em>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">no_commercial_vehicle</th>
+      <td>
+        Commercial vehicles are not allowed.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+## List of supported units
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">0</th>
+      <td>
+        <code>Kilometer per hour</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">1</th>
+      <td>
+        <code>Gallon</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>
+        <code>Percentage</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>
+        <code>Mile per hour</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">4</th>
+      <td>
+        <code>Metric ton</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">5</th>
+      <td>
+        <code>Centimeter</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>
+        <code>Meter</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">7</th>
+      <td>
+        <code>Liter</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">8</th>
+      <td>
+        <code>Short Ton</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">9</th>
+      <td>
+        <code>Inch</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">10</th>
+      <td>
+        <code>Foot</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+## General load type mapping
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        General load type
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">0</th>
+      <td>
+        <code>General_Hazardous_Materials</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">1</th>
+      <td>
+        <code>Explosive_Materials</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>
+        <code>Goods_Harmful_To_Water</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+## Dangerous goods load type mapping
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Dangerous goods load type
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">0</th>
+      <td>
+        <code>Explosives</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">1</th>
+      <td>
+        <code>Gases</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>
+        <code>Flammable_Liquids</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>
+        <code>Flammable_Solids</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">4</th>
+      <td>
+        <code>Oxidizing_And_Organic_Substance</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">5</th>
+      <td>
+        <code>Toxic_And_Infectious_Substance</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>
+        <code>Radioactive_Material</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">7</th>
+      <td>
+        <code>Corrosives</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">8</th>
+      <td>
+        <code>Miscellaneous_Dangerous_Goods</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+## Adr category type mapping
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        ADR category
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">B</th>
+      <td>
+        <code>ADR category B</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">C</th>
+      <td>
+        <code>ADR category C</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">D</th>
+      <td>
+        <code>ADR category D</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">E</th>
+      <td>
+        <code>ADR category E</code>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,1893 @@
+---
+title: Tile
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2024.09.19'
+    color: grey5
+---
+
+## Public Preview Notice  
+
+<Blockquote type="announcement" hasIcon>
+
+<p>
+  This API is in Public Preview. Go to the [Public Preview - what is it?](https://developer.tomtom.com/public-preview) page to see what this means.
+</p>
+
+</Blockquote>
+
+## Purpose
+
+Similar to the  [Map Display API Raster Tile service](/map-display-api/documentation/raster/tile) , the **Map Display API Vector Tile service** serves data on zoom levels ranging from `0` to `22`.
+
+- For zoom level `0`, the entire earth is displayed on a single tile.
+- At zoom level `22`, the world is divided into 2<sup>44</sup> tiles. See:  [Zoom Levels and Tile Grid](/map-display-api/documentation/zoom-levels-and-tile-grid).
+
+The Maps Vector Service delivers geographic map data packaged in a vector representation of squared sections called **vector tiles**.
+
+- Each tile includes pre-defined collections of map features (points, lines, road shapes, water polygons, building footprints, etc.) delivered in one of the specified vector formats.
+- The format of the tile is formally described using the  [protobuf schema](/map-display-api/documentation/vector/content#schema-data).
+- The content of the tiles and meaning of each tile layer is described in the  [tile layers description](/map-display-api/documentation/vector/content#tile-layers).
+
+### Tiles Layers and Styles
+
+The Vector Maps Service supports the following tile layers: basic, hybrid, labels, and poi. Unlike raster tiles there is no difference in data served between main and night styles. The vector data consists of layers with their own names and geometry. The client determines how to present this data to the end user, for example which colors to use for which features.
+
+- The `basic` vector tiles contain mapping data such as polygons, road shapes, borders, basic POIs, labels, and road icons.
+- The `labels` vector tiles provide the same label information as the basic vector tiles. The labels are precisely placed to align with the labels on the basic vector tiles.
+- The `hybrid` vector tiles provide all of the features from the basic layer except geographic polygons. It contains borders, road networks, labels, and road icons.
+- The `poi` vector tiles provide all of the Points of Interest features.
+
+### Tiles Resolution
+
+Visible geometry is stored as coordinates in the range `0-4095`. Coordinate `0,0` is defined as the _top-left corner_ of the tile.
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+
+## Request data
+
+### HTTPS method: `GET`
+
+For ease of viewing and identification:
+
+- Constants and parameters enclosed in curly brackets `{}` must be replaced with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for these values. The generic URL format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/map/{versionNumber}/tile/{layer}/{zoom}/{X}/{Y}.{format}?key={Your_API_Key}&view={view}&include={include_list}&travelMode={travelMode}&vehicleWeight={vehicleWeight}&vehicleAxleWeight={vehicleAxleWeight}&numberOfAxles={numberOfAxles}&vehicleLength={vehicleLength}&vehicleWidth={vehicleWidth}&vehicleHeight={vehicleHeight}&generalLoadType={generalLoadType}&dangerousGoodsLoadType={dangerousGoodsLoadType}&adrCategory={adrCategory}&travelModeProfile={travelModeProfile}&commercialVehicle={commercialVehicle}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://{baseURL}/map/{versionNumber}/tile/{layer}/{zoom}/{X}/{Y}.{format}?key={Your_API_Key}&view={view}&include={include_list}&travelMode={travelMode}&vehicleWeight={vehicleWeight}&vehicleAxleWeight={vehicleAxleWeight}&numberOfAxles={numberOfAxles}&vehicleLength={vehicleLength}&vehicleWidth={vehicleWidth}&vehicleHeight={vehicleHeight}&generalLoadType={generalLoadType}&dangerousGoodsLoadType={dangerousGoodsLoadType}&adrCategory={adrCategory}&travelModeProfile={travelModeProfile}&commercialVehicle={commercialVehicle}&emissionClass={emissionClass}&engineType={engineType}'
+```
+
+### Request parameters
+
+The following elements are used in calls to generate all vector tile layers.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px">
+        Required parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling TomTom services.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `api.tomtom.com` 
+          </li>
+          <li>
+             `[a|b|c|d].api.tomtom.com`  (see the
+             [Host Name Cycling section](#host-name-cycling)  for
+            details on aliases)
+          </li>
+          <li>
+             `kr-api.tomtom.com`  (see the
+             [Region-specific content](/region-specific-content) 
+            page)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `2`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `layer` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Layer of the tile to be rendered.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `basic` 
+          </li>
+          <li>
+             `hybrid` 
+          </li>
+          <li>
+             `labels` 
+          </li>
+          <li>
+             `poi` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `zoom` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        Zoom level of the tile to be rendered.
+        <br />
+         **Value:**   `0..22` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `X` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The x coordinate of the tile on a zoom grid.
+        <br />
+         **Value:** 
+         `0..2  zoom  -1` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `Y` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The y coordinate of the tile on a zoom grid.
+        <br />
+         **Value:** 
+         `0..2  zoom  -1` 
+      </td>
+    </tr>
+    <tr></tr>
+    <tr>
+      <th scope="row">
+         `format` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The format of the Response.
+        <br />
+         **Value:**   `pbf` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        An API Key valid for the requested service.
+        <br />
+         **Value:**  Your valid API Key.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `view` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        A geopolitical view.
+        <br />
+         **Default value:**  See the following
+         [Default view mapping section](#default-view-mapping).<br />
+         **Other values:** 
+        <ul>
+          <li>
+             `Unified` 
+          </li>
+          <li>
+             `IL` 
+          </li>
+          <li>
+             `IN` 
+          </li>
+          <li>
+             `MA` 
+          </li>
+          <li>
+             `PK` 
+          </li>
+          <li>
+             `AR` 
+          </li>
+          <li>
+             `Arabic` 
+          </li>
+          <li>
+             `RU` 
+          </li>
+          <li>
+             `TR` 
+          </li>
+          <li>
+             `CN` 
+          </li>
+          <li>
+             `KR` 
+            <sup>*</sup>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>include</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        List of additional data types to be included in the tile.
+        Values must be placed between `[` and `]` and separated by a `,`.
+        <br />
+        <b>Default value:</b> None
+        <br />
+        <b>Actual supported values:</b>
+        <ul>
+          <li>
+            `road_restrictions` - includes restriction-related data filtered based on the provided vehicle profile.
+          </li>
+        </ul>
+        Example: `include=[road_restrictions]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleWeight</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        Weight of the vehicle in kilograms.
+        <br />
+        <b>Default value:</b> 0
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleAxleWeight</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        Weight per axle of the vehicle in kilograms.
+        <br />
+        <b>Default value:</b> 0
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>numberOfAxles</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        Number of vehicle axles.
+        <br />
+        <b>Default value:</b> 0
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleLength</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        Length of the vehicle in meters.
+        <br />
+        <b>Default value:</b> 0
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleWidth</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        Width of the vehicle in meters.
+        <br />
+        <b>Default value:</b> 0
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleHeight</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        Height of the vehicle in meters.
+        <br />
+        <b>Default value:</b> 0
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>generalLoadType</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        List of the vehicle general load types.
+        Values must be placed between `[` and `]` and separated by a `,`.
+        <br />
+        <b>Default value:</b> None.
+        <br />
+        <b>Actual supported values:</b>
+        <ul>
+          <li>
+            <code>General_Hazardous_Materials</code>
+          </li>
+          <li>
+            <code>Explosive_Materials</code>
+          </li>
+          <li>
+            <code>Goods_Harmful_To_Water</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>dangerousGoodsLoadType</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        List of the vehicle dangerous goods load types.
+        Values must be placed between `[` and `]` and separated by a `,`.
+        <br />
+        <b>Default value:</b> None.
+        <br />
+        <b>Actual supported values:</b>
+        <ul>
+          <li>
+            <code>Explosives</code>
+          </li>
+          <li>
+            <code>Gases</code>
+          </li>
+          <li>
+            <code>Flammable_Liquids</code>
+          </li>
+          <li>
+            <code>Flammable_Solids</code>
+          </li>
+          <li>
+            <code>Oxidizing_And_Organic_Substance</code>
+          </li>
+          <li>
+            <code>Toxic_And_Infectious_Substance</code>
+          </li>
+          <li>
+            <code>Radioactive_Material</code>
+          </li>
+          <li>
+            <code>Corrosives</code>
+          </li>
+          <li>
+            <code>Miscellaneous_Dangerous_Goods</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>adrCategory</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        Vehicle ADR category.
+        <br />
+        <b>Default value:</b> None.
+        <br />
+        <b>Actual supported values:</b>
+        <ul>
+          <li>
+            <code>B</code>
+          </li>
+          <li>
+            <code>C</code>
+          </li>
+          <li>
+            <code>D</code>
+          </li>
+          <li>
+            <code>E</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>commercialVehicle</code>
+        <br />
+        <em>bool</em>
+      </th>
+      <td>
+        Indicates a commercial vehicle.
+        <br />
+        <b>Default value:</b> false
+        <br />
+        <b>Actual supported values:</b>
+        <ul>
+          <li>
+            <code>false</code> - Vehicle is not commercial.
+          </li>
+          <li>
+            <code>true</code> - Vehicle is commercial.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>travelMode</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        Travel mode to be included in the restriction data.
+        <br />
+        <b>Default value:</b> If <code>travelMode</code> is not provided, the default value - <code>Car</code> - will be used.
+        <br />
+        <b>Actual supported values:</b>
+        <ul>
+          <li>
+            <code>Car</code>
+          </li>
+          <li>
+            <code>Truck</code>
+          </li>
+          <li>
+            <code>Taxi</code>
+          </li>
+          <li>
+            <code>Bus</code>
+          </li>
+          <li>
+            <code>Van</code>
+          </li>
+          <li>
+            <code>Motorcycle</code>
+          </li>
+          <li>
+            <code>Bicycle</code>
+          </li>
+          <li>
+            <code>Pedestrian</code>
+          </li>
+          <li>
+            <code>Other</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>emissionClass</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        List of the emission classes.
+        Values must be placed between `[` and `]` and separated by a `,`.
+        <br />
+        <b>Default value:</b> None.
+        <br />
+        <b>Actual supported values:</b>
+        <ul>
+          <li>
+            <code>EmissionClass0</code>
+          </li>
+          <li>
+            <code>EmissionClass1</code>
+          </li>
+          <li>
+            <code>EmissionClass2</code>
+          </li>
+          <li>
+            <code>EmissionClass3</code>
+          </li>
+          <li>
+            <code>EmissionClass4</code>
+          </li>
+          <li>
+            <code>EmissionClass5</code>
+          </li>
+          <li>
+            <code>EmissionClass6</code>
+          </li>
+          <li>
+            <code>EmissionClass7</code>
+          </li>
+          <li>
+            <code>EmissionClass8</code>
+          </li>
+          <li>
+            <code>EmissionClass9</code>
+          </li>
+          <li>
+            <code>EmissionClass10</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>engineType</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        List of the engine types
+        Values must be placed between `[` and `]` and separated by a `,`.
+        <br />
+        <b>Default value:</b> None.
+        <br />
+        <b>Actual supported values:</b>
+        <ul>
+          <li>
+            <code>LPG</code>
+          </li>
+          <li>
+            <code>CNG</code>
+          </li>
+          <li>
+            <code>LNG</code>
+          </li>
+          <li>
+            <code>Diesel</code>
+          </li>
+          <li>
+            <code>Petrol</code>
+          </li>
+          <li>
+            <code>Hydrogen</code>
+          </li>
+          <li>
+            <code>Electric</code>
+          </li>
+          <li>
+            <code>Hybrid</code>
+          </li>
+          <li>
+            <code>Plugin_Hybrid</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>travelModeProfile</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The short version combines vehicle-related parameters with <code>travelMode</code>.
+        Instead of passing all parameters separately, it can be provided in a single parameter.
+        <br />
+        <code>travelModeProfile=&lt;travelMode&gt;,&lt;vehicleWeight&gt;,&lt;vehicleAxleWeight&gt;,&lt;numberOfAxles&gt;,&lt;vehicleLength&gt;,&lt;vehicleWidth&gt;,&lt;vehicleHeight&gt;,&lt;generalLoadType&gt;,&lt;dangerousGoodsLoadType&gt;,&lt;adrCategory&gt;,&lt;commercialVehicle&gt;,&lt;emissionClass&gt;,&lt;engineType&gt;</code>
+        <br />
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+                Parameter type
+              </th>
+              <th scope="col" style={{ fontSize: '1em' }}>
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                <code>travelMode</code>
+                <br />
+                <em>string</em>
+              </th>
+              <td>
+                Travel mode to be included in the restriction data.
+                See:
+                <a href="#travel-mode-mapping" target="_blank">
+                  Travel mode mapping section
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>vehicleWeight</code>
+                <br />
+                <em>integer</em>
+              </th>
+              <td>
+                Weight of the vehicle in kilograms.
+                <br />
+                <b>Default value:</b> 0
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>vehicleAxleWeight</code>
+                <br />
+                <em>integer</em>
+              </th>
+              <td>
+                Weight per axle of the vehicle in kilograms.
+                <br />
+                <b>Default value:</b> 0
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>numberOfAxles</code>
+                <br />
+                <em>integer</em>
+              </th>
+              <td>
+                Number of vehicle axles.
+                <br />
+                <b>Default value:</b> 0
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>vehicleLength</code>
+                <br />
+                <em>float</em>
+              </th>
+              <td>
+                Length of the vehicle in meters.
+                <br />
+                <b>Default value:</b> 0
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>vehicleWidth</code>
+                <br />
+                <em>float</em>
+              </th>
+              <td>
+                Width of the vehicle in meters.
+                <br />
+                <b>Default value:</b> 0
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>vehicleHeight</code>
+                <br />
+                <em>float</em>
+              </th>
+              <td>
+                Height of the vehicle in meters.
+                <br />
+                <b>Default value:</b> 0
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>generalLoadType</code>
+                <br />
+                <em>string</em>
+              </th>
+              <td>
+                List of vehicle general load types.
+                Values must be placed between `[` and `]` and separated by a `,`.
+                See:
+                <a href="#general-load-type-mapping" target="_blank">
+                  General load type mapping section
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>dangerousGoodsLoadType</code>
+                <br />
+                <em>string</em>
+              </th>
+              <td>
+                List of vehicle dangerous goods load types.
+                Values must be placed between `[` and `]` and separated by a `,`.
+                See:
+                <a href="#dangerous-goods-load-type-mapping" target="_blank">
+                  Vehicle Dangerous goods load type mapping section
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>adrCategory</code>
+                <br />
+                <em>string</em>
+              </th>
+              <td>
+                Vehicle ADR category
+                See:
+                <a href="#adr-category-type-mapping" target="_blank">
+                  Vehicle ADR category type mapping section
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>commercialVehicle</code>
+                <br />
+                <em>string</em>
+              </th>
+              <td>
+                Indicates a commercial vehicle.
+                <br />
+                <b>Default value:</b> 0.
+                <br />
+                <b>Actual supported values:</b>
+                <ul>
+                  <li>
+                    <code>0</code> - Vehicle is not commercial.
+                  </li>
+                  <li>
+                    <code>1</code> - Vehicle is commercial.
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>emissionClass</code>
+                <br />
+                <em>string</em>
+              </th>
+              <td>
+                List of emission classes.
+                Values must be placed between `[` and `]` and separated by a `,`.
+                See:
+                <a href="#emission-class-mapping" target="_blank">
+                  Emission class mapping section
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>engineType</code>
+                <br />
+                <em>string</em>
+              </th>
+              <td>
+                List of engine types.
+                Values must be placed between `[` and `]` and separated by a `,`.
+                See:
+                <a href="#engine-type-mapping" target="_blank">
+                  Engine type mapping section
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+        Example:
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+                Travel mode profile value
+              </th>
+              <th scope="col" style={{ fontSize: '1em' }}>
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                <code>0,1500,,,5.5,,2.2,,,,,,</code>
+              </th>
+              <td>
+                Car, weight 1500kg, length 5.5m, height 2.2m.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>1,,,3,,3.1,,,,,,,</code>
+              </th>
+              <td>
+                Truck, 3 axles, width 3.1m.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+* Only available under  *kr-api.tomtom.com* , see  [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+<br />
+
+### HTTP request headers
+
+The following table lists HTTP request headers of particular interest to clients of the Map Display API Vector Tile service endpoint. **Note:** There are no required headers in this endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) 
+      </th>
+      <td>
+        Contains the content encoding (usually a compression algorithm) that the
+        client is able to understand.
+        <br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [If-None-Match](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match) 
+      </th>
+      <td>
+        Contains an identifier for a specific version of resource. The server
+        will send back the requested resource with a 200 HTTP status code, only
+        if it doesn't have an ETag matching the given one.
+        <br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tracking-ID</th>
+      <td>
+        Specifies an identifier for the request. It can be used to trace a call.
+        The value must match the regular expression
+         `'^[a-zA-Z0-9-]{1,100}$'`. An example of the format
+        that matches this regular expression is a UUID (e.g.,
+         `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122). If specified, it is replicated in the Tracking-ID response header.
+        <br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Default view mapping
+
+Default view is recognized based on the country the request came from.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px;">
+        Country
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default view
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Argentina</th>
+      <td>
+         `AR` 
+        <br />
+         **Other available views:**   `Arabic` ,  `CN` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">India</th>
+      <td>
+         `IN` 
+        <br />
+         **Other available views:**  None
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Morocco</th>
+      <td>
+         `MA` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Pakistan</th>
+      <td>
+         `PK` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russia</th>
+      <td>
+         `RU` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Türkiye</th>
+      <td>
+         `TR` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">China</th>
+      <td>
+         `CN` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `IN` ,  `IL` ,  `MA` ,  `KR` 
+        <sup>*</sup>,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Bahrain, Kuwait, Oman, Qatar,
+        <br />
+        Saudi Arabia, the United Arab Emirates
+      </th>
+      <td>
+         `Arabic` 
+        <br />
+         **Other available views:**   `AR` ,  `CN` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Others</th>
+      <td>
+         `Unified` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+* Only available under  *kr-api.tomtom.com* , see  [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+<br />
+
+### Travel mode mapping
+
+Travel mode values mapping
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Travel mode
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">0</th>
+      <td>
+        <code>Car</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">1</th>
+      <td>
+        <code>Truck</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>
+        <code>Taxi</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>
+        <code>Bus</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">4</th>
+      <td>
+        <code>Van</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">5</th>
+      <td>
+        <code>Motorcycle</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>
+        <code>Bicycle</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">7</th>
+      <td>
+        <code>Pedestrian</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">8</th>
+      <td>
+        <code>Other</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### General load type mapping
+
+General load type mapping
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        General load type
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">0</th>
+      <td>
+        <code>General_Hazardous_Materials</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">1</th>
+      <td>
+        <code>Explosive_Materials</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>
+        <code>Goods_Harmful_To_Water</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+### Dangerous goods load type mapping
+
+Dangerous goods load type mapping
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Dangerous goods load type
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">0</th>
+      <td>
+        <code>Explosives</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">1</th>
+      <td>
+        <code>Gases</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>
+        <code>Flammable_Liquids</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>
+        <code>Flammable_Solids</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">4</th>
+      <td>
+        <code>Oxidizing_And_Organic_Substance</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">5</th>
+      <td>
+        <code>Toxic_And_Infectious_Substance</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>
+        <code>Radioactive_Material</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">7</th>
+      <td>
+        <code>Corrosives</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">8</th>
+      <td>
+        <code>Miscellaneous_Dangerous_Goods</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+### Adr category type mapping
+
+ADR category type mapping
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        ADR category
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">B</th>
+      <td>
+        <code>ADR category B</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">C</th>
+      <td>
+        <code>ADR category C</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">D</th>
+      <td>
+        <code>ADR category D</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">E</th>
+      <td>
+        <code>ADR category E</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Emission class mapping
+
+Emission class mapping
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Emission class
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">0</th>
+      <td>
+        <code>EmissionClass0</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">1</th>
+      <td>
+        <code>EmissionClass1</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>
+        <code>EmissionClass2</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>
+        <code>EmissionClass3</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">4</th>
+      <td>
+        <code>EmissionClass4</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">5</th>
+      <td>
+        <code>EmissionClass5</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>
+        <code>EmissionClass6</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">7</th>
+      <td>
+        <code>EmissionClass7</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">8</th>
+      <td>
+        <code>EmissionClass8</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">9</th>
+      <td>
+        <code>EmissionClass9</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">10</th>
+      <td>
+        <code>EmissionClass10</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Engine type mapping
+
+Engine type mapping
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px;">
+        Value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Engine type
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">0</th>
+      <td>
+        <code>LPG</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">1</th>
+      <td>
+        <code>CNG</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>
+        <code>LNG</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>
+        <code>Diesel</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">4</th>
+      <td>
+        <code>Petrol</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">5</th>
+      <td>
+        <code>Hydrogen</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td>
+        <code>Electric</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">7</th>
+      <td>
+        <code>Hybrid</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">8</th>
+      <td>
+        <code>Plugin_Hybrid</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Host Name Cycling
+
+Most web browsers have a default limitation on the number of active connections that can be allowed to each host.
+
+- This means if map tiles are being loaded via the api.tomtom.com host name, they will be loaded one at a time.
+- A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases.
+  - These host names are:
+    - `a.api.tomtom.com`
+    - `b.api.tomtom.com`
+    - `c.api.tomtom.com`
+    - `d.api.tomtom.com`
+- By cycling through these four different host names, the web browser will be tricked into retrieving four map tiles at a time rather than just one.
+- This will significantly speed up the performance of map rendering.
+
+For instance, if four map tiles are being requested at zoom level one, you would request the first one as:
+
+```shell
+https://a.api.tomtom.com/map/2/tile/basic/1/0/0.pbf?key={Your_API_Key}
+```
+
+The second would be:
+
+```shell
+https://b.api.tomtom.com/map/2/tile/basic/1/0/0.pbf?key=Your_API_Key
+```
+
+and so on up until `d.api.tomtom.com`. When more than four tiles are being requested, start back again at `a.api.tomtom.com`.
+
+## Response data
+
+The Map Display API Vector service endpoint, for a single request, returns a binary response body which must be deserialized by client code generated by the  [Google Protocol Buffers compiler](https://developers.google.com/protocol-buffers/docs/overview). The following response examples use a simple textual representation of the serialized binary vector tile data to illustrate the response content.
+
+### Response examples
+
+<h4 style={{ fontSize: '1em' }}>Example 1</h4>
+
+Whole world at zoom = `0`, basic layer.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{'fontSize':'1em'}}>Request</th>
+      <th scope="col" style={{'fontSize':'1em'}}>Response</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `https://api.tomtom.com/map/2/tile/basic/0/0/0.pbf?key={Your_API_Key}` 
+      </th>
+<td>
+
+```json
+layers:4
+water:
+  version: 2
+  extent: 4096
+  features: 1069
+  keys: 2
+  values: 3
+land_cover:
+  version: 2
+  extent: 4096
+  features: 2983
+  keys: 2
+  values: 6
+boundaries:
+  version: 2
+  extent: 4096
+  features: 4
+  keys: 4
+  values: 3
+carto_labels:
+  version: 2
+  extent: 4096
+  features: 5
+  keys: 4
+  values: 8
+```
+
+</td>
+</tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>Example 2.</h4>
+
+Zoom level = `5`, hybrid layer
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{'fontSize':'1em'}}>Request</th>
+      <th scope="col" style={{'fontSize':'1em'}}>Response</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `https://api.tomtom.com/map/2/tile/hybrid/5/4/8.pbf?key={Your_API_Key}` 
+      </th>
+<td>
+
+```json
+layers: 1
+boundaries:
+  version: 2
+  extent: 4096
+  features: 1
+  keys: 1
+  values: 1
+```
+
+</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>Example 3.</h4>
+
+Zoom level = `4`, labels layer
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{'fontSize':'1em'}}>Request</th>
+      <th scope="col" style={{'fontSize':'1em'}}>Response</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `https://api.tomtom.com/map/2/tile/labels/4/9/5.pbf?key=Your_API_Key` 
+      </th>
+<td>
+
+```json
+layers: 3
+boundaries:
+  version: 2
+  extent: 4096
+  features: 3
+  keys: 2
+  values: 3
+places:
+  version: 2
+  extent: 4096
+  features: 50
+  keys: 10
+  values: 110
+carto_labels:
+  version: 2
+  extent: 4096
+  features: 1
+  keys: 4
+  values: 4
+```
+
+</td>
+    </tr>
+  </tbody>
+</table>
+
+### Error Response
+
+The Map Display API Vector service endpoint for an invalid request returns a response body in XML or JSON format. The XML format is returned by default. To have an error response returned in JSON format, `application/json` has to be specified in the `Accept` HTTP request header.
+
+<h4 id="error-response-field-structure" style={{ fontSize: '1em' }}>
+  Error response field structure
+</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `detailedError` 
+        <br />
+         *object* 
+      </th>
+      <td>
+        Main  `object`  of the error response.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code` 
+        <br />
+         *string* 
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `message` 
+        <br />
+         *string* 
+      </th>
+      <td>A human-readable description of the error code.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="error-response-example" style={{ fontSize: '1em' }}>
+  Error response example
+</h4>
+
+```json [title=JSON format]
+{
+  "detailedError": {
+    "code": "BAD_REQUEST",
+    "message": "Invalid tile position arguments"
+  }
+}
+```
+
+```xml [title=XML format]
+<errorResponse description="Invalid tile position arguments" errorCode="400" version="1.0.54-mascoma">
+  <detailedError>
+    <code>BAD_REQUEST</code>
+      <message>Invalid tile position arguments</message>
+  </detailedError>
+</errorResponse>
+```
+
+### HTTP response codes
+
+<table>
+  <thead>
+    <tr>
+      <th
+        scope="col"
+        style={{ fontSize: '1em', textAlign: 'center' }}
+        width="250px;"
+      >
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Meaning &amp; possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `200` 
+      </th>
+      <td>
+         **OK** 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `304` 
+      </th>
+      <td>
+         **Not Modified** : The tile has not been modified. This code is
+        returned when the  `If-None-Match`  request header is used and
+        its value matches the ETag of the requested tile.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `400` 
+      </th>
+      <td>
+         **Bad request** : Probably malformed syntax.
+        <ul>
+          <li>
+            The combination of layer and query parameters is not supported.
+          </li>
+          <li>
+            Zoom  *n*  is out of range 0 &lt;= zoom &lt;= 22: The requested
+            zoom level is out of the possible range.
+          </li>
+          <li>
+            x  *n*  is out of range [0, *m* ]: The requested x coordinate
+            is out of the possible range (the value of  *m*  will vary
+            depending on the zoom level).
+          </li>
+          <li>
+            y  *n*  is out of range [0, *m* ]: The requested y coordinate
+            is out of the possible range (the value of  *m*  will vary
+            depending on the zoom level).
+          </li>
+          <li>The requested view is not supported.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `403` 
+      </th>
+      <td>
+         **Forbidden** :
+        <ul>
+          <li>The supplied API Key is not valid for this request.</li>
+          <li>
+            The requested view is not available in the country from where the
+            request was sent.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `429` 
+      </th>
+      <td>
+         **Too Many Requests** : Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `500` 
+      </th>
+      <td>
+         **Internal Server Error** : There is a problem with the TomTom Maps
+        Vector Tile service.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `503` 
+      </th>
+      <td>
+         **Service currently unavailable**.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### HTTP response headers
+
+The following data table lists HTTP response headers of particular interest to clients of the Map Display API Vector Tile service.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin) 
+      </th>
+      <td>
+        The Map Display API Vector Tile service allows cross-origin resource
+        sharing (CORS).
+        <br />
+         **Value:**   `*`  Universal.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) 
+      </th>
+      <td>
+        Contains directives for a caching mechanism.
+        <br />
+         **Value:**   `max-age=<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding) 
+      </th>
+      <td>
+        Indicates which encodings were applied to the response body.
+        <br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Length](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length) 
+      </th>
+      <td>
+        Contains information about the size of the response body.
+        <br />
+         **Value:**   `<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) 
+      </th>
+      <td>
+        Indicates the media type of the resource returned.
+        <br />
+         **Value:**   `image/pbf` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Date](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date) 
+      </th>
+      <td>
+        Contains the date and time at which the message was originated.
+        <br />
+         **Value:**   `<http-date>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) 
+      </th>
+      <td>
+        Contains an identifier for a specific version of resource.
+        <br />
+         **Value:**   `W/"2fdbd61f30456"` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Expires](https://developer.mozilla.org/en/docs/Web/HTTP/Headers/Expires) 
+      </th>
+      <td>
+        Contains the date after which the response is considered outdated.
+        <br />
+         **Value:**   `<http-date>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Transfer-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding) 
+      </th>
+      <td>
+        Specifies the form of encoding used to safely transfer the response to
+        the user. If this header is specified, the Content-Length header will be
+        absent.
+        <br />
+         **Value:**   `chunked` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tracking-ID</th>
+      <td>
+        An identifier for the request. If the Tracking-ID header was specified
+        in the request, it is replicated in the response. Otherwise, it is
+        generated automatically by the service. For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122).<br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>

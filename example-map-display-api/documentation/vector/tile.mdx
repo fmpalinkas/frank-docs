@@ -1,0 +1,1212 @@
+---
+title: Tile
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2023.08.01'
+    color: grey5
+---
+
+## Purpose  
+
+Similar to the  [Map Display API Raster Tile](/map-display-api/documentation/raster/tile) , the **Maps Vector Tile** serves data on zoom levels ranging from `0` to `22`.
+
+- For zoom level `0`, the entire earth is displayed on a single tile.
+- At zoom level `22`, the world is divided into 2<sup>44</sup> tiles. See the  [Zoom Levels and Tile Grid](/map-display-api/documentation/zoom-levels-and-tile-grid).
+
+The Maps Vector Service delivers geographic map data packaged in a vector representation of squared sections called **vector tiles**. Each tile includes pre-defined collections of map features (points, lines, road shapes, water polygons, building footprints, etc.) delivered in one of the specified vector formats.
+
+- The format of the tile is formally described using the  [protobuf schema](/traffic-api/documentation/vector-tile-structure/vector-tile-structure#schema-data).
+- The content of the tiles and meaning of each tile layer is described in the  [tile layers and styles](#tiles-layers-and-styles)  section.
+
+### Tiles Layers and Styles
+
+The Vector Maps Service supports the following tile layers: `basic`, `hybrid`, `labels`, and `poi`. Unlike raster tiles there is no difference in data served between main and night styles. The vector data consists of layers with their own names and geometry. The client determines how to present this data to the end user, for example which colors to use for which features.
+
+- The `basic` vector tiles contain mapping data such as polygons, road shapes, borders, labels, and road icons.
+- The `labels` vector tiles provide the same label information as the basic vector tiles. The labels are precisely placed to align with the labels on the basic vector tiles.
+- The `hybrid` vector tiles provide all of the features from the basic layer except geographic polygons. It contains borders, road networks, labels, and road icons.
+- The `poi` vector tiles provide all of the Points of Interest features.
+
+### Tiles resolution
+
+Visible geometry is stored as coordinates in the range `0-4095`. Coordinate `0,0` is defined as the _top-left corner_ of the tile.
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+
+## Request data
+
+### HTTPS method: `GET`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/map/{versionNumber}/tile/{layer}/{style}/{zoom}/{X}/{Y}.{format}?key={Your_API_Key}&view={view}&language={language}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://{baseURL}/map/{versionNumber}/tile/{layer}/{style}/{zoom}/{X}/{Y}.{format}?key={Your_API_Key}&view={view}&language={language}'
+```
+
+### Request parameters
+
+The following elements are used in calls to generate all vector tile layers.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling TomTom services.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `api.tomtom.com` 
+          </li>
+          <li>
+             `[a|b|c|d].api.tomtom.com`  (see the
+             [Host Name Cycling section](#host-name-cycling)  for
+            details on aliases)
+          </li>
+          <li>
+             `kr-api.tomtom.com`  (see the
+             [Region-specific content](/region-specific-content) 
+            page)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `layer` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Layer of the tile to be rendered.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `basic` 
+          </li>
+          <li>
+             `hybrid` 
+          </li>
+          <li>
+             `labels` 
+          </li>
+          <li>
+             `poi` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `style` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Style of the tile to be rendered.
+        <br />
+         **Value:**   `main` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `zoom` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        Zoom level of the tile to be rendered.
+        <br />
+         **Value:**  0..22
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `X` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The x coordinate of the tile on a zoom grid.
+        <br />
+         **Value:**  0..2 <sup>zoom -1</sup>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `Y` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The y coordinate of the tile on a zoom grid.
+        <br />
+         **Value:**  0..2 <sup>zoom</sup> -1
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `format` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The format of the response.
+        <br />
+         **Value:**   `pbf` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        An API Key valid for the requested service.
+        <br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `view` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        A geopolitical view.
+        <br />
+         **Default value:**  See the following
+         [Default view mapping](#default-view-mapping)  section.
+        <br />
+         **Other values:**   `Unified` ,  `IL` ,
+         `IN` ,  `MA` ,  `PK` ,  `AR` ,
+         `Arabic` ,  `RU` , `TR` ,  `CN` ,
+         `KR` 
+        <sup>*</sup>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `language` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The language to be used for labels returned in the response. It should
+        be one of the supported
+         [IETF language code tags described here](https://datahub.io/core/language-codes) 
+        or one of the custom language tags. When data in a specified language is
+        not available for a specific label, the
+         [default language](#default-language-algorithm)  is used.
+        <br />
+         **Default value:**   `NGT`  (Neutral Ground Truth)
+        <br />
+         **Other values:**  See the following
+         [List of supported languages](#list-of-supported-languages) 
+        section.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+* Only available under  *kr-api.tomtom.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+<br />
+
+### HTTP request headers
+
+The following table lists HTTP request headers of particular interest to clients of the Maps Vector Tile API endpoint.
+
+**Note:** There are no required headers in this endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) 
+      </th>
+      <td>
+        Contains the content encoding (usually a compression algorithm), that
+        the client is able to understand.
+        <br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [If-None-Match](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match) 
+      </th>
+      <td>
+        Contains an identifier for a specific version of resource. The server
+        will send back the requested resource, with a 200 HTTP status code, only
+        if it doesn't have an ETag matching the given one.
+        <br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-request" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        Specifies an identifier for the request. It can be used to trace a call.
+        The value must match the regular expression
+         `'^[a-zA-Z0-9-]{1,100}$'`. An example of the format
+        that matches this regular expression is a UUID (e.g.,
+         `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122). If specified, it is replicated in the
+         [Tracking-ID](#trackingid-response)  response header.
+        <br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Default language algorithm
+
+The best match will be chosen based on the following algorithm.
+
+1. Every IETF language subtag provided in the `language` parameter is being matched from left to right. Partial match is allowed. For example:
+   - All requested language subtags exactly match; the requested language is selected.
+   - If the requested primary language subtag does not have a match for a region, but a script subtag is available for another primary language subtag, then this other laguage will be used.
+2. If there are multiple matches for a region, then the one with highest priority is used.
+3. If there is no match then  `NGT` (Neutral Ground Truth) is used
+
+## Default view mapping
+
+Default view is recognised based on the country the request came from.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Country
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default view
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Argentina</th>
+      <td>
+         `AR` 
+        <br />
+         **Other available views:**   `Arabic` ,  `CN` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">India</th>
+      <td>
+         `IN` 
+        <br />
+         **Other available views:**  None
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Morocco</th>
+      <td>
+         `MA` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Pakistan</th>
+      <td>
+         `PK` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russia</th>
+      <td>
+         `RU` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Türkiye</th>
+      <td>
+         `TR` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">China</th>
+      <td>
+         `CN` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Bahrain, Kuwait, Oman, Qatar,
+        <br />
+        Saudi Arabia, the United Arab Emirates
+      </th>
+      <td>
+         `Arabic` 
+        <br />
+         **Other available views:**   `AR` ,  `CN` ,
+         `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` ,  `Unified` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Others</th>
+      <td>
+         `Unified` 
+        <br />
+         **Other available views:**   `Arabic` ,  `AR` ,
+         `CN` ,  `IN` ,  `IL` ,  `KR` 
+        <sup>*</sup>,  `MA` ,  `PK` ,  `RU` ,  `TR` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+* Only available under  *kr-api.tomtom.com* , see [Available region specific contents](/region-specific-content#available-region-specific-contents).<br />
+<br />
+
+## List of supported languages
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="350px;">
+        Language name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Language tag
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Neutral Ground Truth (custom)</th>
+      <td>
+         `NGT` 
+        <br />
+        Official languages for all regions in local scripts if available.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Neutral Ground Truth - Latin exonyms (custom)</th>
+      <td>
+         `NGT-Latn` 
+        <br />
+        Latin script will be used if available.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Arabic</th>
+      <td>
+         `ar` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Bulgarian</th>
+      <td>
+         `bg-BG` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Chinese (Taiwan)</th>
+      <td>
+         `zh-TW` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Chinese (Simplified)</th>
+      <td>
+         `zh-CN` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Czech</th>
+      <td>
+         `cs-CZ` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Danish</th>
+      <td>
+         `da-DK` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Dutch</th>
+      <td>
+         `nl-NL` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Australia)</th>
+      <td>
+         `en-AU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Canada)</th>
+      <td>
+         `en-CA` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Great Britain)</th>
+      <td>
+         `en-GB` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (New Zealand)</th>
+      <td>
+         `en-NZ` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (USA)</th>
+      <td>
+         `en-US` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Finnish</th>
+      <td>
+         `fi-FI` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">French</th>
+      <td>
+         `fr-FR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">German</th>
+      <td>
+         `de-DE` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Greek</th>
+      <td>
+         `el-GR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Hungarian</th>
+      <td>
+         `hu-HU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Indonesian</th>
+      <td>
+         `id-ID` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Italian</th>
+      <td>
+         `it-IT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Korean</th>
+      <td>
+         `ko-KR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Lithuanian</th>
+      <td>
+         `lt-LT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Malay</th>
+      <td>
+         `ms-MY` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Norwegian</th>
+      <td>
+         `nb-NO` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Polish</th>
+      <td>
+         `pl-PL` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese (Brazil)</th>
+      <td>
+         `pt-BR` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese (Portugal)</th>
+      <td>
+         `pt-PT` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russian written in the Cyrlic script.</th>
+      <td>
+         `ru-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russian written in the Latin script.</th>
+      <td>
+         `ru-Latn-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Russian written in the Cyrlic script.
+        <br />
+        Cyrlic script used where possible.
+      </th>
+      <td>
+         `ru-Cyrl-RU` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Slovak</th>
+      <td>
+         `sk-SK` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Slovenian</th>
+      <td>
+         `sl-SI` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish (Castilian)</th>
+      <td>
+         `es-ES` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish (Mexico)</th>
+      <td>
+         `es-MX` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Swedish</th>
+      <td>
+         `sv-SE` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Thai</th>
+      <td>
+         `th-TH` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Turkish</th>
+      <td>
+         `tr-TR` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Host Name Cycling
+
+Most web browsers have a default limitation on the number of active connections that can be allowed to each host. This means if map tiles are being loaded via the api.tomtom.com host name, they will be loaded one at a time. A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases. These host names are:
+
+- **a.api.tomtom.com**
+- **b.api.tomtom.com**
+- **c.api.tomtom.com**
+- **d.api.tomtom.com**
+
+By cycling through these four different host names, the web browser will be tricked into retrieving four map tiles at a time rather than just one. This will significantly speed up the performance of map rendering.
+
+For instance, if four map tiles are being requested at zoom level one, you would request the first one as:
+
+```shell [type=get] [title=Request URL using a.api.tomtom.com]
+https://a.api.tomtom.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
+```
+
+The second would be:
+
+```shell [type=get] [title=Request URL using b.api.tomtom.com]
+https://b.api.tomtom.com/map/1/tile/basic/main/1/0/0.png?key={Your_API_Key}
+```
+
+and so on up until **d.api.tomtom.com**. When more than four tiles are being requested, start back again at **a.api.tomtom.com**.
+
+## Response data
+
+The Vector Maps API, for a single request, returns a binary response body which must be deserialized by client code generated by the [Google Protocol Buffers compiler](https://developers.google.com/protocol-buffers/docs/overview). The following response examples use a simple textual representation of the serialized binary vector tile data to illustrate the response content.
+
+### Response examples
+
+<h4 style={{ fontSize: '1em' }}>
+  Example 1. Whole world at zoom =  `0` , basic-main style.
+</h4>
+
+<table>
+	<thead>
+		<tr>
+			<th scope="col" style={{'fontSize':'1em'}}>Request</th>
+			<th scope="col" style={{'fontSize':'1em'}}>Response</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">
+			 `https://api.tomtom.com/map/1/tile/basic/main/0/0/0.pbf?key={Your_API_Key}` 
+			</th>
+<td>
+
+```cpp
+layers:3
+ lake:
+   version: 2
+   extent: 255
+   features: 371
+   keys: 0
+   values: 0
+   geometry summary:
+	 total: 3339
+	 commands: 1113
+	 move_to: 371
+	 line_to: 742
+	 close: 371
+	 degenerate polygons: 371
+	 empty geoms: 0
+ ocean:
+   version: 2
+   extent: 255
+   features: 5313
+   keys: 0
+   values: 0
+   geometry summary:
+	 total: 47817
+	 commands: 15939
+	 move_to: 5313
+	 line_to: 10626
+	 close: 5313
+	 degenerate polygons: 5313
+	 empty geoms: 0
+ country border:
+   version: 2
+   extent: 255
+   features: 199
+   keys: 1
+   values: 0
+   geometry summary:
+	 total: 3162
+	 commands: 398
+	 move_to: 199
+	 line_to: 1183
+	 close: 0
+	 degenerate polygons: 73
+	 empty geoms: 0
+```
+
+</td>
+		</tr>
+	</tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>
+  Example 2. Zoom level =  `5` , hybrid-main style
+</h4>
+
+<table>
+	<thead>
+		<tr>
+			<th scope="col" style={{'fontSize':'1em'}}>Request</th>
+			<th scope="col" style={{'fontSize':'1em'}}>Response</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">
+			 `https://api.tomtom.com/map/1/tile/hybrid/main/5/4/8.pbf?key={Your_API_Key}` 
+			</th>
+<td>
+
+```cpp
+layers: 1
+state border:
+   version: 2
+   extent: 16384
+   features: 200
+   keys: 3
+   values: 0
+   geometry summary:
+	 total: 8384
+	 commands: 400
+	 move_to: 200
+	 line_to: 3792
+	 close: 0
+	 degenerate polygons: 23
+	 empty geoms: 0
+```
+
+</td>
+		</tr>
+	</tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>
+  Example 3. Zoom level =  `4` , labels-main style
+</h4>
+
+<table>
+	<thead>
+		<tr>
+			<th scope="col" style={{'fontSize':'1em'}}>Request</th>
+			<th scope="col" style={{'fontSize':'1em'}}>Response</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">
+			 `https://api.tomtom.com/map/1/tile/labels/main/4/9/5.pbf?key={Your_API_Key}` 
+			</th>
+<td>
+
+```cpp
+layers: 8
+ocean name:
+   version: 2
+   extent: 16384
+   features: 3
+   keys: 3
+   values: 1
+   geometry summary:
+	 total: 18
+	 commands: 6
+	 move_to: 3
+	 line_to: 3
+	 close: 0
+	 degenerate polygons: 3
+	 empty geoms: 0
+country name:
+   version: 2
+   extent: 16384
+   features: 7
+   keys: 2
+   values: 14
+   geometry summary:
+	 total: 21
+	 commands: 7
+	 move_to: 7
+	 line_to: 0
+	 close: 0
+	 degenerate polygons: 0
+	 empty geoms: 0
+capital city:
+   version: 2
+   extent: 16384
+   features: 7
+   keys: 2
+   values: 14
+   geometry summary:
+	 total: 21
+	 commands: 7
+	 move_to: 7
+	 line_to: 0
+	 close: 0
+	 degenerate polygons: 0
+	 empty geoms: 0
+```
+
+</td>
+</tr>
+	</tbody>
+</table>
+
+### Error response
+
+The Map Display API Vector service for an invalid request returns a response body in XML or JSON format. The XML format is returned by default. To have an error response returned in JSON format, `application/json` has to be specified in the **Accept** HTTP request header.
+
+<h4 style={{ fontSize: '1em' }}>Error response field structure</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `detailedError` 
+        <br />
+         *object* 
+      </th>
+      <td>Main object of the error response.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code` 
+        <br />
+         *string* 
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `message` 
+        <br />
+         *string* 
+      </th>
+      <td>A human-readable description of the error code.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json [title=Error response example - JSON format]
+{
+  "detailedError": {
+    "code": "BAD_REQUEST",
+    "message": "Invalid tile position arguments"
+  }
+}
+```
+
+```xml [title=Error response example - XML format]
+<errorResponse description="Invalid tile position arguments" errorCode="400" version="1.0.54-mascoma">
+  <detailedError>
+    <code>BAD_REQUEST</code>
+    <message>Invalid tile position arguments</message>
+  </detailedError>
+</errorResponse>
+```
+
+### Response codes
+
+<table>
+  <thead>
+    <tr>
+      <th
+        scope="col"
+        style={{ fontSize: '1em', textAlign: '250px' }}
+        width="250px;"
+      >
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Meaning &amp; possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `200` 
+      </th>
+      <td>
+         **OK** 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `304` 
+      </th>
+      <td>
+         **Not Modified** : The tile has not been modified. This code is
+        returned when the  `If-None-Match`  request header is used and
+        its value matches the ETag of the requested tile.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `400` 
+      </th>
+      <td>
+         **Bad request** : Probably malformed syntax.
+        <ul>
+          <li>
+            The combination of layer, style, and query parameters is not
+            supported.
+          </li>
+          <li>
+            Zoom  *n*  is out of range 0 &lt;= zoom &lt;= 22: The requested
+            zoom level is out of the possible range.
+          </li>
+          <li>
+            x  *n*  is out of range [0, *m* ]: The requested x
+            coordinate is out of the possible range (the value of  *m* 
+            will vary depending on the zoom level).
+          </li>
+          <li>
+            y  *n*  is out of range [0, *m* ]: The requested y
+            coordinate is out of the possible range (the value of  *m* 
+            will vary depending on the zoom level).
+          </li>
+          <li>The requested view is not supported.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `403` 
+      </th>
+      <td>
+         **Forbidden** :
+        <ul>
+          <li>The supplied API Key is not valid for this request.</li>
+          <li>
+            The requested view is not available in the country from where the
+            request was sent.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `429` 
+      </th>
+      <td>
+         **Too Many Requests** : Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `500` 
+      </th>
+      <td>
+         **Internal Server Error** : There is a problem with the TomTom Maps
+        Vector Tile service.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `503` 
+      </th>
+      <td>
+         **Service currently unavailable**.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Response headers
+
+The following data table lists HTTP response headers of particular interest to clients of the Maps Vector Tile API endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin) 
+      </th>
+      <td>
+        The Maps Vector Tile API allows cross-origin resource sharing (CORS).
+        <br />
+         **Value:**   `*`  Universal.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) 
+      </th>
+      <td>
+        Contains directives for a caching mechanism.
+        <br />
+         **Value:**  max-age= `<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding) 
+      </th>
+      <td>
+        Indicates which encodings were applied to the response body.
+        <br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Length](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length) 
+      </th>
+      <td>
+        Contains information about the size of the response body.
+        <br />
+         **Value:**   `<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) 
+      </th>
+      <td>
+        Indicates the media type of the resource returned.
+        <br />
+         **Value:**   `image/pbf` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Date](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date) 
+      </th>
+      <td>
+        Contains the date and time at which the message was originated.
+        <br />
+         **Value:**   `<http-date>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) 
+      </th>
+      <td>
+        Contains an identifier for a specific version of resource.
+        <br />
+         **Value:**   `W/"2fdbd61f30456"` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Expires](https://developer.mozilla.org/en/docs/Web/HTTP/Headers/Expires) 
+      </th>
+      <td>
+        Contains the date after which the response is considered outdated.
+        <br />
+         **Value:**   `http-date` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Transfer-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding) 
+      </th>
+      <td>
+        Specifies the form of encoding used to safely transfer response to the
+        user. If this header is specified, the  **Content-Length**  header will
+        be absent.
+        <br />
+         **Value:**   `chunked` 
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        An identifier for the request. If the
+         [Tracking-ID](#trackingid-request)  header was specified in
+        the request, it is replicated in the response. Otherwise, it is
+        generated automatically by the service. For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122).<br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>

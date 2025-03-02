@@ -1,0 +1,415 @@
+﻿---
+title: Copyrights
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.08'
+    color: grey5
+  - label: TomTom Orbis Maps
+    color: brand-cadmium
+---
+
+<Blockquote type="announcement" hasIcon>
+### Important notes:
+- This TomTom Orbis API is in **<a href="https://developer.tomtom.com/public-preview">public preview</a>**.
+- This API is powered by **TomTom Orbis Maps.**
+- See the <a href="/tomtom-orbis-maps/documentation/introduction">TomTom Orbis Maps</a> documentation for more information.
+</Blockquote>
+
+## Purpose
+
+The Copyrights API is designed to serve copyright information for the Map Display services. As an alternative to copyrights for a map request, you can receive copyrights for the map service called **captions**.
+
+## Map Copyrights
+
+### Request data
+
+### HTTPS method: `GET`
+
+Please see the following [Request parameters](#request-parameters-map-copyrights) section with the required parameters table for these values. The generic URL format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+The schema for the map copyrights request:
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/maps/orbis/copyrights?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>
+
+```shell [type=get] [title=Request example]
+https://api.tomtom.com/maps/orbis/copyrights?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://{baseURL}/maps/orbis/copyrights?apiVersion=1&key={Your_API_Key}'
+```
+
+### Request parameters (Map Copyrights)
+
+<table data-notbreakword>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;parameters</th>
+        <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">
+            `baseURL`  
+            *string*
+        </th>
+        <td>
+            The base URL for calling TomTom services.
+            **Value:**   `api.tomtom.com`
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            `key`  
+            *string*
+        </th>
+        <td>
+            An API Key valid for the requested service.
+            **Value:**  Your valid  `API Key`.
+        </td>
+    </tr>
+    </tbody>
+</table>  
+
+<table data-notbreakword>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;parameters</th>
+        <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">
+            `apiVersion`  
+            *integer*
+        </th>
+        <td>
+            A version of the api to call. If the parameter is set it will overwrite the value stored in TomTom-Api-Version  header.
+            **Value:** The current version is `1`.
+        </td>
+    </tr>
+    </tbody>
+</table>  
+
+### HTTP request headers (Map Copyrights)  
+
+<table data-notbreakword>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;headers</th>
+        <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">
+            `TomTom-Api-Version`   
+            *integer*
+        </th>
+        <td>
+            Contains a version of the API to call.
+            **Value:**   The current version is `1`.
+        </td>
+    </tr>
+    </tbody>
+</table>  
+
+### Response data  
+
+The response body will contain copyrights in a plain text format.  
+
+```text [type=text] [title=Copyrights in plain text format]
+© OpenStreetMap contributors. This data is licensed under the terms of the Open Database License (ODbL) available at https://opendatacommons.org/licenses/odbl/1-0/. More information can be found here: https://www.openstreetmap.org/copyright/en. To the extent that you create a browsable electronic map using this product, you are further required to comply with the provisions of https://www.openstreetmap.org/copyright/en
+
+© 1992 - 2023 TomTom. All rights reserved. This material is proprietary and the subject of copyright protection, database right protection and other intellectual property rights owned by TomTom or its suppliers. The use of this material is subject to the terms of a license agreement. Any unauthorized copying or disclosure of this material will lead to criminal and civil liabilities.
+
+Data Source © 2023 TomTom
+
+Based on https://www.tomtom.com/en_gb/thirdpartyproductterms/
+```
+
+## Map Service Copyrights  
+
+### Request data  
+
+### HTTPS method: `GET`  
+
+Please see the following [Request parameters](#request-parameters-map-service-copyrights) section with the required and optional parameters tables for these values. The generic URL format is as follows.
+
+The schema for the map service copyrights:
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/maps/orbis/copyrights/caption.json?key={Your_API_Key}
+```
+
+#### Example
+
+
+```shell [type=get] [title=Request URL example]
+https://api.tomtom.com/maps/orbis/copyrights/caption.json?key={Your_API_Key}
+```
+
+#### curl command format
+
+
+```shell [type=get] [title=Request curl command]
+curl 'https://{baseURL}/maps/orbis/copyrights/caption.json?apiVersion=1&key={Your_API_Key}'
+```
+
+### Request parameters (Map Service Copyrights)
+
+<table data-notbreakword>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;parameters</th>
+        <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">
+            `baseURL`  
+            *string*
+        </th>
+        <td>
+            The base URL for calling TomTom services.
+            Value: `api.tomtom.com`
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            `key`  
+            *string*
+        </th>
+        <td>
+            An API Key valid for the requested service.
+            **Value:**  Your valid  `API Key`.
+        </td>
+    </tr>
+    </tbody>
+</table>  
+
+<table data-notbreakword>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;parameters</th>
+        <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">
+            `apiVersion`  
+            *integer*
+        </th>
+        <td>
+            A version of the api to call. If the parameter is set, it will overwrite the value stored in TomTom-Api-Version header.
+            **Value:** The current version is `1`.
+        </td>
+    </tr>
+    </tbody>
+</table>  
+
+### HTTP request headers (Map Service Copyrights)
+
+<table data-notbreakword>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;headers</th>
+        <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">TomTom-Api-Version</th>
+        <td>
+            Contains a version of the API to call.
+            **Value:**   The current version is `1`.
+        </td>
+    </tr>
+    </tbody>
+</table>  
+
+### Response data  
+
+For the map service copyright request, the response body will contain a copyrights caption in JSON format.
+
+```json [title=JSON response example]
+{
+  "formatVersion": "0.0.1",
+  "copyrightsCaption": "©TomTom, ©OpenStreetMap"
+}
+```
+
+### Error response  
+
+The Map Display API Copyrights service for an invalid request returns a response body in XML or JSON format. The XML format is returned by default. To have an error response returned in JSON format, `application/json` has to be specified in the **Accept** HTTP request header.  
+
+### Error response field structure  
+
+<table data-notbreakword>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em' }}>Field</th>
+        <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">
+            `detailedError`  
+            *object*
+        </th>
+        <td>Main object of the error response.</td>
+    </tr>
+    <tr>
+        <th scope="row">
+            `code`  
+            *string*
+        </th>
+        <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+        <th scope="row">
+            `message`  
+            *string*
+        </th>
+        <td>A human-readable description of the error code.</td>
+    </tr>
+    </tbody>
+</table>  
+
+### Error response example  
+
+```json [title=Error response - JSON format]
+{
+  "detailedError": {
+    "code": "BAD_REQUEST",
+    "message": "Bad Request"
+  }
+}
+```
+
+```xml [title=Error response - XML format]
+<errorResponse description="Bad Request" errorCode="400" version="1.0.54-mascoma">
+  <detailedError>
+    <code>BAD_REQUEST</code>
+    <message>Bad Request</message>
+  </detailedError>
+</errorResponse>
+```
+
+### Response codes  
+
+<table data-notbreakword>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em', textAlign: 'center' }}>Code</th>
+        <th scope="col" style={{ fontSize: '1em' }}>Meaning &amp; possible causes</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row" style={{ textAlign: 'center' }}>`200`</th>
+        <td>
+            OK
+        </td>
+    </tr>
+    <tr>
+        <th scope="row" style={{ textAlign: 'center' }}>`304`</th>
+        <td>
+            Not Modified: The response has not been modified. This code is
+            returned when the If-None-Match request header is used and its value
+            matches the ETag of the requested copyrights.
+        </td>
+    </tr>
+    <tr>
+        <th scope="row" style={{ textAlign: 'center' }}>`400`</th>
+        <td>
+            Bad Request: Requested syntax is not available.
+        </td>
+    </tr>
+    <tr>
+        <th scope="row" style={{ textAlign: 'center' }}>`403`</th>
+        <td>
+            Forbidden: The supplied API Key is not valid for this request.
+        </td>
+    </tr>
+    <tr>
+        <th scope="row" style={{ textAlign: 'center' }}>`429`</th>
+        <td>
+            Too Many Requests: Too many requests were sent in a given amount
+            of time for the supplied API Key.
+        </td>
+    </tr>
+    <tr>
+        <th scope="row" style={{ textAlign: 'center' }}>`500`</th>
+        <td>
+            Internal Server Error: There is a problem with the TomTom
+            Copyrights API service.
+        </td>
+    </tr>
+    <tr>
+        <th scope="row" style={{ textAlign: 'center' }}>`503`</th>
+        <td>
+            Service Unavailable: TomTom Copyrights API service is unable to
+            receive any request.
+        </td>
+    </tr>
+    <tr>
+        <th scope="row" style={{ textAlign: 'center' }}>`596`</th>
+        <td>
+            Service Not Found: Unknown version of the service.
+        </td>
+    </tr>
+    </tbody>
+</table>  
+
+### Response headers  
+
+<table data-notbreakword>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em' }}>Header</th>
+        <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">[Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin)</th>
+        <td>
+            The Maps Copyrights API allows cross-origin resource sharing (CORS).
+            Value: ` * `
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">[ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag)</th>
+        <td>
+            The Maps Copyrights API provides ETag and supports the
+            [If-None-Match](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match)
+            header.
+            Value: ` * `
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">Tracking-ID</th>
+        <td>
+            An identifier for the request. If the Tracking-ID header was specified
+            in the request, it is replicated in the response. Otherwise, it is
+            generated automatically by the service. For details check [RFC 4122](https://tools.ietf.org/html/rfc4122).
+            Value: `<string>`
+        </td>
+    </tr>
+  </tbody>
+</table>  

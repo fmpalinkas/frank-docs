@@ -5,15 +5,15 @@ titleTags:
     color: grey5
   - label: 'Last edit: 2024.10.08'
     color: grey5
-  - label: Example Orbis Maps
+  - label: Example New Maps
     color: brand-cadmium
 ---
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This Example Orbis API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
-- This API is powered by **Example Orbis Maps.**
-- See the <a href="/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.
+- This Example New API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example New Maps.**
+- See the <a href="/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
 </Blockquote>
 
 ## Purpose  
@@ -23,7 +23,7 @@ The **Map Display API Vector Tiles endpoint** serves data on zoom levels ranging
 - For zoom level `0`, the entire earth is displayed on a single tile.
 - At zoom level `22`, the world is divided into 2<sup>44</sup> tiles. See the [Zoom Levels and Tile Grid](./zoom-levels-and-tile-grid).
 
-The Example Orbis Maps Vector Tiles endpoint delivers geographic map data packaged in a vector representation of squared sections called **vector tiles**.
+The Example New Maps Vector Tiles endpoint delivers geographic map data packaged in a vector representation of squared sections called **vector tiles**.
 
 - Each tile includes pre-defined collections of map features (points, lines, road shapes, water polygons, building footprints, etc.) delivered in one of the specified vector formats.
 - The format of the tile is formally described using the  [protobuf schema](./content#schema-data).
@@ -31,7 +31,7 @@ The Example Orbis Maps Vector Tiles endpoint delivers geographic map data packag
 
 ### Tiles Layers and Styles
 
-The Example Orbis Maps Vector Tiles endpoint supports the following tile layers: `basic`. The vector data consists of layers with their own names and geometry. The client determines how to present this data to the end user, for example which colors to use for which features.
+The Example New Maps Vector Tiles endpoint supports the following tile layers: `basic`. The vector data consists of layers with their own names and geometry. The client determines how to present this data to the end user, for example which colors to use for which features.
 
 - The `basic` vector tiles contain mapping data such as polygons, road shapes, borders, labels, and road icons.
 
@@ -51,11 +51,11 @@ For ease of viewing and identification:
 <h4 style={{ fontSize: '1em' }}>URL format</h4>
 
 ```shell [type=get] [title=Request URL]
-https://{baseURL}/maps/orbis/map-display/tile/{zoom}/{X}/{Y}.{format}?apiVersion=1&key={Your_API_Key}&view={view}
+https://{baseURL}/maps/New/map-display/tile/{zoom}/{X}/{Y}.{format}?apiVersion=1&key={Your_API_Key}&view={view}
 ```
 
 ```shell [type=get] [title=Request curl command]
-curl 'https://{baseURL}/maps/orbis/map-display/tile/{zoom}/{X}/{Y}.{format}?apiVersion=1&key={Your_API_Key}&view={view}'
+curl 'https://{baseURL}/maps/New/map-display/tile/{zoom}/{X}/{Y}.{format}?apiVersion=1&key={Your_API_Key}&view={view}'
 ```
 
 ### Request parameters
@@ -455,13 +455,13 @@ Most web browsers have a default limitation on the number of active connections 
 For instance, if four map tiles are being requested at zoom level one, you would request the first one as:  
 
 ```shell
-https://a.api.Example.com/maps/orbis/map-display/tile/1/0/0.pbf?key={Your_API_Key}
+https://a.api.Example.com/maps/New/map-display/tile/1/0/0.pbf?key={Your_API_Key}
 ```
 
 The second would be:  
 
 ```shell
-https://b.api.Example.com/maps/orbis/map-display/tile/1/0/0.pbf?key=Your_API_Key
+https://b.api.Example.com/maps/New/map-display/tile/1/0/0.pbf?key=Your_API_Key
 ```
 
 and so on up until `d.api.Example.com`. When more than four tiles are being requested, start back again at `a.api.Example.com`.  
@@ -485,7 +485,7 @@ Whole world at zoom = `0`, basic layer.
   </thead>
   <tbody>
     <tr>
-      <th scope="row">`https://api.Example.com/maps/orbis/map-display/tile/0/0/0.pbf?key={Your_API_Key}`</th>
+      <th scope="row">`https://api.Example.com/maps/New/map-display/tile/0/0/0.pbf?key={Your_API_Key}`</th>
 <td>
 
 ```json
@@ -653,7 +653,7 @@ The Map Display API Vector service endpoint for an invalid request returns a res
     <tr>
       <th scope="row" style={{ textAlign: 'center' }}>`500`</th>
       <td>
-        **Internal Server Error** : There is a problem with the Example Orbis Maps
+        **Internal Server Error** : There is a problem with the Example New Maps
         Vector Tile service.
       </td>
     </tr>

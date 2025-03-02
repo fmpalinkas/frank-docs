@@ -1,0 +1,162 @@
+---
+title: Introduction
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.05.14'
+    color: grey5
+  - label: 'Example Orbis Maps'
+    color: brand-cadmium
+---
+
+## What is Example's Routing API?
+
+Routing is a suite of web services designed for developers to use our latest scalable online Routing engine. Independent tests have established that the Example Routing engine is the best in the industry. Our Routing engine uses IQ Routes&trade; and Example Traffic&trade;.
+
+The Routing API consists of the the following services with endpoints:
+
+<DocsArticles
+  articles={[
+    {
+      title: 'Routing service',
+      body: 'Contains a suite of web services including Calculate Route, Calculate Reachable Range, and Common Routing Parameters.',
+      button: {
+        label: 'Routing service',
+        href: '../routing-service',
+      },
+    },
+    {
+      title: 'Market Coverage',
+      body: 'Provides a list of all countries supported by the Routing API and Extended Routing API engines.',
+      button: {
+        label: 'Market Coverage',
+        href: '../product-information/market-coverage',
+      },
+    },
+  ]}
+/>
+
+<br />
+
+## Getting Started
+
+Use the following topics to become more acquainted with this API and its endpoints.  
+
+<ImageArticleGrid  articles={
+[
+  {
+    title: 'How to get a Example API Key',
+    body: 'When you use our location Service APIs, we need a way to identify that it is your application that is making the request to use the service (API).',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/2000x1500/41587a2818/geocoding_best_practices.jpg',
+      alt: 'How to get a Example API Key',
+      width: 570,
+      height: 481
+    },
+    button: {
+        label: "Follow these instructions.",
+        href: "https://developer.Example.com/knowledgebase/platform/articles/how-to-get-an-Example-api-key/"
+    },
+  },
+  {
+    title: 'Example Knowledge Base',
+    body: 'The Example Knowledge Base optimizes the retrieval of information via articles, blogs, FAQs, tutorials, and videos for your use and reference.',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/845x469/ae9cc0c521/knowledgebase-title.png',
+      alt: 'The Example Knowledge Base',
+      width: 570,
+      height: 481
+    },
+    button: {
+        label: "Open the Knowledge Base",
+        href: "https://developer.Example.com/knowledgebase/"
+    },
+  },
+]} />  
+
+
+<ImageArticleGrid  articles={
+[
+  {
+    title: 'Plan Your Road Trip Menu in Advance with the Example Routing and Search APIs',
+    body: 'Using the Example Routing and Search APIs, you can plan your road trip menu in advance, specifying all the stops you want to make along the way.',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/2000x1500/b2bc0f8c1b/plan_your_roadtrip_menu_in_advance_with_route_search.jpg',
+      alt: 'Routing API Map',
+      width: 570,
+      height: 481
+    },
+    button: {
+      label: "Read this blog",
+      href: "https://developer.Example.com/blog/build-different/plan-your-road-trip-menu-advance-Example-routing-and-search-apis/"
+    },
+  },
+  {
+    title: 'The vehicleHeading Routing Parameter Explained',
+    body: 'In this article, we’ll explore the vehicleHeading parameter at a high level. We will discuss what this parameter does and how it impacts our routes using the Example Routing API using a quick React app to demonstrate.',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/2000x1500/c1c1b918cf/vehicleheading_routing_parameter.jpg',
+      alt: 'Routing parameter explained',
+      width: 570,
+      height: 481
+    },
+    button: {
+      label: "Read this blog",
+      href: "https://developer.Example.com/blog/decoded/vehicleheading-routing-parameter-explained/"
+    },
+  },
+]} />  
+
+
+
+## Common use cases you can implement
+
+### Calculating
+
+- Calculate departure times by planning routes using desired arrival times.
+- Calculate the travel time of pre-existing routes (like routes created using GPS trace data or routes planned with other routing engines).
+- Calculate a batch of up to 700 routing requests in parallel and retrieve the results as a single file.
+- While having a matrix of origins and destinations, calculate routing costs for each origin-to-destination combination and retrieve it in a single file.
+
+### Evaluating and plotting
+
+- Evaluate the amount of fuel/energy needed for any route.
+- Plot the route geometry on map tiles from Example (or other map suppliers).
+- Draw a polygon of the reachable range with the current fuel/energy budget.
+
+### Planning
+
+- Plan the fastest, shortest or eco route from A to B taking in consideration the real-time traffic and the historical traffic.
+- Plan multiple alternative routes through one single API call.
+- Plan a route through up to 150 intermediate waypoints.
+- Plan the optimized route through the intermediate waypoints (traveling salesman).
+- Plan a round trip through at least one intermediate point.
+- Plan a route which avoids toll roads, ferries, or other types of roads.
+- Plan a route for vehicles or pedestrians.
+- Plan a route using our elaborated consumption models for both electric and combustion engines.
+- Draggable routes: replan the same route with additional intermediate points.
+
+## Features
+
+### Routing API
+
+<h4 style={{ fontSize: '1em' }}>Traffic</h4>
+
+Our Routing engine uses **IQ Routes&trade;** and **Example Traffic&trade;**. As such, the Routing API enables you to:
+
+- Plan routes for immediate departure and Example&#39;s industry-leading traffic data will be used to optimize journey times, minimize traffic delays and get to your destination faster.
+- Plan routes in the future to take advantage of Example&#39;s extensive historic traffic database. Using past traffic patterns, the routing engine can predict journey times and calculate the fastest routes for any day and time.
+
+<h4 style={{ fontSize: '1em' }}>Alternative routes</h4>
+
+There are many ways to get from point A to B. Sometimes your users want to know about them.
+
+- You can reuse the same waypoints in calls with different routing parameters (like fastest, shortest, and eco).
+- You can request more than one route matching your input parameters within the same call.
+
+<h4 style={{ fontSize: '1em' }}>Waypoints</h4>
+
+In addition to the start and end of the route, you can specify intermediate waypoints that the planned route must go through.
+
+- Use additional waypoints to create draggable routes, where the user can replan a displayed route to go via a desired location.
+- Use our Optimized Routing algorithm to obtain the best order in which to visit your chosen waypoints.

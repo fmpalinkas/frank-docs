@@ -1,0 +1,10 @@
+group: routing-api-and-extended-routing-api
+isPrivate: false
+productName: Routing API 
+description: Routing API explorer
+isMenuOpened: false
+menuTitle: API Explorer
+menu:
+  - title: API Explorer
+    items:
+      - fileId: index

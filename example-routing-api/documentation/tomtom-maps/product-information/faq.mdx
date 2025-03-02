@@ -1,0 +1,82 @@
+---
+title: FAQ
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2023.08.22'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+## Frequently Asked Questions
+
+### _What does 'Engine error while executing route request: STOPPED' mean?_
+
+Requests in the Routing API are forcefully canceled once they exceed some internal compute time limit (currently around 30 seconds) in order to avoid resource starvation scenarios.  
+In this case, the Routing API returns the following error response:
+
+```
+{
+  "formatVersion": "0.0.12",
+  "detailedError": {
+    "message": "Engine error while executing route request: STOPPED: The request exceeded the internal compute time limit and was canceled. For more information, go to: https://developer.Example.com/routing-api/documentation/product-information/faq",
+    "code": "COMPUTE_TIME_LIMIT_EXCEEDED"
+  }
+}
+```
+
+The Matrix Routing v2 API returns the following cell processing error:
+```
+{
+  "originIndex": 0,
+  "destinationIndex": 0,
+  "detailedError": {
+    "code": "CELL_PROCESSING_ERROR",
+    "message": "Cell could not be processed",
+    "innerError": {
+      "code": "NO_ROUTE_FOUND",
+      "message": "Engine error while executing route request: STOPPED: The request exceeded the internal compute time limit and was canceled. For more information, go to: https://developer.Example.com/routing-api/documentation/product-information/faq"
+    }
+  }
+},
+```
+
+### _A request was canceled, or the response time is long. How can I reduce the response time?_
+
+The length of the resulting route for a route calculation, and respectively the resulting area for a reachable range calculation have the largest direct impact on the time it takes to compute them.
+
+In addition most routing / range options have some impact on compute time.<br />
+The default options produce fast responses. Using non-default options typically increases the response time.
+
+The following options have a big impact on the response time:
+
+Common Routing Parameters:
+
+- any `avoid` options, in particular, `motorways`, `tollRoads`, and `ferries`
+- `routeType` options `thrilling`, `shortest`, and `short`
+- `travelMode` options `pedestrian` and `bicycle`
+- `vehicleMaxSpeed` less than 60
+
+Calculate Route:
+
+- long distance between route planning locations
+- `maxAlternatives` greater than 0
+
+Calculate Reachable Range:
+
+- large `timeBudgetInSec` or `distanceBudgetInMeters`
+- overly efficient vehicle models with a large ratio between `fuelBudgetInLiters` or `energyBudgetInkWh` and the respective consumption per distance
+
+Long Distance EV Routing:
+
+- parameters that cause a long response time for routing mentioned above
+- vehicles that require a high number of charging stops, e.g., a very small battery or an extremely high consumption
+
+Matrix Routing v2:
+
+- any `avoid` options, in particular `tollRoads`
+- `routeType` set to `shortest`,
+- `travelMode` set to `pedestrian`
+- `vehicleMaxSpeed` less than 60
+

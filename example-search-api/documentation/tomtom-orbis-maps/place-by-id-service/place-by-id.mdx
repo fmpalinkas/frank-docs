@@ -7,7 +7,7 @@ titleTags:
     color: grey5
   - label: 'PUBLIC PREVIEW'
     color: grey5
-  - label: Example Orbis Maps
+  - label: Example New Maps
     color: brand-cadmium
 ---
 
@@ -15,9 +15,9 @@ titleTags:
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This Example Orbis Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.Example.com/public-preview)  page to see what this means.
-- This API is powered by **Example Orbis Maps**.
-- See the <a href="https://developer.Example.com/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.
+- This Example New Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.Example.com/public-preview)  page to see what this means.
+- This API is powered by **Example New Maps**.
+- See the <a href="https://developer.Example.com/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
 </Blockquote>  
 
 ## Purpose  
@@ -36,15 +36,15 @@ For ease of viewing and identification:
 **Important note:** Either `apiVersion` parameter or `Example-Api-Version` header needs to be present.  
 
 ```shell [type=get] [title=URL request format]
-https://{baseURL}/maps/orbis/places/place.{ext}?entityId={Poi_id}&key={Your_API_Key}&apiVersion={apiVersion}&language={one_of_the_supported_languages}&openingHours={openingHours}&timeZone={timeZone}&mapcodes={mapcodes}&view={view}
+https://{baseURL}/maps/New/places/place.{ext}?entityId={Poi_id}&key={Your_API_Key}&apiVersion={apiVersion}&language={one_of_the_supported_languages}&openingHours={openingHours}&timeZone={timeZone}&mapcodes={mapcodes}&view={view}
 ```
 
 ```shell [type=get] [URL request example]
-https://api.Example.com/maps/orbis/places/place.json?entityId=00004e4c-3100-3c00-0000-0000685e23c7&key={Your_API_Key}&apiVersion=1
+https://api.Example.com/maps/New/places/place.json?entityId=00004e4c-3100-3c00-0000-0000685e23c7&key={Your_API_Key}&apiVersion=1
 ```
 
 ```shell [type=get] [title=curl command request example]
-curl 'https://api.Example.com/maps/orbis/places/place.json?entityId=00004e4c-3100-3c00-0000-0000685e23c7&key={Your_API_Key}&apiVersion=1'
+curl 'https://api.Example.com/maps/New/places/place.json?entityId=00004e4c-3100-3c00-0000-0000685e23c7&key={Your_API_Key}&apiVersion=1'
 ```
 
 ### Request parameters  
@@ -1686,7 +1686,7 @@ The following table describes all of the fields that can appear in a response. F
         *string*
       </th>
       <td>
-        Pass this as `parkingAvailability` to the [Parking Availability](https://developer.Example.com/parking-availability-api/documentation/Example-orbis-maps/product-information/introduction) service 
+        Pass this as `parkingAvailability` to the [Parking Availability](https://developer.Example.com/parking-availability-api/documentation/Example-New-maps/product-information/introduction) service 
         to fetch parking availability information for this result.
       </td>
     </tr>
@@ -1703,7 +1703,7 @@ The following table describes all of the fields that can appear in a response. F
         *string*
       </th>
       <td>
-        Pass this as `fuelPrice` to the [Fuel Prices](https://developer.Example.com/fuel-prices-api/documentation/Example-orbis-maps/product-information/introduction) service 
+        Pass this as `fuelPrice` to the [Fuel Prices](https://developer.Example.com/fuel-prices-api/documentation/Example-New-maps/product-information/introduction) service 
         to fetch fuel price information for this result.
       </td>
     </tr>

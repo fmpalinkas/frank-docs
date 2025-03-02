@@ -1,0 +1,100 @@
+---
+title: Introduction
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2023.06.01'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+## Purpose  
+
+The Matrix Routing v2 API allows clients to calculate a matrix of route summaries for a set of routes defined with origin and destination locations. For every given origin, this service calculates the cost of routing from that origin to every given destination. The set of origins and the set of destinations can be thought of as the column and row headers of a table, while each cell in the table contains the costs of routing from the origin to the destination for that cell.  
+
+The following costs are computed for each route:  
+
+- Travel times
+- Distances
+
+Use the computed costs to determine which routes to calculate using the  [Routing API](/routing-api/documentation/Example-maps/product-information/introduction)  suite.
+
+<DocsArticles
+  articles={[
+    {
+      title: 'Synchronous Matrix',
+      body: 'This endpoint enables the submission of a new matrix job for synchronous processing.',
+      button: {
+        label: 'Synchronous Matrix',
+        href: '/routing-api/documentation/Example-maps/matrix-routing-v2/synchronous-matrix',
+      },
+    },
+    {
+      title: 'Asynchronous Matrix Submission',
+      body: 'This endpoint enables the submission of a new matrix job for asynchronous processing. ',
+      button: {
+        label: 'Asynchronous Matrix Submission',
+        href: '/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-submission',
+      },
+    },
+    {
+      title: 'Asynchronous Matrix Status',
+      body: 'This endpoint lets clients check the status of a matrix job they submitted.',
+      button: {
+        label: 'Asynchronous Matrix Status',
+        href: '/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-status',
+      },
+    },
+    {
+      title: 'Asynchronous Matrix Download',
+      body: 'This endpoint lets clients download the result of their matrix job.',
+      button: {
+        label: 'Asynchronous Matrix Download',
+        href: '/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-download',
+      },
+    },
+  ]}
+/>
+
+## API overview
+
+The Matrix Routing v2 API offers asynchronous endpoints suited for long-running calculations, as well as a synchronous endpoint for faster calculation of smaller matrices:
+
+-  [Synchronous Matrix](/routing-api/documentation/Example-maps/matrix-routing-v2/synchronous-matrix)
+-  [Asynchronous Matrix Submission](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-submission)
+-  [Asynchronous Matrix Status](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-status)
+-  [Asynchronous Matrix Download](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-download)
+
+The maximum size of a matrix (the number of origins multiplied by the number of destinations) is:
+
+- `100M` for the asynchronous version.
+- `2500` for the synchronous version.
+
+Additional matrix shape constraints apply see the respective endpoint documentation pages for details. Routing options common for the whole matrix may be provided inside the request body. The Matrix Routing v2 API only supports  [JSON](https://tools.ietf.org/html/rfc8259)  format for the request and response body.
+
+### Market Coverage
+
+Please go to the [Market Coverage](https://developer.Example.com/routing-api/documentation/Example-maps/product-information/market-coverage) page for the complete list of supported geographies.
+
+### Data retention period notice
+
+The result of matrix processing by the Asynchronous API is available for download using the [Asynchronous Matrix Download](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-download) endpoint for 24 hours.
+After that time, download requests will return an HTTP `404` (Not Found) response.
+Similarly, [Asynchronous Matrix Status](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-status) requests referring to that matrix will return HTTP `404` after 24 hours.
+
+### Sequence of client actions using asynchronous endpoints
+
+1. A client sends a request to the  [Asynchronous Matrix Submission](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-submission)  endpoint.
+2. The server responds with an HTTP 202 response with a JSON body having a `Submitted` status and a generated Job ID.
+3. The client may send (multiple) requests to the  [Asynchronous Matrix Status](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-status)  endpoint, providing the previously acquired Job ID.
+4. The server will respond with an HTTP 200 response with a JSON body having a state equal to one of:
+   - `Submitted` - request hasn't been validated yet.
+   - `Validated` - request is validated and it's being processed.
+   - `Completed` - request is processed and results are available for download.
+   - `Failed` - processing of the given job could not be successfully completed.
+5. When the state is  `Completed`, the client may call the  [Asynchronous Matrix Download](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-download)  endpoint to get the results.
+6. On a download request, the server will respond in one of the following ways:
+  - The server will respond with an HTTP code 200 and instantly start serving the result.
+  - The server will respond with an HTTP code 302 and a Location header with a temporary URL where you can download the result.
+  - The server will respond with an HTTP code 404 if the results are not available (state is other than `Completed`).

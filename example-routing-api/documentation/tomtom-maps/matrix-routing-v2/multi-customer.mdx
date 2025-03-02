@@ -1,0 +1,153 @@
+---
+title: Multi-Customer
+titleTags:
+- label: 'Service version: 2'
+  color: grey5
+- label: 'Last edit: 2024.09.19'
+  color: grey5
+- label: 'Example Maps'
+  color: grey5
+---
+
+## Public Preview Notice
+
+<Blockquote type="announcement" hasIcon>
+
+<p>This feature of the Matrix Routing v2 API is in  [Public Preview](https://developer.Example.com/public-preview). If you would like to try it out, please  [contact Sales](https://developer.Example.com/contact-sales).</p>
+
+</Blockquote>
+
+## What is the Multi-Customer feature?
+
+The Matrix v2 service has processing limits per customer.
+Customers may want to offer Matrix v2, e.g., via an app or API platform, to their own multiple customers called sub-customers on this page.
+The Multi-Customer feature allows every sub-customer to have their own independent limits, so that requests from different sub-customers will not affect each other during processing time.
+
+## How to use the Multi-Customer feature?
+
+This section covers the actions that must be taken to use the Multi-Customer feature in the Matrix Routing v2 API.
+
+>
+> **Note:**
+> If ```Sub-Customer-ID``` is not provided at all, then Matrix v2 works without the Multi-Customer feature.
+>
+
+### Request
+
+In order to use the Multi-Customer feature you should add the **Sub-Customer-ID** header to the regular Matrix v2 requests.
+Please be aware that this document does not specify the complete request, but only additional input data.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Header name</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Sub-Customer-ID</th>
+      <td>
+        Specifies an identifier for the sub-customer.
+        <ul>
+          <li>It is used to differentiate your customers in the Multi-Customer feature.</li>
+          <li>The value must match the regular expression  `'^[a-zA-Z0-9-]{1,100}$'`.</li>
+          <li>The value should not contain sensitive information, because it can be used for tracing. Please consider using the SHA256 hash.</li>
+        </ul>  
+        **Value:**  An  `identifier`  for the sub-customer.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Error response  
+
+The Matrix v2 may return ```HTTP 400 Bad Request``` while using ```Sub-Customer-ID``` header in the following cases:
+- ```Sub-Customer-ID``` header does not match the regular expression  `'^[a-zA-Z0-9-]{1,100}$'`, for example, the value has a length greater than 100.
+- The Multi-Customer feature is not enabled for your API Key. Please  [contact Sales](https://developer.Example.com/contact-sales)  to enable this feature.
+
+#### Example error message  
+
+Please notice the ```subCustomerId``` value in the ```target``` field.  
+
+```
+HTTP 400 Bad Request
+{
+  "detailedError": {
+    "code": "BAD_REQUEST",
+    "message": "Bad Request",
+    "details": [
+      {
+        "code": "BAD_ARGUMENT",
+        "message": "You are not allowed to use Sub-Customer-ID header.",
+        "target": "subCustomerId",
+        "innerError": {
+          "code": "ILLEGAL_PARAMETER"
+        }
+      }
+    ]
+  }
+}
+```
+
+## Usage scenarios  
+
+The feature can be used with both  [Synchronous](/routing-api/documentation/Example-maps/matrix-routing-v2/synchronous-matrix)
+and  [Asynchronous](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-submission)  Matrix v2 APIs.  
+
+Keep in mind that for the Asynchronous API all the endpoints are affected:
+-  [Asynchronous Matrix v2 Submission](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-submission)
+-  [Asynchronous Matrix v2 Status](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-status)
+-  [Asynchronous Matrix v2 Download](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-download)
+
+### Synchronous API
+
+Interaction with the Synchronous API is done in a single API call, so it is enough to set the  [```Sub-Customer-ID```](#request)
+header for the  [Synchronous Submission](/routing-api/documentation/Example-maps/matrix-routing-v2/synchronous-matrix)  request
+in order to have the Multi-Customer feature effective.
+
+### Asynchronous API
+
+The  [```Sub-Customer-ID```](#request)  header must be set for all the asynchronous Matrix endpoints to be effective.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Scenario</th>
+      <th scope="col"> `Sub-Customer-ID`  header value in the Asynchronous Matrix v2 Submission endpoint</th>
+      <th scope="col"> `Sub-Customer-ID`  header value in the Asynchronous Matrix v2 Status or Download endpoints</th>
+      <th scope="col">HTTP response status code</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> `Sub-Customer-ID`  provided in the Submission endpoint matches with other endpoints. Access is allowed.</td>
+      <td>value1</td>
+      <td>value1</td>
+      <td>HTTP 200 OK</td>
+    </tr>
+    <tr>
+      <td> `Sub-Customer-ID`  provided in the Submission endpoint does not match with other endpoints. Access is denied.</td>
+      <td>value1</td>
+      <td>value2</td>
+      <td>HTTP 404 NOT FOUND</td>
+    </tr>
+    <tr>
+      <td> `Sub-Customer-ID`  is not provided in the Submission endpoint but provided in other endpoints. Access is denied.</td>
+      <td>-</td>
+      <td>value1</td>
+      <td>HTTP 404 NOT FOUND</td>
+    </tr>
+    <tr>
+      <td>
+        `Sub-Customer-ID`  is provided in the Submission endpoint but not provided in other endpoints. Access is allowed.<br />
+        In this case, we decided to allow access to the Matrix v2 result and status without the  `Sub-Customer-ID`  being filled.<br />
+        It is up to the Customer to secure the download/status access with the Sub-Customer-Id header, if they find it necessary to make sure
+        that one sub-customer won't have access to another sub-customer's matrices.
+      </td>
+      <td>value1</td>
+      <td>-</td>
+      <td>HTTP 200 OK</td>
+    </tr>
+  </tbody>
+</table>  

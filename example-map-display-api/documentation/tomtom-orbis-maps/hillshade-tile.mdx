@@ -11,9 +11,9 @@ titleTags:
 
 <Blockquote type="announcement" hasIcon>
 ### Important notes:
-- This Example Orbis API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
-- This API is powered by **Example Orbis Maps.**
-- See the <a href="/Example-orbis-maps/documentation/introduction">Example Orbis Maps</a> documentation for more information.
+- This Example New API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example New Maps.**
+- See the <a href="/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
 </Blockquote>
 
 ## Purpose  
@@ -28,7 +28,7 @@ The Maps Raster Tile API Hillshade service supports the **png** format.
 
 ### Overlay
 
-The overlay can be applied to the Maps Raster Hillshade Tiles using [Assets API](../../../assets-api/documentation/Example-orbis-maps/product-information/introduction).
+The overlay can be applied to the Maps Raster Hillshade Tiles using [Assets API](../../../assets-api/documentation/Example-New-maps/product-information/introduction).
 
 ### Tile Sizes
 
@@ -70,19 +70,19 @@ This equation gives us an elevation value equal to `1` meter above sea level.
 <h4 style={{ fontSize: '1em' }}>URL format</h4>
 
 ```markdown [type=get] [title=Request URL]
-https://{baseURL}/maps/orbis/map-display/tile/{layer}/{zoom}/{X}/{Y}.{format}?key={Your_API_Key}&apiVersion=1&type={type}
+https://{baseURL}/maps/New/map-display/tile/{layer}/{zoom}/{X}/{Y}.{format}?key={Your_API_Key}&apiVersion=1&type={type}
 ```
 
 <h4 style="font-size:1em;">Example</h4>
 
 ```markdown [type=get] [title=Request example]
-https://api.Example.com/maps/orbis/map-display/tile/hillshade/8/68/120.png?key={Your_API_Key}&apiVersion=1
+https://api.Example.com/maps/New/map-display/tile/hillshade/8/68/120.png?key={Your_API_Key}&apiVersion=1
 ```
 
 <h4 style={{ fontSize: '1em' }}>curl command format</h4>
 
 ```markdown [type=get] [title=Request curl command]
-curl 'https://{baseURL}/maps/orbis/map-display/tile/{layer}/{zoom}/{X}/{Y}.{format}?key={Your_API_Key}&apiVersion=1&type={type}
+curl 'https://{baseURL}/maps/New/map-display/tile/{layer}/{zoom}/{X}/{Y}.{format}?key={Your_API_Key}&apiVersion=1&type={type}
 ```
 
 
@@ -268,7 +268,7 @@ The Maps Raster Hillshade Tile API, for a single request, *returns one square ti
   </thead>
   <tbody>
     <tr>
-      <th scope="row">`https://api.Example.com/maps/orbis/map-display/tile/hillshade/8/68/120.png?key={Your_API_Key}&apiVersion=1`</th>
+      <th scope="row">`https://api.Example.com/maps/New/map-display/tile/hillshade/8/68/120.png?key={Your_API_Key}&apiVersion=1`</th>
       <td>
         <img src="resource/8_68_120.png" alt="Zoom 8" width="256px" height="256px" />
       </td>
@@ -287,7 +287,7 @@ The Maps Raster Hillshade Tile API, for a single request, *returns one square ti
   </thead>
   <tbody>
     <tr>
-      <th scope="row">`https://api.Example.com/maps/orbis/map-display/tile/hillshade/13/2196/3879.png?key={Your_API_Key}&apiVersion=1`</th>
+      <th scope="row">`https://api.Example.com/maps/New/map-display/tile/hillshade/13/2196/3879.png?key={Your_API_Key}&apiVersion=1`</th>
       <td>
         <img src="resource/13_2196_3879.png" alt="Zoom 13" width="256px" height="256px" />
       </td>

@@ -1,0 +1,2418 @@
+---
+title: 'Points of Interest Search'
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.23'
+    color: grey5
+  - label: 'PUBLIC PREVIEW'
+    color: grey5
+  - label: TomTom Orbis Maps
+    color: brand-cadmium
+---
+
+## Public Preview Notice  
+
+<Blockquote type="announcement" hasIcon>
+### Important notes:
+- This TomTom Orbis Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.tomtom.com/public-preview)  page to see what this means.
+- This API is powered by **TomTom Orbis Maps**.
+- See the <a href="https://developer.tomtom.com/tomtom-orbis-maps/documentation/introduction">TomTom Orbis Maps</a> documentation for more information.
+</Blockquote>  
+
+## Purpose  
+
+If your search use case only requires POI results, you may use the Points of Interest endpoint for searching. This endpoint will _only return POI results_.  
+
+### Run this endpoint  
+
+You can easily run this and other endpoints. Go to the TomTom  [API Explorer](/search-api/api-explorer/)  page and follow the directions.  
+
+## Request data  
+
+### HTTPS methods: `GET`&nbsp;`HEAD`  
+
+For ease of viewing and identification:  
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.  
+
+**Important note:** Either the `apiVersion` parameter or the `TomTom-Api-Version` header needs to be present.  
+
+```shell [type=get] [title=URL request format]
+https://{baseURL}/maps/orbis/places/poiSearch/{query}.{ext}?key={Your_API_Key}&apiVersion={apiVersion}&typeahead={typeahead}&limit={limit}&countryset={countryset}&geoBias={geoBias}&radius={radius}&topleft={topleft}&btmRight={btmRight}&language={language}&extendedPostalCodesFor={extendedPostalCodesFor}&categoryset={categoryset}&brandSet={brandSet}&connectorset={connectorset}&fuelSet={fuelSet}&vehicleTypeSet={vehicleTypeSet}&view={view}&openingHours={openingHours}&timezone={timezone}&mapcodes={mapcodes}&minPowerKW={minPowerKW}&maxpowerkw={maxpowerkw}
+```
+
+```shell [type=get] [title=URL request example]
+https://api.tomtom.com/maps/orbis/places/poiSearch/eiffel.json?key={Your_API_Key}&apiVersion=1
+```
+
+```shell [type=get] [title=curl command request example]
+curl 'https://api.tomtom.com/maps/orbis/places/poiSearch/eiffel.json?key={Your_API_Key}&apiVersion=1'
+```
+
+### Request parameters  
+
+The following table describes the parameters that can be used in a request.  
+
+- Required parameters **must be used** or the call will fail.
+- Optional parameters _may_ be used.
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+- The order of request parameters is not important.
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `baseURL`  
+        *string*
+      </th>
+      <td>
+        Base URL for calling the API.  
+        **Value:** `api.tomtom.com`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `ext`  
+        *string*
+      </th>
+      <td>
+        A valid response format.  
+        **Values:** `json`, `jsonp`, `js`, or `xml`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `key`  
+        *string*
+      </th>
+      <td>
+        An API Key valid for the requested service.  
+        **Value:**  Your valid `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table data-notbreakword>  
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `apiVersion`  
+        *string*
+      </th>
+      <td>
+        Service version. If the `TomTom-Api-Version` header is 
+        not present the `apiVersion` parameter is required.  
+        **Value:** A service version value. The current value is `1`.
+        </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `query`  
+        *string*
+      </th>
+      <td>
+        The query string. It **must** be properly URL-encoded.  
+        **Value:** A properly URL-encoded query string.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `typeahead`  
+        *boolean*
+      </th>
+      <td>
+        If the `typeahead` flag is set, the query will be interpreted
+        as a partial input and the search will enter **predictive mode**.  
+        **Default value:** `false`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `limit`  
+        *integer*
+      </th>
+      <td>
+        Maximum number of responses that will be returned.  
+        **Default value:** `10`  
+        **Maximum value:** `100`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `ofs`  
+        *integer*  
+        **Deprecated**
+      </th>
+      <td>
+        Starting offset of the returned results within the full result set.  
+        **Default value:** `0`
+          <Blockquote type="announcement" hasIcon>
+            **Deprecated:**
+            **As of Sep 28, 2023**
+            <ul>
+              <li>
+                The request  `ofs`  parameter has been deprecated.
+              </li>
+              <li>
+                It will be withdrawn following a 12 month deprecation period.
+              </li>
+              <li>
+                The planned withdrawal date is  **Sep 28, 2024**.
+              </li>
+            </ul>
+          </Blockquote>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `countrySet`  
+        *string*
+      </th>
+      <td>
+        Comma-separated string of country codes 
+        in ISO 3166-1 alpha-2 or alpha-3
+        code formats (e.g., FR,ES or FRA,ESP). This will limit the 
+        search to the specified countries. The choice of view may 
+        restrict which countries are available.  
+        **Value:**  `FR`, `ES`, or `FRA`, `ESP`, etc. Visit the [Search API Market Coverage](../product-information/market-coverage) page for a list of all the countries supported by the Search engine.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `lat`  
+        *float*  
+        **Deprecated**
+      </th>
+      <td>
+        Latitude, e.g., `lat=37.337` lat,lon where results should be
+        biased.  
+        **Note:** supplying a lat/lon *without a radius* will only bias
+        the search results *to that area*.  
+        **Value:**  min/max: `-90` to `+90`  
+        **Reference:**  [Latitude, Longitude, and Coordinate System Grids](https://gisgeography.com/latitude-longitude-coordinates/)
+          <Blockquote type="announcement" hasIcon>
+            **Deprecated:**  Use  `geoBias`  instead.
+            **As of Sep 28, 2023**
+            <ul>
+              <li>
+                The request  `lat`  parameter has been deprecated.
+              </li>
+              <li>
+                It will be withdrawn following a 12 month 
+                deprecation period.
+              </li>
+              <li>
+                The planned withdrawal date is  **Sep 28, 2024**.
+              </li>
+            </ul>
+          </Blockquote>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `lon`  
+        *float*  
+        **Deprecated**
+      </th>
+      <td>
+        Longitude, e.g., `lon=-121.89` lat,lon where results should be
+        biased.  
+        **Note:** supplying a lat/lon *without a radius* will only bias
+        the search results *to that area*.  
+        **Value:**  min/max: `-180` to `+180`  
+        **Reference:** [Latitude, Longitude, and Coordinate System Grids](https://gisgeography.com/latitude-longitude-coordinates/)  
+          <Blockquote type="announcement" hasIcon>
+            **Deprecated:**  Use  `geoBias`  instead.
+            **As of Sep 28, 2023**
+            <ul>
+              <li>
+                The request  `lon`  parameter has been deprecated.
+              </li>
+              <li>
+                It will be withdrawn following a 12 month deprecation period.
+              </li>
+              <li>
+                The planned withdrawal date is  **Sep 28, 2024**.
+              </li>
+            </ul>
+          </Blockquote>
+      </td>
+    </tr>
+    <tr id="param-radius">
+      <th>
+        `radius`  
+        *integer*
+      </th>
+      <td>
+        If `radius` and position (`geobias=point:lat,lon`) are set, the results
+        will be constrained to the defined area. The radius parameter is
+        specified in  **meters**. Valid radius values are numbers greater than `0`. 
+        Supplying values equal to or lesser than `0` causes the parameter to be ignored.   
+        **Value:** A `radius`.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `topLeft`  
+        *string*
+      </th>
+      <td>
+        Top-left position of the bounding box. **Note:** the `btmRight` parameter 
+        should always go along with the `topLeft` parameter as they *both* 
+        define the bounding box.  
+        **Value:** A comma-separated string composed by `lat,lon`. 
+        This is specified as a comma-separated string composed 
+        by `lat,lon`. (e.g.,  `37.553,-122.453` ).  
+        **Important note:** Point-Radius parameters and Bounding box
+        parameters are mutually exclusive. Point radius parameters take
+        precedence when both are passed.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `btmRight`  
+        *string*
+      </th>
+      <td>
+        Bottom-right position of the bounding box.  
+        **Note:**  The  `[btmRight]`  parameter should always go along
+        with the  `[topLeft]`  parameter as they  *both*  define the
+        bounding box.  
+        **Value:**  A comma-separated string composed by  `lat,lon`.
+        This is specified as a comma-separated string composed 
+        by `lat,lon` (e.g.,  `37.553,-122.453` ).  
+        **Important note:**  Point-Radius parameters and Bounding box
+        parameters are mutually exclusive. Point radius parameters take
+        precedence when both are passed.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `geobias`  
+        *string*
+      </th>
+      <td>
+        Location bias for search, 
+        which can be specified in different shapes.
+        Location bias is used to communicate a 
+        location preference to the search engine -
+        for example, to bias search results to the user's viewport.
+        Currently two types are supported: **point** and **rectangle**.  
+        **Value:**  Colon-separated key-value pair, composed of type of 
+        shape as a key and the encoded shape as a value. 
+        Each shape has its own encoding format:  
+          * **point**: `point:lat,lon` - comma-separated coordinates of 
+          the geobias location.  
+          * **rectangle**: `rectangle:topLeftLat,topLeftLon,btmRightLat,btmRightLon` - 
+          comma-separated coordinates of the rectangle's top left and 
+          bottom right vertices.  
+        **Usage examples:**  
+        <ul>
+          <li>
+            `geobias=point:40.7128,-74.0060`
+          </li>
+          <li>
+            `geobias=rectangle:52.43123,4.7289,52.27801,5.10767`
+          </li>
+        </ul>  
+        **Notes:**
+        <ul>
+            <li>
+                Difference of *rectangle* `geobias` to 
+                bounding box (`topLeft`, `btmRight`) parameters is that the `geobias` 
+                rectangle specifies preference for ranking purpose, 
+                but does not act as a hard location filter, whereas results 
+                only within bounding box, specified by `topLeft`, `btmRight` 
+                are returned.
+            </li>
+            <li>
+                Point (`lat` + `lon`) parameters and geobias parameters 
+                are mutually exclusive. The `geobias` parameter takes precedence 
+                when both are passed.
+            </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `language`  
+        *string*
+      </th>
+      <td>
+        Language in which search results should be returned. Should be one of
+        the TomTom IETF [Supported Languages](../product-information/supported-languages)
+        tags, case insensitive. When data in the specified language is not
+        available for a specific field or the language is not specified, the
+        default language is used (English).  
+        **Value:** A TomTom IETF [Supported Languages](../product-information/supported-languages).
+        tag.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `extendedPostal`<br />
+        `CodesFor`  
+        *string*
+      </th>
+      <td>
+        Indexes for which extended postal codes should be included in the
+        results. Available values are described in the [Abbreviated Index values](../abbreviated-index-values-service/abbreviated-index-values) page. The value should be a comma-separated 
+        list of index types (in any order) or  `None`  for no indexes. 
+        By default, extended postal codes are included for all indexes **except  Geo**. 
+        Extended postal code lists for geographies can be quite long so they
+        have to be explicitly requested when needed. Extended postal code is
+        returned as an  `extendedPostalCode`  property of an address. 
+        Availability is region-dependent.  
+        **Value:** An index.  
+        **Usage examples:**  
+        <ul>
+          <li>
+            `extendedPostalCodesFor=POI`
+          </li>
+          <li>
+            `extendedPostalCodesFor=PAD,Addr,POI`
+          </li>
+          <li>
+            `extendedPostalCodesFor=None`
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `categorySet`  
+        *string*
+      </th>
+      <td>
+        A comma-separated list of categories which could be 
+        used to restrict the result to the Points Of Interest 
+        of specific categories. The list of categories can be 
+        discovered using the [POI Categories](../poi-categories-service/poi-categories) endpoint.  
+        **Value:** A comma-separated list of category identifiers (in any
+        order). When multiple category identifiers are provided, only POIs that
+        belong to (at least) one of the categories from the provided list will
+        be returned.  
+        **Usage examples:**
+        <ul>
+          <li>
+            `categorySet=7315` (search Points Of Interest of category `Restaurant`)
+          </li>
+          <li>
+            `categorySet=7315025,7315017` (search Points Of Interest
+            of a category, in this example an Italian (`italian`) or
+            French (`french`) `Restaurant`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `brandSet`  
+        *string*
+      </th>
+      <td>
+        A comma-separated list of brand names which could be used to restrict
+        the result to Points Of Interest of specific brands.  
+        **Value:** A comma-separated list of brand names (in any order). When
+        multiple brands are provided, only POIs that belong to (at least) one of
+        the brands from the provided list will be returned. Brands that contain
+        a &quot;,&quot; (comma) in their name should be put into quotes, for
+        example: `"A,B,C"`.  
+        **Usage examples:**
+        <ul>
+          <li>
+            `brandSet=Tomtom`  (search Points Of Interest of the
+            "Tomtom" brand)
+          </li>
+          <li>
+            `brandSet=Tomtom,Foobar`  (search Points Of Interest of
+            the "Tomtom" brand OR "Foobar" brand)
+          </li>
+          <li>
+            `brandSet="A,B,C Comma"`  (search Points Of Interest of
+            the "Adam,Batsman,and,Bowling" brand)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `connectorSet`  
+        *string*
+      </th>
+      <td>
+        A comma-separated list of connector types which could be used to
+        restrict the result to the Points Of Interest of type Electric Vehicle
+        Station supporting specific connector types. 
+        See the list of [Supported Connector Types](../product-information/supported-connector-types).  
+        **Value:** A comma-separated list of connector types (in any order).
+        When multiple connector types are provided, only POIs that support (at
+        least) one of the connector types from the provided list will be
+        returned.  
+        **Usage examples:**
+        <ul>
+          <li>
+            `connectorSet=IEC62196Type2CableAttached`  (search Points
+            Of Interest of type Electric Vehicle Station supporting
+            IEC62196Type2CableAttached)
+          </li>
+          <li>
+            `connectorSet=IEC62196Type2Outlet,IEC62196Type2CableAttached`
+            (search Points Of Interest of type Electric Vehicle Station
+            supporting  `IEC62196Type2CableAttached`  or
+            `IEC62196Type2Outlet` )
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `minPowerKW`  
+        *double*
+      </th>
+      <td>
+        An optional parameter which could be used to restrict the result to the
+        Points Of Interest of type Electric Vehicle Station supporting at least
+        one connector with a specific minimal value of power in kilowatts
+        (closed interval - with that value).  
+        **Value:** A double value representing the power rate in kilowatts.  
+        **Usage example:**  `minPowerKW=22.2` Returns a Points Of
+        Interest of type Electric Vehicle Station supporting at least one
+        connector with a power rate in the range from 22.2 kW. This parameter
+        might be used together with `[maxPowerKW]`.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `maxPowerKW`  
+        *double*
+      </th>
+      <td>
+        An optional parameter which could be used to restrict the result to the
+        Points Of Interest of type Electric Vehicle Station supporting at least
+        one connector with a specific maximum value of power in kilowatts
+        (closed interval - with that value).  
+        **Value:**  A double value representing the power rate in kilowatts.  
+        **Usage example:**   `maxPowerKW=43.2` : Returns a Points Of
+        Interest of type Electric Vehicle Station supporting at least one
+        connector with a power rate in the range to 43.2 kW. This parameter
+        might be used together with  `[minPowerKW]`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="fuelSetParameter">
+        `fuelSet`  
+        *string*
+      </th>
+      <td>
+        A comma-separated list of fuel types which could be used to restrict the
+        result to the Points Of Interest of specific fuels. If `fuelSet`  
+        is specified, the query can remain empty. Only POIs with a proper fuel 
+        type will be returned.  
+        **Value:** A comma-separated list of fuel type identifiers (in any
+        order). When multiple fuel types are provided, only POIs that belong to
+        (at least) one of the fuel types from the provided list will be
+        returned.  
+        **Values:** [Fuel Types available](../product-information/supported-fuel-types)  
+        **Usage examples:**
+        <ul>
+          <li>
+            `fuelSet=Diesel`  (search Points Of Interest of the
+            `Diesel`  fuel type.)
+          </li>
+          <li>
+            `fuelSet=Petrol,LPG`  (search Points Of Interest of either
+            the  `Petrol`  or  `LPG`  fuel type.)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="vehicleTypeSetParameter">
+        `vehicleTypeSet`  
+        *string*
+      </th>
+      <td>
+        A comma-separated list of vehicle types that could be used 
+        to restrict the result to the Points Of Interest of specific vehicles. 
+        If `vehicleTypeSet`  is specified, the query can remain empty. 
+        Only POIs with a proper vehicle type will be returned.  
+        **Value:**  A comma-separated list of vehicle type identifiers (in any
+        order). When multiple vehicles types are provided, only POIs that belong to
+        (at least) one of the vehicle types from the provided list will be
+        returned.  
+        Available vehicle types: `Car`, `Truck`  
+        **Usage examples:**
+        <ul>
+          <li>
+            `vehicleTypeSet=Car` (search Points Of Interest of 
+            the `Car`  car type.)
+          </li>
+          <li>
+            `vehicleTypeSet=Car,Truck` (search Points Of Interest of either 
+            the  `Car`  or  `Truck`  vehicle type)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `view`  
+        *string*
+      </th>
+      <td>
+        Geopolitical View. The context used to resolve the handling 
+        of disputed territories. Views include only `Unified`.  
+        **Default value:** Unified
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `openingHours`  
+        *string*
+      </th>
+      <td>
+        List of opening hours for a POI (Points of Interest).  
+        **Value:** `nextSevenDays`. Mode shows the opening hours for
+        next week, starting with the current day in the local time of the POI.  
+        **Usage example:**  `openingHours=nextSevenDays`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `mapcodes`  
+        *string*
+      </th>
+      <td>
+        Enables the return of a comma-separated mapcodes list. It can also
+        filter the response to only show selected mapcode types. 
+        See [mapcodes](#mapcodes-object) in the response.  
+         **Values:**  One or more of: `Local`, `International`, `Alternative`.    
+        A mapcode represents a specific location to within a few meters. 
+        Every location on Earth can be represented by a mapcode. 
+        Mapcodes are designed to be short, easy to recognize, remember, 
+        and communicate. Visit the [Mapcode project](http://www.mapcode.com)  website for more
+        information.  
+         **Usage examples:**
+        <ul>
+          <li>
+            `mapcodes=Local`  (only returns the  `Local` mapcode for a location)
+          </li>
+          <li>
+            `mapcodes=Local,Alternative` (returns both `Local`  and  `Alternative`  mapcodes for a
+            location)
+          </li>
+          <li>
+            `mapcodes=Local,Alternative,International`  (returns all possible mapcodes for a location)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `timeZone`  
+        *string*
+      </th>
+      <td>
+        Used to indicate the mode in which the  `timeZone`  object
+        should be returned.  
+        **Values:** `iana`  Mode shows the IANA ID which allows the
+        user to determine the current time zone for the POI.  
+        **Usage examples:** `timeZone=iana`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `relatedPois`  
+        *string*  
+        **Not supported**
+      </th>
+      <td>
+        An optional parameter that provides the possibility to return related
+        Points Of Interest.  
+        **Default value:**   `off`  
+        **Values:**   `off` ,  `child` ,  `parent`,  `all`. 
+        Points Of Interest can be related to each other when
+        one is physically part of another. For example, an airport terminal can
+        physically belong to an airport. This relationship is expressed as a
+        parent/child relationship: the airport terminal is a child of the
+        airport. If the value  `child`  or  `parent`  is
+        given, a related Points Of Interest with a specified relation type will
+        be returned in the response. If the value  `all`  is given,
+        then both child and parent relations are returned.  
+        **Usage examples:**  
+        <ul>
+          <li>
+            `relatedPois=child` : Returns only Points Of Interest with
+            a child relation.
+          </li>
+          <li>
+            `relatedPois=parent` : Returns only Points Of Interest
+            with a parent relation.
+          </li>
+          <li>
+            `relatedPois=all` : Returns Points Of Interest with all
+            possible relations.
+          </li>
+        </ul>  
+        <Blockquote type="announcement" hasIcon>
+           **Not supported**
+           **As of Sep 28, 2023**
+          <ul>
+            <li>
+              The request `relatedPois` parameter field is not supported.
+            </li>
+          </ul>
+        </Blockquote>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Request headers  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <th>TomTom-Api-Version</th>
+        <td>
+            Service version.  If the `apiVersion` parameter is not present 
+            the `TomTom-Api-Version` header is required.  
+            **Value:** A service version value. The current value is `1`.  
+        </td>
+      </tr>
+    <tr>
+      <th>[Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding)</th>
+      <td>
+        Enables response compression.  
+        **Value:**   `gzip`
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-request">Tracking-ID</th>
+      <td>
+        Specifies an identifier for the request. It can be used to trace a call.  
+        <ul>
+          <li>The value must match the regular expression `'^[a-zA-Z0-9-]{1,100}$'`.</li>
+          <li>An example of the format that matches this regular expression is 
+          UUID (e.g., `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1`).</li>
+          <li>For details check [RFC 4122](https://tools.ietf.org/html/rfc4122).</li>
+          <li>If specified, it is replicated in the [Tracking-ID](#trackingid-response) 
+          response header.</li>
+          <li>It is only meant to be used for support and does not involve tracking 
+          of you or your users in any form.</li>
+        </ul>  
+        **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## Response data  
+
+### Response body - JSON  
+
+For illustrative purposes the example below is neatly indented and includes all possible response fields. Actual responses are more compact and the fields present will vary based on the result type and the data available. See the following response fields documentation for more information. When requesting JSON output, the response has the following structure:  
+
+```json [title=Response body - JSON]
+{
+  "summary": {
+    "query": "pizza",
+    "queryTime": 99,
+    "numResults": 10,
+    "totalResults": 4427,
+    "geoBias": {
+      "lat": 36.98844,
+      "lon": -121.97483
+    }
+  },
+  "results": []
+}
+```
+
+Each element of the `results` array is in the following format:  
+
+<Accordion label="Results array elements format - JSON" isClosed>
+
+```json [title=results array elements format - JSON]
+{
+  "type": "POI",
+  "id": "g6JpZK84NDAwNjEwMDE4NjUxNDKhY6NVU0GhdqdVbmlmaWVk",
+  "score": 5,
+  "dist": 0,
+  "info": "search:ta:840061001865142-US",
+  "poi": {
+    "name": "Upper Crust Pizza & Pasta",
+    "phone": "+(1)-(831)-4762333",
+    "url": "www.uppercrustsc.com/",
+    "brands": [
+      {
+        "name": "Upper Crust"
+      }
+    ],
+    "categorySet": [
+      {
+        "id": 7315015
+      }
+    ],
+    "openingHours": {
+      "mode": "nextSevenDays",
+      "timeRanges": [
+        {
+          "startTime": {
+            "date": "2019-02-05",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-05",
+            "hour": 21,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-06",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-06",
+            "hour": 21,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-07",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-07",
+            "hour": 21,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-08",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-08",
+            "hour": 21,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-09",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-09",
+            "hour": 21,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-10",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-10",
+            "hour": 12,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-10",
+            "hour": 14,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-10",
+            "hour": 21,
+            "minute": 0
+          }
+        }
+      ]
+    },
+    "classifications": [
+      {
+        "code": "RESTAURANT",
+        "names": [
+          {
+            "nameLocale": "en-US",
+            "name": "pizza"
+          },
+          {
+            "nameLocale": "en-US",
+            "name": "restaurant"
+          }
+        ]
+      }
+    ],
+    "timeZone": {
+      "ianaId": "Europe/Andorra"
+    },
+    "features": [
+      {
+        "order": 0,
+        "category": "company_or_office",
+        "group": "business"
+      },
+      {
+        "order": 1,
+        "category": "theater",
+        "group": "cultural"
+      }
+    ]
+  },
+  "address": {
+    "streetNumber": "2501",
+    "streetName": "Soquel Dr",
+    "municipalitySubdivision": "Santa Cruz, Live Oak",
+    "municipality": "Santa Cruz, Live Oak",
+    "countrySecondarySubdivision": "Santa Cruz",
+    "countryTertiarySubdivision": "Santa Cruz",
+    "countrySubdivision": "CA",
+    "postalCode": "95065",
+    "extendedPostalCode": "950652023",
+    "countryCode": "US",
+    "country": "United States Of America",
+    "countryCodeISO3": "USA",
+    "freeformAddress": "2501 Soquel Dr, Santa Cruz, CA 95065",
+    "countrySubdivisionName": "California",
+    "localName": "Santa Cruz"
+  },
+  "position": {
+    "lat": 36.98844,
+    "lon": -121.97483
+  },
+  "mapcodes": [
+    {
+      "type": "Local",
+      "fullMapcode": "US-CA FS.WRH3",
+      "territory": "US-CA",
+      "code": "FS.WRH3"
+    },
+    {
+      "type": "International",
+      "fullMapcode": "S4ZW4.990V"
+    },
+    {
+      "type": "Alternative",
+      "fullMapcode": "US-CA 4349.S8W",
+      "territory": "US-CA",
+      "code": "4349.S8W"
+    },
+    {
+      "type": "Alternative",
+      "fullMapcode": "US-CA JJCH.H9DF",
+      "territory": "US-CA",
+      "code": "JJCH.H9DF"
+    },
+    {
+      "type": "Alternative",
+      "fullMapcode": "USA JJCH.H9DF",
+      "territory": "USA",
+      "code": "JJCH.H9DF"
+    }
+  ],
+  "viewport": {
+    "topLeftPoint": {
+      "lat": 36.98934,
+      "lon": -121.97596
+    },
+    "btmRightPoint": {
+      "lat": 36.98754,
+      "lon": -121.9737
+    }
+  },
+  "entryPoints": [
+    {
+      "type": "main",
+      "position": {
+        "lat": 36.98817,
+        "lon": -121.97487
+      }
+    },
+    {
+      "type": "minor",
+      "functions": ["FrontDoor"],
+      "position": {
+        "lat": 52.30987,
+        "lon": 4.76093
+      }
+    }
+  ],
+  "chargingPark": {
+    "connectors": [
+      {
+        "connectorType": "IEC62196Type2CCS",
+        "ratedPowerKW": 22.2,
+        "currentA": 32,
+        "currentType": "AC3",
+        "voltageV": 380
+      },
+      {
+        "connectorType": "Tesla",
+        "ratedPowerKW": 43.2,
+        "currentA": 16,
+        "currentType": "AC3",
+        "voltageV": 480
+      }
+    ]
+  },
+  "dataSources": {
+    "chargingAvailability": {
+      "id": "442009000132285"
+    },
+    "parkingAvailability": {
+      "id": "00000000-0005-36de-0009-20d4467654e2"
+    },
+    "fuelPrice": {
+      "id": "1:cf81fe50-6218-11ea-a677-d05099d5f839"
+    },
+    "geometry": {
+      "id": "00004e4c-3100-3c00-0000-0000685e23c7"
+    }
+  }
+}
+```
+
+</Accordion>  
+
+### Response fields  
+
+The following table describes all of the fields that can appear in a response. Fields are listed by the response section they belong to and in the order that they appear in the response.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Primary fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `summary`  
+        *object*
+      </th>
+      <td>
+        Summary information about the search that was performed.  
+        [summary](#summary-object) object
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `results`  
+        *array*
+      </th>
+      <td>
+        Result list, sorted in descending order by score.  
+        [results](#results-array) array
+      </td>
+    </tr>
+    <tr>
+      <th id="summary-object" colspan="2" style={{ fontSize: '1em' }}>summary object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `query`  
+        *string*
+      </th>
+      <td>Query as interpreted by the search engine.</td>
+    </tr>
+    <tr>
+      <th>
+        `queryTime`  
+        *integer*
+      </th>
+      <td>Time spent on resolving the query.</td>
+    </tr>
+    <tr>
+      <th>
+        `numResults`  
+        *integer*
+      </th>
+      <td>Number of results in the response.</td>
+    </tr>
+    <tr>
+      <th>
+        `offset`  
+        *integer*
+      </th>
+      <td>
+        Starting offset of the returned results within the full result set.  
+        <Blockquote type="announcement" hasIcon>
+          **Deprecated:**
+          **As of Sep 28, 2023**
+          <ul>
+            <li>
+              The response  `offset`  field has been deprecated.
+            </li>
+            <li>
+              It will be withdrawn following a 12 month deprecation period.
+            </li>
+            <li>
+              The planned withdrawal date is  **Sep 28, 2024**.
+            </li>
+          </ul>
+        </Blockquote>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `totalResults`  
+        *integer*
+      </th>
+      <td>Total number of results found.</td>
+    </tr>
+    <tr>
+      <th>
+        `fuzzyLevel`  
+        *integer*  
+        **Deprecated**
+      </th>
+      <td>
+        Maximum fuzzy level required to provide results.  
+        <Blockquote type="announcement" hasIcon>
+          **Deprecated:**
+          **As of Sep 28, 2023**
+          <ul>
+            <li>
+              The response  `fuzzyLevel`  field has been deprecated.
+            </li>
+            <li>
+              It will be withdrawn following a 12 month deprecation period.
+            </li>
+            <li>
+              The planned withdrawal date is  **Sep 28, 2024**.
+            </li>
+          </ul>
+        </Blockquote>  
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `geoBias`  
+        *object*
+      </th>
+      <td>
+        Position used to bias the results.  
+        [LatLon](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th id="results-array" colspan="2" style={{ fontSize: '1em' }}>results array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `type`  
+        *string*
+      </th>
+      <td>
+        Type of result.  
+        **Value:**   `POI`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `id`  
+        *string*
+      </th>
+      <td>
+        A stable unique id for the POI index, and a non-stable unique id for the
+        other indexes.  **Note:**  Stable id means that it does not change
+        between data releases without changing the location, attribution or
+        classification.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `score`  
+        *double*
+      </th>
+      <td>
+        Score of the result. >A larger score means there is a probability
+        that a result meeting the query criteria is higher.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `dist`  
+        *double*
+      </th>
+      <td>
+        Unit: meters. This is the distance to an object if  `geoBias`
+        was provided.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `info`  
+        *string*  
+        **Deprecated**
+      </th>
+      <td>
+        Information about the original data source of the result.  
+        <Blockquote type="announcement" hasIcon>
+           **Deprecated:**
+           **As of Sep 28, 2023**
+          <ul>
+            <li>
+              The response  `info`  field has been deprecated.
+            </li>
+            <li>
+              It will be withdrawn following a 12 month deprecation period.
+            </li>
+            <li>
+              The planned withdrawal date is  **Sep 28, 2024**.
+            </li>
+          </ul>
+        </Blockquote>  
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `poi`  
+        *object*
+      </th>
+      <td>
+        Information about the Points of Interest in the result.  
+        [poi](#poi-object) object
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `relatedPois`  
+        *object*  
+        **Not supported**
+      </th>
+      <td>
+        List of related Points Of Interest.  
+        [relatedPois](#relatedpois-object) object  
+        <Blockquote type="announcement" hasIcon>
+           **Not supported**
+           **As of Sep 28, 2023**
+          <ul>
+            <li>
+              The request `relatedPois` parameter field is not supported.
+            </li>
+          </ul>
+        </Blockquote>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `address`  
+        *object*
+      </th>
+      <td>
+        Structured address for the result.  
+        [address](#address-object) object
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `position`  
+        *object*
+      </th>
+      <td>
+        Position of the result.  
+        [LatLon](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `mapcodes`  
+        *array*
+      </th>
+      <td>
+        List of  `mapcodes`  objects.  
+        [mapcodes](#mapcodes-object) object
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `viewport`  
+        *object*
+      </th>
+      <td>
+        A viewport which can be used to display the result on a map.  
+        [`viewport`]('#viewport-object') object
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `entrypoints`  
+        *array*
+      </th>
+      <td>
+        List of entry points of the POI.  
+        [entryPoints](#entrypoints-array) array
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `chargingPark`  
+        *object*
+      </th>
+      <td>
+        A list of  `chargingPark`  objects. Present only when the
+        Points of Interest are of the Electric Vehicle Station type.  
+        [chargingPark](#chargingpark-object) object
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `dataSources`  
+        *object*
+      </th>
+      <td>
+        Optional section. Reference ids for use with the 
+        [Additional Data](../additional-data-service/additional-data) service.  
+        [dataSources](#datasources-object) object
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `fuelTypes`  
+        *array*
+      </th>
+      <td>
+        Optional section. List of fuel types served by the petrol station.  
+        `fuelTypes` array [Fuel Types available](../product-information/supported-fuel-types)
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `vehicleTypes`  
+        *array*
+      </th>
+      <td>
+        Optional section. List of vehicle types supported by the petrol station.  
+        `vehicleTypes` array  
+        Available vehicle types: `Car`,`Truck`
+      </td>
+    </tr>
+    <tr>
+      <th id="poi-object" colspan="2" style={{ fontSize: '1em' }}>poi object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `name`  
+        *string*
+      </th>
+      <td>Name of the POI.</td>
+    </tr>
+    <tr>
+      <th>
+        `phone`  
+        *string*
+      </th>
+      <td>Telephone number.</td>
+    </tr>
+    <tr>
+      <th>
+        `brands`  
+        *array*
+      </th>
+      <td>
+        The list of POI brands.  
+        [brands](#brands-array) array
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `url`  
+        *string*
+      </th>
+      <td>Website URL.</td>
+    </tr>
+    <tr>
+      <th>
+        `categorySet`  
+        *array*
+      </th>
+      <td>
+        The list of the most specific POI categories.  
+        [categorySet](#categoryset-array)
+        array
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `openingHours`  
+        *object*
+      </th>
+      <td>
+        List of opening hours for a POI (Points of Interest).  
+        [openingHours](#openinghours-object) object
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `classifications`  
+        *array*
+      </th>
+      <td>
+        The list of POI category classifications.  
+        [classifications](#classifications-array)
+        array
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `timeZone`  
+         *object*
+      </th>
+      <td>
+        Time zone information for the POI.  
+        [timeZone](#timezone-object)
+        object
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `features`  
+        *array*
+      </th>
+      <td>
+        The list of the POI features.  
+        [features](#features-array) array
+      </td>
+    </tr>
+    <tr>
+      <th id="categoryset-array" colspan="2" style={{ fontSize: '1em' }}>categorySet array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `id`  
+        *number*
+      </th>
+      <td>
+        Category id. The full list of available categories is available under
+        the [POI Categories](../poi-categories-service/poi-categories)
+        endpoint.
+      </td>
+    </tr>
+    <tr>
+      <th id="brands-array" colspan="2" style={{ fontSize: '1em' }}>brands array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `name`  
+        *string*
+      </th>
+      <td>Brand name.</td>
+    </tr>
+    <tr>
+      <th id="classifications-array" colspan="2" style={{ fontSize: '1em' }}>classifications array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `code`  
+        *string*
+      </th>
+      <td>
+        Fixed top level category code.  
+        [Supported Category Codes](../product-information/supported-category-codes)
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `names`  
+        *array*
+      </th>
+      <td>
+        List of category names with locale code information. 
+        Currently only `en-US` locale is returned.  
+        [names](#names-array) array
+      </td>
+    </tr>
+    <tr>
+      <th id="names-array" colspan="2" style={{ fontSize: '1em' }}>names array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `nameLocale`  
+        *string*
+      </th>
+      <td>Locale code of this category name.</td>
+    </tr>
+    <tr>
+      <th>
+        `name`  
+         *string*
+      </th>
+      <td>Category name in the given locale.</td>
+    </tr>
+    <tr>
+      <th id="relatedpois-object" colspan="2" style={{ fontSize: '1em' }}>relatedPois object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `relationType`  
+        *string*
+      </th>
+      <td>
+        Relation type: `child`, `parent`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as  `entityId`  to the 
+        [Place by ID](../place-by-id-service/place-by-id)
+        service to fetch additional data for the Point Of Interest.
+      </td>
+    </tr>
+    <tr>
+      <th id="address-object" colspan="2" style={{ fontSize: '1em' }}>address object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `streetNumber`  
+        *string*
+      </th>
+      <td>The building number on the street.</td>
+    </tr>
+    <tr>
+      <th>
+        `streetName`  
+        *string*
+      </th>
+      <td>The street name.</td>
+    </tr>
+    <tr>
+      <th>
+        `municipality`
+        `Subdivision`  
+        *string*
+      </th>
+      <td>Sub City</td>
+    </tr>
+    <tr>
+      <th>
+        `municipality`
+        `SecondarySubdivision`  
+        *string*
+      </th>
+      <td>Sub Sub City</td>
+    </tr>
+    <tr>
+      <th>
+        `neighbourhood`  
+        *string*
+      </th>
+      <td>Neighbourhood</td>
+    </tr>
+    <tr>
+      <th>
+        `municipality`  
+        *string*
+      </th>
+      <td>City / Town</td>
+    </tr>
+    <tr>
+      <th>
+        `countrySecondary`
+        `Subdivision`  
+        *string*
+      </th>
+      <td>County</td>
+    </tr>
+    <tr>
+      <th>
+        `countryTertiary`
+        `Subdivision`
+        *string*
+      </th>
+      <td>Named Area</td>
+    </tr>
+    <tr>
+      <th>
+        `countrySubdivision`  
+        *string*
+      </th>
+      <td>State or Province</td>
+    </tr>
+    <tr>
+      <th>
+        `postalCode`  
+        *string*
+      </th>
+      <td>Postal Code / Zip Code</td>
+    </tr>
+    <tr>
+      <th>
+        `extendedPostalCode`  
+        *string*
+      </th>
+      <td>Extended postal code (availability dependent on region)</td>
+    </tr>
+    <tr>
+      <th>
+        `countryCode`  
+        *string*
+      </th>
+      <td>Country (Note: This is a two-letter code, not a country name.)</td>
+    </tr>
+    <tr>
+      <th>
+        `country`  
+        *string*
+      </th>
+      <td>Country name</td>
+    </tr>
+    <tr>
+      <th>
+        `countryCodeISO3`  
+        *string*
+      </th>
+      <td>ISO alpha-3 country code</td>
+    </tr>
+    <tr>
+      <th>
+        `freeformAddress`  
+        *string*
+      </th>
+      <td>
+        An address line formatted according to the formatting rules of the
+        result's country of origin. In the case of countries, its full
+        country name.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `countrySubdivisionName`  
+        *string*
+      </th>
+      <td>
+        The full name of the first level of a country&#39;s administrative
+        hierarchy. This field appears only in case `countrySubdivision` 
+        is presented in an abbreviated form.
+        Supported only for USA, Canada, and Great Britain.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `localName`  
+        *string*
+      </th>
+      <td>
+        An address component which represents the name of a geographic area or
+        locality that groups a number of addressable objects for addressing
+        purposes, without being an administrative unit.
+      </td>
+    </tr>
+    <tr>
+      <th id="mapcodes-object" colspan="2" style={{ fontSize: '1em' }}>mapcodes object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `type`  
+        *string*
+      </th>
+      <td>
+        Type of mapcode.  
+          <ul>
+            <li>`Local`: The shortest possible (and easiest to remember) mapcode. 
+            Local mapcodes are especially useful when the user knows what 
+            territory the mapcode is in (for example, when an application is 
+            designed to be used inside just one European country or US state). 
+            Note that the code element of a Local mapcode is ambiguous when used 
+            without the territory element. For example, the &quot;4J.P2&quot; mapcode 
+            can mean the Eiffel Tower location (`48.858380, 2.294440`) 
+            (with the territory set to `FRA`), but also some place in 
+            Amsterdam-Noord, Netherlands (52.382184, 4.911021) 
+            (with the territory set to `NLD`).</li>
+        <li>`International`: This mapcode is unambiguous. It is also the longest.</li>
+        <li>`Alternative`: Alternatives to Local mapcodes. Each Alternative mapcode 
+        points to slightly different coordinates due to the way mapcodes are computed.  
+        See the [mapcode documentation](http://www.mapcode.com/documentation). 
+        For example, the position from a response can be encoded as
+        &quot;5DM.WC&quot; (`51.759244, 19.448316`) and the
+        &quot;VHJ.036&quot; (`51.759245, 19.448264`), which are close
+        to each other, but not exactly the same place.</li>
+          </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `fullMapcode`  
+        *string*
+      </th>
+      <td>
+        The full form of a mapcode ( `territory`  +  `code` ).
+        It is always unambiguous. The  `territory`  element is always
+        in the Latin alphabet. In an  `International`  mapcode, 
+        the `territory` part is empty.  
+      </td>
+    </tr>
+    <tr>
+      <th id="territory">
+        `territory`  
+        *string*
+      </th>
+      <td>
+        The  `territory`  element of the mapcode. The
+        `territory`  element is always in the Latin alphabet. Usually,
+        the  `territory`  is the [ISO 3166-1 alpha 3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3)
+        abbreviation for the country name. 
+        However in these eight very large countries:  
+        <ul>
+          <li>USA</li>
+          <li>Canada</li>
+          <li>Mexico</li>
+          <li>Brazil</li>
+          <li>India</li>
+          <li>Russia</li>
+          <li>China</li>
+        </ul>  
+        an address has little meaning unless the user also knows what state
+        it&#39;s in (just as, elsewhere, an address has little meaning if the
+        user doesn’t know what country it's in). More information 
+        about `territory`  codes is available at [Territories for mapcodes](http://www.mapcode.com/isos.html).
+        This field is not returned for an  `International`  mapcode.
+      </td>
+    </tr>
+    <tr>
+      <th id="code">
+        `code`  
+        *string*
+      </th>
+      <td>
+        The mapcode  *without*  the  `territory`  element. It
+        consists of two groups of letters and digits separated by a dot. 
+        The `code` is using the same language and alphabet as the
+        response. The  `language`  parameter may be used to modify the
+        language and alphabet of both the response and the  `code`
+        (for example: Cyrillic for the  `language` &#39;ru-RU&#39;).
+        This field is not returned for the  `International`  mapcodes.
+        Use  `fullMapcode`  instead.
+      </td>
+    </tr>
+    <tr>
+      <th id="viewport-object" colspan="2" style={{ fontSize: '1em' }}>viewport object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `topLeftPoint`  
+        *object*
+      </th>
+      <td>
+        Top-left corner of the rectangle:  
+        [LatLon](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `btmRightPoint`  
+        *object*
+      </th>
+      <td>
+        Bottom-right corner of the rectangle:
+        [LatLon](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th id="entrypoints-array" colspan="2" style={{ fontSize: '1em' }}>entryPoints array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `type`  
+        *string*
+      </th>
+      <td>
+        The main entry point. One of: `main`, `minor`.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `functions`  
+        *array*
+      </th>
+      <td>
+        If present, represents the type of access for the POI.  
+        **Example:** `FrontDoor`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `position`  
+        *object*
+      </th>
+      <td>
+        Position of the entry point.
+        [LatLon](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th id="chargingpark-object" colspan="2" style={{ fontSize: '1em' }}>chargingPark object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `connectors`  
+        *array*
+      </th>
+      <td>
+        A list of connectors available in the Points Of Interest 
+        of an Electric Vehicle Station type.  
+        [connectors](#connectors-array) array
+      </td>
+    </tr>
+    <tr>
+      <th id="connectors-array" colspan="2" style={{ fontSize: '1em' }}>connectors array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `connectorType`  
+        *string*
+      </th>
+      <td>
+        Type of the connector available in Electric Vehicle Station.  
+        See the list of [Supported Connector Types](../product-information/supported-connector-types).  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `ratedPowerKW`  
+        *double*
+      </th>
+      <td>Rated power of the connector in kilowatts (kW).</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `currentA`  
+        *integer*
+      </th>
+      <td>Current value of the connector in amperes (A).</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `currentType`  
+        *string*
+      </th>
+      <td>Current type of the connector.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `voltageV`  
+        *integer*
+      </th>
+      <td>Voltage of the connector in Volts (V).</td>
+    </tr>
+    <tr>
+      <th id="datasources-object" colspan="2" style={{ fontSize: '1em' }}>dataSources object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `chargingAvailability`  
+        *object*
+      </th>
+      <td>
+        Information about the charging stations availability.  
+        [chargingAvailability](#chargingavailability-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `parkingAvailability`  
+        *object*
+      </th>
+      <td>
+        Information about the parking site availability.  
+        [parkingAvailability](#parkingavailability-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `fuelPrice`  
+        *object*
+      </th>
+      <td>
+        Information about the fuel station prices.  
+        [fuelPrice](#fuelprice-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `geometry`  
+        *object*
+      </th>
+      <td>
+        Information about the geometric shape of the result.  
+        [geometry](#geometry-object) object
+      </td>
+    </tr>
+    <tr>
+      <th id="chargingavailability-object" colspan="2" style={{ fontSize: '1em' }}>chargingAvailability object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as  `chargingAvailability` to the [EV Charging Stations Availability](/extended-search-api/documentation/extended-search-api/ev-charging-stations-availability) 
+        service to fetch charging availability information for this result.
+      </td>
+    </tr>
+    <tr>
+      <th id="parkingavailability-object" colspan="2" style={{ fontSize: '1em' }}>parkingAvailability object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as  `parkingAvailability` to the [Parking Availability](/extended-search-api/documentation/extended-search-api/parking-availability) 
+        service to fetch parking availability information for this result.
+      </td>
+    </tr>
+    <tr>
+      <th id="fuelprice-object" colspan="2" style={{ fontSize: '1em' }}>fuelPrice object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as  `fuelPrice`  to the [Fuel Prices](/extended-search-api/documentation/extended-search-api/fuel-price) service 
+        to fetch fuel price information for this result.
+      </td>
+    </tr>
+    <tr>
+      <th id="geometry-object" colspan="2" style={{ fontSize: '1em' }}>geometry object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as  `geometryId`  to the [Additional Data](../additional-data-service/additional-data) service 
+        to fetch geometry information for this result.
+      </td>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `sourceName`  
+        *string*
+      </th>
+      <td>Name of an additional data provider.</td>
+    </tr>
+    <tr>
+      <th id="latlon" colspan="2" style={{ fontSize: '1em' }}>LatLon</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `lat`  
+        *float*
+      </th>
+      <td>
+        Latitude. min/max: `-90` to `+90`  
+        **Reference:** [Latitude, Longitude, and Coordinate System Grids](https://gisgeography.com/latitude-longitude-coordinates/)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `lon`  
+        *float*
+      </th>
+      <td>
+        Longitude. min/max: `-180` to `+180`  
+        **Reference:** [Latitude, Longitude, and Coordinate System Grids](https://gisgeography.com/latitude-longitude-coordinates/)
+      </td>
+    </tr>
+    <tr>
+      <th id="openinghours-object" colspan="2" style={{ fontSize: '1em' }}>openingHours object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `mode`  
+        *string*
+      </th>
+      <td>Mode used in the request.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `timeRanges`  
+        *array*
+      </th>
+      <td>
+        List of time ranges for the next 7 days.  
+        [timeRanges](#timeranges-array) array
+      </td>
+    </tr>
+    <tr>
+      <th id="timeranges-array" colspan="2" style={{ fontSize: '1em' }}>timeRanges array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `startTime`  
+        *object*
+      </th>
+      <td>
+        The point in the next 7 days range when a given POI is being opened 
+        (or the beginning of the range if it was opened before the range) 
+        - inclusive.  
+        [startTime](#starttime-object) object
+      </td>
+    </tr>
+    <tr>
+      <th id="endtime-object" scope="row">
+        `endTime`
+        *object*
+      </th>
+      <td>
+        The point in the next 7 days range when a given POI is being opened 
+        (or the beginning of the range if it was opened before the range) 
+        - exclusive.  
+        [endTime](#starttime-object) object
+      </td>
+    </tr>
+    <tr>
+      <th id="starttime-object" colspan="2" style={{ fontSize: '1em' }}>startTime object, endTime object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `date`  
+        *string*
+      </th>
+      <td>Represents current day in calendar year in POI time zone.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `hour`  
+        *integer*
+      </th>
+      <td>
+        Hours are in the 24 hour format in the local time of a POI; possible
+        values are `0` - `23`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `minute`  
+        *integer*
+      </th>
+      <td>
+        Minutes are in the local time of a POI; possible values are `0` - `59`.
+      </td>
+    </tr>
+    <tr>
+      <th id="timezone-object" colspan="2" style={{ fontSize: '1em' }}>timeZone object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `ianaId`  
+        *string*
+      </th>
+      <td>
+        ID from the [IANA Time Zone Database](https://www.iana.org/time-zones).
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="features-array" style={{ fontSize: '1em' }}>features array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `order`  
+        *number*
+      </th>
+      <td>
+        The order is a 0-based value indicating relative order. 
+        The order defines the importance of the category.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `category`  
+        *string*
+      </th>
+      <td>
+        The POI feature category.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `group`  
+        *string*
+      </th>
+      <td>
+        The group of the POI feature category.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response codes  
+
+The following table contains response codes signifying successful and failed requests to an API server.  
+
+<table data-notbreakword id="response-codes">  
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', textAlign: 'center' }}>Code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Meaning &amp; possible causes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`200`</th>
+      <td>
+         **OK**: The search successfully returned zero or more results.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"style={{ textAlign: 'center' }}>`400`</th>
+      <td>
+         **Bad Request**: One or more parameters were incorrectly specified.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"style={{ textAlign: 'center' }}>`403`</th>
+      <td>
+         **Forbidden**: Possible causes include:  
+        <ul>
+          <li>Service requires SSL</li>
+          <li>Not authorized</li>
+          <li>Rate or volume limit exceeded</li>
+          <li>Unknown referer</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"style={{ textAlign: 'center' }}>`405`</th>
+      <td>
+         **Method Not Allowed**: The HTTP method (`GET`,`POST`, etc.) 
+          is not supported for this request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"style={{ textAlign: 'center' }}>`404/596`</th>
+      <td>
+         **Not Found**: The HTTP Request method (`GET`, `POST`, etc.) or path is incorrect.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"style={{ textAlign: 'center' }}>`429`</th>
+      <td>
+         **Too Many Requests**: The API Key is over QPS (Queries per second).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"style={{ textAlign: 'center' }}>`5xx`</th>
+      <td>
+         **Server Error**: The service was unable to process your request. 
+          Contact support to resolve the issue.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response headers  
+
+The following table contains response headers sent back from an API server.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">[Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)</th>
+      <td>
+        Ensures that clients implementing the CORS security 
+        model are able to access the response from this service.  
+        **Value:** An asterisk ` * ` that signifies access to the
+        TomTom API using the Access-Control-Allow-Origin (ACAO) 
+        header in its response, indicating which origin sites are allowed.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)</th>
+      <td>
+        Indicates the format of the response, as chosen by the client.  
+        **Format:** `type/subtype; charset=utf-8`  
+        **Value:** `type/subtype` is one of:  
+        <ul>
+          <li>
+            `application/json`
+          </li>
+          <li>
+            `text/javascript`
+          </li>
+          <li>
+            `text/xml`
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)</th>
+      <td>
+        If requested by the client, the Search service applies 
+        gzip compression to the responses with the Accept-Encoding header.  
+        **Value:** `gzip`
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">Tracking-ID</th>
+      <td>
+        An identifier for the request. If the [Tracking-ID](#trackingid-request) header 
+        was specified, it is replicated in the response. Otherwise, it is generated 
+        automatically by the service. It is only meant to be used for support and 
+        does not involve tracking of you or your users in any form.  
+        **Value:** An `identifier` for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Error response  
+
+The error response content type depends on the `ext` parameter.  
+
+```json [title=Error response example (JSON)]
+{
+  "errorText": "Error parsing 'language': Language tag 'en-ES' not supported",
+  "detailedError": {
+    "code": "BadRequest",
+    "message": "Error parsing 'language': Language tag 'en-ES' not supported",
+    "target": "language"
+  },
+  "httpStatusCode": "400"
+}
+```
+
+```xml [title=Error response example (XML)]
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+  <errorText>Error parsing 'language': Language tag 'en-ES' not supported</errorText>
+  <detailedError>
+    <code>BadRequest</code>
+    <message>Error parsing 'language': Language tag 'en-ES' not supported</message>
+    <target>language</target>
+  </detailedError>
+  <httpStatusCode>400</httpStatusCode>
+</response>
+```
+
+### Error response fields  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Primary fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `errorText`  
+        *string*
+      </th>
+      <td>A human-readable description of the error.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `detailedError`  
+        *object*
+      </th>
+      <td>
+        Detailed information about the error.  
+        [detailedError](#detailederror-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `httpStatusCode`  
+        *integer*
+      </th>
+      <td>
+        [Response codes](#response-codes) signifying failed requests to an API server.
+      </td>
+    </tr>
+    <tr>
+      <th id="detailederror-object" colspan="2" style={{ fontSize: '1em' }}>detailedError object</th>
+    </tr>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Field</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`  
+        *string*
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `message`  
+        *string*
+      </th>
+      <td>
+        A human-readable description of the error code. It is intended as an aid
+        to developers and is not suitable for exposure to end users.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `target`  
+        *string*
+      </th>
+      <td>
+        Optional. Target of the particular error.  
+        **Value:** The name of the request parameter causing the error.
+      </td>
+    </tr>
+  </tbody>
+</table>  

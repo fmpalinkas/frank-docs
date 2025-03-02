@@ -1,0 +1,7 @@
+platformSwitcherItems:
+  - title: TomTom Maps
+    fallbackUrl: /search-api/documentation/product-information/introduction
+    platformRootDirectory: /search-api/documentation/
+  - title: TomTom Orbis Maps
+    fallbackUrl: /search-api/documentation/tomtom-orbis-maps/product-information/introduction
+    platformRootDirectory: /search-api/documentation/tomtom-orbis-maps/

@@ -1,0 +1,121 @@
+---
+title: Supported Connector Types
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.23'
+    color: grey5
+  - label: 'PUBLIC PREVIEW'
+    color: grey5
+  - label: TomTom Orbis Maps
+    color: brand-cadmium
+---
+
+## Public Preview Notice  
+
+<Blockquote type="announcement" hasIcon> 
+### Important notes:
+- This TomTom Orbis Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.tomtom.com/public-preview)  page to see what this means.
+- This API is powered by **TomTom Orbis Maps**.
+- See the <a href="https://developer.tomtom.com/tomtom-orbis-maps/documentation/introduction">TomTom Orbis Maps</a> documentation for more information.
+</Blockquote>  
+
+## Purpose  
+
+The following table describes supported connector types.  
+
+<table data-notbreakword>
+	<thead>
+		<tr>
+			<th scope="col" style={{'fontSize':'1em'}}>Connector type</th>
+			<th scope="col" style={{'fontSize':'1em'}}>Standard and description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>StandardHouseholdCountrySpecific</td>
+			<td>
+			<div>These are the standard household connectors for a certain region. They are all AC single phase and the standard Voltage and standard Amperage.<br />
+			See also:  [Plug &amp; socket types - World Standards](https://www.worldstandards.eu/electricity/plugs-and-sockets) </div>
+			</td>
+		</tr>
+		<tr>
+			<td>IEC62196Type1</td>
+			<td>
+			<div>Type 1 connector as defined in the IEC 62196-2 standard. Also called Yazaki after the original manufacturer or SAE J1772 after the standard that first published it. Mostly used in combination with 120V single phase or up to 240V single phase infrastructure.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>IEC62196Type1CCS</td>
+			<td>
+			<div>Type 1 based combo connector as defined in the IEC 62196-3 standard. The connector is based on the&nbsp;Type 1 connector&nbsp;&ndash; as defined in the IEC 62196-2 standard &ndash; with two additional direct current (DC) contacts to allow DC fast charging.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>IEC62196Type2CableAttached</td>
+			<td>
+			<div>Type 2 connector as defined in the IEC 62196-2 standard. Provided as a cable and plug attached to the charging point</div>
+			</td>
+		</tr>
+		<tr>
+			<td>IEC62196Type2Outlet</td>
+			<td>
+			<div>Type 2 connector as defined in the IEC 62196-2 standard. Provided as a socket set into the charging point.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>IEC62196Type2CCS</td>
+			<td>
+			<div>Type 2 based combo connector as defined in the IEC 62196-3 standard. The connector is based on the&nbsp;Type 2 connector&nbsp;&ndash; as defined in the IEC 62196-2 standard &ndash; with two additional direct current (DC) contacts to allow DC fast charging.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>IEC62196Type3</td>
+			<td>
+			<div>Type 3 connector as defined in the IEC 62196-2 standard. Also called Scame after the original manufacturer. Mostly used in combination with up to 240V single phase or up to 420V three phase infrastructure.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>Chademo</td>
+			<td>
+			<div>CHAdeMO connector named after an association formed by the Tokyo Electric Power Company and industrial partners. Because of this is is also known as the TEPCO&#39;s connector. It supports fast DC charging.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>GBT20234Part2</td>
+			<td>
+			<div>China Part 2 connector as defined in the GB/T 20234.2-2015 standard. The name of the standard is sometimes used to refer to the connector (e.g. GB/T part 2 or even GB/T 20234.2). Mostly used in combination with 220V single phase, but can be extended to work with three phase infrastructure.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>GBT20234Part3</td>
+			<td>
+			<div>China Part 3 connector as defined in the GB/T 20234.3-2015 standard. The name of the standard is sometimes used to refer to the connector (e.g. GB/T part 3 or even GB/T 20234.3). It supports fast DC charging.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>IEC60309AC3PhaseRed</td>
+			<td>
+			<div>Industrial Red connector is a connector defined in the IEC 60309 standard. It is sometime referred to as by some combination of the standard, the color and the fact that it supports three phases. The connector usually has the &quot;3P+N+E, 6h&quot; configuration.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>IEC60309AC1PhaseBlue</td>
+			<td>
+			<div>Industrial Blue connector is a connector defined in the IEC 60309 standard. It is sometime referred to as by some combination of the standard, the color and the fact that is a single phase connector. The connector usually has the &quot;P+N+E, 6h&quot; configuration.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>IEC60309DCWhite</td>
+			<td>
+			<div>Industrial White connector is a DC connector defined in the IEC 60309 standard.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>Tesla</td>
+			<td>
+			<div>The Tesla connector is the regionally specific Tesla Supercharger connector. I.e. it refers to either Tesla&#39;s proprietary connector, sometimes referred to as Tesla Port mostly limited to North America or the modified Type 2 (DC over Type 2) in Europe.</div>
+			</td>
+		</tr>
+	</tbody>
+</table>  

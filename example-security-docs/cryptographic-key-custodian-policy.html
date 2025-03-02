@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Cryptographic Key Custodian Policy</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="cryptographic-key-custodian-policy">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/cryptographic-key-custodian-policy.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">Security Policy Examples</h2>
+
+      <h3 class="brown3" tabindex="0">(<i>Company name</i>) Cryptographic Key Custodian Policy</h3>
+
+      <section class="api">
+
+        <h2 id="keycustodianresponsibilities" tabindex="0">Key Custodian Responsibilities - General Information</h2>
+
+        <h4 id="purpose" tabindex="0">Purpose</h4>
+        <p class="indent1">This document defines (<i>Company name</i>)'s policy for the responsibilities of Key Custodians (KC) as required by the Payment Card Industry's Data Security Standard (PCI-DSS).</p>
+
+        <h4 id="applicability" tabindex="0">Applicability</h4>
+        <p class="indent1">This policy applies to all Employees, Contractors, Consultants, Outsourcers and Service Providers, of (<i>Company name</i>), who are designated and required to perform in the capacity of a KC.</p>
+
+        <h4 id="background" tabindex="0">Background</h4>
+        <p class="indent1">The Payment Card Industry Data Security Standard  (PCI-DSS) is an industry regulation for the protection of sensitive credit-card data.  Amongst many security requirements, it mandates the encryption of Personal Account Numbers (PAN) when stored on a computerized device.  Cryptographic encryption keys used for protecting the information are required to be managed with "appropriate key-management" operations as defined in the PCI-DSS Key Management (KM) section of the Requirements and Security Assessment Procedures, Version 3.2, dated April 2016. Reference: <a href="https://www.pcisecuritystandards.org/">PCI Security Standards .org <img class="exlink" alt="external link icon" src="bin/images/link.png" /></a></p>
+
+        <h4 id="policyowner" tabindex="0">Policy Owner</h4>
+        <p class="indent1">The creation, implementation and any subsequent changes to this policy is the responsibility of the Chief Security Officer (CSO). This policy and any subsequent changes must be approved by two or more of the following officers of the company:</p>
+        <ul class="indent">
+          <li><p>Chief Executive Officer</p></li>
+          <li><p>Chief Technology Officer</p></li>
+          <li><p>Chief Financial Officer</p></li>
+          <li><p>Chief Legal Officer</p></li>
+          <li><p>Internal Auditor</p></li>
+        </ul>
+
+        <h4 id="sensitivedata" tabindex="0">Sensitive Data</h4>
+        <p class="indent1">Confidential personal information (to be hereinafter called Sensitive Data) is currently defined by the company to be any one of the following:</p>
+        <ul class="indent">
+          <li><p>Cardholder Data as defined by PCI-SSC</p></li>
+          <li><p>Government issued IDs</p></li>
+          <li><p>Behavioral Data</p></li>
+          <li><p>Account number in combination with any required security code, access code, or password that would permit access to an individual's financial account.</p></li>
+        </ul>
+
+        <h2 id="roles" class="break" tabindex="0">Roles</h2>
+
+        <h4 id="chiefsecurityofficer" tabindex="0">Chief Security Officer</h4>
+        <p class="indent1">The Chief Security Officer (CSO) is the owner of this policy.</p>
+
+        <h4 id="keycustodian" tabindex="0">Key Custodian</h4>
+        <p class="indent1">The Key Custodian (KC) is a part owner of the cryptographic keys established by (<i>Company name</i>) to protect Sensitive Data.</p>
+
+        <h4 id="encryptiondomainadministrator" tabindex="0">Encryption Domain Administrator</h4>
+        <p class="indent1">The Encryption Domain Administrator (EDA or DA) is the technical administrator of the cryptographic keys and data created and maintained by (<i>Company name</i>).</p>
+
+        <h4 id="authorizedusers" tabindex="0">Authorized Users</h4>
+        <p class="indent1">Any human user or software application executing on any device that needs to access Sensitive Data is an Authorized User (AU).  AU's must be explicitly permitted to perform any function within the cryptographic systems established by (<i>Company name</i>).</p>
+
+        <h2 id="resources" tabindex="0">Resources</h2>
+
+        <h4 id="strongauthkeyappliance" tabindex="0">StrongAuth KeyAppliance (SAKA)</h4>
+        <p class="indent1">(<i>Company name</i>) has purchased and deployed the StrongAuth KeyAppliance (SAKA) to comply with PCI-DSS requirements for encryption and key-management (EKM). While many of the statements in this policy document are technology-independent, some statements are specific to the implementation chosen by (<i>Company name</i>) and how they are carried out within the SAKA.</p>
+        <p class="indent1">
+          In the event the SAKA conflicts with this policy, (<i>Company name</i>) will work with the vendor to resolve the differences. Where the SAKA goes above and beyond this policy, all Roles are required to adhere to the requirements of the SAKA implementation.
+        </p>
+
+        <h2 id="processes" tabindex="0">Processes</h2>
+
+        <h4 id="requestingaccesstothesaka" tabindex="0">Requesting Access to the SAKA</h4>
+        <p class="indent1">
+          Access to the SAKA is handled through (<i>Company name</i>)’s standard SDLC process.
+        </p>
+
+        <p class="indent1">During design phase, development will consult with InfoSec and determine if a new encryption domain should be created, or if the requested use requires access to an existing encryption domain.</p>
+
+        <p class="indent1">Once approved by InfoSec and the CTO, a Jira ticket will be created. Creation of the domain will be accomplished by the Domain Administrator, a role currently assigned to the Sr. Director of Operations, or the back-up Domain Administrator, also a member of the Operations team.</p>
+
+        <p class="indent1">The Domain administrator is also responsible for securely distributing the access credentials and making any additional modifications to the domain. The Domain Administrator will follow all standard (<i>Company name</i>) change control procedures.</p>
+
+        <h4 id="revokingaccesstothesaka" tabindex="0">Revoking Access to the SAKA</h4>
+        <p class="indent1">Revoking access to the SAKA also occurs via the standard (<i>Company name</i>) change control system. The Domain Administrator implements the revocation</p>
+
+        <h2 class="break" id="responsibilities" tabindex="0">Responsibilities</h2>
+
+        <h4 id="allemployees" tabindex="0">All Employees</h4>
+        <p class="indent1">All Employees, Contractors, and Consultants employed by (<i>Company name</i>) are required to comply with this policy, without exception.</p>
+
+        <h4 id="chiefsecurityofficer" tabindex="0">Chief Security Officer (CSO)</h4>
+        <p class="indent1">The CSO is responsible for:</p>
+        <ul class="indent">
+          <li><p>Implementing this policy and ensuring it stays current i.e., it must conform to PCI-DSS and other regulations which cover (<i>Company name</i>)'s business operations.</p></li>
+          <li><p>Ensuring that people in Roles related to this policy are trained to comply with this policy.</p></li>
+          <li><p>Providing annual reports to (<i>Company name</i>)'s Audit Committee on compliance to this policy.</p></li>
+        </ul>
+
+        <h4 id="keycustodians" tabindex="0">Key Custodians</h4>
+        <p class="indent1">The KC is responsible for:</p>
+        <ul class="indent">
+          <li><p>Maintaining strict control over the credential/token they are entrusted with to activate the cryptographic module on the SAKA.</p></li>
+          <li><p>Selecting a complex password – alphabet, numeral and special character – for their credential, of a minimum length of eight (8) characters.</p></li>
+          <li><p>Never revealing their credential password to anyone.</p></li>
+          <li>
+            <p>Never handling more than one KC credential at any time.</p>
+            <ul class="indent">
+              <li>Note: There are three (3) KC credentials, denoted by the Red, Green and Blue colored tokens.</li>
+              <li>A KC must never be responsible for more than one colored token credential at any time.</li>
+            </ul>
+          </li>
+          <li><p>Never copying anything on the token intended for their credential.</p></li>
+          <li><p>Never copying their credential file to any computer.</p></li>
+          <li><p>Notifying the CSO of any loss of or compromise to the credential as soon as feasible.</p></li>
+        </ul>
+
+        <h4 id="encryptiondomainadministrator" tabindex="0">Encryption Domain Administrator</h4>
+        <p class="indent1">The EDA/DA is responsible for:</p>
+        <ul class="indent">
+          <li><p>Maintaining strict control over the credential/token they are entrusted with to manage an Encryption Domain on the SAKA.</p></li>
+          <li><p>Selecting a complex password (alphabet, numeral and special character) for their credential of a minimum length of eight (8) characters.</p></li>
+          <li><p>Never revealing their credential password to anyone.</p></li>
+          <li><p>Never handling a KC credential at any time.</p></li>
+          <li><p>Never copying anything on the token intended for their credential.</p></li>
+          <li><p>Never copying their credential file to any computer.</p></li>
+          <li><p>Notifying the CSO of any loss of or compromise to the credential as soon as feasible.</p></li>
+          <li><p>Never granting, revoking, or modifying privileges to the SAKA without complying with the Processes described in this policy.</p></li>
+        </ul>
+
+        <h4 id="internalauditor" tabindex="0">Internal Auditor</h4>
+        <p class="indent1">The IA is responsible for:</p>
+        <ul class="indent">
+          <li><p>Periodically reviewing the SAKA environment for compliance to this policy.</p></li>
+          <li>
+            <p>Notifying the CSO of violations and/or deficiencies in compliance to this policy.</p>
+            <ul class="indent1">
+              <li>In the absence of the CSO not rectifying the violation/deficiency within 60 days, the IA will notify (<i>Company name</i>)'s Audit Committee of the violation and/or deficiency.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h2 id="otherresources" tabindex="0">Related Resources</h2>
+        <ul>
+          <li><p><a href="information-classification-scheme.html">Information Classification Scheme.</a></p></li>
+          <li><p><a href="https://www.pcisecuritystandards.org/pci_security/">Payment Card Industry Data Security Standard <img class="exlink" alt="- This is an external link." src="bin/images/link.png" /></a></p></li>
+          <li><p><a href="https://www.researchgate.net/publication/259532997_SAKA_A_Secure_Authentication_and_Key_Agreement_Protocol_for_GSM_Networks">SAKA (Secure Authentication and Key Agreement Protocol for GSM Networks) Documentation <img class="exlink" alt="- This is an external link." src="bin/images/link.png" /></a></p></li>
+        </ul>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

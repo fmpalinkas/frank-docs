@@ -1,0 +1,1163 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: CWE Top 25 Most Dangerous Software Errors</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" media="screen and print">
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="cwe-25-errors">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/cwe-25-errors.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">CWE (Common Weakness Enumeration)</h2>
+
+      <p class="less">CWE is the acronym for the <a href="https://cwe.mitre.org/" target="_blank">Common Weakness Enumeration <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown" tabindex="0">Top 25 Most Dangerous Software Errors</h3>
+
+      <p>The CWE/SANS Top 25 Most Dangerous Software Errors is a list of the most widespread and critical errors that can lead to serious vulnerabilities in software. They are:</p>
+      <ul>
+        <li><p>Often easy to find, and easy to exploit.</p></li>
+        <li><p>Dangerous because they will frequently allow attackers to completely take over the software, steal data, or prevent the software from working at all.</p></li>
+      </ul>
+
+      <p>For your guide and reference, here are the Top 25 Most Dangerous Software Errors as put forward by CWE.</p>
+
+      <h5 class="stories"><span class="stories2 click hide1">Click a <span class="aablue"><strong><span>&#9654;</span> CWE Error</strong></span> to expand/collapse it.</span></h5>
+
+      <section class="api indent">
+
+        <details tabindex="0">
+
+          <summary tabindex="0">
+            1. CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')
+          </summary>
+
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>If attackers can influence the SQL that you use to communicate with your database, then suddenly all your data belongs to them. If you use SQL queries in security controls such as authentication, attackers could alter the logic of those queries to bypass security. They could modify the queries to steal, corrupt, or otherwise change your underlying data. They'll even steal data one byte at a time if they have to, and they have the patience and know-how to do so. SQL injection is responsible for the compromises of many high-profile organizations, including Sony Pictures, PBS, MySQL.com, security company HBGary Federal, and many others.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Data loss, Security bypass</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/89.html" target="_blank">CWE 89 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            2. CWE-78: Improper Neutralization of Special Elements used in an OS Command ("OS Command Injection")
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Your software is often the bridge between an outsider on the network and the internals of your operating system. When you invoke another program on the operating system, but you allow untrusted inputs to be fed into the command string that you generate for executing that program, then you are inviting attackers to cross that bridge into a land of riches by executing their own commands instead of yours.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Code execution</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/78.html" target="_blank">CWE-78 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            3. CWE-120: Buffer Copy without Checking Size of Input ("Classic Buffer Overflow")
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Buffer overflows is a reminder of that law of physics that says: if you try to put more stuff into a container than it can hold, you're going to make a mess. The scourge of C applications for decades, buffer overflows have been remarkably resistant to elimination. However, copying an untrusted input without checking the size of that input is the simplest error to make in a time when there are much more interesting mistakes to avoid. That's why this type of buffer overflow is often referred to as "classic." It's decades old, and it's typically one of the first things you learn about in Secure Programming 101.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Code execution, Denial of service, Data loss</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="" target="_blank"> <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            4. CWE-79: Improper Neutralization of Input During Web Page Generation ("Cross-site Scripting")
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Cross-site scripting (XSS) is one of the most prevalent, obstinate, and dangerous vulnerabilities in web applications. It's pretty much inevitable when you combine the stateless nature of HTTP, the mixture of data and script in HTML, lots of data passing between web sites, diverse encoding schemes, and feature-rich web browsers. If you're not careful, attackers can inject Javascript or other browser-executable content into a web page that your application generates. Your web page is then accessed by other users, whose browsers execute that malicious script as if it came from you (because, after all, it "did" come from you). Suddenly, your web site is serving code that you didn't write. The attacker can use a variety of techniques to get the input directly into your server, or use an unwitting victim as the middle man in a technical version of the "why do you keep hitting yourself?" game.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Code execution, Security bypass</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/79.html" target="_blank">CWE-79 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            5. CWE-306: Missing Authentication for Critical Function
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd>
+                <p>
+                  In countless action movies, the villain breaks into a high-security building by crawling through heating ducts or pipes, scaling elevator shafts, or hiding under a moving cart. This works because the pathway into the building doesn't have all those nosy security guards asking for identification. Software may expose certain critical functionality with the assumption that nobody would think of trying to do anything but break in through the front door. But attackers know how to case a joint and figure out alternate ways of getting into a system.
+                </p>
+              </dd>
+              <dd>
+                <table>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>Common</td>
+                    </tr>
+
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low to High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Sometimes</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Security bypass</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/306.html" target="_blank">CWE-306 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            6. CWE-862: Missing Authorization
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Suppose you're hosting a house party for a few close friends and their guests. You invite everyone into your living room, but while you're catching up with one of your friends, one of the guests raids your fridge, peeks into your medicine cabinet, and ponders what you've hidden in the nightstand next to your bed. Software faces similar authorization problems that could lead to more dire consequences. If you don't ensure that your software's users are only doing what they're allowed to, then attackers will try to exploit your improper authorization and exercise unauthorized functionality that you only intended for restricted users. In May 2011, Citigroup revealed that it had been compromised by hackers who were able to steal details of hundreds of thousands of bank accounts by changing the account information that was present in fields in the URL; authorization would check that the user had the rights to access the account being specified. Earlier, a similar missing-authorization attack was used to steal private information of iPad owners from an AT&T site.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low to Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Security bypass</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/862.html" target="_blank">CWE-862 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            7. CWE-798: Use of Hard-coded Credentials
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Hard-coding a secret password or cryptograpic key into your program is bad manners, even though it makes it extremely convenient - for skilled reverse engineers. While it might shrink your testing and support budgets, it can reduce the security of your customers to dust. If the password is the same across all your software, then every customer becomes vulnerable if (rather, when) your password becomes known. Because it's hard-coded, it's usually a huge pain for sysadmins to fix. And you know how much they love inconvenience at 2 AM when their network's being hacked - about as much as you'll love responding to hordes of angry customers and reams of bad press if your little secret should get out. Most of the CWE Top 25 can be explained away as an honest mistake; for this issue, though, many customers won't see it that way. The high-profile Stuxnet worm, which caused operational problems in an Iranian nuclear site, used hard-coded credentials in order to spread. Another way that hard-coded credentials arise is through unencrypted or obfuscated storage in a configuration file, registry key, or other location that is only intended to be accessible to an administrator. While this is much more polite than burying it in a binary program where it can't be modified, it becomes a Bad Idea to expose this file to outsiders through lax permissions or other means.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium to High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Rarely</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Security bypass</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/798.html" target="_blank">CWE-798 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            8. CWE-311: Missing Encryption of Sensitive Data
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Whenever sensitive data is being stored or transmitted anywhere outside of your control, attackers may be looking for ways to get to it. Thieves could be anywhere - sniffing your packets, reading your databases, and sifting through your file systems. If your software sends sensitive information across a network, such as private data or authentication credentials, that information crosses many different nodes in transit to its final destination. Attackers can sniff this data right off the wire, and it doesn't require a lot of effort. All they need to do is control one node along the path to the final destination, control any node within the same networks of those transit nodes, or plug into an available interface. If your software stores sensitive information on a local file or database, there may be other ways for attackers to get at the file. They may benefit from lax permissions, exploitation of another vulnerability, or physical theft of the disk. You know those massive credit card thefts you keep hearing about? Many of them are due to unencrypted storage.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Sometimes</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Data loss</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/311.html" target="_blank">CWE-311 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            9. CWE-434: Unrestricted Upload of File with Dangerous Type
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>You may think you're allowing uploads of innocent images (rather, images that won't damage your system - the Interweb's not so innocent in some places). But the name of the uploaded file could contain a dangerous extension such as .php instead of .gif, or other information (such as content type) may cause your server to treat the image like a big honkin' program. So, instead of seeing the latest paparazzi shot of your favorite Hollywood celebrity in a compromising position, you'll be the one whose server gets compromised.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>Common</td>
+                    </tr>
+
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium</td>
+                    </tr>
+
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Sometimes</td>
+                    </tr>
+                    <tr>
+
+                      <th scope="row">Consequences</th>
+                      <td>Code execution</td>
+                    </tr>
+
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>Medium</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/434.html" target="_blank">CWE-434 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            10. CWE-807: Reliance on Untrusted Inputs in a Security Decision
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>In countries where there is a minimum age for purchasing alcohol, the bartender is typically expected to verify the purchaser's age by checking a driver's license or other legally acceptable proof of age. But if somebody looks old enough to drink, then the bartender may skip checking the license altogether. This is a good thing for underage customers who happen to look older. Driver's licenses may require close scrutiny to identify fake licenses, or to determine if a person is using someone else's license. Software developers often rely on untrusted inputs in the same way, and when these inputs are used to decide whether to grant access to restricted resources, trouble is just around the corner.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Security bypass</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/807.html" target="_blank">CWE-807 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            11. CWE-250: Execution with Unnecessary Privileges
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Your software may need special privileges to perform certain operations, but wielding those privileges longer than necessary can be extremely risky. When running with extra privileges, your application has access to resources that the application's user can't directly reach. For example, you might intentionally launch a separate program, and that program allows its user to specify a file to open; this feature is frequently present in help utilities or editors. The user can access unauthorized files through the launched program, thanks to those extra privileges. Command execution can happen in a similar fashion. Even if you don't launch other programs, additional vulnerabilities in your software could have more serious consequences than if it were running at a lower privilege level.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Sometimes</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Code execution</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/250.html" target="_blank">CWE-250 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            12. CWE-352: Cross-Site Request Forgery (CSRF)
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Cross-site request forgery occurs when the attacker tricks a user into activating a request that goes to your site. Thanks to scripting and the way the web works in general, the user might not even be aware that the request is being sent. But once the request gets to your server, it looks as if it came from the user, not the attacker. This might not seem like a big deal, but the attacker has essentially masqueraded as a legitimate user and gained all the potential access that the user has. This is especially handy when the user has administrator privileges, resulting in a complete compromise of your application's functionality. When combined with XSS, the result can be extensive and devastating. If you've heard about XSS worms that stampede through very large web sites in a matter of minutes (like Facebook), there's usually CSRF feeding them.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Data loss, Code execution</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>Medium</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/352.html" target="_blank">CWE-352 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            13. CWE-22: Improper Limitation of a Pathname to a Restricted Directory ("Path Traversal")
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>While data is often exchanged using files, sometimes you don't intend to expose every file on your system while doing so. When you use an outsider's input while constructing a filename, the resulting path could point outside of the intended directory. An attacker could combine multiple ".." or similar sequences to cause the operating system to navigate out of the restricted directory, and into the rest of the system.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>Widespread</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Code execution, Data loss, Denial of service</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/22.html" target="_blank">CWE-22 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            14. CWE-494: Download of Code Without Integrity Check
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>If you download code and execute it, you're trusting that the source of that code isn't malicious. Maybe you only access a download site that you trust, but attackers can perform all sorts of tricks to modify that code before it reaches you. They can hack the download site, impersonate it with DNS spoofing or cache poisoning, convince the system to redirect to a different site, or even modify the code in transit as it crosses the network. This scenario even applies to cases in which your own product downloads and installs its own updates. When this happens, your software will wind up running code that it doesn't expect, which is bad for you but great for attackers.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium to High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Rarely</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Code execution</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>Low</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/494.html" target="_blank">CWE-494 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            15.	CWE-863: Incorrect Authorization
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>While the lack of authorization is more dangerous, incorrect authorization can be just as problematic. Developers may attempt to control access to certain resources, but implement it in a way that can be bypassed. For example, once a person has logged in to a web application, the developer may store the permissions in a cookie. By modifying the cookie, the attacker can access other resources. Alternately, the developer might perform authorization by delivering code that gets executed in the web client, but an attacker could use a customized client that removes the check entirely.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low to Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Security bypass</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/863.html" target="_blank">CWE-863 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            16. CWE-829: Inclusion of Functionality from Untrusted Control Sphere
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>The idea seems simple enough: you can make a lot of smaller parts of a document (or program), then combine them all together into one big document (or program) by "including" or "requiring" those smaller pieces. This is a common enough way to build programs. Combine this with the common tendency to allow attackers to influence the location of some of these pieces - perhaps even from the attacker's own server - then suddenly you're importing somebody else's code.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low to Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Security bypass</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High/td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/829.html" target="_blank">CWE-829 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            17. CWE-732: Incorrect Permission Assignment for Critical Resource
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>It's rude to take something without asking permission first, but impolite users (i.e., attackers) are willing to spend a little time to see what they can get away with. If you have critical programs, data stores, or configuration files with permissions that make your resources readable or writable by the world - well, that's just what they'll become. While this issue might not be considered during implementation or design, sometimes that's where the solution needs to be applied. Leaving it up to a harried sysadmin to notice and make the appropriate changes is far from optimal, and sometimes impossible.</p></dd>
+              <dd>
+
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low to High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Data loss, Code execution</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/732.html" target="_blank">CWE-732 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            18. CWE-676: Use of Potentially Dangerous Function
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Safety is critical when handling power tools. The programmer's toolbox is chock full of power tools, including library or API functions that make assumptions about how they will be used, with no guarantees of safety if they are abused. If potentially-dangerous functions are not used properly, then things can get real messy real quick.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium</td>
+                    </tr>
+
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Rarely</td>
+                    </tr>
+
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Data loss, Code execution</td>
+                    </tr>
+
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/676.html" target="_blank">CWE-676 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            19. CWE-327: Use of a Broken or Risky Cryptographic Algorithm
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>If you are handling sensitive data or you need to protect a communication channel, you may be using cryptography to prevent attackers from reading it. You may be tempted to develop your own encryption scheme in the hopes of making it difficult for attackers to crack. This kind of grow-your-own cryptography is a welcome sight to attackers. Cryptography is just plain hard. If brilliant mathematicians and computer scientists worldwide can't get it right (and they're always breaking their own stuff), then neither can you. You might think you created a brand-new algorithm that nobody will figure out, but it's more likely that you're reinventing a wheel that falls off just before the parade is about to start.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium to High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Rarely</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Data loss, Security bypass</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>Medium</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/327.html" target="_blank">CWE-327 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            20. CWE-131: Incorrect Calculation of Buffer Size
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>In languages such as C, where memory management is the programmer's responsibility, there are many opportunities for error. If the programmer does not properly calculate the size of a buffer, then the buffer may be too small to contain the data that the programmer plans to write - even if the input was properly validated. Any number of problems could produce the incorrect calculation, but when all is said and done, you're going to run head-first into the dreaded buffer overflow.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Often</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Code execution, Denial of service, Data loss</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy to Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/131.html" target="_blank">CWE-131 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            21. CWE-307: Improper Restriction of Excessive Authentication Attempts
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Attackers may try to break into your account by writing programs that repeatedly guess different passwords. Without some kind of protection against brute force techniques, the attack will eventually succeed. You don't have to be advanced to be persistent.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Sometimes</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Code execution, Data loss, Denial of service</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>Medium</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/307.html" target="_blank">CWE-307 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            22. CWE-601: URL Redirection to Untrusted Site ("Open Redirect")
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p></p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Sometimes</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Code execution, Data loss, Denial of service</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>Medium</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/601.html" target="_blank">CWE-601 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            23. CWE-134: Uncontrolled Format String
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>The mantra is that successful relationships depend on communicating clearly, and this applies to software, too. Format strings are often used to send or receive well-formed data. By controlling a format string, the attacker can control the input or output in unexpected ways - sometimes, even, to execute code.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Sometimes</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Code execution, Data loss, Denial of service</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>Medium</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/134.html" target="_blank">CWE-134 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            24. CWE-190: Integer Overflow or Wraparound
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p></p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>Common</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Low</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Sometimes</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Denial of service, Code execution, Data loss</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Easy</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/190.html" target="_blank">CWE-190 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <details>
+          <summary tabindex="0">
+            25.	CWE-759: Use of a One-Way Hash without a Salt
+          </summary>
+          <section class="api">
+            <dl>
+              <dt>Error Description</dt>
+              <dd><p>Salt is good for your password security. Instead of storing passwords in plain text, a common practice is to apply a one-way hash, which effectively randomizes the output and can make it more difficult if (or when?) attackers gain access to your password database. If you don't add a little salt to your hash, then the health of your application is in danger.</p></dd>
+              <dd>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="row">Weakness Prevalence</th>
+                      <td>Medium</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Remediation Cost</th>
+                      <td>Medium to High</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attack Frequency</th>
+                      <td>Rarely</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Consequences</th>
+                      <td>Security bypass</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Ease of Detection</th>
+                      <td>Moderate</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Attacker Awareness</th>
+                      <td>High</td>
+                    </tr>
+                  </thead>
+                </table>
+              </dd>
+              <dd>See: <a href="http://cwe.mitre.org/data/definitions/759.html" target="_blank">CWE-759 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></dd>
+            </dl>
+          </section>
+        </details>
+
+        <h3 tabindex="0">References</h3>
+
+        <ul>
+          <li><p><a href="https://cwe.mitre.org/" target="_blank">CWE Home <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+        </ul>
+      </section>
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Proactive Control 9. Implement Secure Logging and Monitoring</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-controls-9-implement-secure-logging-and-monitoring">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/9-implement-secure.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">OWASP Top 10 Proactive Security Controls v3.0</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">9. Implement Secure Logging and Monitoring</h3>
+
+      <section class="api">
+
+        <dl>
+          <dt tabindex="0">Control Description</dt>
+          <dd>
+            <p>
+              Logging is a concept that most developers already use for debugging and diagnostic
+              purposes.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Security logging is an equally basic concept: to log security information during the
+                  runtime operation of an application.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Monitoring is the live review of application and security
+                  logs using various forms of automation.
+                </p>
+              </li>
+              <li>
+                <p>
+                  The same tools and patterns can be used for
+                  operations, debugging and security purposes.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Benefits of Security Logging</dt>
+          <dd>
+            <p>
+              Security logging can be used for:
+            </p>
+            <ol>
+              <li><p>Feeding intrusion detection systems.</p></li>
+              <li><p>Forensic analysis and investigations.</p></li>
+              <li><p>Satisfying regulatory compliance requirements.</p></li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Security Logging Implementation</dt>
+          <dd>
+            <p>The following is a list of security logging implementation best practices.</p>
+            <ol>
+              <li>
+                <p>
+                  Follow a common logging format and approach within the system and across systems
+                  of an organization.
+                </p>
+                <ol>
+                  <li>
+                    <p>
+                      An example of a common logging framework is the Apache
+                      Logging Services which helps provide logging consistency between Java, PHP, .NET,
+                      and C++ applications.
+                    </p>
+                  </li>
+                </ol>
+              </li>
+              <li>
+                <p>
+                  Do not log too much or too little. For example, make sure to always log the
+                  timestamp and identifying information including the source IP and user-id, but be
+                  careful not to log private or confidential data.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Pay close attention to time syncing across nodes to ensure that timestamps are
+                  consistent.
+                </p>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Logging for Intrusion Detection and Response</dt>
+          <dd>
+            <p>
+              Use logging to identify activity that indicates that a user is behaving maliciously. Potentially
+              malicious activity to log includes:
+            </p>
+            <ul>
+              <li><p>Submitted data that is outside of an expected numeric range.</p></li>
+              <li>
+                <p>
+                  Submitted data that involves changes to data that should not be modifiable (select
+                  list, checkbox or other limited entry component).
+                </p>
+              </li>
+              <li><p>Requests that violate server-side access control rules.</p></li>
+            </ul>
+            <p>
+              When your application encounters such activity, your application should at the very least log
+              the activity and mark it as a high severity issue.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Ideally, your application should also respond
+                  to a possible identified attack, by for example invalidating the user’s session and locking the
+                  user's account.
+                </p>
+              </li>
+              <li>
+                <p>
+                  The response mechanisms allows the software to react in realtime to possible
+                  identified attacks.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Secure Logging Design</dt>
+          <dd>
+            <p>
+              Logging solutions must be built and managed in a secure way. Secure Logging design may include
+              the following:
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Encode and validate any dangerous characters before logging to prevent log injection
+                  or log forging attacks.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Do not log sensitive information.
+                </p>
+                <ul>
+                  <li>
+                    <p>
+                      For example, do not log password, session ID, credit
+                      cards, or social security numbers.
+                    </p>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p>
+                  Protect log integrity.
+                </p>
+                <ul>
+                  <li><p>An attacker may attempt to tamper with the logs.</p></li>
+                  <li>
+                    <p>
+                      Therefore, the
+                      permission of log files and log changes audit should be considered.
+                    </p>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p>
+                  Forward logs from distributed systems to a central, secure logging service.
+                </p>
+                <ul>
+                  <li>
+                    <p>
+                      This will
+                      ensure log data cannot be lost if one node is compromised.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      This also allows for
+                      centralized monitoring.
+                    </p>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Tools</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://www.owasp.org/index.php/OWASP_Security_Logging_Project" target="_blank">OWASP Security Logging Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://logging.apache.org/" target="_blank">Apache Logging Services <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">References</dt>
+          <dd>
+            <ul>
+              <li>
+                <p>
+                  <a href="" target="_blank">OWASP AppSensor Detection Points <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> - Detection points used to identify a malicious
+                  user probing for vulnerabilities or weaknesses in application.
+                </p>
+              </li>
+              <li><p><a href="https://www.owasp.org/index.php/Log_Injection" target="_blank">OWASP Log injection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php?title=Log_Forging&redirect=no" target="_blank">OWASP Log Forging <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Logging_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Logging<img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> - How to properly implement logging in an application</p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Error_Handling,_Auditing_and_Logging" target="_blank">OWASP Development Guide: Logging <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Reviewing_Code_for_Logging_Issues" target="_blank">OWASP Code Review Guide: Reviewing Code for Logging Issues <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

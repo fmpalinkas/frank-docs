@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Proactive Control 2. Leverage Security Frameworks and Libraries</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-controls-2-leverage-security-frameworks-and-libraries">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/2-leverage-security.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">OWASP Top 10 Proactive Security Controls v3.0</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">2. Leverage Security Frameworks &amp; Libraries</h3>
+
+      <section class="api">
+
+        <dl>
+          <dt tabindex="0">Control Description</dt>
+          <dd>
+            <p>
+              Secure coding libraries and software frameworks with embedded security help software
+              developers guard against security-related design and implementation flaws.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  A developer
+                  writing an application from scratch might not have sufficient knowledge, time, or budget to
+                  properly implement or maintain security features.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Leveraging security frameworks helps
+                  accomplish security goals more efficiently and accurately.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Implementation Best Practices</dt>
+          <dd>
+            <p>
+              When incorporating third party libraries or frameworks into your software, it is important to
+              consider the following best practices:
+            </p>
+            <ol>
+              <li>
+                <p>
+                  Use libraries and frameworks from trusted sources that are actively maintained and
+                  widely used by many applications.
+                </p>
+              </li>
+              <li><p>Create and maintain an inventory catalog of all the third party libraries.</p></li>
+              <li>
+                <p>
+                  Proactively keep libraries and components up to date.
+                </p>
+                <ol>
+                  <li>
+                    <p>
+                      Use a tool like OWASP
+                      Dependency Check and Retire.JS to identify project dependencies and check if there
+                      are any known, publicly disclosed vulnerabilities for all third party code.
+                    </p>
+                  </li>
+                </ol>
+              <li>
+                <p>
+                  Reduce the attack surface by encapsulating the library and expose only the required
+                  behavior into your software.
+                </p>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Vulnerabilities Prevented</dt>
+          <dd>
+            <p>
+              Secure frameworks and libraries can help to prevent a wide range of web application
+              vulnerabilities.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  It is critical to keep these frameworks and libraries up to date as described in
+                  the <a href="owasp-9-using-components-with-known-vulnerabilities.html" target="_blank">Using Components with Known Vulnerabilities</a> Top Ten 2017 risk.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Tools</dt>
+          <dd>
+            <ul>
+              <li>
+                <p>
+                  <a href="https://www.owasp.org/index.php/OWASP_Dependency_Check" target="_blank">OWASP Dependency Check <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>: Identifies project dependencies and checks for publicly
+                  disclosed vulnerabilities.
+                </p>
+              </li>
+              <li><p><a href="https://retirejs.github.io/retire.js/" target="_blank">Retire.JS scanner <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>: This is for JavaScript libraries.</p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

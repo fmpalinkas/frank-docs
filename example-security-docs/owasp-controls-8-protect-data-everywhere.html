@@ -1,0 +1,333 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Proactive Control 8. Protect Data Everywhere</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-controls-8-protect-data-everywhere">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/8-protect-data.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">OWASP Top 10 Proactive Security Controls v3.0</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">8. Protect Data Everywhere</h3>
+
+      <section class="api">
+
+        <dl>
+          <dt tabindex="0">Control Description</dt>
+          <dd>
+            <p>
+              Sensitive data such as passwords, credit card numbers, health records, personal information
+              and business secrets require extra protection, particularly if that data falls under privacy laws
+              (EU's General Data Protection Regulation GDPR), financial data protection rules such as PCI
+              Data Security Standard (PCI DSS) or other regulations.
+            </p>
+            <p>
+              Attackers can steal data from web and webservice applications in a number of ways.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  For
+                  example, if sensitive information in sent over the internet without communications security,
+                  then an attacker on a shared wireless connection could see and steal another user’s data.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Also, an attacker could use SQL Injection to steal passwords and other credentials from an
+                  applications database and expose that information to the public.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Data Classification</dt>
+          <dd>
+            <p>
+              It is critical to classify data in your system and determine which level of sensitivity each piece
+              of data belongs to.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Each data category can then be mapped to protection rules necessary for
+                  each level of sensitivity.
+                </p>
+              </li>
+              <li>
+                <p>
+                  For example, public marketing information that is not sensitive may
+                  be categorized as public data which is ok to place on the public website.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Credit card numbers
+                  may be classified as private user data which may need to be encrypted while stored or in
+                  transit.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Encrypting Data in Transit</dt>
+          <dd>
+            <p>
+              When transmitting sensitive data over any network, end-to-end communications security (or
+              encryption-in-transit) of some kind should be considered.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  TLS is by far the most common and
+                  widely supported cryptographic protocol for communications security.
+                </p>
+              </li>
+              <li>
+                <p>
+                  It is used by many
+                  types of applications (web, webservice, mobile) to communicate over a network in a secure
+                  fashion.
+                </p>
+              </li>
+              <li>
+                <p>
+                  TLS must be properly configured in a variety of ways in order to properly defend
+                  secure communications.
+                </p>
+              </li>
+            </ul>
+
+            <p>
+              The primary benefit of transport layer security is the protection of web application data from
+              unauthorized disclosure and modification when it is transmitted between clients (web
+              browsers) and the web application server, and between the web application server and back
+              end and other non-browser based enterprise components.
+            </p>
+          </dd>
+
+          <dt tabindex="0">Encrypting Data at Rest</dt>
+          <dd>
+            <p>
+              The first rule of sensitive data management is to avoid storing sensitive data when at all
+              possible.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  If you must store sensitive data then make sure it's cryptographically protected in
+                  some way to avoid unauthorized disclosure and modification.
+                </p>
+              </li>
+            </ul>
+
+            <p>
+              Cryptography (or crypto) is one of the more advanced topics of information security, and one
+              whose understanding requires the most schooling and experience.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  It is difficult to get right
+                  because there are many approaches to encryption, each with advantages and disadvantages
+                  that need to be thoroughly understood by web solution architects and developers.
+                </p>
+              </li>
+              <li>
+                <p>
+                  In
+                  addition, serious cryptography research is typically based in advanced mathematics and
+                  number theory, providing a serious barrier to entry.
+                </p>
+              </li>
+            </ul>
+
+            <p>
+              Instead of building cryptographic capability from scratch, it is strongly recommended that
+              peer reviewed and open solutions be used, such as the Google Tink project, Libsodium, and
+              secure storage capability built into many software frameworks and cloud services.
+            </p>
+          </dd>
+
+          <dt tabindex="0">Mobile Application: Secure Local Storage</dt>
+          <dd>
+            <p>
+              Mobile applications are at particular risk of data leakage because mobile devices are regularly
+              lost or stolen yet contain sensitive data.
+            </p>
+            <p>
+              As a general rule, only the minimum data required should be stored on the mobile device.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  But if you must store sensitive data on a mobile device, then sensitive data should be stored
+                  within each mobile operating systems specific data storage directory.
+                </p>
+              </li>
+              <li>
+                <p>
+                  On Android this will be
+                  the Android keystore and on iOS this will be the iOS keychain.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Key Lifecycle</dt>
+          <dd>
+            <p>
+              Secret keys are used in applications number of sensitive functions.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  For example, secret keys
+                  can be used to to sign JWTs, protect credit cards, provide various forms of authentication as
+                  well as facilitation other sensitive security features.
+                </p>
+              </li>
+              <li>
+                <p>
+                  In managing keys, a number of rules
+                  should be followed including:
+                </p>
+                <ul>
+                  <li><p>Ensure that any secret key is protected from unauthorized access.</p></li>
+                  <li><p>Store keys in a proper secrets vault (as described below).</p></li>
+                  <li><p>Use independent keys when multiple keys are required.</p></li>
+                  <li><p>Build support for changing algorithms and keys when needed.</p></li>
+                  <li><p>Build application features to handle a key rotation.</p></li>
+                </ul>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Application Secrets Management</dt>
+          <dd>
+            <p>
+              Applications contain numerous "secrets" that are needed for security operations.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  These
+                  include certificates, SQL connection passwords, third party service account credentials,
+                  passwords, SSH keys, encryption keys and more.
+                </p>
+              </li>
+              <li>
+                <p>
+                  The unauthorized disclosure or modification
+                  of these secrets could lead to complete system compromise.
+                </p>
+              </li>
+              <li>
+                <p>
+                  In managing application secrets,
+                  consider the following.
+                </p>
+                <ul>
+                  <li>
+                    <p>
+                      Don’t store secrets in code, config files or pass them through environment variables.
+                      Use tools like GitRob or TruffleHog to scan code repos for secrets.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Keep keys and your other application-level secrets in a secrets vault like KeyWhiz or
+                      Hashicorp's Vault project or Amazon KMS to provide secure storage and access to
+                      application-level secrets at run-time.
+                    </p>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Vulnerabilities Prevented</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://www.owasp.org/index.php/Top_10-2017_A3-Sensitive_Data_Exposure" target="_blank">OWASP Top 10 2017 - A3: Sensitive Data Exposure <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Mobile_Top_10_2016-M2-Insecure_Data_Storage" target="_blank">OWASP Mobile Top 10 2016-M2 Insecure Data Storage <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Tools</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://github.com/nabla-c0d3/sslyze" target="_blank">SSLyze <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> - SSL configuration scanning library and CLI tool</p></li>
+              <li><p><a href="https://ssllabs.com/" target="_blank">SSLLabs <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> - Free service for scanning and checking TLS/SSL configuration</p></li>
+              <li><p><a href="https://www.owasp.org/index.php/O-Saft" target="_blank">OWASP O-Saft TLS Tool <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> - TLS connection testing tool</p></li>
+              <li>
+                <p>
+                  <a href="https://github.com/michenriksen/gitrob" target="_blank">GitRob <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> - Command line tool to find sensitive information in publicly available files on
+                  GitHub
+                </p>
+              </li>
+              <li><p><a href="https://github.com/dxa4481/truffleHog" target="_blank">TruffleHog <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> - Searches for secrets accidentally committed</p></li>
+              <li><p><a href="https://square.github.io/keywhiz/" target="_blank">KeyWhiz <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> - Secrets manager</p></li>
+              <li><p><a href="https://www.vaultproject.io/" target="_blank">Hashicorp Vault <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> - Secrets manager</p></li>
+              <li><p><a href="https://aws.amazon.com/kms/" target="_blank">Amazon KMS <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> - Manage keys on Amazon AWS</p></li>
+            </ul>
+          </dd>
+
+         
+
+          <dt tabindex="0">Related References</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Transport Layer Protection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://blog.qualys.com/ssllabs/2016/06/27/new-release-of-ssltls-deployment-best-practices" target="_blank">Ivan Ristic: SSL/TLS Deployment Best Practices <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: HSTS <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Cryptographic_Storage_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Cryptographic Storage <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Password Storage <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Mobile_Top_10_2012-M1_Insecure_Data_Storage" target="_blank">OWASP Cheat Sheet: IOS Developer - Insecure Data Storage <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Testing_for_SSL-TLS_(OWASP-CM-001)" target="_blank">OWASP Testing Guide: Testing for TLS <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

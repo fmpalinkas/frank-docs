@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Countermeasure 10. Insecure Data Transfer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-privacy-10-insecure-data-transfer">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/10-insecure-data-transfer.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">OWASP Top 10 Privacy Risk Countermeasures</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">10. Insecure Data Transfer</h3>
+
+      <section class="api">
+
+        <dl>
+          <dt tabindex="0">Risk Description</dt>
+          <dd>
+            <p>
+              Failure to provide data transfers over
+              encrypted and secured channels which would
+              exclude the possibility of data leakage.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Failure to enforce mechanisms limiting the
+                  leak surface, e.g., allowing the inference of
+                  any user data out of the mechanics of Web
+                  application operation.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">How to check?</dt>
+          <dd>
+            <ol>
+              <li>
+                <p>
+                  What are the policies for protecting data in
+                  transit?
+                </p>
+              </li>
+              <li><p>Is data encrypted during transfer?</p></li>
+              <li><p>Are secure protocols and algorithms used?</p></li>
+              <li>
+                <p>
+                  Are privacy-friendly
+                  protocols available for
+                  transfer?
+                </p>
+              </li>
+              <li>
+                <p>
+                  Are private protocols enforced where
+                  appropriate (e.g., login is only available
+                  over HTTPS, and sensitive records only
+                  accessible by TLS or SFTP)?
+                </p>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Countermeasures</dt>
+          <dd>
+            <ol>
+              <li>
+                <p>
+                  Always send personal data by secure
+                  protocols, i.e., not an insecure protocol like
+                  ordinary email, many instant messaging
+                  clients, FTP.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Configure transfer protocols so they are
+                  secure enough for the types of data being
+                  transmitted.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Allow connections using the best available
+                  secure protocols, where possible.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Disallow weak protocols for sensitive
+                  information.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Avoid personal information in the URL,
+                  especially if the data transfer is
+                  unencrypted.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Activate privacy in protocols (e.g. Privacy
+                  Extensions in IPv6).
+                </p>
+              </li>
+              <li><p>Support TLS/DTLS, do not support SSLv3.</p></li>
+              <li>
+                <p>
+                  Use ECDHE and GCM ciphers, do not
+                  support static RSA key exchange and
+                  CBCbased
+                  ciphers.
+                </p>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Examples</dt>
+          <dd>
+            <ol>
+              <li>
+                <p>
+                  Configure services to disable broken
+                  security protocols such as SSLv3.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Configure services to enable the latest
+                  secure protocols.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Enforce HTTPS for the entire Web
+                  application session, from first visit to login
+                  page to completion of logout.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Disable vulnerable file transfer services
+                  such as Telnet and FTP on file servers.
+                  Enable secure transfer protocols instead.
+                </p>
+              </li>
+              <li>
+                <p>
+                  About the insecurity of current internet technologies
+                  and the initiative to build new ones: see <a href="http://youbroketheinternet.org/" target="_blank">You Broke the Internet.org <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>
+                </p>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">References</dt>
+          <dd>
+            <ul>
+              <li>
+                <p>
+                  <a href="http://security.stackexchange.com/questions/7790/
+guidanceforimplementorsofhttpsonlysitesserv
+erside" target="_blank">Guidance for implementors of HTTPS-only sites (Server side)<img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <a href="https://www.computerworld.com/article/3180690/security/its-time-to-turn-on-https-the-benefits-are-well-worth-the-effort.html" target="_blank">
+                    It's time to turn on HTTPS: The benefits are well worth the effort <img src="bin/images/link.png" class="exlink" alt="- This is an external link." />
+                  </a>
+                </p>
+              </li>
+              <li><p><a href="https://www.heise.de/netze/rfc/rfcs/rfc4941.shtml" target="_blank">Privacy Extensions in IPv6 <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li>
+                <p>
+                  <a href="https://mentor.ieee.org/802-ec/dcn/14/ec-14-0043-01-00EC-internet-privacy-tutorial.pdf" target="_blank">
+                    Background information: IEEE 802 Tutorial about
+                    Designing Privacy into Internet Protocols (July
+                    2014) <img src="bin/images/link.png" class="exlink" alt="- This is an external link." />
+                  </a>
+                </p>
+              </li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

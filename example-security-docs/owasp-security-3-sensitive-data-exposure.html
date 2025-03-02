@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: OWASP: 3. Sensitive Data Exposure</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-security-3-sensitive-data-exposure">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/3-sensitive-data-exposure.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 tabindex="0" id="headline">OWASP Top 10 Web App Security Risks - 2017</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">3. Sensitive Data Exposure</h3>
+
+      <section class="api">
+        <dl>
+          <dt tabindex="0">Risk Description</dt>
+          <dd>
+            <p>Many web applications and APIs do not properly protect sensitive data, such as financial, healthcare, and PII.</p>
+            <ul>
+              <li><p>Attackers may steal or modify such weakly protected data to conduct credit card fraud, identity theft, or other crimes.</p></li>
+              <li><p>Sensitive data may be compromised without extra protection, such as encryption at rest or in transit, and requires special precautions when exchanged with the browser.</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Attack Vectors</dt>
+          <dd>
+            <p>Rather than directly attacking crypto, attackers steal keys, execute man-in-the-middle attacks, or steal clear text data off the server, while in transit, or from the user’s client, e.g., browser.</p>
+            <ul>
+              <li><p>A manual attack is generally required.</p></li>
+              <li><p>Previously retrieved password databases could be brute forced by Graphics Processing Units (GPUs).</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Security Weakness</dt>
+          <dd>
+            <p>Over the last few years, this has been the most common impactful attack.</p>
+            <ul>
+              <li><p>The most common flaw is simply not encrypting sensitive data.</p></li>
+              <li><p>When crypto is employed, weak key generation and management, and weak algorithm, protocol and cipher usage is common, particularly for weak password hashing storage techniques.</p></li>
+              <li><p>For data in transit, server side weaknesses are mainly easy to detect, but hard for data at rest.</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Impacts</dt>
+          <dd>
+            <p>Failure frequently compromises all data that should have been protected. Typically, this information includes sensitive personal information (PII) data such as health records, credentials, personal data, and credit cards, which often require protection as defined by laws or regulations such as the EU GDPR or local privacy laws.</p>
+          </dd>
+
+          <dt tabindex="0">Vulnerability</dt>
+          <dd>
+            <p>The first thing is to determine the protection needs of data in transit and at rest. For example, passwords, credit card numbers, health records, personal information and business secrets require extra protection, particularly if that data falls under privacy laws, e.g., EU's General Data Protection Regulation (GDPR), or regulations, e.g. financial data protection such as PCI Data Security Standard (PCI DSS). For all such data:</p>
+            <ul>
+              <li><p>Is any data transmitted in clear text? This concerns protocols such as HTTP, SMTP, and FTP. External internet traffic is especially dangerous. Verify all internal traffic e.g. between load balancers, web servers, or back-end systems.</p></li>
+              <li><p>Are any old or weak cryptographic algorithms used either by default or in older code?</p></li>
+              <li><p>Are default crypto keys in use, weak crypto keys generated or re-used, or is proper key management or rotation missing?</p></li>
+              <li><p>Is encryption not enforced, e.g. are any user agent (browser) security directives or headers missing?</p></li>
+              <li><p> Does the user agent (e.g., app, mail client) not verify if the received server certificate is valid?</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Prevention</dt>
+          <dd>
+            <p>Do the following, at a minimum, and consult the references:</p>
+            <ol>
+              <li><p>Classify data processed, stored or transmitted by an application. Identify which data is sensitive according to privacy laws, regulatory requirements, or business needs.</p></li>
+              <li><p>Apply controls as per the classification.</p></li>
+              <li><p>Don't store sensitive data unnecessarily. Discard it as soon as possible or use PCI DSS compliant tokenization or even truncation. Data that is not retained cannot be stolen.</p></li>
+              <li><p>Make sure to encrypt all sensitive data at rest.</p></li>
+              <li><p>Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.</p></li>
+              <li><p>Encrypt all data in transit with secure protocols such as TLS with perfect forward secrecy (PFS) ciphers, cipher prioritization by the server, and secure parameters. Enforce encryption using directives like HTTP Strict Transport Security (HSTS).</p></li>
+              <li><p>Disable caching for response that contain sensitive data.</p></li>
+              <li><p>Store passwords using strong adaptive and salted hashing functions with a work factor (delay factor), such as Argon2, scrypt, bcrypt or PBKDF2.</p></li>
+              <li><p>Verify independently the effectiveness of configuration and settings.</p></li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Example Attack Scenarios</dt>
+          <dd>
+            <p>
+              <strong>Scenario 1:</strong> An application encrypts credit card numbers in a database using automatic database encryption.
+              However, this data is automatically decrypted when retrieved, allowing an SQL injection flaw to retrieve credit card numbers in clear text.
+            </p>
+          </dd>
+
+          <dd>
+            <p><strong>Scenario 2:</strong> A site doesn't use or enforce TLS for all pages or supports weak encryption.</p>
+            <ol>
+              <li><p>An attacker monitors network traffic (e.g. at an insecure wireless network), downgrades connections from HTTPS to HTTP, intercepts requests, and steals the user's session cookie.</p></li>
+              <li><p>The attacker then replays this cookie and hijacks the user's (authenticated) session, accessing or modifying the user's private data.</p></li>
+              <li><p>Instead of the above they could alter all transported data, e.g. the recipient of a money transfer.</p></li>
+            </ol>
+          </dd>
+
+          <dd>
+            <p>
+              <strong>Scenario 3:</strong> The password database uses unsalted or simple hashes to store everyone's passwords.
+            </p>
+            <ol>
+              <li><p>A file upload flaw allows an attacker to retrieve the password database.</p></li>
+              <li><p>All the unsalted hashes can be exposed with a rainbow table of pre-calculated hashes.</p></li>
+              <li><p>Hashes generated by simple or fast hash functions may be cracked by GPUs, even if they were salted.</p></li>
+            </ol>
+          </dd>
+        </dl>
+
+        <dl>
+          <dt tabindex="0">
+            OWASP References
+          </dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://www.owasp.org/index.php/OWASP_Proactive_Controls#7:_Protect_Data" target="_blank">OWASP Proactive Controls: Protect Data <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project" target="_blank">OWASP Application Security Verification Standard (V7, 9, 10) <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Transport Layer Protection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/User_Privacy_Protection_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: User Privacy Protection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Password and Cryptographic Storage <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/OWASP_Secure_Headers_Project" target="_blank">OWASP Security Headers Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: HSTS <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Testing_for_weak_Cryptography" target="_blank">OWASP Testing Guide: Testing for weak cryptography <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">
+            Related References
+          </dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/220.html" target="_blank">CWE-220 (Common Weakness Enumeration): Exposure of sensitive information through data queries <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/310.html" target="_blank">CWE-310 (Common Weakness Enumeration): Cryptographic Issues <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/311.html" target="_blank">CWE-311 (Common Weakness Enumeration): Missing Encryption <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/312.html" target="_blank">CWE-312 (Common Weakness Enumeration): Cleartext Storage of Sensitive Information <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/319.html" target="_blank">CWE-319 (Common Weakness Enumeration): Cleartext Transmission of Sensitive Information <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/326.html" target="_blank">CWE-326 (Common Weakness Enumeration): Weak Encryption <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/327.html" target="_blank">CWE-327 (Common Weakness Enumeration): Broken/Risky Crypto <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/359.html" target="_blank">CWE-359 (Common Weakness Enumeration): Exposure of Private Information (Privacy Violation) <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

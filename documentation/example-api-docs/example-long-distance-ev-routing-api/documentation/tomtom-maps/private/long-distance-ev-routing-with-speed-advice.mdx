@@ -1,0 +1,277 @@
+---
+title: Long Distance EV Routing with Speed Advice
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2023.07.11'
+    color: grey5
+  - label: 'Private Preview'
+    color: brand-cadmium
+---
+
+## Private Preview Notice
+
+<Blockquote type="announcement" hasIcon>
+
+The Long Distance EV Routing service with Speed Advice is still in development
+and only available as a **Private Preview** for testing purposes. Go to the
+[Private Preview](https://developer.Example.com/private-preview) page to see what
+this means.
+
+</Blockquote>
+
+## Purpose
+
+Long Distance EV Routing estimates the speed of the driver along the planned
+route based on historical and real-time traffic information. Clients might be
+interested in the effect of higher or lower speeds on consumption and travel
+time, in particular to see for which speeds a destination or charge stop is
+still reachable, so that a speed advice can be provided to the driver.
+
+For this, the
+[Long Distance EV Routing](routing-api/documentation/extended-routing/long-distance-ev-routing)
+service has an additional request parameter, `speedAdviceSpeedsInKmh`, that
+specifies a list of speed values. For each specified speed, the primary route
+is augmented with alternative per-leg travel time and consumption information,
+where the speed originally assumed in route planning is adapted according to
+the provided value.
+
+This feature can be used to advise a speed selected from the set of potential
+candidates provided as `speedAdviceSpeedsInKmh`, based on the projected
+consumption, indicating that the next charging stop or the destination would be
+reachable when traveling at the advised speed where possible.
+
+## Request data
+
+### HTTPS method: `POST`
+
+Please refer to the generic
+[request format](/routing-api/documentation/extended-routing/long-distance-ev-routing#request-data)
+of the Long Distance EV Routing service.
+
+#### curl command request example
+
+```shell [type=post] [title=curl command request example]
+curl -X POST 'https://api.Example.com/routing/1/calculateLongDistanceEVRoute/{routePlanningLocations}/json?key={Your_API_Key}&...'
+    -H 'Content-Type: application/json'
+    -d '{
+          [...]
+          "speedAdviceSpeedsInKmh": [120, 110, 100, 95, 90]
+        }'
+```
+
+### POST request parameters
+
+In addition to the parameters outlined in the
+[Calculate Route POST data parameters](/routing-api/documentation/routing/calculate-route#post-data-parameters)
+and the
+[Long Distance EV Routing POST data parameters](/routing-api/documentation/extended-routing/long-distance-ev-routing#request-data)
+sections, the POST data can contain `speedAdviceSpeedsInKmh` as a JSON array.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '250px' }}>Parameter</th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `speedAdviceSpeedsInKmh`<br />
+        *array of integers*
+      </th>
+      <td>
+        A list of speeds in kilometers/hour in the range [90, 250].
+        Each value is used to recalculate travel time and consumption on
+        the primary route. The speed originally estimated in route planning is
+        modified on appropriate parts of the route; the given value is treated
+        as the driver's preferred speed. The route itself is not changed.<br />
+        Based on the output, clients can advise one of the speeds as a succinct
+        proposal to the driver, indicating that the next charging stop or the
+        destination would be reachable when traveling at the advised speed
+        where possible.<br />
+        Notes:
+        <ul>
+          <li>
+           The list must not be empty and is restricted to a maximum of eight items.
+          </li>
+          <li>
+            The additional output generated for `speedAdviceSpeedsInKmh` is
+            provided only for the primary route, not for potential alternative
+            routes.
+          </li>
+          <li>
+            If the primary route contains a charging stop, no output is
+            generated for legs beyond the first charging stop. This
+            limitation might be changed in the future.
+          </li>
+          <li>
+            Even where the assumed speed on a road is modified, the new speed can
+            be different from the specified value. The algorithm aims at avoiding
+            overly optimistic consumption values or travel times.
+          </li>
+          <li>
+            The calculation of travel times and consumption is a best-effort
+            attempt to reflect the specified speeds and the results may be
+            counter-intuitive in some cases. Due to differences in the
+            calculation of the travel time and the consumption, inconsistencies
+            can arise between these properties.
+          </li>
+          <li>
+            In exceptional cases, the route path may become illegal to drive,
+            for example, due to time-dependent restrictions. Also, a charging
+            station along the route might be closed due to changed arrival
+            times resulting from the provided speeds. Conditions such as these are
+            currently not detected.
+          </li>
+          <li>
+            Parameters from
+            [`reassessmentParameterSets`](/routing-api/documentation/routing/calculate-route#post-data-parameters)
+            are not considered for speed advice.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+### Response body
+
+The preceding POST example [request](#curl-command-request-example) will result
+in a response similar to this, where only the differences to a typical
+[response of the Long Distance EV Routing service](routing-api/documentation/extended-routing/long-distance-ev-routing#response-body)
+are shown:
+
+<Accordion label="Response body - JSON" isClosed>
+
+```json
+{
+[...],
+  "routes": [
+    {
+      [...],
+      "legs": [
+        {
+          "summary": {...},
+          "speedAdviceRecords": [
+            { "speedInKmh" : 120, "travelTimeInSeconds": 131, "batteryConsumptionInkWh": 0.0605407 },
+            { "speedInKmh" : 110, "travelTimeInSeconds": 183, "batteryConsumptionInkWh": 0.0603291 },
+            { "speedInKmh" : 100, "travelTimeInSeconds": 214, "batteryConsumptionInkWh": 0.0598749 },
+            { "speedInKmh" :  95, "travelTimeInSeconds": 277, "batteryConsumptionInkWh": 0.0591301 },
+            { "speedInKmh" :  90, "travelTimeInSeconds": 297, "batteryConsumptionInkWh": 0.0587898 }
+          ],
+          [...]
+        }, {
+          "summary": {
+            [...]
+            "chargingInformationAtEndOfLeg": {...}
+          },
+          "speedAdviceRecords": [
+            { "speedInKmh" : 120, "travelTimeInSeconds": 241, "batteryConsumptionInkWh": 0.0905407 },
+            { "speedInKmh" : 110, "travelTimeInSeconds": 280, "batteryConsumptionInkWh": 0.0803291 },
+            { "speedInKmh" : 100, "travelTimeInSeconds": 301, "batteryConsumptionInkWh": 0.0793829 },
+            { "speedInKmh" :  95, "travelTimeInSeconds": 329, "batteryConsumptionInkWh": 0.0723273 },
+            { "speedInKmh" :  90, "travelTimeInSeconds": 356, "batteryConsumptionInkWh": 0.0724270 }
+          ],
+          [...]
+        }, {
+          "summary": {...},
+          [...]
+        }, {
+          "summary": {...},
+          [...]
+        }
+      ]
+    },
+    [...]
+  ]
+}
+```
+
+</Accordion>
+
+### Response fields
+
+A successful request when providing `speedAdviceSpeedsInKmh` to the Long
+Distance EV Routing service extends the fields specified in the
+[Response data section](routing-api/documentation/extended-routing/long-distance-ev-routing#response-fields)
+of the Long Distance EV Routing service as follows:
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>Primary fields</th>
+    </tr>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '250px' }}>Field</th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `speedAdviceRecords`<br />
+        *array of speedAdviceRecord objects*
+      </th>
+      <td>
+        This object holds the speed advice information generated for the
+        `speedAdviceSpeedsInKmh` and is, where applicable, inserted into the
+        `summary` field of the individual legs of the route.<br />
+        Notes:
+        <ul>
+          <li>
+            The order of the entries in the array corresponds to the order of
+            the speeds provided as `speedAdviceSpeedsInKmh` in the request.
+          </li>
+          <li>
+            The number of items in `speedAdviceRecords` can be less than the
+            number of speeds provided in the request parameter
+            `speedAdviceSpeedsInKmh`. This occurs when the service detects that
+            a specific speed would make the route illegal or unfeasible. In the
+            special case that all speeds are deemed unsuitable, the field
+            `speedAdviceRecords` may be omitted in the output.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>speedAdviceRecord object</th>
+    </tr>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '250px' }}>Field</th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `speedInKmh`<br />
+        *integer*
+      </th>
+      <td>
+        The specific speed used to evaluate the travel time and consumption
+        information. It corresponds to one of the speeds specified in the
+        request parameter `speedAdviceSpeedsInKmh`.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `travelTimeInSeconds`<br />
+        *integer*
+      </th>
+      <td>
+        The estimated travel time in seconds for the leg.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `batteryConsumptionInkWh`<br />
+        *float*
+      </th>
+      <td>
+        The estimated energy consumption in kWh for the leg.
+      </td>
+    </tr>
+  </tbody>
+</table>

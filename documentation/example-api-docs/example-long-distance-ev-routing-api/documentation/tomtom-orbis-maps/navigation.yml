@@ -1,0 +1,32 @@
+group: long-distance-ev-routing-api
+isPrivate: true
+description: The Long Distance EV Routing API calculates a route between a given origin and destination, passing through waypoints if they are specified. 
+productName: Long Distance EV Routing API
+menuTitle: Documentation
+isMenuOpened: true
+menu:
+  - title: Product Information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+      - fileId: /product-information/release-notes
+        title: Release Notes
+      - fileId: /product-information/market-coverage
+        title: Market Coverage
+      - fileId: /product-information/language-support
+        title: Supported Languages
+        isPrivate: true
+  - title: Private APIs
+    items:
+      - fileId: /long-distance-ev-routing-v1
+        title: Long Distance EV Routing v1
+        suffix: post
+        isPrivate: true
+      - fileId: /long-distance-ev-routing-v2
+        title: Long Distance EV Routing v2
+        suffix: post
+        isPrivate: true
+      - fileId: /long-distance-ev-routing-with-weather-consideration
+        title: Long Distance EV Routing with Weather Consideration
+        suffix: post
+        isPrivate: true

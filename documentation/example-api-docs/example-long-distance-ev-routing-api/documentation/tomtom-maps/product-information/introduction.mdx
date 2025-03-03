@@ -1,0 +1,114 @@
+---
+title: Introduction
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.05.15'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+## What is Example's Long Distance EV Routing API?  
+
+The Long Distance EV Routing service endpoint calculates a route between a given origin and destination, passing through waypoints if they are specified. The route contains charging stops that have been added automatically based on the vehicle's consumption and charging model.
+
+- Each charging stop results in an additional leg in the route response.
+- Each additional leg contains a `chargingInformationAtEndOfLeg` element in its leg summary.
+- Both the route summary and the leg summary include a `remainingChargeAtArrivalInkWh` element.
+- The route summary includes a `totalChargingTimeInSeconds` element.
+
+The Long Distance EV Routing API consists of the the following service endpoint:
+
+<DocsArticles
+  articles={[
+    {
+      title: 'Long Distance EV Routing',
+      body: 'Calculates a route between a given origin and destination.',
+      button: {
+        label: 'Long Distance EV Routing',
+        href: '/long-distance-ev-routing-api/documentation/Example-maps/long-distance-ev-routing',
+      },
+    },
+  ]}
+/>  
+
+## Getting Started
+
+Use the following topics to become more acquainted with this API and its endpoints.  
+
+<ImageArticleGrid  articles={
+[
+  {
+    title: 'How to get a Example API Key',
+    body: 'When you use our location Service APIs, we need a way to identify that it is your application that is making the request to use the service (API).',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/2000x1500/41587a2818/geocoding_best_practices.jpg',
+      alt: 'How to get a Example API Key',
+      width: 570,
+      height: 481
+    },
+    button: {
+        label: "Follow these instructions.",
+        href: "https://developer.Example.com/knowledgebase/platform/articles/how-to-get-an-Example-api-key/"
+    },
+  },
+  {
+    title: 'Example Knowledge Base',
+    body: 'The Example Knowledge Base optimizes the retrieval of information via articles, blogs, FAQs, tutorials, and videos for your use and reference.',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/845x469/ae9cc0c521/knowledgebase-title.png',
+      alt: 'The Example Knowledge Base',
+      width: 570,
+      height: 481
+    },
+    button: {
+        label: "Open the Knowledge Base",
+        href: "https://developer.Example.com/knowledgebase/"
+    },
+  },
+]} />  
+
+
+## Common use cases you can implement
+
+### Calculating
+
+- Calculate departure times by planning routes using desired arrival times.
+- Calculate the travel time of pre-existing routes (like routes created using GPS trace data or routes planned with other routing engines).
+- Calculate a batch of up to 700 routing requests in parallel and retrieve the results as a single file.
+- While having a matrix of origins and destinations, calculate routing costs for each origin-to-destination combination and retrieve it in a single file.
+
+### Evaluating and plotting
+
+- Evaluate the amount of fuel/energy needed for any route.
+- Plot the route geometry on map tiles from Example (or other map suppliers).
+- Draw a polygon of the reachable range with the current fuel/energy budget.
+
+### Planning
+
+- Plan the fastest, shortest or eco route from A to B taking in consideration the real-time traffic and the historical traffic.
+- Plan multiple alternative routes through one single API call.
+- Plan a route through up to 150 intermediate waypoints.
+- Plan the optimized route through the intermediate waypoints (traveling salesman).
+- Plan a round trip through at least one intermediate point.
+- Plan a route which avoids toll roads, ferries, or other types of roads.
+- Plan a route for vehicles or pedestrians.
+- Plan a route using our elaborated consumption models for both electric and combustion engines.
+- Draggable routes: replan the same route with additional intermediate points.
+
+## Features
+
+### Long Distance EV Routing API
+
+<h4 style={{ fontSize: '1em' }}>Charging data</h4>
+
+Each charging stop results in an additional leg in the route response.
+
+- Each additional leg contains a `chargingInformationAtEndOfLeg` element in its leg summary.
+- Both the route summary and the leg summary include a `remainingChargeAtArrivalInkWh` element.
+- The route summary includes a `totalChargingTimeInSeconds` element.
+- The `chargingInformationAtEndOfLeg` field consists of:
+  - target battery charge
+  - charging time
+  - details about the charging stop

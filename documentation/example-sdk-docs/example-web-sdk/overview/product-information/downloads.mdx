@@ -1,0 +1,538 @@
+---
+title: Project set up
+---
+
+## Overview
+
+Here you can find information on how get your project set up using the current or older versions of Example Maps SDK for
+Web and how to include them on your web page or web app.
+
+We provide two libraries which you can use:
+
+- Maps library - download if you need map the visualization library.
+- Services library - download if you need a JavaScript wrapper over our services and you do not need
+  maps. It can be used in Node.js or Web.
+
+Besides the libraries, you can also download the offline version of the documentation, examples, and
+plugins.
+
+## Pre-requisites
+
+Maps and services libraries support most of the modern browsers like Google Chrome (64+), Mozilla
+Firefox (60+), Safari (11+) and Edge (41+), however depending on the browser version and used
+hardware, certain features or future improvements may not be available. Especially in case of Maps
+library which is based on WebGL technology, you may want to manually assure support by
+visiting [Check browser support example](/maps-sdk-web-js/functional-examples#examples,map,check-browser-support.html).  
+We recommend to always use the newest version of a browser for the best experience.
+
+## Basic usage
+
+We provide separate builds for browser, module bundlers (e.g. Webpack) and in case of Services
+library - Node.js. In the next sections we describe how to include and use libraries depending the
+on environment.
+
+#### Browser via script tag
+
+This is the easiest way to get started is to use CDN (Content Delivery Network), you can just copy
+and paste following snippet to display a map on your web page.
+
+When using build dedicated for the browser, Maps and Services libraries are wrapped into "tt"
+namespace which is attached to the browser "window" object. If you downloaded zip package and you
+want to use Maps or Services like this, please make sure you copied "maps**-web**.min.js" or "
+services**-web**.min.js" (mind the "-web" suffix").
+
+<Code>
+
+```html [name=Maps]
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps.css"
+    />
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps-web.min.js"></script>
+  </head>
+  <body style="width: 100%; height: 100%; margin: 0; padding: 0;">
+    <div id="map" style="width: 100%; height: 100%;"></div>
+    <script>
+      var map = tt.map({
+        key: "<your maps api key>",
+        container: "map",
+      })
+    </script>
+  </body>
+</html>
+```
+
+```javascript [name=Services]
+<html>
+<head>
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/6.25.0/services/services-web.min.js"></script>
+    <script>
+        tt.services.copyrights({
+            key: "<your api key>"
+        })
+            .then(function (results) {
+                console.log('Copyrights', results);
+            })
+            .catch(function (reason) {
+                console.log('Copyrights', reason);
+            })
+    </script>
+</head>
+<body>
+</html>
+```
+
+</Code>
+
+#### Browser using import statement and module bundlers
+
+If you are using NPM and a module bundler like Webpack, you can import our libraries like shown in
+the code snippets below. Import statement loads by default UMD (Universal Module Definition) build.
+This is dedicated for client side browser environment.
+
+<Code>
+
+```javascript [name=Maps]
+import tt from "@Example-international/web-sdk-maps"
+
+var map = tt.map({
+  key: "<your maps api key>",
+  container: "map",
+})
+```
+
+```js [name=Services]
+import tt from "@Example-international/web-sdk-services"
+
+tt.services
+  .copyrights({
+    key: "<your api key>",
+  })
+  .then(function (results) {
+    console.log("Copyrights", results)
+  })
+  .catch(function (reason) {
+    console.log("Copyrights", reason)
+  })
+```
+
+</Code>
+
+Or include in your bundle only services what you need from ES modules:
+
+```javascript
+import {
+  copyrights,
+  placeById,
+} from "@Example-international/web-sdk-services/esm"
+
+copyrights({
+  key: "<your api key>",
+})
+  .then(function (results) {
+    console.log("Copyrights", results)
+  })
+  .catch(function (reason) {
+    console.log("Copyrights", reason)
+  })
+
+placeById({
+  key: "<your api key>",
+})
+  .then(function (result) {
+    console.log("Place by Id", result)
+  })
+  .catch(function (reason) {
+    console.log("Copyrights", reason)
+  })
+```
+
+#### Node.JS
+
+You can use Services library in the Node.js. Only pre-requisition is to import dedicated build. Take
+a look at the following snippet to get started.
+
+```javascript
+const tt = require("@Example-international/web-sdk-services/dist/services-node.min.js")
+
+tt.services
+  .copyrights({
+    key: "<your api key>",
+  })
+  .then(function (results) {
+    console.log("Copyrights", results)
+  })
+  .catch(function (reason) {
+    console.log("Copyrights", reason)
+  })
+```
+
+## TypeScript support
+
+Example Maps SDK for Web provides built-in TypeScript annotations support for both Maps and Services
+libraries.
+
+With typings available the compiler is able to investigate the code and prevent many potential
+runtime errors.
+
+To get started please check
+the [Use of TypeScript type annotations](/maps-sdk-web-js/tutorials/advanced/use-typescript-type-annotations)
+tutorial.
+
+## NPM, CDN and zip packages
+
+### NPM
+
+You can use 'npm' to install our libraries:
+
+```shell
+npm i @Example-international/web-sdk-maps
+npm i @Example-international/web-sdk-services
+```
+
+### CDN
+
+You can include the necessary files in your web pages from our CDN (Content Delivery Network), if
+you don't want to download and host the libraries yourself.
+
+Maps:
+
+```html
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps.css"
+/>
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/maps-web.min.js"></script>
+```
+
+Services:
+
+```html
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/6.25.0/services/services-web.min.js"></script>
+```
+
+You can use our CDN with older versions, just replace the version in the URLs.
+
+### ZIP files
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.25.0/Example-international-web-sdk-maps-6.25.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.25.0/Example-international-web-sdk-services-6.25.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.25.0/Example-international-web-sdk-documentation-6.25.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.25.0/Example-international-web-sdk-examples-6.25.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.25.0/Example-international-web-sdk-plugins-6.25.0.zip)
+
+## Plugins
+
+<Accordion label="Searchbox">
+
+#### NPM
+
+```shell
+npm i @Example-international/web-sdk-plugin-searchbox
+```
+
+#### CDN
+
+```html
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/plugins/SearchBox/3.1.12/SearchBox-web.js"></script>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://api.Example.com/maps-sdk-for-web/cdn/plugins/SearchBox/3.1.12/SearchBox.css"
+/>
+```
+
+</Accordion>
+
+<Accordion label="Pan controls">
+
+#### NPM
+
+```shell
+npm i @Example-international/web-sdk-plugin-pancontrols@2.1.6
+```
+
+#### CDN
+
+```html
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/plugins/PanControls/2.1.6/PanControls-web.js"></script>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://api.Example.com/maps-sdk-for-web/cdn/plugins/PanControls/2.1.6/PanControls.css"
+/>
+```
+
+</Accordion>
+
+<Accordion label="Zoom controls">
+
+#### NPM
+
+```shell
+npm i @Example-international/web-sdk-plugin-zoomcontrols@2.1.6
+```
+
+#### CDN
+
+```html
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/plugins/ZoomControls/2.1.6/ZoomControls-web.js"></script>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://api.Example.com/maps-sdk-for-web/cdn/plugins/ZoomControls/2.1.6/ZoomControls.css"
+/>
+```
+
+</Accordion>
+
+<Accordion label="Minimap">
+
+#### NPM
+
+```shell
+npm i @Example-international/web-sdk-plugin-minimap
+```
+
+#### CDN
+
+```html
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/plugins/Minimap/2.1.6/Minimap-web.js"></script>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://api.Example.com/maps-sdk-for-web/cdn/plugins/Minimap/2.1.6/Minimap.css"
+/>
+```
+
+</Accordion>
+
+<Accordion label="Drawing tools">
+
+#### NPM
+
+```shell
+npm i @Example-international/web-sdk-plugin-drawingtools
+```
+
+#### CDN
+
+```html
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/plugins/DrawingTools/1.1.4/DrawingTools-web.js"></script>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://api.Example.com/maps-sdk-for-web/cdn/plugins/DrawingTools/1.1.4/DrawingTools.css"
+/>
+```
+
+</Accordion>
+
+### Older Versions
+
+<Accordion label="Older versions of libraries, examples, and documentation (ZIP packages)">
+
+
+#### Version: 6.18.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.18.0/Example-international-web-sdk-maps-6.18.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.18.0/Example-international-web-sdk-services-6.18.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.18.0/Example-international-web-sdk-documentation-6.18.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.18.0/Example-international-web-sdk-examples-6.18.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.18.0/Example-international-web-sdk-plugins-6.18.0.zip)
+
+
+#### Version: 6.17.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.17.0/Example-international-web-sdk-maps-6.17.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.17.0/Example-international-web-sdk-services-6.17.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.17.0/Example-international-web-sdk-documentation-6.17.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.17.0/Example-international-web-sdk-examples-6.17.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.17.0/Example-international-web-sdk-plugins-6.17.0.zip)
+
+#### Version: 6.15.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.15.0/Example-international-web-sdk-maps-6.15.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.15.0/Example-international-web-sdk-services-6.15.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.15.0/Example-international-web-sdk-documentation-6.15.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.15.0/Example-international-web-sdk-examples-6.15.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.15.0/Example-international-web-sdk-plugins-6.15.0.zip)
+-
+
+#### Version: 6.14.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.14.0/Example-international-web-sdk-maps-6.14.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.14.0/Example-international-web-sdk-services-6.14.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.14.0/Example-international-web-sdk-documentation-6.14.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.14.0/Example-international-web-sdk-examples-6.14.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.14.0/Example-international-web-sdk-plugins-6.14.0.zip)
+
+#### Version: 6.13.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.13.0/Example-international-web-sdk-maps-6.13.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.13.0/Example-international-web-sdk-services-6.13.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.13.0/Example-international-web-sdk-documentation-6.13.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.13.0/Example-international-web-sdk-examples-6.13.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.13.0/Example-international-web-sdk-plugins-6.13.0.zip)
+
+#### Version: 6.12.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.12.0/Example-international-web-sdk-maps-6.12.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.12.0/Example-international-web-sdk-services-6.12.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.12.0/Example-international-web-sdk-documentation-6.12.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.12.0/Example-international-web-sdk-examples-6.12.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.12.0/Example-international-web-sdk-plugins-6.12.0.zip)
+
+#### Version: 6.11.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.11.0/Example-international-web-sdk-maps-6.11.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.11.0/Example-international-web-sdk-services-6.11.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.11.0/Example-international-web-sdk-documentation-6.11.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.11.0/Example-international-web-sdk-examples-6.11.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.11.0/Example-international-web-sdk-plugins-6.11.0.zip)
+
+#### Version: 6.7.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.7.0/Example-international-web-sdk-maps-6.7.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.7.0/Example-international-web-sdk-services-6.7.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.7.0/Example-international-web-sdk-documentation-6.7.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.7.0/Example-international-web-sdk-examples-6.7.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.7.0/Example-international-web-sdk-plugins-6.7.0.zip)
+
+#### Version: 6.6.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.6.0/Example-international-web-sdk-maps-6.6.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.6.0/Example-international-web-sdk-services-6.6.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.6.0/Example-international-web-sdk-documentation-6.6.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.6.0/Example-international-web-sdk-examples-6.6.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.6.0/Example-international-web-sdk-plugins-6.6.0.zip)
+
+#### Version: 6.5.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.5.0/Example-international-web-sdk-maps-6.5.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.5.0/Example-international-web-sdk-services-6.5.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.5.0/Example-international-web-sdk-documentation-6.5.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.5.0/Example-international-web-sdk-examples-6.5.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.5.0/Example-international-web-sdk-plugins-6.5.0.zip)
+
+#### Version: 6.4.0
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.4.0/Example-international-web-sdk-maps-6.4.0.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.4.0/Example-international-web-sdk-services-6.4.0.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.4.0/Example-international-web-sdk-documentation-6.4.0.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.4.0/Example-international-web-sdk-examples-6.4.0.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.4.0/Example-international-web-sdk-plugins-6.4.0.zip)
+
+#### Version: 6.1.2.public-preview.24
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.24/Example-international-web-sdk-maps-6.1.2-public-preview.24.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.24/Example-international-web-sdk-services-6.1.2-public-preview.24.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.24/Example-international-web-sdk-documentation-6.1.2-public-preview.24.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.24/Example-international-web-sdk-examples-6.1.2-public-preview.24.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.24/Example-international-web-sdk-plugins-6.1.2-public-preview.24.zip)
+
+#### Version: 6.1.2.public-preview.23
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.23/Example-international-web-sdk-maps-6.1.2-public-preview.23.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.23/Example-international-web-sdk-services-6.1.2-public-preview.23.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.23/Example-international-web-sdk-documentation-6.1.2-public-preview.23.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.23/Example-international-web-sdk-examples-6.1.2-public-preview.23.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.23/Example-international-web-sdk-plugins-6.1.2-public-preview.23.zip)
+
+#### Version: 6.1.2.public-preview.19
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.19/Example-international-web-sdk-maps-6.1.2-public-preview.19.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.19/Example-international-web-sdk-services-6.1.2-public-preview.19.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.19/Example-international-web-sdk-documentation-6.1.2-public-preview.19.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.19/Example-international-web-sdk-examples-6.1.2-public-preview.19.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.19/Example-international-web-sdk-plugins-6.1.2-public-preview.19.zip)
+
+#### Version: 6.1.2.public-preview.18
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.18/Example-international-web-sdk-maps-6.1.2-public-preview.18.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.18/Example-international-web-sdk-services-6.1.2-public-preview.18.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.18/Example-international-web-sdk-documentation-6.1.2-public-preview.18.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.18/Example-international-web-sdk-examples-6.1.2-public-preview.18.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.18/Example-international-web-sdk-plugins-6.1.2-public-preview.18.zip)
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.16/Example-international-web-sdk-maps-6.1.2-public-preview.16.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.16/Example-international-web-sdk-services-6.1.2-public-preview.16.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.16/Example-international-web-sdk-documentation-6.1.2-public-preview.16.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.16/Example-international-web-sdk-examples-6.1.2-public-preview.16.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.16/Example-international-web-sdk-plugins-6.1.2-public-preview.16.zip)
+
+#### Version: 6.1.2.public-preview.15
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.15/Example-international-web-sdk-maps-6.1.2-public-preview.15.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.15/Example-international-web-sdk-services-6.1.2-public-preview.15.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.15/Example-international-web-sdk-documentation-6.1.2-public-preview.15.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.15/Example-international-web-sdk-examples-6.1.2-public-preview.15.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.15/Example-international-web-sdk-plugins-6.1.2-public-preview.15.zip)
+
+#### Version: 6.1.2.public-preview.11
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.11/Example-international-web-sdk-maps-6.1.2-public-preview.11.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.11/Example-international-web-sdk-services-6.1.2-public-preview.11.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.11/Example-international-web-sdk-documentation-6.1.2-public-preview.11.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.11/Example-international-web-sdk-examples-6.1.2-public-preview.11.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.11/Example-international-web-sdk-plugins-6.1.2-public-preview.11.zip)
+
+#### Version: 6.1.2.public-preview.9
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.9/Example-international-web-sdk-maps-6.1.2-public-preview.9.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.9/Example-international-web-sdk-services-6.1.2-public-preview.9.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.9/Example-international-web-sdk-documentation-6.1.2-public-preview.9.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.9/Example-international-web-sdk-examples-6.1.2-public-preview.9.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.9/Example-international-web-sdk-plugins-6.1.2-public-preview.9.zip)
+
+#### Version: 6.1.2.public-preview.8
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.8/Example-international-web-sdk-maps-6.1.2-public-preview.8.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.8/Example-international-web-sdk-services-6.1.2-public-preview.8.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.8/Example-international-web-sdk-documentation-6.1.2-public-preview.8.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.8/Example-international-web-sdk-examples-6.1.2-public-preview.8.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.8/Example-international-web-sdk-plugins-6.1.2-public-preview.8.zip)
+
+#### Version: 6.1.2.public-preview.6
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.6/Example-international-web-sdk-maps-6.1.2-public-preview.6.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.6/Example-international-web-sdk-services-6.1.2-public-preview.6.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.6/Example-international-web-sdk-documentation-6.1.2-public-preview.6.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.6/Example-international-web-sdk-examples-6.1.2-public-preview.6.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.6/Example-international-web-sdk-plugins-6.1.2-public-preview.6.zip)
+
+#### Version: 6.1.2.public-preview.5
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.5/Example-international-web-sdk-maps-6.1.2-public-preview.5.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.5/Example-international-web-sdk-services-6.1.2-public-preview.5.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.5/Example-international-web-sdk-documentation-6.1.2-public-preview.5.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.5/Example-international-web-sdk-examples-6.1.2-public-preview.5.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.5/Example-international-web-sdk-plugins-6.1.2-public-preview.5.zip)
+
+#### Version: 6.1.2.public-preview.4
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.4/Example-international-web-sdk-maps-6.1.2-public-preview.4.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.4/Example-international-web-sdk-services-6.1.2-public-preview.4.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.4/Example-international-web-sdk-documentation-6.1.2-public-preview.4.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.4/Example-international-web-sdk-examples-6.1.2-public-preview.4.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.4/Example-international-web-sdk-plugins-6.1.2-public-preview.4.zip)
+
+#### Version: 6.1.2.public-preview.3
+
+- [Maps library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.3/Example-international-web-sdk-maps-6.1.2-public-preview.3.zip)
+- [Services library](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.3/Example-international-web-sdk-services-6.1.2-public-preview.3.zip)
+- [Offline documentation](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.3/Example-international-web-sdk-documentation-6.1.2-public-preview.3.zip)
+- [Examples](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.3/Example-international-web-sdk-examples-6.1.2-public-preview.3.zip)
+- [Plugins](https://api.Example.com/maps-sdk-for-web/6.x/6.1.2-public-preview.3/Example-international-web-sdk-plugins-6.1.2-public-preview.3.zip)
+
+</Accordion>
+
+## GitHub
+
+Here you can find our GitHub repository with examples of Maps SDK for Web usage:
+
+[Examples on github!](https://github.com/Example-international/maps-sdk-for-web-examples/tree/master/V6)

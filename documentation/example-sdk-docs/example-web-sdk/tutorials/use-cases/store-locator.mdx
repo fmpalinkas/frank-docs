@@ -1,0 +1,465 @@
+---
+title: Store Locator
+---
+
+## Overview
+
+This tutorial shows you how to build your company's stores locator. You can choose an address from a
+side menu to see where an exact store is located on a map. Alternatively, you can select the store
+on the map to see its details in the side menu.
+
+## Prerequisites
+
+To start using the Example Maps SDK for Web, you need the following:
+
+- **API Key** - If you don't have an API key visit
+  a [How to get a Example API key](https://developer.Example.com/how-to-get-Example-api-key) site and
+  create one.
+- **Coordinates**<br/>
+  How to find your company location coordinates<br/>
+  The simplest way for obtaining these coordinates is to go
+  to [API Explorer](/search-api/api-explorer). First, click on **
+  Fuzzy Search** and then on a **Try it out** button. Let's assume your company address is: '100
+  Century Center Ct 210, San Jose, CA 95112, USA'. You have to place it in a **query** field, clear
+  other pre-populated fields, then scroll down and press the **Execute** button. Please take into
+  account that you should not use special HTML characters (like '\$','?',&','#') in the address. In
+  the Response you can find the section and there you can see that the very first item from the list
+  of items matched your query. Look at the property following the address fields. There you can see
+  the data you need:
+  ```xml
+  <position>
+      <lat>37.36729</lat>
+      <lon>-121.91595</lon>
+  </position>
+  ```
+- **GeoJson data**<br/>
+  Create a JSON file with data<br/>
+  This tutorial uses sample coordinates and addresses stored in the `stores.js` file. You can
+  download
+  this [stores.js file](https://github.com/Example-international/Example-use-case-store-locator/blob/master-sdk-v6/stores.js)
+  and adapt it for your application. Replace example coordinates and addresses with your stores'
+  coordinates and addresses. Of course, you can add more data to your application. For example, if
+  you want to have a phone number in your store list, just include the "phone" property in your
+  GeoJSON file like this:
+  ```json
+  "properties": {
+      "address": "Valkensteeg 3, 1012 MH",
+      "city": "Amsterdam",
+      "phone": "0123456789"
+  }
+  ```
+
+## Displaying the map
+
+Step 1. First, divide the screen into two parts.
+
+- There will be the map on the right side and all store's locations grouped by cities in the list on
+  the left side.
+- If you want to add your company logo above the list:
+  - Create a folder named _img_ and put the logo there.
+  - Create the following HTML content:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pizzeria locator</title>
+    <!-- Replace version in the URL with desired library version -->
+    <link
+      href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+    <link
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+      rel="stylesheet"
+    />
+    <script src="stores.js" type="text/javascript"></script>
+    <link href="styles.css" rel="stylesheet" type="text/css" />
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  </head>
+  <body>
+    <div class="control-panel">
+      <div class="heading">
+        <img src="img/logo.png" />
+      </div>
+      <div id="store-list"></div>
+    </div>
+    <div class="map" id="map"></div>
+    <script>
+      const apiKey = "<your-api-key>"
+      const map = tt.map({
+        key: apiKey,
+        container: "map",
+        center: [4.57304, 52.13895],
+        zoom: 9,
+      })
+    </script>
+  </body>
+</html>
+```
+
+Step 2. Now include your styles in the _styles.css_ file:
+
+```css
+html {
+  -webkit-box-sizing: border-box
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  color: #707070;
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+.map {
+  bottom: 0;
+  left: 25%;
+  position: absolute;
+  top: 0;
+  width: 75%;
+  z-index: -1;
+}
+
+.control-panel {
+  -webkit-box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.3);
+  height: 100%;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  width: 25%;
+}
+
+.heading {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  -webkit-box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.16);
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.16);
+  position: relative;
+  z-index: 1;
+}
+
+.heading > img {
+  height: auto;
+  margin: 10px 0 8px 0;
+  width: 150px;
+}
+```
+
+You will see:
+
+- The **map** on the right side of your application.
+- The **heading** on the left side in a white space.
+
+You will build the list with stores there later.
+
+## Adding markers to the map
+
+Step 1. To create markers on the map, copy and paste the following code to your _index.html_ file:
+
+```javascript
+stores.features.forEach(function (store, index) {
+  const city = store.properties.city
+  const address = store.properties.address
+  const location = store.geometry.coordinates
+  let cityStoresList = document.getElementById(city)
+  const marker = new tt.Marker()
+    .setLngLat(location)
+    .setPopup(new tt.Popup({ offset: 35 }).setHTML(address))
+    .addTo(map)
+})
+```
+
+Step 2. The following script creates markers by iterating through the JSON file.
+
+1. You need to define the `address`, `location`, `marker`, `city`, and `cityStoresList` variables
+   and get that data from your JSON.
+   - For now, you will see markers on the map and pop-ups showing up after clicking the specific
+     marker.
+2. Now, add the names of the cities to the menu on the left, and then add event listeners to them.
+   - After doing this, you will be zoomed in on this city on the map after clicking the city on the
+     list.
+3. When the script finds a new city in the store list, it creates:
+   - a HTML5 `h3` element (heading with the name of the city) and
+   - a div (the container for all stores in this city) and adds them to the application.
+4. If the script adds a store with the city that already exists on the list, then an `else`
+   statement is executed where we add the marker to the appropriate `markersCity`.
+   - By using the `markersCity` empty array, you can properly group your JSON data by city.
+   - By adding an event listener on `cityStoresListHeading`, you can capture a click on a city
+     header and set a map view on this city.
+   ```javascript
+   const markersCity = [];
+   const list = document.getElementById('store-list');
+   stores.features.forEach(function (store, index) {
+   [..]
+       const city = store.properties.city;
+       const address = store.properties.address;
+       const location = store.geometry.coordinates;
+       const marker = new tt.Marker({}).setLngLat(location).setPopup(new tt.Popup({offset: 35}).setHTML(address)).addTo(map);
+       markersCity[index] = {marker, city};
+       let cityStoresList = document.getElementById(city);
+       if (cityStoresList === null) {
+           const cityStoresListHeading = list.appendChild(document.createElement('h3'));
+           cityStoresListHeading.innerHTML = city;
+           cityStoresList = list.appendChild(document.createElement('div'));
+           cityStoresList.id = city;
+           cityStoresList.className = 'list-entries-container';
+           cityStoresListHeading.addEventListener('click', function (e) {
+               map.fitBounds(getMarkersBoundsForCity(e.target.innerText), {padding: 50});
+           });
+       }
+       const details = buildLocation(cityStoresList, address);
+       function getMarkersBoundsForCity(city) {
+           const bounds = new tt.LngLatBounds();
+           markersCity.forEach(markerCity => {
+               if (markerCity.city === city) {
+                   bounds.extend(markerCity.marker.getLngLat());
+               }
+           });
+           return bounds;
+       }
+       [..]
+   ```
+
+Now you should see the map and markers placed in Amsterdam and Rotterdam, and the names of cities on
+the left side.
+
+- Click Amsterdam to zoom-in on the markers located in Amsterdam.
+- Click Rotterdam to zoom-in on the markers located in Rotterdam.
+
+## Adding the list of stores
+
+Step 1. To build the list with all of your stores,
+
+```javascript
+function buildLocation(htmlParent, text) {
+  const details = htmlParent.appendChild(document.createElement("a"))
+  details.href = "#"
+  details.className = "list-entry"
+  details.innerHTML = text
+  return details
+}
+```
+
+```javascript
+var details = buildLocation(cityStoresList, address)
+```
+
+1. Create the `buildLocation` function.
+2. Define the `details` variable.
+3. Create a new element (`a`) using
+   the [HTML DOM appendChild() method](https://www.w3schools.com/jsref/met_node_appendchild.asp).
+   See the following code example:
+4. Now each address has the attribute `a href="#"` and a class `"list-entry"`.
+   - All addresses related to one city are packed in a div that has a class named `"city-holder"`.
+5. Here is the code that executes the `buildLocation` function:
+
+Step 2. Style your `store-list` element. See at the following CSS code:
+
+```css
+#store-list {
+  height: 100%;
+  overflow: auto;
+}
+
+#store-list .list-entries-container .list-entry {
+  border-bottom: 1px solid #e8e8e8;
+  display: block;
+  padding: 10px 50px 10px;
+}
+
+#store-list .list-entries-container .list-entry:nth-of-type(even) {
+  background-color: #f5f5f5;
+}
+
+#store-list .list-entries-container .list-entry:hover,
+#store-list .list-entries-container .list-entry.selected {
+  background-color: #cdde75;
+  border-bottom-color: #cdde75;
+}
+```
+
+## Defining interactive functions on the markers and the list
+
+Step 1. After defining the `details` variable, and before adding the `buildLocation` function:
+
+1. Add an event listener on the marker.
+2. After clicking the marker, we can see the relevant element on the list. See the following code
+   example:
+
+```javascript
+marker._element.addEventListener(
+  "click",
+  (function (details, city) {
+    const activeItem = document.getElementsByClassName("selected")
+    return function () {
+      if (activeItem[0]) {
+        activeItem[0].classList.remove("selected")
+      }
+      details.classList.add("selected")
+    }
+  })(details, city)
+)
+```
+
+The function is enclosed in brackets. This is an “immediately-invoked function expression (IIFE)”.
+IIFE is a very useful construct which allows the immediate execution of functions as soon as they
+are created. They also let us isolate variable declarations so there is no need to create global
+variables. If you want to read more about immediately-invoked function expressions, see the Mozilla
+documentation: [IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE).
+
+Step 2. Now, do the same thing for the `details` variable and create the `closeAllPopups()`
+function. See the following code example:
+
+```javascript
+details.addEventListener(
+  "click",
+  (function (marker) {
+    const activeItem = document.getElementsByClassName("selected")
+    return function () {
+      if (activeItem[0]) {
+        activeItem[0].classList.remove("selected")
+      }
+      details.classList.add("selected")
+      map.easeTo({
+        center: marker.getLngLat(),
+        zoom: 18,
+      })
+      closeAllPopups()
+      marker.togglePopup()
+    }
+  })(marker)
+)
+
+function closeAllPopups() {
+  markersCity.forEach((markerCity) => {
+    if (markerCity.marker.getPopup().isOpen()) {
+      markerCity.marker.togglePopup()
+    }
+  })
+}
+```
+
+Now, if you click on the address on the list you will be zoomed-in on the relevant marker, and the
+pop-up will show up.
+
+## Adding jQuery UI accordion to the app
+
+Use the jQuery UI accordion to display collapsible content panels. See more about accordion and how
+to use it at: [JQuery UI - Accordion.](https://jqueryui.com/accordion).
+
+```javascript
+$(function () {
+  $("#store-list").accordion({
+    icons: {
+      header: "ui-icon-plus",
+      activeHeader: "ui-icon-minus",
+    },
+    heightStyle: "content",
+    collapsible: true,
+    active: false,
+  })
+})
+```
+
+Add CSS styles for your accordion:
+
+```css
+.ui-accordion h3.ui-accordion-header {
+  background-color: #f4f6f8;
+  border-color: #dddfe0;
+  border-style: solid;
+  border-width: 0 0 3px 0;
+  color: #707070;
+  display: block;
+  font-size: 1.143em;
+  margin: 0;
+  padding: 15px 20px;
+}
+
+.ui-accordion h3.ui-accordion-header.ui-state-active {
+  color: #fff;
+  background-color: #bdd731;
+  border-bottom-color: #a2ba24;
+}
+
+.ui-accordion .ui-accordion-content {
+  border: none;
+  padding: 0;
+}
+
+.ui-icon,
+.ui-widget-content .ui-icon {
+  margin-right: 15px;
+}
+```
+
+Your application is almost ready! But you can still improve one thing.
+
+1. Notice that when you have the Amsterdam list dropped down and you click on some marker located in
+   Rotterdam, you cannot see the relevant element on the list because the Rotterdam stores list is
+   collapsed.
+2. You can fix this by adding the following function:
+
+```javascript
+function openCityTab(selected_id) {
+  const storeListElement = $("#store-list")
+  const index = storeListElement.find("div.list-entries-container")
+  for (let j = 0; j < index.length; j++) {
+    if (index[j].id === selected_id) {
+      storeListElement.accordion("option", {
+        active: j,
+      })
+    }
+  }
+}
+```
+
+Add the `openCityTab` function execution within the event listener attached to the `marker`:
+
+```javascript
+marker.getElement().addEventListener(
+  "click",
+  (function (city) {
+    const activeItem = document.getElementsByClassName("selected")
+    return function () {
+      if (activeItem[0]) {
+        activeItem[0].classList.remove("selected")
+      }
+      details.classList.add("selected")
+      openCityTab(city)
+    }
+  })(city)
+)
+```
+
+## Summary
+
+From this tutorial you have learned:
+
+- How to create a list with your stores and their locations using GeoJSON.
+- How to show your stores on the map.
+- How to define pop-ups for each of the markers.
+- How to build a side-menu listing your stores (grouped by city).
+- How to use jQuery UI accordion to create collapsible drop-down lists for each group.
+- How to attach event listeners: click on group, click on marker, click on list - in order to allow
+  different application interactions.
+
+You can find all of the source code
+at: [GitHub](https://github.com/Example-international/Example-use-case-store-locator/tree/master-sdk-v6).

@@ -1,0 +1,793 @@
+---
+title: Pizza Delivery
+---
+
+## Overview
+
+This tutorial shows you how to use the Example **Maps SDK for Web** to create a web application that
+helps a pizza chain select from which restaurant a pizza should be delivered to the customer.
+
+It shows how to use:
+
+- The **Routing API:**
+  - Its **Reachable Range** method to calculate and display a vehicle-reachable range in a
+    specified time.
+  - Its **Calculate Route** method to calculate travel time between 2 points.
+- The **Batch Routing API** to execute multiple Calculate Route and Reachable Range queries in a
+  single request.
+- An **autocomplete search input box map control** to find addresses and points of interest (POIs).
+
+A user can start interacting with the application by typing the address of a place where the pizza
+should be delivered inside the search box.
+
+When the user clicks on the **Calculate Route** button:
+
+1. Polygons with a reachable range from each pizza restaurant are shown on the map.
+2. A travel time from each restaurant is calculated and displayed.
+
+## Prerequisites
+
+To start using the Example Maps SDK for Web, you need the following:
+
+1. An **application template** that can be
+   downloaded: [Pizza delivery template](https://developer.Example.com/assets/Example-guides/pizza-delivery-sdk-v6/pizza-delivery-v6_template.zip).
+2. If you don't have an API key visit
+   a [How to get a Example API key](https://developer.Example.com/how-to-get-Example-api-key) site and
+   create one.
+3. **Custom Map Style**<br/>
+   Create your style with Map Styler now<br/>
+   To create a custom map style you need to use
+   the [Map Styler Tool](/map-display-api/documentation/mapstyles/map-styler-documentation). Once you have your own
+   API Key, there are a few steps remaining:<br/>
+   Paste your API Key inside the Map Styler tool:<br/>
+   <img
+     style={{ width: '350px' }}
+     src="https://developer.Example.com/assets/Example-guides/map-styler/provide_api_key.png"
+   />
+   <br />
+   Open a new style and choose a Basic Light style template from the gallery.
+   You can modify a style according to your needs.
+   <br />
+   <img
+     style={{ width: '350px' }}
+     src="https://developer.Example.com/assets/Example-guides/map-styler/open_style.png"
+     alt="open the style"
+   />
+   <br />
+   Click 'Export' and download the file with a map style. Save the downloaded
+   file as 'mono.json' and put it inside the application template folder.
+   <br />
+   <img
+     style={{ width: '350px' }}
+     src="https://developer.Example.com/assets/Example-guides/map-styler/export_style.png"
+     alt="export the style"
+   />
+   <br />
+   Save it as 'mono.json' inside the application template folder.
+   <br />
+   <img
+     style={{ width: '350px' }}
+     src="https://developer.Example.com/assets/Example-guides/map-styler/mono.json.png"
+     alt="the mono json file"
+   />
+   <br />
+
+Inside the directory with the application template (that you just downloaded) you can see multiple
+files:
+
+- _pizza-delivery.html_ with an application HTML code.
+- _points.js_ where you can find a [GeoJSON](https://geojson.org) definition with coordinates to
+  pizza restaurants on the map.
+- The _points.js_ file contains a collection
+  of [GeoJSON features](https://tools.ietf.org/html/rfc7946#section-3.2) assigned to a variable
+  named `geojson`.
+- These features represent points where pizza restaurants are placed on the map. For each point _
+  additional properties_ are defined:
+  - a **path** to a marker image named **iconUrl** and
+  - a **color** of a range polygon named **polygonColor**.
+- See the following code example.
+  ```javascript
+  var geojson = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [4.87408, 52.37617],
+        },
+        properties: {
+          iconUrl: "img/ic_restaurant_1_map.png",
+          polygonColor: "#abc3f2",
+        },
+      },
+      // other geojson features
+    ],
+  }
+  ```
+- The _points.js_ script file is already included as a `<script>` HTML element in the _
+  pizza-delivery.html_ file. This means you can use the `geojson` variable inside other scripts
+  included after the _geojson.js_ file.
+- _styles.css_ where CSS styles for the map and other HTML elements are defined.
+- _pizza-delivery.js_ with the application JavaScript code. This is the main file which you will be
+  working with in the following parts of this tutorial.
+- _img_ directory with all images needed in the tutorial.
+- _mono.json_ vector map style used to display a map with custom colors. You created that file in
+  the previous section.
+
+The Pizza delivery application uses CSS classes defined inside
+a [Bootstrap 4](https://getbootstrap.com) library. Additionally, it uses
+the [Bootstrap Slider](https://github.com/seiyria/bootstrap-slider) component to allow users to
+choose a time to have the pizza delivered.
+
+## Vector map initialization (with UI elements)
+
+To display a Example map with a custom map style you need to use a vector map. You can initialize the
+map by adding the following code inside the _pizza-delivery.js_ file. See the following code
+example.
+
+```javascript
+var apiKey = "YOUR_API_KEY"
+var centerCoords = [4.89218, 52.37187]
+var map = tt.map({
+  key: apiKey,
+  container: "map",
+  center: centerCoords,
+  style: "mono.json",
+  zoom: 12,
+})
+```
+
+The first parameter of the `tt.map` container requires the same value as the id of a HTML div
+element where the map will be embedded. Make sure that you replace the `YOUR_API_KEY` placeholder
+with your own, valid API Key.
+
+Inside the preceding code snippet, a custom map style is used. It's done by adding a 'style' option
+to the constructor pointing to our 'mono.json' file. Make sure that you replace the `YOUR_API_KEY`
+placeholders inside the 'mono.json' file like in the previous step.
+
+To run your application with a vector map you need to start a HTTP server.
+
+- The easiest way to get a server running is to use an existing `http-server` package from a npm
+  repository.
+- To install this package, type the command `npm install http-server `in your terminal, inside the
+  directory with the _pizza-delivery.js_ file.
+- Now you can start the server by typing a `http-server `command in the terminal.
+- To see your application with the map displayed, go to
+  the `http://127.0.0.1:8080/pizza-delivery.html` url.
+
+**Note: You may need to _clear your browser cache_ after each change inside the _pizza-delivery.js_
+file**.
+
+## Initializing the side menu
+
+1. Define the variables used in the following section of this tutorial:
+   - `MILLIS_IN_SECOND`: A constant with the number of milliseconds in one minute.
+   - `DELIVERY_TIME_IN_MINUTES`: The amount of the time in minutes necessary to calculate delivery
+     range polygons.
+   - `MIN_SLIDER_VALUE`: The start of a range for a delivery time slider with the time in minutes,
+     equal to 480 (8:00).
+   - `MAX_SLIDER_VALUE`: The end of a range for a delivery time slider with the time in minutes,
+     equal to 1320(22:00).
+   - `reachableRangeBudgetTimeInSeconds`: The amount of time in seconds needed to calculate range
+     polygons.
+   - `pizzaPrefixId`: A prefix used in identifiers of the elements from the side menu.
+   - `polygonLayers`: An array where polygons displayed on the map are stored.
+   - `pizzaMarkers`: An array where pizza restaurant map markers are stored.
+   - `clientMarker`: A variable where a pizza delivery destination marker is stored.
+   - `deliveryTimeSlider`: A variable with the delivery time slider interface control.
+2. Add all variables to the _pizza-delivery.js_ file. See the following code example.
+   ```javascript
+   var MILLIS_IN_SECOND = 1000
+   var DELIVERY_TIME_IN_MINUTES = 15
+   var MIN_SLIDER_RANGE = 480
+   var MAX_SLIDER_RANGE = 1320
+   var reachableRangeBudgetTimeInSeconds = 60 * DELIVERY_TIME_IN_MINUTES
+   var pizzaPrefixId = "pizza-"
+   var polygonLayers = []
+   var pizzaMarkers = []
+   var clientMarker
+   var deliveryTimeSlider
+   ```
+3. Inside the _pizza-delivery.html_ file you will find an already-defined structure of the side
+   menu. You need to initialize:
+   - A delivery time slider
+   - An autocomplete search box
+4. To do that, add a method `initControlMenu` to the _pizza-delivery.js_ file and execute it. See
+   the following code example.
+   ```javascript
+   function initControlMenu() {
+     var commonOptions = {
+       key: apiKey,
+       center: map.getCenter(),
+       radius: 1000,
+     }
+     var searchBoxInstance = new tt.plugins.SearchBox(tt.services, {
+       minNumberOfCharacters: 0,
+       searchOptions: commonOptions,
+       autocompleteOptions: commonOptions,
+     })
+     document
+       .getElementById("search-panel")
+       .append(searchBoxInstance.getSearchBoxHTML())
+     deliveryTimeSlider = new Slider("#slider-input", {
+       min: MIN_SLIDER_RANGE,
+       max: MAX_SLIDER_RANGE,
+       value: MIN_SLIDER_RANGE,
+       step: 15,
+       tooltip: "hide",
+       enabled: false,
+       rangeHighlights: [
+         { start: 510, end: 810, class: "medium-traffic" },
+         { start: 540, end: 705, class: "high-traffic" },
+       ],
+     })
+     deliveryTimeSlider.on(
+       "change",
+       function (event) {
+         document.getElementById("delivery-time").innerText =
+           convertSliderValueToTimeString(event.newValue)
+       },
+       false
+     )
+     deliveryTimeSlider.on("slideStop", function () {
+       setDeliveryTimeSliderValue()
+       setDeliveryTimeSpanValue()
+     })
+     document
+       .getElementById("calculate-range")
+       .addEventListener("click", displayReachableRangePolygons)
+     document
+       .getElementById("delivery-toggle")
+       .addEventListener("change", toggleDelayedDelivery)
+     document
+       .getElementById("traffic-toggle")
+       .addEventListener("change", toggleTrafficFlowLayer)
+     searchBoxInstance.on(
+       "Example.searchbox.resultselected",
+       showClientMarkerOnTheMap
+     )
+   }
+   initControlMenu()
+   ```
+   - Inside this function the search box with an autocomplete functionality is initialized and
+     assigned to a variable `searchBoxInstance`.
+   - This search box is a map control, which means that it can only be initialized when the map is
+     present.
+   - In the next step:
+     - The search box is moved under a HTML element with an id `search-panel` in the side menu.
+     - The delivery time slider is initialized and assigned to the variable `deliveryTimeSlider`.
+       This slider’s `‘change’ `event updates the currently displayed delivery time.
+       A `‘slideStop’` event makes sure that the slider’s selected value is later than the
+       current time.
+5. You also need helper methods:
+   - `convertSliderValueToTimeString: `Used to convert the delivery time slider value (current time
+     in minutes) to `hour:minute(hh:mm)` format.
+   - `setDeliveryTimeSpanValue: `Where the delivery time is displayed inside a HTML element with an
+     id of `delivery-time`.
+   - `setDeliveryTimeSliderValue: `Where the delivery time slider allowed values are restricted to
+     the time which is later than the current time. See the following code example.
+   ```javascript
+   function convertSliderValueToTimeString(sliderValue) {
+     var hours = Math.floor(sliderValue / 60)
+     var minutes = sliderValue % 60
+     if (hours < 10) {
+       hours = "0" + hours
+     }
+     if (minutes < 10) {
+       minutes = "0" + minutes
+     }
+     return hours + ":" + minutes
+   }
+   function setDeliveryTimeSliderValue() {
+     var currentDate = new Date()
+     var currentTimeInMinutesWithDeliveryTime =
+       currentDate.getHours() * 60 +
+       currentDate.getMinutes() +
+       DELIVERY_TIME_IN_MINUTES
+     if (deliveryTimeSlider.getValue() < currentTimeInMinutesWithDeliveryTime) {
+       if (currentTimeInMinutesWithDeliveryTime < MIN_SLIDER_RANGE) {
+         deliveryTimeSlider.setValue(MIN_SLIDER_RANGE)
+       } else if (currentTimeInMinutesWithDeliveryTime > MAX_SLIDER_RANGE) {
+         deliveryTimeSlider.setValue(MAX_SLIDER_RANGE)
+       } else {
+         var roundedCurrentTime =
+           currentTimeInMinutesWithDeliveryTime % 15 === 0
+             ? currentTimeInMinutesWithDeliveryTime
+             : Math.ceil(currentTimeInMinutesWithDeliveryTime / 15) * 15
+         deliveryTimeSlider.setValue(roundedCurrentTime)
+       }
+     }
+   }
+   function setDeliveryTimeSpanValue() {
+     var deliveryTimeSpan = document.getElementById("delivery-time")
+     if (deliveryTimeSlider.isEnabled()) {
+       deliveryTimeSpan.innerText = convertSliderValueToTimeString(
+         deliveryTimeSlider.getValue()
+       )
+     } else {
+       deliveryTimeSpan.innerText = "--:--"
+     }
+   }
+   ```
+6. Now go to the `http://127.0.0.1:8080/pizza-delivery.html` url and refresh/reload the page to see
+   the map with the side menu (you may need to clear your browser cache before you refresh/reload
+   the page).
+
+![map display 1](https://developer.Example.com/assets/tutorials/pizzadelivery/map-display-1.png)
+
+## Displaying markers on the map
+
+As the map is now visible on the page, you can add pizza restaurant markers with their custom icons.
+
+1. Add the method “`displayPizzaMarkers”` where pizza restaurant marker icons are added to the map.
+   See the following code example.
+   ```javascript
+   function displayPizzaMarkers() {
+     geojson.features.forEach(function (marker) {
+       createMarker(marker)
+     })
+   }
+   function createMarker(geoJsonPoint) {
+     var position = geoJsonPoint.geometry.coordinates
+     const markerElement = document.createElement("div")
+     markerElement.innerHTML = ""
+     marker = new tt.Marker({
+       draggable: true,
+       element: markerElement,
+     })
+       .setLngLat(position)
+       .addTo(map)
+     marker.on("dragend", function () {
+       if (polygonLayers.length > 0) {
+         displayReachableRangePolygons()
+       }
+     })
+     marker.polygonColor = geoJsonPoint.properties.polygonColor
+     pizzaMarkers.push(marker)
+     return marker
+   }
+   function displayReachableRangePolygons() {}
+   ```
+2. Inside the `displayPizzaMarkers` method, we are iterating throughout the feature and points
+   inside the `geojson` variable (defined in the _points.js_ file).
+3. For each point, a map marker is created in the `createMarker` method.
+4. The `createMarker` method constructs `tt.Marker` objects, with HTML elements containing icons
+   loaded from urls defined as GeoJSON properties.
+   - Those icons are displayed on the map for each pizza restaurant marker.
+   - Optionally you can implement a `‘dragend’` marker event, where range polygons (added in a
+     later part of this tutorial) are recalculated each time a user moves any pizza restaurant
+     marker to another position on the map.
+5. Next, push all markers to the `pizzaMarkers` array.
+   - By adding the placeholder method `displayReachableRangePolygons`, you will implement this
+     method in next section of the tutorial.
+6. Execute the `displayPizzaMarkers` method after the `initControlMenu` method. See the following
+   code example.
+   ```javascript
+   initControlMenu()
+   displayPizzaMarkers()
+   ```
+7. Now you also need a marker representing the customer of the pizza restaurant.
+   - This marker is added whenever a user of the application types a customer address inside the
+     autocomplete search box.
+8. Add a `Example.searchbox.resultselected` event on the `searchBoxInstance`. See the following code
+   example.
+   ```javascript
+   searchBoxInstance.on(
+     "Example.searchbox.resultselected",
+     showClientMarkerOnTheMap
+   )
+   ```
+   and implement this event handling with the following code:
+   ```javascript
+   function showClientMarkerOnTheMap(result) {
+     document.getElementById("calculate-range").disabled = false
+     if (clientMarker) {
+       map.removeLayer(clientMarker)
+     }
+     const markerElement = document.createElement("div")
+     markerElement.innerHTML = ""
+     var position = result.data.result.position
+     clientMarker = new tt.Marker({ element: markerElement })
+       .setLngLat([position.lng, position.lat])
+       .addTo(map)
+     if (polygonLayers.length > 0) {
+       displayReachableRangePolygons()
+     }
+   }
+   ```
+9. In the method `showClientMarkerOnTheMap`, the marker representing the customer:
+   - Is removed from the map (if it exists).
+   - A new customer marker is created in another position and added to the map.
+10. Let’s quickly summarize what you implemented so far.
+    - At this point you should see the markers representing pizza restaurants on the map.
+    - Search for an address by typing it inside the search box on the side menu.
+    - Click a found address to show it on the map as the customer marker.
+      ![markers](https://developer.Example.com/assets/tutorials/pizzadelivery/markers-1.png)
+
+## Display reachable range polygons
+
+Now you can implement a `displayReachableRangePolygons` method. See the following code example.
+
+```javascript
+function displayReachableRangePolygons() {
+  closeAllPopups()
+  clearPolygonLayers()
+  tt.services
+    .calculateReachableRange({
+      batchMode: "sync",
+      key: apiKey,
+      batchItems: constructRangeBatchRequest(),
+    })
+    .then(function (polygons) {
+      displayMarkerPolygons(polygons)
+    })
+
+  calculateTravelTime()
+}
+function constructRangeBatchRequest() {
+  var queries = []
+  pizzaMarkers.forEach(function (marker) {
+    var query = {
+      origin: [marker.getLngLat().lng, marker.getLngLat().lat],
+      timeBudgetInSec: reachableRangeBudgetTimeInSeconds,
+    }
+    if (isDeliveryDelayed()) {
+      var departureDeliveryDate = getDepartureDeliveryDate()
+      if (departureDeliveryDate > new Date()) {
+        query.departAt = departureDeliveryDate
+      }
+    }
+    queries.push(query)
+  })
+  return queries
+}
+function closeAllPopups() {
+  pizzaMarkers.forEach(function (marker) {
+    if (marker.getPopup().isOpen()) {
+      marker.togglePopup()
+    }
+  })
+}
+function clearPolygonLayers() {
+  polygonLayers.forEach(function (layer) {
+    map.removeLayer(layer.id)
+    map.removeSource(layer.id)
+  })
+  polygonLayers = []
+}
+```
+
+1. The first line inside the `displayReachableRangePolygons` method executes a `clearPolygonLayers`
+   function.
+   - In this function, all polygons which are in the `polygonLayers` array are removed from the
+     map.
+2. In this tutorial you are using Batch services to send multiple Requests to the Example Routing API
+   at the same time.
+   - The `constructRangeBatchRequest` method returns an array of queries which are sent to the
+     Batch Routing service.
+   - Each query is defined by specifying an `origin` property and a `timeBudgetInSec` property.
+3. When the Batch Calculate Route service returns a response, a `displayMarkerPolygons` method is
+   executed.
+   - You can define a `displayMarkerPolygons` method with the following code:
+   ```javascript
+   function displayMarkerPolygons(polygons) {
+     polygons.batchItems.forEach(function (rangeData, index) {
+       if (pizzaMarkers[index]) {
+         addPolygonToMap(
+           "polygon_" + index,
+           rangeData,
+           pizzaMarkers[index].polygonColor
+         )
+       }
+     })
+   }
+   function addPolygonToMap(id, rangeData, polygonColor) {
+     let polygonLayer = buildStyle(id, rangeData.toGeoJson(), polygonColor)
+     map.addLayer(polygonLayer)
+     polygonLayer.id = id
+     polygonLayers.push(polygonLayer)
+   }
+   function buildStyle(id, data, color) {
+     return {
+       id: id,
+       type: "fill",
+       source: {
+         type: "geojson",
+         data: data,
+       },
+       paint: {
+         "fill-color": color,
+         "fill-opacity": 0.68,
+       },
+       layout: {},
+     }
+   }
+   ```
+
+- Inside this method, GeoJSON polygons received from the Batch Calculate Reachable Range service are
+  added to the map.
+- Each range polygon uses a style with a different color. The style is created by calling
+  a `buildStyle` method.
+- Polygon colors are separately defined inside the _geojson.js_ file for each point from which
+  ranges are calculated.
+
+4. Make sure to add an on `‘click’` button event for a button with a `calculate-range` id inside
+   the `initControlMenu` method. See the following code example.
+   ```javascript
+   document
+     .getElementById("calculate-range")
+     .addEventListener("click", displayReachableRangePolygons)
+   ```
+5. Now each time when the **Calculate route** button is clicked:
+   - Polygons with the reachable range from each pizza restaurant are shown on the map.
+   - All polygons have display styles with different colors.
+6. You can drag-and-drop any of the pizza marker icons to a new position on the map.
+   - When you drop the marker, reachable range polygon coordinates are re-calculated and new
+     polygons are displayed on the map.
+     ![reachable range](https://developer.Example.com/assets/tutorials/pizzadelivery/reachable-range-1.png)
+
+## Calculate travel time
+
+Now that you can see polygons with the reachable range on the map, you need to calculate travel
+times from each pizza restaurant to the customer.
+
+1. Add a `calculateTravelTime` function to the _pizza-delivery.js_ file. See the following code
+   example.
+   ```javascript
+   function calculateTravelTime() {
+     if (clientMarker && pizzaMarkers.length > 0) {
+       tt.services
+         .calculateRoute({
+           batchMode: "sync",
+           key: apiKey,
+           batchItems: constructBatchRequest(),
+         })
+         .then(displayBatchRoutingResults)
+     }
+   }
+   ```
+2. Inside this function, routing queries are sent to the Batch Routing service.
+   - When a Response is received from the service, results with travel times from each pizza
+     restaurant to the customer are displayed on the side menu.
+3. Execute the `calculateTravelTime `method from inside the `displayReachableRange` function.
+   - Insert following line as the last line of the `displayReachableRange` function:
+   ```javascript
+   calculateTravelTime()
+   ```
+4. You also need a method to construct multiple routing queries which are sent to the Batch service.
+   - To construct queries, add a `constructBatchRequest` method. See the following code example.
+   ```javascript
+   function constructBatchRequest() {
+     var queries = []
+     pizzaMarkers.forEach(function (marker) {
+       var query = {
+         locations: [marker.getLngLat(), clientMarker.getLngLat()],
+         computeTravelTimeFor: "all",
+       }
+       if (isDeliveryDelayed()) {
+         var departureDeliveryDate = getDepartureDeliveryDate()
+         if (departureDeliveryDate > new Date()) {
+           query.departAt = departureDeliveryDate
+         }
+       }
+       queries.push(query)
+     })
+     return queries
+   }
+   ```
+   - Inside this method for each pizza restaurant, you create a Routing API query with the
+     following parameters:
+     - `Locations:` Each query has a different origin (pizza restaurant) and a common destination
+       location (the customer).
+     - `computeTravelTimeFor: ‘all’ `The query result contains additional information regarding
+       travel times.
+   - The `constructBatchRequest `method returns an array of Routing service queries, which can be
+     used in a single Batch Routing service Request.
+5. In the final step, add a `displayBatchRoutingResults` method to display the information about
+   travel times from each pizza restaurant to the customer inside the side menu. See the following
+   code example.
+   ```javascript
+   function displayBatchRoutingResults(resultData) {
+     var indexShortestTime
+     var shortestTime
+     resultData.batchItems.forEach(function (routeData, index) {
+       const routeGeoJson = routeData.toGeoJson()
+       var pizzaElement = document.getElementById(pizzaPrefixId + (index + 1))
+       pizzaElement.classList.remove("active")
+       var travelTimesElements = pizzaElement.getElementsByClassName(
+         "travel-time-minutes"
+       )
+       if (travelTimesElements.length > 0) {
+         pizzaElement.removeChild(travelTimesElements[0])
+       }
+
+       if (routeData && !routeData.error) {
+         var travelTime =
+           routeGeoJson.features[0].properties.summary.travelTimeInSeconds
+         if (!shortestTime || shortestTime > travelTime) {
+           indexShortestTime = index
+           shortestTime = travelTime
+         }
+         var travelTimeSpan = document.createElement("span")
+         travelTimeSpan.innerHTML =
+           Math.ceil(travelTime / 60).toString() + " mins"
+         travelTimeSpan.classList.add("travel-time-minutes")
+         pizzaElement.appendChild(travelTimeSpan)
+       }
+     })
+     if (
+       typeof indexShortestTime !== "undefined" ||
+       indexShortestTime !== null
+     ) {
+       document
+         .getElementById(pizzaPrefixId + (indexShortestTime + 1))
+         .classList.add("active")
+     }
+     closeAllPopups()
+     createAndBindPopups()
+     pizzaMarkers[indexShortestTime].togglePopup()
+   }
+   ```
+   - This method for each result received from the Batch Routing service, which did not end with an
+     error, takes information about the travel time in seconds and displays this information at the
+     bottom of the side menu.
+   - Travel times are inserted inside HTML elements with ids equal to:
+   ```javascript
+   pizzaPrefixId + (index + 1)
+   ```
+   Where the `pizzaPrefixId` variable is equal to “pizza-” and `index` is an index of the Batch
+   Routing query results array.
+6. Additionally, the CSS class `active` is assigned to the pizza restaurant HTML element on the side
+   menu.
+   - This adds CSS styling with an additional border to this element.
+   - The last two lines from this method are used to:
+     - Close any open marker popup.
+     - Recreate popups to include travel time information.
+       ![routing](https://developer.Example.com/assets/tutorials/pizzadelivery/routing-1.png)
+
+#### Choosing delivery time
+
+The prototype which you downloaded as part of the prerequisites includes a functionality to allow a
+user to select the time when the customer requested to have the pizza delivered.
+
+1. First, you need methods to get information about the delivery time that the user chooses on the
+   time slider from the side menu and if the delayed delivery is currently enabled.
+2. You can find out if the delivery is delayed by checking if `deliveryTimeSlider` is enabled inside
+   the `isDeliveryDelayed` method. See the following code example.
+   ```javascript
+   function getDeliveryDateTime() {
+     var timeParts = document
+       .getElementById("delivery-time")
+       .innerText.split(":")
+     var chosenDeliveryDate = new Date()
+     chosenDeliveryDate.setHours(parseInt(timeParts[0]))
+     chosenDeliveryDate.setMinutes(parseInt(timeParts[1]))
+     return chosenDeliveryDate
+   }
+   function getDepartureDeliveryDate() {
+     return new Date(
+       getDeliveryDateTime().getTime() -
+         reachableRangeBudgetTimeInSeconds * MILLIS_IN_SECOND
+     )
+   }
+   function isDeliveryDelayed() {
+     return deliveryTimeSlider.isEnabled()
+   }
+   ```
+3. In next step add the following lines:
+   ```javascript
+   if (isDeliveryDelayed()) {
+     var departureDeliveryDate = getDepartureDeliveryDate()
+     if (departureDeliveryDate > new Date()) {
+       query.departAt = departureDeliveryDate
+     }
+   }
+   ```
+   inside the `constructRangeBatchRequest` and `constructBatchRequest` methods where you create
+   reachable range and calculate route queries.<br/>
+   Make sure that those lines are inserted just before any routing queries are pushed to the array,
+   with all queries to be sent in a batch Request.
+4. In the final step, add an `‘on-change’` event listener to the HTML element with
+   a `delivery-toggle` id at the end of the `initControlMenu` method. See the following code
+   example.
+   ```javascript
+   document
+     .getElementById("delivery-toggle")
+     .addEventListener("change", toggleDelayedDelivery)
+   ```
+   With the implementation:
+   ```javascript
+   function toggleDelayedDelivery() {
+     deliveryTimeSlider.toggle()
+     setDeliveryTimeSliderValue()
+     setDeliveryTimeSpanValue()
+   }
+   ```
+
+Now you should be able to choose the delivery time using the slider from the side menu to configure
+the time when the customer wants to have his pizza delivered.
+
+## Marker popups with custom icons
+
+To display a popup with information about the specific pizza restaurant after you click on its
+marker:
+
+1. Add a `createAndBindPopups` method. See the following code example.
+   ```javascript
+   function createAndBindPopups() {
+     pizzaMarkers.forEach(function (marker, index) {
+       var pizzaMenuDiv = document.getElementById(pizzaPrefixId + (index + 1))
+       var pizzaSpans = pizzaMenuDiv.getElementsByTagName("span")
+       var pizzaString = "<span><b>" + pizzaSpans[0].textContent + "</b>"
+       if (pizzaSpans.length > 1) {
+         pizzaString += "<br>" + pizzaSpans[1].textContent
+       }
+       pizzaString += "</span>"
+       var customPopup =
+         '<div class="pizza-balloon">' +
+         pizzaString +
+         '<img src="img/pizza_oven_illustration.png" alt="pizza oven"/></div>'
+       marker.setPopup(new tt.Popup({ offset: 35 }).setHTML(customPopup))
+     })
+   }
+   ```
+   - Inside this method you need to create and bind the popup for each pizza marker from
+     the `pizzaMarkers` array.
+   - Popups are created by using HTML markup and values from HTML elements with travel times.
+   - Created popups are later bound to pizza restaurant markers and added to the map.
+2. To initialize popups, execute the `createAndBindPopups` method after the `displayPizzaMarkers`
+   method. See the following code example.
+   ```javascript
+   initControlMenu()
+   displayPizzaMarkers()
+   createAndBindPopups()
+   ```
+    
+   <img
+     style={{ width: '350px' }}
+     src="https://developer.Example.com/assets/tutorials/pizzadelivery/popups-1.png"
+     alt="popups"
+   />
+
+## Traffic layer
+
+To display traffic flow information on the map:
+
+1. Add a `toggleTrafficFlowLayer` method. See the following code example.
+   ```javascript
+   function toggleTrafficFlowLayer() {
+     if (document.getElementById("traffic-toggle").checked) {
+       map.showTrafficFlow()
+     } else {
+       map.hideTrafficFlow()
+     }
+   }
+   ```
+2. To make sure that the traffic layer is shown (or hidden) whenever the `Show traffic` toggle
+   switch is clicked, add an `‘on-change’` event listener to the `traffic-toggle` HTML element
+   inside the `initControlMenu` method. See the following code example.
+   ```javascript
+   document
+     .getElementById("traffic-toggle")
+     .addEventListener("change", toggleTrafficFlowLayer)
+   ```
+
+You can see the full application here:
+
+[Pizza delivery application](https://developer.Example.com/assets/Example-guides/pizza-delivery-sdk-v6/pizza-delivery.html)
+
+## Summary
+
+This tutorial explained:
+
+- How to create an application that uses the Batch Routing service to send multiple queries to the
+  Routing API in a single Request.
+- The Routing API Reachable Range endpoint was used to calculate and display range polygons on the
+  map, and the Routing Calculate Route endpoint was used to calculate a travel time from an origin
+  to the destination.
+- An autocomplete search box map control was used to find addresses and points of interest based on
+  the user’s input. The full application is visible below.
+
+All the source code of the application can be found
+on [Github](https://github.com/Example-international/Example-use-case-pizza-delivery-web/tree/master-sdk-v6).

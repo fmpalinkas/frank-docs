@@ -1,0 +1,162 @@
+---
+title: Migrate from version 4 - the Maps library
+---
+
+## Overview of the tutorial
+
+This tutorial covers some basic use cases to help you switch from version 4 of the Maps SDK for Web
+to the latest one as quickly as possible. We will use code examples to explain the main differences
+between the SDKs.
+
+If you are just interested in migrating services you can refer to
+the [migration tutorial for services](/maps-sdk-web-js/tutorials/migration/migrate-version-4-services-library).
+
+## Prerequisites
+
+To start using the latest version of the Example Maps SDK for Web you need the following:
+
+- The **Maps library**<br/>
+  The Maps SDK for Web can be used in three ways:
+  - Downloaded from NPM: https://www.npmjs.com/package/@Example-international/web-sdk-maps
+  - With a
+    CDN: https://api.Example.com/maps-sdk-for-web/cdn/6.x/&ltversion&gt;/maps/maps-web.min.js -
+    NOTE: include the latest version in the URL.
+  - Downloaded from here: [Downloads.](/maps-sdk-web-js/overview/product-information/downloads)<br/>
+    In this tutorial, we are using a CDN as an example.
+- **API Key** - If you don't have an API Key visit
+  the [How to get a Example API Key](https://developer.Example.com/how-to-get-Example-api-key) site and
+  create one.
+
+## Displaying a map
+
+```html
+<!DOCTYPE html>
+<html class="use-all-space">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8" />
+    <title>My Map</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <!-- Replace version in the URL with desired library version -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+    />
+    <style>
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <!-- Replace version in the URL with desired library version -->
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+    <script>
+      tt.setProductInfo("<your-product-name>", "<your-product-version>")
+      tt.map({
+        key: "<your-Example-API-Key>",
+        container: "map",
+      })
+    </script>
+  </body>
+</html>
+```
+
+To locally run this example , save the preceding code in a HTML file. Replace ‘&lt;your-api-key&gt;‘
+with the API Key you obtained as shown in the Prerequisites section.
+
+Also replace the basePath with the location of the SDK. Assuming that you have saved it next to the
+file above, the basePath will be _'./sdk'_.
+
+To see the result simply open your HTML file in a browser. If there is any problem you can check the
+log in developer tools.
+
+## Initializing a map
+
+The following code initializes a map using a defined center point and zoom level. In this section we
+compare the difference between both SDKs.
+
+### Version 4 of the Maps SDK for Web
+
+```javascript
+var map = Example.map("map", {
+  key: "<your-api-key>",
+  basePath: "<your-Example-sdk-base-path>",
+  source: "vector",
+  center: [52.379189, 4.899431],
+  zoom: 12,
+})
+```
+
+### Latest version of Maps SDK for Web
+
+```javascript
+var map = tt.map({
+  key: "<your-Example-API-key>",
+  container: "map",
+  center: [4.899431, 52.379189],
+  zoom: 12,
+})
+```
+
+The code for both is similar:
+
+- Both map methods return a reference to the map.
+- Both use ‘center’ and ‘zoom’ as properties.
+
+Both require the ID of an element to render the map (in this example 'map'), but now you have to
+pass it in a 'container' property.
+
+The preceding code example shows how to initialize a vector map with a default style. To see how to
+set another style, please take a look at
+the [options.style parameter documentation.](https://developer.Example.com/maps-sdk-web-js/documentation#Maps.Map)
+
+Note that the **Example** namespace was changed to **tt** in the new SDK.
+
+**The new versions of our SDK use the longitude, latitude coordinate order (as opposed to latitude,
+longitude) to match GeoJSON.** You will have to change the order of those in all of the parts of
+your application where the coordinates are passed as an array.
+
+## Differences in APIs
+
+Here is an overview of some of the most important updates within our top-level namespace.
+
+### Common factory functions renamed
+
+Some of the common functions changed. Here are some examples:
+
+<table>
+  <thead>
+    <tr>
+      <th>Version 4</th>
+      <th>Current version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Example.key(key, [value])</td>
+      <td>
+        You need to pass the API Key directly to the service.
+        ```javascript
+           `tt.map({key: API-KEY, ...});` 
+        ```
+      </td>
+    </tr>
+    <tr>
+      <td>Example.localeService()</td>
+      <td>
+        You need to pass the language directly to the service. For the map, you
+        can also change the language after initialization by doing:
+        ```javascript
+           `map.setLanguage('en');` 
+        ```
+      </td>
+    </tr>
+  </tbody>
+</table>

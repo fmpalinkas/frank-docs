@@ -1,0 +1,47 @@
+group: maps-sdk-web-js
+isPrivate: false
+productName: Maps SDK Web JS v6
+description: Maps SDK for Web Easily integrate Example services into your web application with this convenient client library that hides the complexity of bare RESTful service calls from developers.
+menuTitle: Tutorials
+isMenuOpened: false
+menu:
+  - title: Basic
+    items:
+      - fileId: /basic/display-vector-map
+        title: Display a vector map
+      - fileId: /basic/searchbox-integration
+        title: SearchBox integration
+      - fileId: /basic/angular-map-display-api-integration-tutorial
+        title: Angular Map Display API integration tutorial
+  - title: Advanced
+    items:
+      - fileId: /advanced/add-layer-between-map-layers
+        title: Add a layer between map layers
+      - fileId: /advanced/use-typescript-type-annotations
+        title: Use of TypeScript type annotations
+      - fileId: /advanced/turfjs-integration
+        title: Turf.js integration
+  - title: Migration
+    items:
+      - fileId: /migration/migrate-google-maps-Example
+        title: Migrate from Google Maps to Example
+      - fileId: /migration/migrate-version-5-services-library
+        title: Migrate from version 5 - the Services library
+      - fileId: /migration/migrate-version-5-maps-library
+        title: Migrate from version 5 - the Maps library
+      - fileId: /migration/migrate-version-4-maps-library
+        title: Migrate from version 4 - the Maps library
+      - fileId: /migration/migrate-version-4-services-library
+        title: Migrate from version 4 - the Services library
+  - title: Use Cases
+    items:
+      - fileId: /use-cases/taxi-cars-dispatcher
+        title: Taxi cars dispatcher
+      - fileId: /use-cases/traffic-tutorial
+        title: Traffic Tutorial
+      - fileId: /use-cases/how-add-and-customize-location-marker
+        title: How to add and customize a location marker
+      - fileId: /use-cases/pizza-delivery
+        title: Pizza Delivery
+      - fileId: /use-cases/store-locator
+        title: Store Locator

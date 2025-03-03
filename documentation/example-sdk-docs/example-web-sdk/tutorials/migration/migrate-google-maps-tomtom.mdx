@@ -1,0 +1,416 @@
+---
+title: Migrate from Google Maps to Example
+---
+
+[For Android](/maps-sdk-android/android-tutorials/migrate-google-maps-Example)
+
+[For iOS](/maps-sdk-ios/tutorials/migrate-google-maps-Example)
+
+## Overview
+
+This tutorial covers some basic use cases to help you switch from Google's APIs to Example's as
+quickly as possible. It begins with the basic environment setup along with use cases accompanied by
+code examples. At the very bottom of the page is a recommended reading list to allow you to build on
+the foundations provided by this tutorial.
+
+## Prerequisites
+
+To start using the Example Maps SDK for Web, you need the following:
+
+- The **Maps library** <br/>
+  The Maps SDK for Web can be used in three ways:
+  - Downloaded from NPM: https://www.npmjs.com/package/@Example-international/web-sdk-maps
+  - With a
+    CDN: https://api.Example.com/maps-sdk-for-web/cdn/6.x/&ltversion&gt;/maps/maps-web.min.js -
+    NOTE: include the latest version in the URL.
+  - Downloaded from: [Downloads.](/maps-sdk-web-js/overview/product-information/downloads)
+    In this tutorial, we are using a CDN as an example.
+- **API Key** - If you don't have an API Key visit
+  a [How to get a Example API Key](https://developer.Example.com/how-to-get-Example-api-key) site and
+  create one.
+
+## Displaying a map
+
+The following code example displays a minimal HTML structure containing the JavaScript code to
+initialize and display a Example map:
+
+```html
+<!DOCTYPE html>
+<html class="use-all-space">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8" />
+    <title>My Map</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <!-- Replace version in the URL with desired library version -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+    />
+  </head>
+  <body>
+    <div id="map" class="map" style="width:100%; height:100vh"></div>
+    <!-- Replace version in the URL with desired library version -->
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+    <script>
+      tt.setProductInfo("<your-product-name>", "<your-product-version>")
+      tt.map({
+        key: "<your-Example-API-Key>",
+        container: "map",
+      })
+    </script>
+  </body>
+</html>
+```
+
+To run this example locally, name it **index.html** and save it in the _sdk-tutorial_.
+Replace `‘<your-api-key>‘` with the API Key you obtained as shown in the Prerequisites section.
+
+## Run a HTTP server
+
+Navigate to the directory containing your file using a terminal.
+
+For example:
+
+```shell
+~$ cd sdk-tutorial/
+~sdk-tutorial$
+```
+
+Install a light-weight HTTP server (you might need to run this command with admin/root privileges):
+
+```shell
+npm install --global http-server
+```
+
+Then simply run the following command:
+
+```shell
+http-server
+```
+
+Note that npm comes bundled with Node.js, so please make sure you have it installed on your machine.
+
+### So now it is time to see the results!
+
+Open a browser and type this URL in the address bar: _http://localhost:8080/index.html_. You should
+be able to see a map! If not, use developer mode (press F12 on Windows or Linux or ⌘ + ⌥ + I on Mac)
+to check for console errors.
+
+## Initializing a map
+
+The following code initializes a map using a defined center point and zoom level.
+
+### Google
+
+```javascript
+var map = new google.maps.Map(document.getElementById("map"), {
+  center: { lat: 37.769167, lng: -122.478468 },
+  zoom: 15,
+})
+```
+
+### Example
+
+```javascript
+var map = tt.map({
+  key: "<your-Example-API-key>",
+  container: "map",
+  center: [-122.478468, 37.769167],
+  zoom: 15,
+})
+```
+
+These two code blocks have some similarities:
+
+- Both create a variable to refer to later.
+- Both use `‘center’` and `‘zoom’` as properties.
+- Both require the ID of an element to render the map (in this example, `'map'`).
+
+The Example Maps SDK for Web requires a `‘key’` property for your API Key. In addition, the Example
+Maps SDK for Web expresses coordinates as an array rather than an object with properties.
+
+## Displaying traffic
+
+The next step is to add a traffic layer to the map.
+
+### Google
+
+```javascript
+var trafficLayer = new google.maps.TrafficLayer()
+trafficLayer.setMap(map)
+```
+
+### Example
+
+Example provides two services that offer traffic information:
+
+- **Traffic flow** shows the difference between current and free flow speed.
+  - Green indicates that the speeds are the same, meaning there are no traffic jams.
+  - Red indicates that traffic is much slower than free flow, meaning there are traffic jams.
+- **Traffic incidents** indicates specific traffic problems such as closed roads, rain, ice on the
+  road, or accidents.
+
+The following code displays both types of traffic data:
+
+```javascript
+map.on("load", function () {
+  map.showTrafficFlow()
+  map.showTrafficIncidents()
+})
+```
+
+```javascript
+map.on("load", function (): void {
+  map.showTrafficFlow()
+  map.showTrafficIncidents()
+})
+```
+
+You can also set traffic visibility when initiating a map object:
+
+```javascript
+var map = tt.map({
+  key: "${api.key.maps}",
+  container: "map",
+  stylesVisibility: {
+    trafficIncidents: true,
+    trafficFlow: true,
+  },
+})
+```
+
+## Displaying a marker
+
+### Google
+
+```javascript
+var marker = new google.maps.Marker({
+  position: { lat: 37.768454, lng: -122.492544 },
+  map: map,
+})
+```
+
+### Example
+
+```javascript
+var marker = new tt.Marker().setLngLat([-122.492544, 37.768454]).addTo(map)
+```
+
+The next step is to allow your user to interact with the map by clicking a marker to display an
+information popup.
+
+### Google
+
+```javascript
+var infowindow = new google.maps.InfoWindow({
+  content: "my marker",
+})
+marker.addListener("click", function () {
+  infowindow.open(map, marker)
+})
+```
+
+### Example
+
+```javascript
+marker.setPopup(new tt.Popup().setHTML("my marker"))
+```
+
+## Displaying a route/directions
+
+Here’s how to display a route from point A to point B on the map. Google's name for this service
+is "directions". We call it routing (Routing API).
+
+### Google
+
+```javascript
+var directionsService = new google.maps.DirectionsService()
+var directionsDisplay = new google.maps.DirectionsRenderer()
+directionsDisplay.setMap(map)
+var request = {
+  origin: new google.maps.LatLng(37.768014, -122.510601),
+  destination: new google.maps.LatLng(37.769167, -122.478468),
+  travelMode: "DRIVING",
+}
+directionsService.route(request, function (response, status) {
+  if (status == "OK") {
+    directionsDisplay.setDirections(response)
+  }
+})
+```
+
+To display a route with Google, you are required to use two services: one to ask for a route from A
+to B and another to render it on the map.
+
+### Example
+
+Add the services library in your HTML.
+
+```html
+<!-- Replace version in the URL with desired library version -->
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/services/services-web.min.js"></script>
+```
+
+And the code:
+
+```javascript
+tt.services
+  .calculateRoute({
+    key: "YOUR_API_KEY",
+    locations: "-122.510601,37.768014:-122.478468,37.769167",
+  })
+  .then(function (response) {
+    var geojson = response.toGeoJson()
+    map.addLayer({
+      id: "route",
+      type: "line",
+      source: {
+        type: "geojson",
+        data: geojson,
+      },
+      paint: {
+        "line-color": "#00d7ff",
+        "line-width": 8,
+      },
+    })
+    var bounds = new tt.LngLatBounds()
+    geojson.features[0].geometry.coordinates.forEach(function (point) {
+      bounds.extend(tt.LngLat.convert(point))
+    })
+    map.fitBounds(bounds, { padding: 20 })
+  })
+```
+
+```javascript
+tt.services
+  .calculateRoute({
+    key: "YOUR_API_KEY",
+    locations: "-122.510601,37.768014:-122.478468,37.769167",
+  })
+  .then(function (response: tt.CalculateRouteResponse) {
+    var geojson = response.toGeoJson()
+    map.addLayer({
+      id: "route",
+      type: "line",
+      source: {
+        type: "geojson",
+        data: geojson,
+      },
+      paint: {
+        "line-color": "#00d7ff",
+        "line-width": 8,
+      },
+    })
+    var bounds = new tt.LngLatBounds()
+    geojson.features[0].geometry.coordinates.forEach(function (
+      point: tt.LngLatLike
+    ) {
+      bounds.extend(tt.LngLat.convert(point))
+    })
+    map.fitBounds(bounds, { padding: 20 })
+  })
+```
+
+The only required parameters for the routing call are the start and end points, separated by a
+colon. If more colon-separated coordinates are provided, the ones in the middle will be used as
+intermediate locations (waypoints). By default, the route will be calculated for a car, but this and
+many other parameters can be changed. See
+the [Maps SDK For Web Documentation - Calculate Route](/maps-sdk-web-js/documentation#Services.services.calculateRoute)
+for complete details of routing parameters and filters.
+
+Call the routing service by executing the `tt.services.calculateRoute()` function. The result will
+be returned as [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON) containing a 'LineString' feature.
+This is a (poly)line that can be added to a map, with defined properties like color, opacity, and
+weight.
+
+Then call 'fitBounds' to center the map on the route.
+
+The code above generates a polyline, but no markers. Developers have a lot of freedom to display the
+route, but if a start and end marker are required, they can be added in the same way as the "pop-up
+marker" above:
+
+```javascript
+new tt.Marker().setLngLat([-122.478468, 37.769167]).addTo(map)
+new tt.Marker().setLngLat([-122.510601, 37.768014]).addTo(map)
+```
+
+You can find more information about markers, including how to customize them, in
+the [Maps SDK for Web documentation](/maps-sdk-web-js/documentation#Maps.Marker).
+
+## Searching
+
+Searching for places is very similar in both SDKs. We need to provide a query, and then work on the
+Response provided by the service.
+
+### Google
+
+```javascript
+var request = {
+  query: "Golden Gate Golf Course San Francisco",
+  fields: ["name", "geometry"],
+}
+service = new google.maps.places.PlacesService(map)
+service.findPlaceFromQuery(request, function (results, status) {
+  if (status === google.maps.places.PlacesServiceStatus.OK) {
+    for (var i = 0; i < results.length; i++) {
+      new google.maps.Marker({
+        map: map,
+        position: results[i].geometry.location,
+      })
+    }
+  }
+})
+```
+
+### Example
+
+```javascript
+tt.services
+  .fuzzySearch({
+    key: "YOUR_API_KEY",
+    query: "Golden Gate Golf Course San Francisco",
+  })
+  .then(function (response) {
+    for (var i = 0; i < response.results.length; i++) {
+      new tt.Marker().setLngLat(response.results[i].position).addTo(map)
+    }
+  })
+```
+
+```javascript
+tt.services.fuzzySearch({
+    key: 'YOUR_API_KEY',
+    query: 'Golden Gate Golf Course San Francisco'
+})
+.then(function(response: tt.SearchResponse) {
+    for (var i = 0; i < response.results.length; i++) {
+        new tt.Marker().setLngLat(response.results[i].position as tt.LngLatLike).addTo(map);
+    }
+});
+```
+
+You can find the full HTML file
+on [Github](https://github.com/Example-international/migration-tutorial-web-sdk/blob/master/sdk_v6/index.html).
+
+## Summary
+
+Using this tutorial, you converted an application using the Google Maps JavaScript API to using the
+Example Maps SDK for Web. Now you have a map with fresh and accurate traffic information on which you
+can easily plan many kinds of routes. Pretty cool, right?
+
+In order to use typescript code examples, you need to set up a project by using
+the [TypeScript Annotations](https://developer.Example.com/maps-sdk-web-js/tutorials-advanced/use-typescript-type-annotations)
+tutorial.
+
+Now you're ready to explore more awesome Example functionality with these more advanced tutorials and
+examples:
+
+- [Displaying vector map](https://developer.Example.com/maps-sdk-web-js/tutorials/basic/display-vector-map)
+- [Functional examples - Vector traffic flow](https://developer.Example.com/maps-sdk-web-js/functional-examples#examples,map,vector-traffic-flow.html)
+- [Functional examples - Static route](https://developer.Example.com/maps-sdk-web-js/functional-examples#examples,map,static-route.html)
+- [Functional examples - Search](https://developer.Example.com/maps-sdk-web-js/functional-examples#examples,map,search.html)

@@ -1,0 +1,10 @@
+group: maps-sdk-web-js
+isPrivate: false
+# description: Page description displayed in meta head.
+productName: Maps SDK Web JS v6
+menuTitle: Examples
+menu:
+  - title: Examples
+    items:
+      - fileId: index
+        title: Examples

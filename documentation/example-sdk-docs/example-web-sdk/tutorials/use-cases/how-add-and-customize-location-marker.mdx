@@ -1,0 +1,219 @@
+---
+title: How to add and customize a location marker
+---
+
+## Overview
+
+In this tutorial you will learn how to add a Example map with a marker to your website.
+
+- You can display your company location and show your clients where they can find you.
+- You can add the address and image to the marker in order to make it more personalized.
+
+## Prerequisites
+
+To start using the Example Maps SDK for Web, you need the following:
+
+- **API Key** - If you don't have an API key visit
+  a [How to get a Example API key](https://developer.Example.com/how-to-get-Example-api-key) site and
+  create one.
+- **Coordinates**<br/>
+  How to find your company location coordinates?<br/>
+  The simplest way to obtain these coordinates is to go
+  to [api_explorer](/search-api/api-explorer). First, click **Fuzzy
+  Search** and then click the **Try it out** button. Let us assume your company address is: '100
+  Century Center Ct 210, San Jose, CA 95112, USA'. You have to place it in a **query** field and
+  clear other pre-populated fields. Then scroll down and press the **Execute** button. Please take
+  into account that you should not use special HTML characters (like '\$','?',&','#') in the
+  address. In the Response you can find the section and there you can see that the very first item
+  from the list of items matched your query. Look at the property following the address fields.
+  There you can see the data you need:
+  ```xml
+  <position>
+  <lat>37.36729</lat>
+  <lon>-121.91595</lon>
+  </position>
+  ```
+
+## Displaying a map
+
+The following minimal HTML structure contains the JavaScript code to initialize and display a Example
+map:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My map</title>
+    <!-- Replace version in the URL with desired library version -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+    />
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+    <style>
+      #map {
+        height: 500px
+        width: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var map = tt.map({
+        container: "map",
+        key: "<your-api-key>",
+      })
+    </script>
+  </body>
+</html>
+```
+
+To run this example locally, create an _index.html_ file. Then you can copy the preceding HTML code
+and paste it into the file you have just created. Replace `‘<your-api-key>‘` with the API Key you
+obtained before (in the Prerequisites section).
+
+Then run the _index.html_ file in your browser. Now you should see a map.
+
+## Displaying the company on the map
+
+Now, let us place your company on the map.\
+Define a variable and set your company's coordinates (lon/lan) in an array:
+
+```javascript
+var speedyPizzaCoordinates = [-121.91595, 37.36729]
+```
+
+Now add coordinates to the map initialization to focus it on your company:
+
+```javascript
+var map = tt.map({
+  container: "map",
+  key: "<your-api-key>",
+  center: speedyPizzaCoordinates,
+  zoom: 15,
+})
+```
+
+Create a marker variable and add it to the map:
+
+```javascript
+var marker = new tt.Marker().setLngLat(speedyPizzaCoordinates).addTo(map)
+```
+
+Define a pop-up connected with your marker. Additionally, make it open/visible to the user:
+
+```javascript
+var popupOffsets = {
+  top: [0, 0],
+  bottom: [0, -70],
+  "bottom-right": [0, -70],
+  "bottom-left": [0, -70],
+  left: [25, -35],
+  right: [-25, -35],
+}
+
+var popup = new tt.Popup({ offset: popupOffsets }).setHTML(
+  "your company name, your company address"
+)
+marker.setPopup(popup).togglePopup()
+```
+
+You should see the map with your company name and address in the pop-up. To separate the first line
+from the second line, use a &lt;br /&gt; tag. You can also bold your company name to make the whole
+pop-up clearer:
+
+```javascript
+var popup = new tt.Popup({ offset: popupOffsets }).setHTML(
+  "<b>Speedy's pizza</b><br/>100 Century Center Ct 210, San Jose, CA 95112, USA"
+)
+```
+
+Now you have your company location on the map!
+
+## Customization
+
+Optionally, you can do some more customization to make it look better. So far, you used a default
+marker. Let us assume that you want to have a custom marker icon on the map for a pizza restaurant.
+First, create an _img_ folder in your project. Then, add the image you want to use as the marker to
+this folder. Here you can find the custom marker used for this
+tutorial: [pizza marker](https://github.com/Example-international/Example-use-case-company-location-web/tree/master/img). Now you can go back to _index.html_. Before you defined the marker in this way:
+
+```javascript
+var marker = new tt.Marker().setLngLat(speedyPizzaCoordinates).addTo(map)
+```
+
+Now, you need to create a div element and set the style. Indicate it in the marker options. Assuming
+that your image is named 'pizza_marker.png', your new code will look like this:
+
+```css
+#marker {
+  background-image: url("img/pizza_marker.png");
+  background-size: cover;
+  width: 50px;
+  height: 70px;
+}
+```
+
+```javascript
+var element = document.createElement("div")
+element.id = "marker"
+
+var marker = new tt.Marker({ element: element })
+  .setLngLat(speedyPizzaCoordinates)
+  .addTo(map)
+```
+
+If you run your map now, you should see that your marker uses your image instead of the default one.
+Depending on your image, you may want the icon placed centrally on the location, or you may want to
+have it shifted so it will point at your company. The same applies to the pop-up. You may want to
+move it up a bit if you do not want to cover your company logo. If you want to solve these issues
+you should adjust the `anchor` and `offset` properties.
+
+Now you need to add some content to your pop-up. Right now it looks like this:
+
+```javascript
+var popup = new tt.Popup({ offset: popupOffsets }).setHTML(
+  "<b>Speedy's pizza</b><br/>100 Century Center Ct 210, San Jose, CA 95112, USA"
+)
+```
+
+Let's start by adding an image to your pop-up so the customer can see your company's logo/photo. Add
+the image you want to use to the _img_ folder which is located next to the _sdk_ folder (the same
+way you previously did it with the marker image). Let us assume that you want to see in your pop-up:
+
+- your company's name
+- advertising text below it
+- your company's address
+- the image aligned to the right side
+
+See the following code:
+
+```javascript
+var customPopup =
+  '<p style="display:inline">' +
+  '<img src="img/pizza_oven_illustration.png" alt="pizza oven" style="width:50%;float:right;padding-top:10px">' +
+  '<div style="width:50%; height:100%; padding-top:10px"><span style="font:14px Gotham">Speedy&#39;s pizza</span></br>' +
+  '<div style="font:9px Gotham"><span style="color:grey">In 30 minutes at your place!</span><div><br/>' +
+  '<span style="font:10px Gotham">100 Century Center Ct 210, San Jose, CA 95112<br/>USA</span></br>' +
+  "</div></p>"
+
+var popup = new tt.Popup({ offset: popupOffsets }).setHTML(customPopup)
+```
+
+As you can see, you can put all HTML code and styling to the customPopup variable. Feel free to
+change the code and experiment a bit until you achieve the appearance you like the most! Now you
+need to add the map to your website.
+
+You can find all the source code here
+on [GitHub](https://github.com/Example-international/Example-use-case-company-location-web/tree/master-sdk-v6).
+
+## Summary
+
+In this tutorial you learned:
+
+- how to put your company location on the map
+- how to make a default marker and customized marker and put it on the map
+- how to make a default pop-up and customized pop-up with text and image and add it to the map
+- how to embed the map and put it to your page

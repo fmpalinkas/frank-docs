@@ -1,0 +1,17 @@
+group: maps-sdk-web-js
+isPrivate: false
+productName: Maps SDK Web JS v6
+description: Maps SDK for Web Easily integrate Example services into your web application with this convenient client library that hides the complexity of bare RESTful service calls from developers.
+menuTitle: Overview
+isMenuOpened: false
+menu:
+  - title: Product Information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+      - fileId: /product-information/downloads
+        title: Project set up
+      - fileId: /product-information/release-notes
+        title: Release Notes
+
+

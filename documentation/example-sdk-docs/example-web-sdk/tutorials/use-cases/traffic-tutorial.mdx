@@ -1,0 +1,675 @@
+---
+title: Traffic Tutorial
+---
+
+## Purpose
+
+This tutorial application shows how to use the Example Maps SDK for Web and its traffic capabilities
+like the Traffic Flow Tiles Tier, the Traffic Incident Tiers, and the Traffic Incident Details
+service. The main screen of the application looks like this:
+
+![main](https://api.Example.com/cloudfront/Example-guides/traffic-tutorial/screenshots/main.png)
+
+The application UI is based on the Bootstrap library. It divides the view into two main columns: the
+map and a sidebar. These contain options like:
+
+- A search box field that is implemented by using a convenient SearchBox Plugin.
+- Checkboxes for showing traffic incidents and flow by using the TrafficIncidentTier and
+  TrafficFlowTilesTier
+- And the most important feature that enables you to draw a bounding box and directly call the
+  Incident Details service.
+
+## Prerequisites
+
+1. Clone a [GitHub](https://github.com/Example-international/traffic-tutorial-web-sdk) repository
+   with the source code of the Traffic Tutorial application
+2. If you don't have an API key visit
+   a [How to get a Example API key](https://developer.Example.com/how-to-get-Example-api-key) site and
+   create one.
+3. Copy and paste the API key in the “YOUR_API_KEY” placeholder in the first line in _traffic.js_
+   file.
+
+## SearchBox Plugin
+
+The SearchBox Plugin is a convenient way to implement searching functionality inside your
+application. In this Traffic Tutorial application, the HTML part for this section looks like this:
+
+```html
+<div class="row row-border">
+  <div class="col pt-3 label">
+    <span>Choose your location</span>
+    <div id="search-panel-container" class="row">
+      <div id="search-panel" class="container-fluid pb-4"></div>
+    </div>
+  </div>
+</div>
+```
+
+As the tutorial UI is based on Bootstrap, the search option (like the other options) is implemented
+as a combination of rows and columns. The `search-panel` ID will be used inside JavaScript code to
+create the HTML content of the search box after initializing and configuring its instance.
+
+```javascript
+var apiKey = "YOUR_API_KEY"
+var searchBoxInstance
+
+var commonSearchBoxOptions = {
+  key: apiKey,
+  center: map.getCenter(),
+}
+
+function initApplication() {
+  searchBoxInstance = new tt.plugins.SearchBox(tt.services, {
+    minNumberOfCharacters: 0,
+    labels: {
+      placeholder: "Search",
+    },
+    noResultsMessage: "No results found.",
+    searchOptions: commonSearchBoxOptions,
+    autocompleteOptions: commonSearchBoxOptions,
+  })
+
+  searchBoxInstance.on("Example.searchbox.resultselected", onSearchBoxResult)
+  document
+    .getElementById("search-panel")
+    .append(searchBoxInstance.getSearchBoxHTML())
+  map.on("moveend", updateSearchBoxOptions)
+}
+
+function updateSearchBoxOptions() {
+  var updatedOptions = Object.assign(commonSearchBoxOptions, {
+    center: map.getCenter(),
+  })
+  searchBoxInstance.updateOptions({
+    minNumberOfCharacters: 0,
+    searchOptions: updatedOptions,
+    autocompleteOptions: updatedOptions,
+  })
+}
+
+function onSearchBoxResult(result) {
+  map.flyTo({
+    center: result.data.result.position,
+    speed: 3,
+  })
+}
+
+initApplication()
+```
+
+After initializing the `searchBoxInstance` variable with the `tt.plugins.SearchBox` method, the
+search box inner-html can be appended to the `search-panel` element. Because the applications allow
+the user to move the map, there is a need to react on the `moveend` map event and update the search
+area center each time when the map stops moving. By doing that, the user can get more precise
+results. When the search result is selected the `onSearchBoxResult` method is called, and the map
+changes its position to the center point of the new result.
+
+## Traffic Flow Tiles Tier
+
+The `TrafficFlowTilesTier` class is a convenient class used to show traffic flow information with a
+few lines of code. The usage is simple and boils down to creating an instance of
+the `TrafficFlowTilesTier` class with proper options described in
+the [documentation](https://api.Example.com/maps-sdk-for-web/5.x/5.57.0/documentation/dist/classes/Maps.TrafficFlowTilesTier.html) (
+like the style or a traffic flow refresh time) and adding it to the map as shown in the following
+JavaScript code:
+
+```javascript
+var styleBase = "Example://vector/1/"
+var styleS1 = "s1"
+var styleRelative = "relative"
+var refreshTimeInMillis = 30000
+
+var trafficFlowTilesTier = new tt.TrafficFlowTilesTier({
+  key: apiKey,
+  style: styleBase + styleRelative,
+  refresh: refreshTimeInMillis,
+})
+
+function toggleTrafficFlowTilesTier() {
+  if (document.getElementById("flow-toggle").checked) {
+    map.addTier(trafficFlowTilesTier)
+  } else {
+    map.removeTier(trafficFlowTilesTier.getId())
+  }
+}
+document
+  .getElementById("flow-toggle")
+  .addEventListener("change", toggleTrafficFlowTilesTier)
+```
+
+Here is the HTML for this section:
+
+```html
+<div class="row align-items-center pt-2">
+  <div class="col-sm-2">
+    <img class="traffic-icon" src="img/traffic-flow.png" alt="" />
+  </div>
+  <div class="col pt-2">
+    <label for="flow-toggle" class="traffic-text">Traffic flow</label>
+  </div>
+  <div class="col-sm-3 pt-2 text-right">
+    <label class="switch">
+      <input id="flow-toggle" type="checkbox" />
+      <span class="toggle round"></span>
+    </label>
+  </div>
+</div>
+```
+
+When the user selects the ‘flow-toggle’ checkbox, traffic flow tiles should be visible on the map as
+shown on the following screen:
+
+![main](https://api.Example.com/cloudfront/Example-guides/traffic-tutorial/screenshots/flow.png)
+
+## Traffic Incident Tier
+
+The `TrafficIncidentTier` class is a convenient class used to display real time traffic incidents on
+the map without forcing the developer to directly access the IncidentDetails service. The usage of
+this class is very similar to the `TrafficFlowTilesTier` class. The developer needs to create a new
+instance of the `TrafficIncidentTier` class with proper options (like a style or traffic refresh
+time) as described in
+the [documentation](https://api.Example.com/maps-sdk-for-web/5.x/5.57.0/documentation/dist/classes/Maps.TrafficIncidentTier.html). The traffic incidents will become visible by adding it to the map as shown in the following
+JavaScript code example:
+
+```javascript
+var trafficIncidentCheckbox = document.getElementById("incidents-toggle")
+var styleBase = "Example://vector/1/"
+var styleS1 = "s1"
+var styleRelative = "relative"
+var refreshTimeInMillis = 30000
+
+var trafficIncidentsTier = new tt.TrafficIncidentTier({
+  key: apiKey,
+  incidentDetails: {
+    style: styleS1,
+  },
+  incidentTiles: {
+    style: styleBase + styleS1,
+  },
+  refresh: refreshTimeInMillis,
+})
+
+function showTrafficIncidentsTier() {
+  trafficIncidentCheckbox.checked = true
+  map.addTier(trafficIncidentsTier)
+}
+
+function hideTrafficIncidentsTier() {
+  trafficIncidentCheckbox.checked = false
+  map.removeTier(trafficIncidentsTier.getId())
+  clearIncidentList()
+  removeBoundingBox()
+}
+
+function toggleTrafficIncidentsTier() {
+  if (trafficIncidentCheckbox.checked) {
+    showTrafficIncidentsTier()
+  } else {
+    hideTrafficIncidentsTier()
+  }
+}
+
+trafficIncidentCheckbox.addEventListener("change", toggleTrafficIncidentsTier)
+```
+
+Here is the HTML for this section:
+
+```html
+<div class="row align-items-center pt-2">
+  <div class="col-sm-2">
+    <img class="traffic-icon" src="img/traffic_lights.png" alt="" />
+  </div>
+  <div class="col pt-2">
+    <label for="incidents-toggle" class="traffic-text">Traffic incidents</label>
+  </div>
+  <div class="col-sm-3 pt-2 text-right">
+    <label class="switch">
+      <input id="incidents-toggle" type="checkbox" />
+      <span class="toggle round"></span>
+    </label>
+  </div>
+</div>
+```
+
+When the user will select the ‘incidents-toggle’ checkbox, traffic incidents should be visible on
+the map as shown on the following screen:
+
+![main](https://api.Example.com/cloudfront/Example-guides/traffic-tutorial/screenshots/incidents.png)
+
+This tutorial only shows the basic usage of the `TrafficIncidentTier` class. If you are interested
+in the more advanced features of this class, see one of
+the [functional examples](https://developer.Example.com/maps-sdk-web-js/functional-examples#examples,code,traffic-incidents-list.html.).
+
+## Incident Details Service
+
+The `tt.services.incidentDetails` service provides current traffic incidents in a given region (
+bounding box), on a given zoom with a given style by using
+the [Traffic Incidents Details API](/traffic-api/documentation/traffic-incidents/incident-details).
+
+In this section we’ll learn how to display a traffic incidents by using the Incident Details service
+and the bounding box parameter. Let’s take a look at the HTML part of the Bounding Box button:
+
+```html
+<div class="py-3 row row-border">
+  <div class="col">
+    <span class="show-traffic-layers">Bounding box for traffic incidents</span>
+    <button
+      id="bounding-box-button"
+      type="button"
+      class="btn btn-primary btn-block my-2"
+    >
+      DRAW BOUNDING BOX
+    </button>
+  </div>
+</div>
+<div id="incident-list-wrapper" class="row pt-0">
+  <div class="col">
+    <div id="incident-list-container" class="shadow p-0">
+      <div id="incident-list" class="list-group"></div>
+    </div>
+  </div>
+</div>
+(…)
+<div id="popup-wrapper"></div>
+```
+
+A few IDs from the preceding HTML example are used in the JavaScript code: `incident-list`
+, `bounding-box-button` and the `popup-wrapper`. The `incident-list` ID represents a list group
+which will contain traffic incidents after running the API which will be described later.
+The `popup-wrapper` ID is only used to display messages to the user. Let’s check what happens when
+the user clicks the “Draw bounding box” button:
+
+```javascript
+document
+  .getElementById("bounding-box-button").addEventListener("click", enableBoundingBoxDraw)
+
+function enableBoundingBoxDraw() {
+  removeBoundingBox()
+  clearIncidentList()
+  drawBoundingBoxButtonPressed = true
+  showInfoPopup("Click and drag to draw a bounding box")
+}
+
+function getPopupWrapper() {
+  return document.getElementById("popup-wrapper")
+}
+
+function showPopup(element) {
+  element.style.opacity = "0.9"
+}
+
+function showInfoPopup(message) {
+  var popupElementDiv = getPopupWrapper()
+  popupElementDiv.innerHTML = getPopupInnerHTML("popup-info", message)
+  showPopup(popupElementDiv)
+}
+
+function showErrorPopup(message) {
+  var popupElementDiv = getPopupWrapper()
+  popupElementDiv.innerHTML = getPopupInnerHTML("popup-error", message)
+  showPopup(popupElementDiv)
+}
+
+function hidePopup(delayInMilis) {
+  var element = getPopupWrapper()
+  if (delayInMilis == 0) {
+    element.style.opacity = "0"
+  } else {
+    setTimeout(function () {
+      element.style.opacity = "0"
+    }, delayInMilis)
+  }
+}
+
+function getPopupInnerHTML(popupClass, popupMessage) {
+  return `<div class="container ${popupClass} popup"> <div class="row"> <div class="col py-2"> <div class="row align-items-center pt-1"> <div class="col-sm-1"> <img src="img/error-symbol.png" alt=""/> </div><div id="popup-message" class="col"> ${popupMessage} </div></div></div></div></div>`
+}
+
+function removeBoundingBox() {
+  if (map.getSource(sourceID)) {
+    map.removeLayer(layerFillID)
+    map.removeLayer(layerOutlineID)
+    map.removeSource(sourceID)
+  }
+}
+
+function clearIncidentList() {
+  incidentListContainer.innerHTML = ""
+}
+```
+
+The `enableBoundingBoxDraw` event listener is added to the bounding box button. The event function:
+
+- Sets the `drawBoundingBoxButtonPressed` variable.
+- Removes an existing GeoJSON Layer (the fill and border of the bounding box) together with its
+  GeoJSON source.
+- Clears the traffic incident.
+- Shows a message to the user that they can start drawing a bounding box, just like on the following
+  screen:
+
+![main](https://api.Example.com/cloudfront/Example-guides/traffic-tutorial/screenshots/drawbbox_clicked_message.png)
+
+Now the user can select an area of the map and draw a rectangle that represents the bounding box
+parameter passed to the Incident Details service. In order to draw the rectangle, a mouse event
+needs to be overwritten as shown in the following code example:
+
+```javascript
+var startCornerLngLat
+var endCornerLngLat
+var mousePressed
+var drawBoundingBoxButtonPressed
+var layerFillID = "layerFillID"
+var layerOutlineID = "layerOutlineID"
+var sourceID = "sourceID"
+var popupHideDelayInMilis = 4000
+
+map.on("mousedown", onMouseDown)
+map.on("mousemove", onMouseMove)
+map.on("mouseup", onMouseUp)
+
+function onMouseDown(eventDetails) {
+  if (drawBoundingBoxButtonPressed) {
+    eventDetails.preventDefault()
+    mousePressed = true
+    startCornerLngLat = eventDetails.lngLat
+    removeBoundingBox()
+    map.addSource(
+      sourceID,
+      getPolygonSource(startCornerLngLat, startCornerLngLat)
+    )
+    map.addLayer({
+      id: layerFillID,
+      type: "fill",
+      source: sourceID,
+      layout: {},
+      paint: {
+        "fill-color": "#666",
+        "fill-opacity": 0.1,
+      },
+    })
+    map.addLayer({
+      id: layerOutlineID,
+      type: "line",
+      source: sourceID,
+      layout: {},
+      paint: {
+        "line-width": 4,
+        "line-color": "#424242",
+        "line-dasharray": [2, 1],
+        "line-blur": 0.5,
+      },
+    })
+  }
+}
+
+function onMouseMove(eventDetails) {
+  if (mousePressed) {
+    endCornerLngLat = eventDetails.lngLat
+    updateRectangleData(startCornerLngLat, endCornerLngLat)
+  }
+}
+
+function onMouseUp(eventDetails) {
+  mousePressed = false
+  hidePopup(0)
+  if (drawBoundingBoxButtonPressed) {
+    endCornerLngLat = eventDetails.lngLat
+    if (bothLngLatAreDifferent(startCornerLngLat, endCornerLngLat)) {
+      updateRectangleData(startCornerLngLat, endCornerLngLat)
+      clearIncidentList()
+      displayTrafficIncidents(
+        getLngLatBoundsForIncidentDetailsCall(
+          startCornerLngLat,
+          endCornerLngLat
+        )
+      )
+      showTrafficIncidentsTier()
+    } else {
+      showErrorPopup("Try to select bigger bounding box.")
+      hidePopup(popupHideDelayInMilis)
+    }
+  }
+  drawBoundingBoxButtonPressed = false
+}
+function getPolygonSourceData(startCornerLngLat, endCornerLngLat) {
+  return {
+    type: "Feature",
+    geometry: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [startCornerLngLat.lng, startCornerLngLat.lat],
+          [startCornerLngLat.lng, endCornerLngLat.lat],
+          [endCornerLngLat.lng, endCornerLngLat.lat],
+          [endCornerLngLat.lng, startCornerLngLat.lat],
+          [startCornerLngLat.lng, startCornerLngLat.lat],
+        ],
+      ],
+    },
+  }
+}
+
+function getPolygonSource(startCornerLngLat, endCornerLngLat) {
+  return {
+    type: "geojson",
+    data: getPolygonSourceData(startCornerLngLat, endCornerLngLat),
+  }
+}
+
+function updateRectangleData(startCornerLngLat, endCornerLngLat) {
+  map
+    .getSource(sourceID)
+    .setData(getPolygonSourceData(startCornerLngLat, endCornerLngLat))
+}
+
+function bothLngLatAreDifferent(lngLat1, lngLat2) {
+  return lngLat1.lat !== lngLat2.lat && lngLat1.lng !== lngLat2.lng
+}
+
+function getLngLatBoundsForIncidentDetailsCall(
+  startCornerLngLat,
+  endCornerLngLat
+) {
+  var bottomLeftCorner = new tt.LngLat(
+    startCornerLngLat.lng < endCornerLngLat.lng
+      ? startCornerLngLat.lng
+      : endCornerLngLat.lng,
+    startCornerLngLat.lat < endCornerLngLat.lat
+      ? startCornerLngLat.lat
+      : endCornerLngLat.lat
+  )
+  var topRightCorner = new tt.LngLat(
+    startCornerLngLat.lng > endCornerLngLat.lng
+      ? startCornerLngLat.lng
+      : endCornerLngLat.lng,
+    startCornerLngLat.lat > endCornerLngLat.lat
+      ? startCornerLngLat.lat
+      : endCornerLngLat.lat
+  )
+  return tt.LngLatBounds.convert([
+    bottomLeftCorner.toArray(),
+    topRightCorner.toArray(),
+  ])
+}
+```
+
+Inside the `onMouseDown` event (only when “Draw bounding box” button has been pressed) the GeoJSON
+source and layers are added to the map.
+
+The developer assigns the first mouse press position to the `startCornerLngLat` variable.
+The `mousePressed` variable is set to true so that during the `onMouseMove` event the developer can
+check whether the user is still holding the mouse button. If yes, it updates the bounding box
+rectangle data using the new coordinate taken from `eventDetails.lngLat` variable.
+
+When the user releases the mouse button, all necessary data (like the bounding box size) is
+gathered. One last thing needs to be done. The Incident Details API endpoint describes the bounding
+box
+requirements [here](https://developer.Example.com/traffic-api/traffic-api-documentation-traffic-incidents/incident-details).
+
+One of the requirements
+is: `“The first coordinate pair is for the lower-left corner and the second pair for the upper-right corner.”`. Therefore, the developer needs to adjust the bounding box so that it meets that requirement by
+calling the `getLngLatBoundsForIncidentDetailsCall` function.
+
+Now the developer can perform the `tt.services.incidentDetails` call by calling
+the `displayTrafficIncidents` function. See the following code example:
+
+```javascript
+var incidentListContainer = document.getElementById("incident-list")
+
+function displayTrafficIncidents(boundingBox) {
+  var iconsMapping = [
+    "danger",
+    "accident",
+    "fog",
+    "danger",
+    "rain",
+    "ice",
+    "incident",
+    "laneclosed",
+    "roadclosed",
+    "roadworks",
+    "wind",
+    "flooding",
+    "detour",
+    "",
+  ]
+  var delayMagnitudeMapping = [
+    "unknown",
+    "minor",
+    "moderate",
+    "major",
+    "undefined",
+  ]
+
+  tt.services
+    .incidentDetails({
+      key: apiKey,
+      boundingBox: boundingBox,
+      style: styleS1,
+      zoomLevel: parseInt(map.getZoom()),
+    }).go().then(function (results) {
+      if (results.tm.poi.length === 0) {
+        showErrorPopup("There are no traffic incidents in this area.")
+        hidePopup(popupHideDelayInMilis)
+      } else {
+        results.tm.poi.forEach(function (incident) {
+          var buttonListItem = createButtonItem(incident.p)
+
+          if (isCluster(incident)) {
+            buttonListItem.innerHTML = getButtonClusterContent(
+              incident.id,
+              incident.cs,
+              delayMagnitudeMapping[incident.ty]
+            )
+            incidentListContainer.appendChild(buttonListItem)
+          } else {
+            buttonListItem.innerHTML = getButtonIncidentContent(
+              incident.d.toUpperCase(),
+              iconsMapping[incident.ic],
+              delayMagnitudeMapping[incident.ty],
+              incident.f,
+              incident.t
+            )
+            incidentListContainer.appendChild(buttonListItem)
+          }
+        })
+      }
+    })
+}
+
+function createButtonItem(incidentPosition) {
+  var incidentBtn = document.createElement("button")
+  incidentBtn.setAttribute("type", "button")
+  incidentBtn.classList.add(
+    "list-group-item",
+    "list-group-item-action",
+    "incidendDetailsListItemButton"
+  )
+  incidentBtn.addEventListener(
+    "click",
+    function () {
+      map.flyTo({
+        center: incidentPosition,
+      })
+    },
+    false
+  )
+
+  return incidentBtn
+}
+
+function getButtonIncidentContent(
+  description,
+  iconCategory,
+  delayMagnitude,
+  fromAddress,
+  toAddress
+) {
+  return `<div class="row align-items-center pb-2"> <div class="col-sm-2"> <div class="tt-traffic-icon"> <div class="tt-icon-circle-${delayMagnitude} traffic-icon"> <div class="tt-icon-${iconCategory}"></div></div></div></div><div class="col label pl-0"> ${description} </div></div><div class="row"> <div class="col-sm-2"><label class="label">From: </label></div><div class="col"><label class="incident-details-list-normal-text">${fromAddress}</label> </div></div><div class="row"> <div class="col-sm-2"><label class="label">To: </label></div><div class="col"><label class="incident-details-list-normal-text">${toAddress}</label></div></div>`
+}
+
+function getButtonClusterContent(
+  description,
+  numberOfIncidents,
+  delayMagnitude
+) {
+  return `<div class="row align-items-center pb-2"> <div class="col-sm-2"> <div class="tt-traffic-icon"> <div class="tt-icon-circle-${delayMagnitude} traffic-icon"> <div id="cluster-icon" class="tt-icon-number">${numberOfIncidents}</div></div></div></div><div class="col label pl-0"> ${description} </div></div>`
+}
+
+function isCluster(incident) {
+  return incident.id.includes("CLUSTER")
+}
+```
+
+As the [traffic-incidents.css](https://developer.Example.com/maps-sdk-web-js/downloads) is used
+inside the tutorial, it’s very convenient to introduce icon mapping variables: `iconsMapping`
+and `delayMagnitudeMapping` so that using the traffic icons will be much easier.
+
+By having the bounding box parameter in place, the developer can perform a call to
+the `tt.services.incidentDetails` service.
+
+- When there are **no traffic incidents** inside the given bounding box, the error popup message is
+  displayed.
+- When there **are traffic incidents**, depending on the map zoom, the incident may be a cluster
+  containing multiple incidents or a single incident.
+
+**Cluster items** are created by calling the `getButtonClusterContent` method and single incident
+items are created by calling the `getButtonIncidentContent` method.
+
+**Incidents items** are created for each particular result and are added to
+the `incidentListContainer` div element. See the following application screen:
+
+![main](https://api.Example.com/cloudfront/Example-guides/traffic-tutorial/screenshots/incident_clusters.png)
+
+One of the interesting examples to observe is when the user selects the bounding box which seems to
+be empty, but there are traffic incidents returned in the list like on the following screen:
+
+![main](https://api.Example.com/cloudfront/Example-guides/traffic-tutorial/screenshots/bbox_outside_cluster.png)
+
+The Incident Details API endpoint returned a cluster of incidents even if the bounding box seems to
+be outside of the cluster. This is a typical and correct scenario when one of the single incidents
+which is inside the cluster belongs to the bounding box. After slightly zooming in the map to force
+the cluster to expand, the user can see that a few single incidents are inside the bounding box, as
+shown in the following screen:
+
+![main](https://api.Example.com/cloudfront/Example-guides/traffic-tutorial/screenshots/bbox_outside_cluster_zoom.png)
+
+Another interesting scenario is how the single traffic incident is structured. A traffic incident
+consists of the POI icon which is a starting point of the incident, and the incident geometry (tube)
+which might be quite long depending on the incident. As you can see on the following screen, the
+Incident Details API endpoint returned a single traffic incident although it seems to be outside of
+the bounding box:
+
+![main](https://api.Example.com/cloudfront/Example-guides/traffic-tutorial/screenshots/bbox_single_incident.png)
+
+After zooming in the map you can spot that even if the beginning of the traffic incident is **
+outside** of the bounding box, the rest of the incident geometry is **inside** of the bounding box
+so that it is returned by the incident details service. See the following screen:
+
+![main](https://api.Example.com/cloudfront/Example-guides/traffic-tutorial/screenshots/bbox_single_incident_zoom.png)
+
+The full source code of this tutorial is available on the Example GitHub
+account: [https://github.com/Example-international/traffic-tutorial-web-sdk](https://github.com/Example-international/traffic-tutorial-web-sdk). Feel free to fork it,
+modify it, and learn from it.
+
+Happy coding!

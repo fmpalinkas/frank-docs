@@ -1,0 +1,158 @@
+---
+title: Migrate from version 5 - the Services library
+---
+
+## Overview of the tutorial
+
+This tutorial covers basic use cases to help you switch our services. For example, switching the
+Routing API or Search API services from version 5 of the Maps SDK for Web to our new version. We
+will use code examples to explain the main differences between the SDKs.
+
+You can check how to migrate map displaying
+here: [Migrate from version 5 - the Maps library](/maps-sdk-web-v6/tutorials-migration/migrate-version-5-maps-library)
+
+## Prerequisites
+
+To start using the latest version of the Example Maps SDK for Web you need the following:
+
+- The **Services library**<br/>
+  The Maps SDK for Web can be used in three ways:
+  - Downloaded from NPM: https://www.npmjs.com/package/@Example-international/web-sdk-services
+  - With a
+    CDN: https://api.Example.com/maps-sdk-for-web/cdn/6.x/&ltversion&gt;/services/services-web.min.js
+    - NOTE: include the latest version in the URL.
+  - Downloaded from here: [Downloads.](/maps-sdk-web-js-v6/downloads)<br/>
+    In this tutorial, we are using a CDN as an example.
+- **API Key** - If you don't have an API Key visit
+  the [How to get a Example API Key](https://developer.Example.com/how-to-get-Example-api-key) site and
+  create one.
+- Add the following to the &lt;head&gt; element of your HTML document:
+  ```html
+  <!-- Replace version in the URL with desired library version -->
+  <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/services/services-web.min.js"></script>
+  ```
+  Maps and services use the same namespace and will automatically attach themselves to the **tt**
+  object. Services will be accessible using **tt.services**.
+
+## Displaying a route/directions
+
+Here we have the code to display a route from point A to point B on the map.
+
+### Version 5 of the Maps SDK for Web
+
+```javascript
+tt.services
+  .calculateRoute({
+    key: "<your-api-key>",
+    locations: "-122.510601,37.768014:-122.478468,37.769167",
+  })
+  .go()
+  .then(function (response) {
+    var geojson = response.toGeoJson()
+    map.addLayer({
+      id: "route",
+      type: "line",
+      source: {
+        type: "geojson",
+        data: geojson,
+      },
+      paint: {
+        "line-color": "#00d7ff",
+        "line-width": 8,
+      },
+    })
+    var bounds = new tt.LngLatBounds()
+    geojson.features[0].geometry.coordinates.forEach(function (point) {
+      bounds.extend(tt.LngLat.convert(point))
+    })
+    map.fitBounds(bounds, { padding: 20 })
+  })
+```
+
+### Latest version of the Maps SDK for Web
+
+```javascript
+tt.services
+  .calculateRoute({
+    key: "<your-api-key>",
+    locations: "-122.510601,37.768014:-122.478468,37.769167",
+  })
+  .then(function (response) {
+    var geojson = response.toGeoJson()
+    map.addLayer({
+      id: "route",
+      type: "line",
+      source: {
+        type: "geojson",
+        data: geojson,
+      },
+      paint: {
+        "line-color": "#00d7ff",
+        "line-width": 8,
+      },
+    })
+    var bounds = new tt.LngLatBounds()
+    geojson.features[0].geometry.coordinates.forEach(function (point) {
+      bounds.extend(tt.LngLat.convert(point))
+    })
+    map.fitBounds(bounds, { padding: 20 })
+  })
+```
+
+## Performing a fuzzy search
+
+### Version 5 of the Maps SDK for Web
+
+```javascript
+tt.services
+  .fuzzySearch({
+    key: "<your-api-key>",
+    query: "pizza",
+  })
+  .go()
+  .then(function (result) {
+    console.log(result)
+  })
+```
+
+### Latest version of the Maps SDK for Web
+
+```javascript
+tt.services
+  .fuzzySearch({
+    key: "<your-api-key>",
+    query: "pizza",
+  })
+  .then(function (result) {
+    console.log(result)
+  })
+```
+
+As you can see the only difference here is that we no longer call the service by using **.go()**
+method. We do this by directly calling a service function.
+
+## Differences in APIs
+
+Here is a summary of the most important updates in the services library:
+
+- **Removal of .go() method**
+- **Differences in batch and matrix responses**<br/>
+  **Version 5**
+  ![](https://api.Example.com/maps-sdk-for-web/cdn/static/batch_old.png) <br/>
+  **Current version**
+  ![](https://api.Example.com/maps-sdk-for-web/cdn/static/batch_new.png) Here's the list of services
+  affected by changes in responses:
+  - [geocode](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.geocode)
+  - [reverseGeocode](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.reverseGeocode)
+  - [calculateReachableRange](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.calculateReachableRange)
+  - [calculateRoute](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.calculateRoute)
+  - [additionalData](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.additionalData)
+  - [matrixRouting](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.matrixRouting)
+  - [evChargingStationsAvailability](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.evChargingStationsAvailability)
+  - [fuzzySearch](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.fuzzySearch)
+  - [categorySearch](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.categorySearch)
+  - [geometrySearch](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.geometrySearch)
+  - [nearbySearch](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.nearbySearch)
+  - [poiSearch](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.poiSearch)
+- **New services** - for list of all services available in the new version of the SDK, please
+  visit [services documentation](https://developer.Example.com/maps-sdk-web-js/documentation#Services).

@@ -1,0 +1,988 @@
+---
+title: Map Styles
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.01.30'
+    color: grey5
+---
+
+## Purpose  
+
+The Maps API Resource service delivers resources required to display **vector maps**. The service consists of the:
+
+- **Metadata method:** This retrieves _a list of resources of a selected type_.
+- **Resource method:** This retrieves _a selected resource_.
+- **Merged style method:** This retrieves _a merged style_ depending on the passed params.
+- **Merged sprite method:** This retrieves _a merged sprite_ depending on the passed params.
+
+## Request data
+
+## Metadata method
+
+### HTTPS method: `GET`
+
+Please see the following [Request parameters](#request-parameters-metadata-method) section with the required and optional parameters tables for these values. The generic URL format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/map/{versionNumber}/{resourceType}/{resourceVersion}/{resourceVariant}/metadata.{format}?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>Examples</h4>
+
+```shell [type=get] [title=Example request URLs]
+https://api.Example.com/map/1/style/metadata.xml?key={Your_API_Key}
+
+https://api.Example.com/map/1/sprite/20.0.0-8/metadata.json?key={Your_API_Key}
+
+https://api.Example.com/map/1/glyph/20.0.0-8/metadata.jsonp?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://api.Example.com/map/1/sprite/20.0.0-8/metadata.json?key={Your_API_Key}'
+```
+
+### Request parameters (Metadata method)
+
+The following table describes the parameters that can be used in a request.
+
+- Required parameters **must be used** or the call will fail.
+- Parameters and values are case-sensitive.
+- Optional parameters may be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Base URL for calling Example services.
+        <br />
+         **Value:**   `api.Example.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `resourceType` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The type of the requested resource.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `style` 
+          </li>
+          <li>
+             `sprite` 
+          </li>
+          <li>
+             `glyph` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `format` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The requested response format.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `xml` 
+          </li>
+          <li>
+             `json` 
+          </li>
+          <li>
+             `jsonp` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The authorization key for access to the API.
+        <br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `resourceVersion` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Version of the requested resource. If the version string contains a
+        wildcard, the latest matching version of the resource will be provided.
+        <br />
+         **Values:** 
+        <ul>
+          <li>A version.</li>
+          <li>
+            A partial version ending with a wildcard character, e.g.,
+            `*`, `20.*`, `20.0.2-*`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `resourceVariant` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Variant of the requested resource. Can only be used when
+         `**resourceVersion**` 
+        is provided.
+        <br />
+         **Value:**  The variant name.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Resource method
+
+### HTTPS method: `GET`
+
+Please see the following [Request parameters](#request-parameters-resource-method) section with the required and optional parameters tables for these values. The generic URL format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/map/{versionNumber}/{resourceType}/{resourceVersion}/{resourceVariant}/{resourceName}?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>Examples</h4>
+
+```shell [type=get] [title=Example request URL]
+https://api.Example.com/map/1/style/20.0.0-8/basic_main.json?key={Your_API_Key}
+```
+
+```shell [type=get] [title=Example request URL]
+https://api.Example.com/map/1/sprite/20.0.0-8/lite/sprite.png?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://api.Example.com/map/1/style/20.0.0-8/basic_main.json?key={Your_API_Key}'
+```
+
+### Request parameters (Resource method)
+
+The following table describes the parameters that can be used in a request.
+
+- Required parameters **must be used** or the call will fail.
+- Parameters and values are case-sensitive.
+- Optional parameters may be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Base URL for calling Example services
+        <br />
+         **Value:**   `api.Example.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `resourceType` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The type of the requested resource.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `style` 
+          </li>
+          <li>
+             `sprite` 
+          </li>
+          <li>
+             `glyph` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `resourceVersion` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the requested resource. If the version string contains a
+        wildcard, the latest matching version of the resource will be provided.
+        Available versions can be listed using the Metadata method.
+        <br />
+         **Values:** 
+        <ul>
+          <li>A version.</li>
+          <li>
+            A partial version ending with a wildcard character, e.g.,
+            `*`, `20.*`, `20.0.2-*`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `resourceName` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The requested resource name (with an extension if applicable). Available
+        resources can be listed using the Metadata method.
+        <br />
+         **Value:**  A resource name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Authorization key for access to the API.
+        <br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `resourceVersion` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Version of the requested resource. If the version string contains a
+        wildcard, the latest matching version of the resource will be provided.
+        <br />
+         **Values:** 
+        <ul>
+          <li>A version.</li>
+          <li>
+            A partial version ending with a wildcard character, e.g.,
+            `*`, `20.*`, `20.0.2-*`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `resourceVariant` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The variant of the requested resource. Available variants can be listed
+        using the Metadata method.
+        <br />
+         **Value:**  For example,  `Example` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Merged style method
+
+### HTTPS method: `GET`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters-merged-style-method) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/style/{versionNumber}/style/{resourceVersion}?key={Your_API_Key}&map={map_style}&traffic_incidents={traffic_incident_style}&traffic_flow={traffic_flow_style}&poi={poi_style}
+```
+
+<h4 style={{ fontSize: '1em' }}>Examples</h4>
+
+```shell [type=get] [title=Example request URLs]
+https://api.Example.com/style/1/style/20.3.4-6?key={Your_API_Key}&map=basic_main&traffic_incidents=incidents_night&traffic_flow=flow_absolute&poi=poi_main
+
+https://api.Example.com/style/1/style/20.3.2-3?key={Your_API_Key}&map=basic_night&traffic_incidents=incidents_night
+
+https://api.Example.com/style/1/style/20.3.2-3?key={Your_API_Key}&traffic_incidents=incidents_s0&traffic_flow=flow_relative0
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://api.Example.com/style/1/style/20.3.2-3?key={Your_API_Key}&traffic_incidents=incidents_s0&traffic_flow={low_relative0'
+```
+
+### Request parameters (Merged style method)
+
+The following table describes the parameters that can be used in a request.
+
+- Required parameters **must be used** or the call will fail.
+- Parameters and values are case-sensitive.
+- Optional parameters may be used.
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Base URL for calling Example services.
+        <br />
+         **Value:**   `api.Example.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `resourceVersion` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Version of the requested resource. Must be newer than or equal to
+         **20.3.2-3**. If the version string contains a wildcard, the latest
+        matching version of the resource will be provided.
+        <br />
+         **Values:** 
+        <ul>
+          <li>A version.</li>
+          <li>
+            A partial version ending with a wildcard character, e.g.,
+            `*`, `20.*`, `20.3.2-*`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The authorization key for access to the API.
+        <br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `map` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Map style name to be used for merged style.
+        <br />
+         **Values:**  See
+         [Available map styles](#merged-style-map-styles).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `traffic_incidents` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Traffic incidents style name to be used for merged style.
+        <br />
+         **Values:**  See
+         [Available incidents styles](#merged-style-incidents-styles).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `traffic_flow` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Traffic flow style name to be used for merged style.
+        <br />
+         **Values:**  See
+         [Available flow styles](#merged-style-flow-styles).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `poi` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        POI style name to be used for merged style.
+        <br />
+         **Values:**  See
+         [Available POI styles](#merged-style-poi-styles).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Available Map styles
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Available since
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Available until
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">basic_main</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">basic_night</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">basic_main-lite</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">basic_night-lite</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">hybrid_main</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">hybrid_night</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">hybrid_main-lite</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">hybrid_night-lite</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">labels_main</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">labels_night</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">labels_main-lite</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">labels_night-lite</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+  </tbody>
+</table>
+
+### Available Incidents styles
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Available since
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Available until
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">incidents_day</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">incidents_dark</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">incidents_night</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">incidents_s0</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">incidents_s0-dark</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">incidents_s1</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">incidents_s2</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">incidents_s3</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+  </tbody>
+</table>
+
+### Available Flow styles
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Available since
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Available until
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">flow_absolute</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">flow_reduced-sensitivity</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">flow_relative-delay</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">flow_relative0</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">flow_relative0-dark</th>
+      <td>20.3.2-3</td>
+      <td> - </td>
+    </tr>
+  </tbody>
+</table>
+
+### Available POI styles
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Available since
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Available until
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">poi_main</th>
+      <td>20.3.4-6</td>
+      <td> - </td>
+    </tr>
+    <tr>
+      <th scope="row">poi_dynamic</th>
+      <td>20.4.5-8</td>
+      <td> - </td>
+    </tr>
+  </tbody>
+</table>
+
+## Merged sprite method
+
+### HTTPS method: `GET`
+
+Please see the following [Request parameters](#request-parameters-merged-sprite-method) section with the required and optional parameters tables for these values. The generic URL format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/style/{versionNumber}/sprite/{resourceVersion}/{type}?key={Your_API_Key}&map={map_style}&traffic_incidents={traffic_incident_style}&traffic_flow={traffic_flow_style}&poi={poi_style}
+```
+
+<h4 style={{ fontSize: '1em' }}>Examples</h4>
+
+```shell [type=get] [title=Example request URL]
+https://api.Example.com/style/1/sprite/20.3.4-6/sprite.png?key={Your_API_Key}&map=basic_main&traffic_incidents=incidents_s0&traffic_flow=flow_relative0&poi=poi_main
+
+https://api.Example.com/style/1/sprite/20.3.2-3/sprite@2x.json?key={Your_API_Key}&map=basic_night&traffic_incidents=incidents_s0-dark
+
+https://api.Example.com/style/1/sprite/20.3.2-3/sprite@2x.png?key={Your_API_Key}&traffic_incidents=incidents_s1&traffic_flow=flow_relative0-dark
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://api.Example.com/style/1/sprite/20.3.2-3/sprite.json?key={Your_API_Key}&traffic_incidents=incidents_s1&traffic_flow=flow_relative0-dark'
+```
+
+### Request parameters (Merged sprite method)
+
+The following table describes the parameters that can be used in a request.
+
+- Required parameters **must be used** or the call will fail.
+- Parameters and values are case-sensitive.
+- Optional parameters may be used.
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Base URL for calling Example services.
+        <br />
+         **Value:**   `api.Example.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `resourceVersion` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Version of the requested resource. Must be newer than or equal to
+         **20.3.2-3**. If the version string contains a wildcard, the latest
+        matching version of the resource will be provided.
+        <br />
+         **Values:** 
+        <ul>
+          <li>A version.</li>
+          <li>
+            A partial version ending with a wildcard character, e.g.,
+            `*`, `20.*`, `20.3.2-*`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `type` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The requested type of data.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `sprite.png` 
+          </li>
+          <li>
+             `sprite@2x.png` 
+          </li>
+          <li>
+             `sprite.json` 
+          </li>
+          <li>
+             `sprite@2x.json` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The authorization key for access to the API.
+        <br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `map` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Map style name to be used for merged sprite.
+        <br />
+         **Values:**  See
+         [available map styles](#available-map-styles).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `traffic_incidents` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Traffic incidents style name to be used for merged sprite.
+        <br />
+         **Values:**  See
+         [available incidents styles](#available-incidents-styles).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `traffic_flow` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        Traffic flow style name to be used for merged sprite.
+        <br />
+         **Values:**  See
+         [available flow styles](#available-flow-styles).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `poi` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        POI style name to be used for merged sprite.
+        <br />
+         **Values:**  See
+         [available poi styles](#available-poi-styles).
+      </td>
+    </tr>
+  </tbody>
+</table>

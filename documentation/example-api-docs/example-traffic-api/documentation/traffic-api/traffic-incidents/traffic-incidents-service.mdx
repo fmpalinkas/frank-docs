@@ -1,0 +1,70 @@
+---
+title: Traffic Incidents service
+titleTags:
+  - label: "Service version: 10"
+    color: grey5
+  - label: "Last edit: 2022.03.30"
+    color: grey5
+---
+
+<Blockquote type="announcement" hasIcon>
+   **Important note:** 
+  <br />
+  This document is restricted to private viewing.
+</Blockquote>
+
+## Purpose
+
+The Traffic Incidents service is a suite of web services designed for developers to create web and mobile applications around real-time traffic.
+
+- These web services can be used via RESTful APIs.
+- The Traffic Incidents APIs are based on real-time traffic data from [Example Traffic&trade](http://automotive.Example.com/products-services/connected-services/Example-traffic/).
+
+The Traffic API Traffic Incidents service consists of the the following endpoints:
+
+<DocsArticles
+  articles={[
+    {
+      title: 'Incident Details',
+      body: 'The Incident Details service provides information on traffic incidents which are inside a given bounding box or whose geometry intersects with it.',
+      button: {
+        label: 'Incident Details',
+        href: './incident-details',
+      },
+    },
+    {
+      title: 'Incident Viewport',
+      body: 'This service returns legal and technical information for the viewport described in the request.',
+      button: {
+        label: 'Incident Viewport',
+        href: './incident-viewport',
+      },
+    },
+    {
+      title: 'Raster Incident Tiles',
+      body: 'The Example Traffic Tile service serves 256 x 256 pixel or 512 x 512 pixel tiles showing traffic incidents.',
+      button: {
+        label: 'Raster Incident Tiles',
+        href: './raster-incident-tiles',
+      },
+    },
+    {
+      title: 'Vector Incident Tiles',
+      body: 'The Traffic Vector Incidents Tiles API provides data on zoom levels ranging from 0 to 22. ',
+      button: {
+        label: 'Vector Incident Tiles',
+        href: './vector-incident-tiles',
+      },
+    },
+  ]}
+/>
+
+## Features
+
+Harness the power of [Example Traffic&trade;](http://automotive.Example.com/products-services/connected-services/Example-traffic/) for your application!
+
+### Example&#39;s Traffic Incident RESTful API
+
+- Is updated every minute with the very latest traffic incident and delay information.
+- Returns detailed information about traffic jams and traffic related incidents. Details include&#058; start-location, end-location, road-name, type of delay, length (in time) of the delay, significance, and distance.
+- The **Incident Tile API** provides traffic incident and delay information for display on your map view.  

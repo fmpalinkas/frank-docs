@@ -1,0 +1,434 @@
+---
+title: 'Version'
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.23'
+    color: grey5
+  - label: 'PUBLIC PREVIEW'
+    color: grey5
+  - label: Example New Maps
+    color: brand-cadmium
+---
+
+## Public Preview Notice  
+
+<Blockquote type="announcement" hasIcon>
+### Important notes:
+- This Example New Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.Example.com/public-preview)  page to see what this means.
+- This API is powered by **Example New Maps**.
+- See the <a href="https://developer.Example.com/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
+</Blockquote>  
+
+## Purpose  
+
+The Version endpoint allows you to check the versions of a map and the release for a given country for every political view.  
+
+## Request data  
+
+### HTTPS Method: `GET`  
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.  
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.  
+
+```shell [type=get] [title=URL request format]
+https://{baseURL}/maps/New/places/search/version?key={Your_API_Key}&apiVersion={apiVersion}
+```
+
+```shell [type=get] [title=URL request example]
+https://api.Example.com/maps/New/places/search/version?key={Your_API_Key}&apiVersion=1
+```
+
+```shell [type=get] [title=curl command rquest example]
+curl 'https://api.Example.com/maps/New/places/search/version?key={Your_API_Key}&apiVersion=1'
+```
+
+### Request parameters  
+
+- The following table describes the parameters that can be used in a request.
+- Required parameters **must** be used or the call will fail.  
+
+**Note:** There are no optional parameters in this endpoint.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `baseURL`  
+        *string*
+      </th>
+      <td>
+        Base URL for calling the API.  
+        **Value:** `api.Example.com`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `key`  
+        *string*
+      </th>
+      <td>
+        An API Key valid for the requested service.  
+        **Value:** Your valid `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `apiVersion`  
+        *string*
+      </th>
+      <td>
+        Service version. If the `Example-Api-Version` header is not present 
+        the `apiVersion` parameter is required.  
+        **Value:** A service version value. The current value is `1`.  
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Request headers  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Example-Api-Version</th>
+        <td>
+          Service version. If the `apiVersion` parameter is not present 
+          the `Example-Api-Version` header is required.  
+          **Value:**  A service version value. The current value is `1`. <br />
+        </td>
+    </tr>
+  </tbody>
+</table>  
+
+## Response data  
+
+### Response body  
+
+For illustrative purposes the example below is neatly indented and includes all possible response fields. Actual responses are more compact and the fields present will vary based on the result type and the data available. See the following response field documentation for more information. When requesting JSON output the response has the following structure:
+
+```json [title=Response body - JSON]
+{
+  "versions": {
+    "map": {
+      "geoPoliticalViews": {
+        "PK": {
+          "countries": []
+        },
+        "CN": {
+          "countries": []
+        },
+        "RU": {
+          "countries": []
+        },
+        "MA": {
+          "countries": []
+        },
+        "IN": {
+          "countries": []
+        },
+        "TR": {
+          "countries": []
+        },
+        "IL": {
+          "countries": []
+        },
+        "AR": {
+          "countries": []
+        },
+        "Unified": {
+          "countries": []
+        }
+      }
+    }
+  }
+}
+```
+
+Each element of the `countries` array is in the following format:  
+
+```json [title=Countries array elements format- JSON]
+{
+  "country": "DZ",
+  "map": "2021.06.002_00",
+  "release": "2021.06.002_00.01"
+}
+```
+
+### Response fields   
+
+The following table describes all of the fields that can appear in a response. Fields are listed by the response section they belong to and the order that they appear in the response.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>Primary&nbsp;fields</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `versions`  
+        *object*
+      </th>
+      <td>
+        The versions object.  
+        [`versions`](#fieldVersions) object
+      </td>
+    </tr>
+    <tr>
+      <th id="fieldVersions" colspan="2" style={{ fontSize: '1em' }}>versions object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `map`  
+        *object*
+      </th>
+      <td>
+        The map object.  
+        [`map`](#fieldMap) object
+      </td>
+    </tr>
+    <tr>
+      <th id="fieldMap" colspan="2" style={{ fontSize: '1em' }}>map object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `PK`  
+         *object*
+      </th>
+      <td>
+        Map and release versions for countries in the PK geopolitical view.  
+        [`countries`](#fieldCountries) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `CH`  
+        *object*
+      </th>
+      <td>
+        Map and release versions for countries in the CH geopolitical view.  
+        [`countries`](#fieldCountries) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `RU`  
+        *object*
+      </th>
+      <td>
+        Map and release versions for countries in the RU geopolitical view.  
+        [`countries`](#fieldCountries) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `MA`  
+        *object*
+      </th>
+      <td>
+        Map and release versions for countries in the MA geopolitical view.  
+        [`countries`](#fieldCountries) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `IN`  
+        *object*
+      </th>
+      <td>
+        Map and release versions for countries in the IN geopolitical view.  
+        [`countries`](#fieldCountries) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `TR`  
+        *object*
+      </th>
+      <td>
+        Map and release versions for countries in the TR geopolitical view.  
+        [`countries`](#fieldCountries) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `IL`  
+        *object*
+      </th>
+      <td>
+        Map and release versions for countries in the IL geopolitical view.  
+        [`countries`](#fieldCountries) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `AR`  
+        *object*
+      </th>
+      <td>
+        Map and release versions for countries in the AR geopolitical view.  
+        [`countries`](#fieldCountries) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `Unified`  
+        *object*
+      </th>
+      <td>
+        Map and release versions for countries in the Unified geopolitical view.  
+        [`countries`](#fieldCountries) object
+      </td>
+    </tr>
+    <tr>
+      <th id="fieldCountries" colspan="2" style={{ fontSize: '1em' }}>countries object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th id="requestTrackingID" scope="row">
+        `country`  
+        *string*
+      </th>
+      <td>Country (Note: This is a two-letter code, not a country name.).</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `map`  
+        *string*
+      </th>
+      <td>Version of the map for particular country in particular view.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `release`  
+        *string*
+      </th>
+      <td>Version of the release for particular country in particular view.</td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response codes  
+
+The following data table contains HTTP response codes signifying successful and failed requests to an API server.  
+
+<table data-notbreakword id="response-codes">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', textAlign: 'center' }}>Code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Meaning &amp; possible causes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`200`</th>
+      <td>
+         **OK**: The search successfully returned zero or more results.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`400`</th>
+      <td>
+         **Bad Request**: One or more parameters were incorrectly specified.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`403`</th>
+      <td>
+         **Forbidden** : Possible causes include,  
+        <ul>
+          <li>Service requires SSL</li>
+          <li>Not authorized</li>
+          <li>Rate or volume limit exceeded</li>
+          <li>Unknown referer</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`405`</th>
+      <td>
+         **Method Not Allowed**: The HTTP request method (`GET`, 
+        `POST`, etc.) is not supported for this request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`404/596`</th>
+      <td>
+         **Not Found**: The HTTP request method (GET, POST, etc.) or path is
+        incorrect.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`5xx`</th>
+      <td>
+         **Server Error**: The service was unable to process your request. 
+        Contact support to resolve the issue.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response headers
+
+The following data table contains response headers sent back from an API server.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">[Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)</th>
+      <td>
+        Ensures that clients implementing the CORS security model are able to
+        access the response from this service.  
+        **Value:**  An asterisk ` * ` that signifies access to the
+        Example API using the Access-Control-Allow-Origin (ACAO) header in its
+        response indicating which origin sites are allowed.
+      </td>
+    </tr>
+  </tbody>
+</table>  

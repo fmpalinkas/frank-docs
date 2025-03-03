@@ -1,0 +1,73 @@
+---
+title: Documentation
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="online-route-planner"
+></a>
+
+This component integrates the Routing API described
+on [https://developer.New.com/routing-api/documentation/product-information/introduction](/routing-api/documentation/product-information/introduction). The service calculates a
+route between an origin and a destination, passing through waypoints if they are specified.
+
+The outing API is one of our most advanced APIs, enabling the user to calculate a perfect path from
+point A to point B.
+
+- RoutingBuilder is instantiated with the API Key for the New Online Routing service.
+- You can set an origin and a destination, if you want to route from the current location, then
+  simply pass it to the from() method of the RoutingBuilder.
+- You can set a list of via points to lead the way though them.
+- You can provide locations as points, or as approximate points (circles).
+
+To initialise routing:
+
+<Code>
+
+```java
+routingApi = OnlineRoutingApi.create(context, BuildConfig.ROUTING_API_KEY)
+```
+
+```kotlin
+private val routingApi = OnlineRoutingApi.create(context, BuildConfig.ROUTING_API_KEY)
+```
+
+</Code>
+
+To execute routing:
+
+<Code>
+
+```java
+routingApi.planRoute(routeSpecification, routeCallback);
+```
+
+```kotlin
+routingApi.planRoute(routeSpecification, routeCallback)
+```
+
+</Code>
+
+To display a route on the map:
+
+<Code>
+
+```java
+RouteBuilder routeBuilder = new RouteBuilder(route.getCoordinates())
+        .endIcon(endIcon)
+        .startIcon(startIcon)
+        .style(routeStyle);
+final Route mapRoute = NewMap.addRoute(routeBuilder);
+```
+
+```kotlin
+val routeBuilder = RouteBuilder(route.getCoordinates())
+    .style(RouteStyle.DEFAULT_ROUTE_STYLE)
+    .startIcon(createIcon(R.drawable.ic_map_route_departure))
+    .endIcon(createIcon(R.drawable.ic_map_route_destination))
+    .tag(routeIdx.toString())
+NewMap.addRoute(routeBuilder)
+```
+
+</Code>

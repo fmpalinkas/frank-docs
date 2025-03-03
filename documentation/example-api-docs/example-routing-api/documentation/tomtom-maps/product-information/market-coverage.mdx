@@ -1,0 +1,1653 @@
+---
+title: Market Coverage
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.06.24'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+[//]: # "This file is auto-generated. If you edit it, please inform the Routing API teams in Slack channel #directions-routeplanning."
+
+## Definitions
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px">
+        Term
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Country codes</th>
+      <td>
+        Country codes are provided in the current, officially-assigned, two and
+        three character [ISO 3166-1 alpha-2 and
+        alpha-3](https://www.iso.org/iso-3166-country-codes.html) code formats
+        where available.
+        <ul>
+          <li>
+            A two character country code is shown alone if a three character
+            code for that country is not available.
+          </li>
+          <li>
+            If a country is missing in the following tables, it is not currently
+            supported.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Calculate Route</th>
+      <td>
+        The Calculate Route service calculates a route between an origin and a
+        destination, passing through waypoints if they are specified.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Calculate Reachable Range</th>
+      <td>
+        The Calculate Reachable Range service calculates a set of locations that
+        can be reached from the origin point.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Matrix Routing v2</th>
+      <td>
+        Calculates a matrix of route summaries for a set of routes defined with origin and destination locations.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Real-time Traffic</th>
+      <td>
+        Delivers real-time information about traffic jams and road closures, and
+        a detailed view of the current speed and travel times across the entire
+        road network.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+If you need more information, please feel free to [Contact Us](https://developer.Example.com/contact-us).
+
+### Legend
+
+<table>
+  <thead>
+    <tr colspan="2">
+      <th style={{ textAlign: 'center' }}>Symbol</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td>Country is provided with data.</td>
+    </tr>
+    <tr>
+      <td style={{'textAlign':'center'}}>&#9733;</td>
+      <td>Country is provided with data, but under certain conditions (see the <a href="https://developer.Example.com/region-specific-content" target="_blank">region-specific content documentation</a>).</td>
+    </tr>
+    <tr>
+      <td style={{ textAlign: 'center' }}>Country is missing</td>
+      <td>Country data is not provided.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Americas
+
+<table>
+  <thead>
+    <tr scope="row">
+      <th>Market</th>
+      <th style={{ textAlign: 'center' }}>
+        Country
+        <br />
+        codes
+      </th>
+      <th style={{ textAlign: 'center' }}>
+        Calculate Route and
+        <br />
+        Calculate Reachable Range and
+        <br />
+        Matrix Routing v2
+      </th>
+      <th style={{ textAlign: 'center' }}>
+        Real-time
+        <br />
+        Traffic
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Anguilla</td>
+      <td style={{'textAlign':'center'}}>AI&#47;AIA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Antigua & Barbuda</td>
+      <td style={{'textAlign':'center'}}>AG&#47;ATG</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Argentina</td>
+      <td style={{'textAlign':'center'}}>AR&#47;ARG</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Aruba</td>
+      <td style={{'textAlign':'center'}}>AW&#47;ABW</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Bahamas</td>
+      <td style={{'textAlign':'center'}}>BS&#47;BHS</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Barbados</td>
+      <td style={{'textAlign':'center'}}>BB&#47;BRB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Belize</td>
+      <td style={{'textAlign':'center'}}>BZ&#47;BLZ</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Bermuda</td>
+      <td style={{'textAlign':'center'}}>BM&#47;BMU</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Bolivia</td>
+      <td style={{'textAlign':'center'}}>BO&#47;BOL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Brazil</td>
+      <td style={{'textAlign':'center'}}>BR&#47;BRA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>British Virgin Islands</td>
+      <td style={{'textAlign':'center'}}>VG&#47;VGB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Canada</td>
+      <td style={{'textAlign':'center'}}>CA&#47;CAN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Caribbean Netherlands</td>
+      <td style={{'textAlign':'center'}}>BQ&#47;BES</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Cayman Islands</td>
+      <td style={{'textAlign':'center'}}>KY&#47;CYM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Chile</td>
+      <td style={{'textAlign':'center'}}>CL&#47;CHL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Colombia</td>
+      <td style={{'textAlign':'center'}}>CO&#47;COL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Costa Rica</td>
+      <td style={{'textAlign':'center'}}>CR&#47;CRI</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Cuba</td>
+      <td style={{'textAlign':'center'}}>CU&#47;CUB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Curaçao</td>
+      <td style={{'textAlign':'center'}}>CW&#47;CUW</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Dominica</td>
+      <td style={{'textAlign':'center'}}>DM&#47;DMA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Dominican Republic</td>
+      <td style={{'textAlign':'center'}}>DO&#47;DOM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Ecuador</td>
+      <td style={{'textAlign':'center'}}>EC&#47;ECU</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>El Salvador</td>
+      <td style={{'textAlign':'center'}}>SV&#47;SLV</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Falkland Islands</td>
+      <td style={{'textAlign':'center'}}>FK&#47;FLK</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>French Guiana</td>
+      <td style={{'textAlign':'center'}}>GF&#47;GUF</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Grenada</td>
+      <td style={{'textAlign':'center'}}>GD&#47;GRD</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Guadeloupe</td>
+      <td style={{'textAlign':'center'}}>GP&#47;GLP</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Guatemala</td>
+      <td style={{'textAlign':'center'}}>GT&#47;GTM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Guyana</td>
+      <td style={{'textAlign':'center'}}>GY&#47;GUY</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Haiti</td>
+      <td style={{'textAlign':'center'}}>HT&#47;HTI</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Honduras</td>
+      <td style={{'textAlign':'center'}}>HN&#47;HND</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Jamaica</td>
+      <td style={{'textAlign':'center'}}>JM&#47;JAM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Martinique</td>
+      <td style={{'textAlign':'center'}}>MQ&#47;MTQ</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Mexico</td>
+      <td style={{'textAlign':'center'}}>MX&#47;MEX</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Montserrat</td>
+      <td style={{'textAlign':'center'}}>MS&#47;MSR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Nicaragua</td>
+      <td style={{'textAlign':'center'}}>NI&#47;NIC</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Panama</td>
+      <td style={{'textAlign':'center'}}>PA&#47;PAN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Paraguay</td>
+      <td style={{'textAlign':'center'}}>PY&#47;PRY</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Peru</td>
+      <td style={{'textAlign':'center'}}>PE&#47;PER</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Puerto Rico</td>
+      <td style={{'textAlign':'center'}}>PR&#47;PRI</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Sint Maarten</td>
+      <td style={{'textAlign':'center'}}>SX&#47;SXM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>South Georgia & South Sandwich Islands</td>
+      <td style={{'textAlign':'center'}}>GS&#47;SGS</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>St. Barthélemy</td>
+      <td style={{'textAlign':'center'}}>BL&#47;BLM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>St. Kitts & Nevis</td>
+      <td style={{'textAlign':'center'}}>KN&#47;KNA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>St. Lucia</td>
+      <td style={{'textAlign':'center'}}>LC&#47;LCA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>St. Martin</td>
+      <td style={{'textAlign':'center'}}>MF&#47;MAF</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>St. Pierre & Miquelon</td>
+      <td style={{'textAlign':'center'}}>PM&#47;SPM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>St. Vincent & Grenadines</td>
+      <td style={{'textAlign':'center'}}>VC&#47;VCT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Suriname</td>
+      <td style={{'textAlign':'center'}}>SR&#47;SUR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Trinidad & Tobago</td>
+      <td style={{'textAlign':'center'}}>TT&#47;TTO</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Turks & Caicos Islands</td>
+      <td style={{'textAlign':'center'}}>TC&#47;TCA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>U.S. Virgin Islands</td>
+      <td style={{'textAlign':'center'}}>VI&#47;VIR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>United States</td>
+      <td style={{'textAlign':'center'}}>US&#47;USA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Uruguay</td>
+      <td style={{'textAlign':'center'}}>UY&#47;URY</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Venezuela</td>
+      <td style={{'textAlign':'center'}}>VE&#47;VEN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+
+## Asia Pacific
+
+<table>
+  <thead>
+    <tr scope="row">
+      <th>Market</th>
+      <th style={{ textAlign: 'center' }}>
+        Country
+        <br />
+        codes
+      </th>
+      <th style={{ textAlign: 'center' }}>
+        Calculate Route and
+        <br />
+        Calculate Reachable Range and
+        <br />
+        Matrix Routing v2
+      </th>
+      <th style={{ textAlign: 'center' }}>
+        Real-time
+        <br />
+        Traffic
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>American Samoa</td>
+      <td style={{'textAlign':'center'}}>AS&#47;ASM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Australia</td>
+      <td style={{'textAlign':'center'}}>AU&#47;AUS</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Bangladesh</td>
+      <td style={{'textAlign':'center'}}>BD&#47;BGD</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Bhutan</td>
+      <td style={{'textAlign':'center'}}>BT&#47;BTN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Brunei</td>
+      <td style={{'textAlign':'center'}}>BN&#47;BRN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Cambodia</td>
+      <td style={{'textAlign':'center'}}>KH&#47;KHM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Christmas Island</td>
+      <td style={{'textAlign':'center'}}>CX&#47;CXR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Cocos (Keeling) Islands</td>
+      <td style={{'textAlign':'center'}}>CC&#47;CCK</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Comoros</td>
+      <td style={{'textAlign':'center'}}>KM&#47;COM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Cook Islands</td>
+      <td style={{'textAlign':'center'}}>CK&#47;COK</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Fiji</td>
+      <td style={{'textAlign':'center'}}>FJ&#47;FJI</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>French Polynesia</td>
+      <td style={{'textAlign':'center'}}>PF&#47;PYF</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Guam</td>
+      <td style={{'textAlign':'center'}}>GU&#47;GUM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Hong Kong SAR China</td>
+      <td style={{'textAlign':'center'}}>HK&#47;HKG</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>India</td>
+      <td style={{'textAlign':'center'}}>IN&#47;IND</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Indonesia</td>
+      <td style={{'textAlign':'center'}}>ID&#47;IDN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Kiribati</td>
+      <td style={{'textAlign':'center'}}>KI&#47;KIR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Laos</td>
+      <td style={{'textAlign':'center'}}>LA&#47;LAO</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Macao SAR China</td>
+      <td style={{'textAlign':'center'}}>MO&#47;MAC</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Malaysia</td>
+      <td style={{'textAlign':'center'}}>MY&#47;MYS</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Micronesia</td>
+      <td style={{'textAlign':'center'}}>FM&#47;FSM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Mongolia</td>
+      <td style={{'textAlign':'center'}}>MN&#47;MNG</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Myanmar (Burma)</td>
+      <td style={{'textAlign':'center'}}>MM&#47;MMR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Nauru</td>
+      <td style={{'textAlign':'center'}}>NR&#47;NRU</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Nepal</td>
+      <td style={{'textAlign':'center'}}>NP&#47;NPL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>New Caledonia</td>
+      <td style={{'textAlign':'center'}}>NC&#47;NCL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>New Zealand</td>
+      <td style={{'textAlign':'center'}}>NZ&#47;NZL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Niue</td>
+      <td style={{'textAlign':'center'}}>NU&#47;NIU</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Norfolk Island</td>
+      <td style={{'textAlign':'center'}}>NF&#47;NFK</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Northern Mariana Islands</td>
+      <td style={{'textAlign':'center'}}>MP&#47;MNP</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Pakistan</td>
+      <td style={{'textAlign':'center'}}>PK&#47;PAK</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Palau</td>
+      <td style={{'textAlign':'center'}}>PW&#47;PLW</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Papua New Guinea</td>
+      <td style={{'textAlign':'center'}}>PG&#47;PNG</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Philippines</td>
+      <td style={{'textAlign':'center'}}>PH&#47;PHL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Pitcairn Islands</td>
+      <td style={{'textAlign':'center'}}>PN&#47;PCN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Samoa</td>
+      <td style={{'textAlign':'center'}}>WS&#47;WSM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Singapore</td>
+      <td style={{'textAlign':'center'}}>SG&#47;SGP</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Solomon Islands</td>
+      <td style={{'textAlign':'center'}}>SB&#47;SLB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>South Korea *</td>
+      <td style={{'textAlign':'center'}}>KR&#47;KOR</td>
+      <td style={{'textAlign':'center'}}>&#9733;</td>
+      <td style={{'textAlign':'center'}}>&#9733;</td>
+    </tr>
+    <tr>
+      <td>Sri Lanka</td>
+      <td style={{'textAlign':'center'}}>LK&#47;LKA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Taiwan</td>
+      <td style={{'textAlign':'center'}}>TW&#47;TWN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Thailand</td>
+      <td style={{'textAlign':'center'}}>TH&#47;THA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Timor-Leste</td>
+      <td style={{'textAlign':'center'}}>TL&#47;TLS</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Tokelau</td>
+      <td style={{'textAlign':'center'}}>TK&#47;TKL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Tonga</td>
+      <td style={{'textAlign':'center'}}>TO&#47;TON</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Tuvalu</td>
+      <td style={{'textAlign':'center'}}>TV&#47;TUV</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Vanuatu</td>
+      <td style={{'textAlign':'center'}}>VU&#47;VUT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Vietnam</td>
+      <td style={{'textAlign':'center'}}>VN&#47;VNM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Wallis & Futuna</td>
+      <td style={{'textAlign':'center'}}>WF&#47;WLF</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+\* Only available under <code>kr-api.Example.com</code>, see the <a href="https://developer.Example.com/region-specific-content" target="_blank">region-specific content documentation</a>.
+
+
+## Europe
+
+<table>
+  <thead>
+    <tr scope="row">
+      <th>Market</th>
+      <th style={{ textAlign: 'center' }}>
+        Country
+        <br />
+        codes
+      </th>
+      <th style={{ textAlign: 'center' }}>
+        Calculate Route and
+        <br />
+        Calculate Reachable Range and
+        <br />
+        Matrix Routing v2
+      </th>
+      <th style={{ textAlign: 'center' }}>
+        Real-time
+        <br />
+        Traffic
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Albania</td>
+      <td style={{'textAlign':'center'}}>AL&#47;ALB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Andorra</td>
+      <td style={{'textAlign':'center'}}>AD&#47;AND</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Armenia</td>
+      <td style={{'textAlign':'center'}}>AM&#47;ARM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Austria</td>
+      <td style={{'textAlign':'center'}}>AT&#47;AUT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Azerbaijan</td>
+      <td style={{'textAlign':'center'}}>AZ&#47;AZE</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Belarus</td>
+      <td style={{'textAlign':'center'}}>BY&#47;BLR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Belgium</td>
+      <td style={{'textAlign':'center'}}>BE&#47;BEL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Bosnia & Herzegovina</td>
+      <td style={{'textAlign':'center'}}>BA&#47;BIH</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Bouvet Island</td>
+      <td style={{'textAlign':'center'}}>BV&#47;BVT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Bulgaria</td>
+      <td style={{'textAlign':'center'}}>BG&#47;BGR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Croatia</td>
+      <td style={{'textAlign':'center'}}>HR&#47;HRV</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Cyprus</td>
+      <td style={{'textAlign':'center'}}>CY&#47;CYP</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Czechia</td>
+      <td style={{'textAlign':'center'}}>CZ&#47;CZE</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Denmark</td>
+      <td style={{'textAlign':'center'}}>DK&#47;DNK</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Estonia</td>
+      <td style={{'textAlign':'center'}}>EE&#47;EST</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Faroe Islands</td>
+      <td style={{'textAlign':'center'}}>FO&#47;FRO</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Finland</td>
+      <td style={{'textAlign':'center'}}>FI&#47;FIN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>France</td>
+      <td style={{'textAlign':'center'}}>FR&#47;FRA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Georgia</td>
+      <td style={{'textAlign':'center'}}>GE&#47;GEO</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Germany</td>
+      <td style={{'textAlign':'center'}}>DE&#47;DEU</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Gibraltar</td>
+      <td style={{'textAlign':'center'}}>GI&#47;GIB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Greece</td>
+      <td style={{'textAlign':'center'}}>GR&#47;GRC</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Greenland</td>
+      <td style={{'textAlign':'center'}}>GL&#47;GRL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Guernsey</td>
+      <td style={{'textAlign':'center'}}>GG&#47;GGY</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Hungary</td>
+      <td style={{'textAlign':'center'}}>HU&#47;HUN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Iceland</td>
+      <td style={{'textAlign':'center'}}>IS&#47;ISL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Ireland</td>
+      <td style={{'textAlign':'center'}}>IE&#47;IRL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Isle of Man</td>
+      <td style={{'textAlign':'center'}}>IM&#47;IMN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Italy</td>
+      <td style={{'textAlign':'center'}}>IT&#47;ITA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Jersey</td>
+      <td style={{'textAlign':'center'}}>JE&#47;JEY</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Kazakhstan</td>
+      <td style={{'textAlign':'center'}}>KZ&#47;KAZ</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Kyrgyzstan</td>
+      <td style={{'textAlign':'center'}}>KG&#47;KGZ</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Latvia</td>
+      <td style={{'textAlign':'center'}}>LV&#47;LVA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Liechtenstein</td>
+      <td style={{'textAlign':'center'}}>LI&#47;LIE</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Lithuania</td>
+      <td style={{'textAlign':'center'}}>LT&#47;LTU</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Luxembourg</td>
+      <td style={{'textAlign':'center'}}>LU&#47;LUX</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Malta</td>
+      <td style={{'textAlign':'center'}}>MT&#47;MLT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Moldova</td>
+      <td style={{'textAlign':'center'}}>MD&#47;MDA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Monaco</td>
+      <td style={{'textAlign':'center'}}>MC&#47;MCO</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Montenegro</td>
+      <td style={{'textAlign':'center'}}>ME&#47;MNE</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Netherlands</td>
+      <td style={{'textAlign':'center'}}>NL&#47;NLD</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>North Macedonia</td>
+      <td style={{'textAlign':'center'}}>MK&#47;MKD</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Norway</td>
+      <td style={{'textAlign':'center'}}>NO&#47;NOR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Poland</td>
+      <td style={{'textAlign':'center'}}>PL&#47;POL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Portugal</td>
+      <td style={{'textAlign':'center'}}>PT&#47;PRT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Romania</td>
+      <td style={{'textAlign':'center'}}>RO&#47;ROU</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Russia</td>
+      <td style={{'textAlign':'center'}}>RU&#47;RUS</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>San Marino</td>
+      <td style={{'textAlign':'center'}}>SM&#47;SMR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Serbia</td>
+      <td style={{'textAlign':'center'}}>RS&#47;SRB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Slovakia</td>
+      <td style={{'textAlign':'center'}}>SK&#47;SVK</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Slovenia</td>
+      <td style={{'textAlign':'center'}}>SI&#47;SVN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Spain</td>
+      <td style={{'textAlign':'center'}}>ES&#47;ESP</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Sweden</td>
+      <td style={{'textAlign':'center'}}>SE&#47;SWE</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Switzerland</td>
+      <td style={{'textAlign':'center'}}>CH&#47;CHE</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Tajikistan</td>
+      <td style={{'textAlign':'center'}}>TJ&#47;TJK</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Turkmenistan</td>
+      <td style={{'textAlign':'center'}}>TM&#47;TKM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Türkiye</td>
+      <td style={{'textAlign':'center'}}>TR&#47;TUR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Ukraine</td>
+      <td style={{'textAlign':'center'}}>UA&#47;UKR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>United Kingdom</td>
+      <td style={{'textAlign':'center'}}>GB&#47;GBR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Uzbekistan</td>
+      <td style={{'textAlign':'center'}}>UZ&#47;UZB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Vatican City</td>
+      <td style={{'textAlign':'center'}}>VA&#47;VAT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+  </tbody>
+</table>
+
+
+## Middle East &amp; Africa
+
+<table>
+  <thead>
+    <tr scope="row">
+      <th>Market</th>
+      <th style={{ textAlign: 'center' }}>
+        Country
+        <br />
+        codes
+      </th>
+      <th style={{ textAlign: 'center' }}>
+        Calculate Route and
+        <br />
+        Calculate Reachable Range and
+        <br />
+        Matrix Routing v2
+      </th>
+      <th style={{ textAlign: 'center' }}>
+        Real-time
+        <br />
+        Traffic
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Afghanistan</td>
+      <td style={{'textAlign':'center'}}>AF&#47;AFG</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Algeria</td>
+      <td style={{'textAlign':'center'}}>DZ&#47;DZA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Angola</td>
+      <td style={{'textAlign':'center'}}>AO&#47;AGO</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Bahrain</td>
+      <td style={{'textAlign':'center'}}>BH&#47;BHR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Benin</td>
+      <td style={{'textAlign':'center'}}>BJ&#47;BEN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Botswana</td>
+      <td style={{'textAlign':'center'}}>BW&#47;BWA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Burkina Faso</td>
+      <td style={{'textAlign':'center'}}>BF&#47;BFA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Burundi</td>
+      <td style={{'textAlign':'center'}}>BI&#47;BDI</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Cameroon</td>
+      <td style={{'textAlign':'center'}}>CM&#47;CMR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Cape Verde</td>
+      <td style={{'textAlign':'center'}}>CV&#47;CPV</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Central African Republic</td>
+      <td style={{'textAlign':'center'}}>CF&#47;CAF</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Chad</td>
+      <td style={{'textAlign':'center'}}>TD&#47;TCD</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Congo - Brazzaville</td>
+      <td style={{'textAlign':'center'}}>CG&#47;COG</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Congo - Kinshasa</td>
+      <td style={{'textAlign':'center'}}>CD&#47;COD</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Côte d’Ivoire</td>
+      <td style={{'textAlign':'center'}}>CI&#47;CIV</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Djibouti</td>
+      <td style={{'textAlign':'center'}}>DJ&#47;DJI</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Egypt</td>
+      <td style={{'textAlign':'center'}}>EG&#47;EGY</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Equatorial Guinea</td>
+      <td style={{'textAlign':'center'}}>GQ&#47;GNQ</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Eritrea</td>
+      <td style={{'textAlign':'center'}}>ER&#47;ERI</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Eswatini</td>
+      <td style={{'textAlign':'center'}}>SZ&#47;SWZ</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Ethiopia</td>
+      <td style={{'textAlign':'center'}}>ET&#47;ETH</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>French Southern Territories</td>
+      <td style={{'textAlign':'center'}}>TF&#47;ATF</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Gabon</td>
+      <td style={{'textAlign':'center'}}>GA&#47;GAB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Gambia</td>
+      <td style={{'textAlign':'center'}}>GM&#47;GMB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Ghana</td>
+      <td style={{'textAlign':'center'}}>GH&#47;GHA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Guinea</td>
+      <td style={{'textAlign':'center'}}>GN&#47;GIN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Guinea-Bissau</td>
+      <td style={{'textAlign':'center'}}>GW&#47;GNB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Iran</td>
+      <td style={{'textAlign':'center'}}>IR&#47;IRN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Iraq</td>
+      <td style={{'textAlign':'center'}}>IQ&#47;IRQ</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Israel</td>
+      <td style={{'textAlign':'center'}}>IL&#47;ISR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Jordan</td>
+      <td style={{'textAlign':'center'}}>JO&#47;JOR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Kenya</td>
+      <td style={{'textAlign':'center'}}>KE&#47;KEN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Kuwait</td>
+      <td style={{'textAlign':'center'}}>KW&#47;KWT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Lebanon</td>
+      <td style={{'textAlign':'center'}}>LB&#47;LBN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Lesotho</td>
+      <td style={{'textAlign':'center'}}>LS&#47;LSO</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Liberia</td>
+      <td style={{'textAlign':'center'}}>LR&#47;LBR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Libya</td>
+      <td style={{'textAlign':'center'}}>LY&#47;LBY</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Madagascar</td>
+      <td style={{'textAlign':'center'}}>MG&#47;MDG</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Malawi</td>
+      <td style={{'textAlign':'center'}}>MW&#47;MWI</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Maldives</td>
+      <td style={{'textAlign':'center'}}>MV&#47;MDV</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Mali</td>
+      <td style={{'textAlign':'center'}}>ML&#47;MLI</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Marshall Islands</td>
+      <td style={{'textAlign':'center'}}>MH&#47;MHL</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Mauritania</td>
+      <td style={{'textAlign':'center'}}>MR&#47;MRT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Mauritius</td>
+      <td style={{'textAlign':'center'}}>MU&#47;MUS</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Mayotte</td>
+      <td style={{'textAlign':'center'}}>YT&#47;MYT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Morocco</td>
+      <td style={{'textAlign':'center'}}>MA&#47;MAR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Mozambique</td>
+      <td style={{'textAlign':'center'}}>MZ&#47;MOZ</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Namibia</td>
+      <td style={{'textAlign':'center'}}>NA&#47;NAM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Niger</td>
+      <td style={{'textAlign':'center'}}>NE&#47;NER</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Nigeria</td>
+      <td style={{'textAlign':'center'}}>NG&#47;NGA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Oman</td>
+      <td style={{'textAlign':'center'}}>OM&#47;OMN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Qatar</td>
+      <td style={{'textAlign':'center'}}>QA&#47;QAT</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Rwanda</td>
+      <td style={{'textAlign':'center'}}>RW&#47;RWA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Réunion</td>
+      <td style={{'textAlign':'center'}}>RE&#47;REU</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Saudi Arabia</td>
+      <td style={{'textAlign':'center'}}>SA&#47;SAU</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Senegal</td>
+      <td style={{'textAlign':'center'}}>SN&#47;SEN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Seychelles</td>
+      <td style={{'textAlign':'center'}}>SC&#47;SYC</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Sierra Leone</td>
+      <td style={{'textAlign':'center'}}>SL&#47;SLE</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Somalia</td>
+      <td style={{'textAlign':'center'}}>SO&#47;SOM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>South Africa</td>
+      <td style={{'textAlign':'center'}}>ZA&#47;ZAF</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>South Sudan</td>
+      <td style={{'textAlign':'center'}}>SS&#47;SSD</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>St. Helena</td>
+      <td style={{'textAlign':'center'}}>SH&#47;SHN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Sudan</td>
+      <td style={{'textAlign':'center'}}>SD&#47;SDN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Syria</td>
+      <td style={{'textAlign':'center'}}>SY&#47;SYR</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>São Tomé & Príncipe</td>
+      <td style={{'textAlign':'center'}}>ST&#47;STP</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Tanzania</td>
+      <td style={{'textAlign':'center'}}>TZ&#47;TZA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Togo</td>
+      <td style={{'textAlign':'center'}}>TG&#47;TGO</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Tunisia</td>
+      <td style={{'textAlign':'center'}}>TN&#47;TUN</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Uganda</td>
+      <td style={{'textAlign':'center'}}>UG&#47;UGA</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>United Arab Emirates</td>
+      <td style={{'textAlign':'center'}}>AE&#47;ARE</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+    </tr>
+    <tr>
+      <td>Yemen</td>
+      <td style={{'textAlign':'center'}}>YE&#47;YEM</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Zambia</td>
+      <td style={{'textAlign':'center'}}>ZM&#47;ZMB</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Zimbabwe</td>
+      <td style={{'textAlign':'center'}}>ZW&#47;ZWE</td>
+      <td style={{'textAlign':'center'}}>&#10004;</td>
+      <td style={{'textAlign':'center'}}>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+

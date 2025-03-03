@@ -1,0 +1,258 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Proactive Control 1. Define Security Requirements</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-controls-1-define-security-requirements">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/1-define-security.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">OWASP Top 10 Proactive Security Controls v3.0</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">1. Define Security Requirements</h3>
+
+      <section class="api">
+
+        <dl>
+          <dt tabindex="0">Control Description</dt>
+          <dd>
+            <p>
+              A security requirement is a statement of needed security functionality that ensures one of
+              many different security properties of software is being satisfied.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Security requirements are
+                  derived from industry standards, applicable laws, and a history of past vulnerabilities.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Security
+                  requirements define new features or additions to existing features to solve a specific security
+                  problem or eliminate a potential vulnerability.
+                </p>
+              </li>
+            </ul>
+
+            <p>
+              Security requirements provide a foundation of vetted security functionality for an application.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Instead of creating a custom approach to security for every application, standard security
+                  requirements allow developers to reuse the definition of security controls and best practices.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Those same vetted security requirements provide solutions for security issues that have
+                  occurred in the past.
+                </p>
+              </li>
+              <li><p>Requirements exist to prevent the repeat of past security failures.</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">The OWASP ASVS</dt>
+          <dd>
+            <p>
+              The <a href="https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project" target="_blank">OWASP Application Security Verification Standard (ASVS) <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a> is a catalog of available security
+              requirements and verification criteria.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  OWASP ASVS can be a source of detailed security
+                  requirements for development teams.
+                </p>
+              </li>
+            </ul>
+
+            <p>
+              Security requirements are categorized into different buckets based on a shared higher order
+              security function.
+            </p>
+
+            <ul>
+              <li>
+                For example, the ASVS contains categories such as authentication, access
+                control, error handling / logging, and web services.
+              </li>
+              <li>
+                <p>
+                  Each category contains a collection of
+                  requirements that represent the best practices for that category drafted as verifiable
+                  statements.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Augmenting Requirements with User Stories and Misuse Cases</dt>
+          <dd>
+            <p>
+              The ASVS requirements are basic verifiable statements which can be expanded upon with
+              user stories and misuse cases. The advantage of a user story or misuse case is that it ties the
+              application to exactly what the user or attacker does to the system, versus describing what
+              the system offers to the user.
+            </p>
+            <p>
+              Here is an example of expanding on an ASVS 3.0.1 requirement. From the "Authentication
+              Verification Requirements" section of ASVS 3.0.1, requirement 2.19 focuses on default
+              passwords.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  2.19 Verify there are no default passwords in use for the application framework or any
+                  components used by the application (such as “admin/password”).
+                </p>
+              </li>
+            </ul>
+            <p>
+              This requirement contains both an action to verify that no default passwords exist, and also
+              carries with it the guidance that no default passwords should be used within the application.
+            </p>
+
+            <p>
+              A user story focuses on the perspective of the user, administrator, or attacker of the system,
+              and describes functionality based on what a user wants the system to do for them. A user
+              story takes the form of "As a user, I can do x, y, and z".
+            </p>
+            <ul>
+              <li>
+                <p>
+                  As a user, I can enter my username and password to gain access to the
+                  application.
+                </p>
+              </li>
+              <li>
+                <p>
+                  As a user, I can enter a long password that has a maximum of 1023
+                  characters.
+                </p>
+              </li>
+            </ul>
+
+            <p>When the story is focused on the attacker and their actions, it is referred to as a misuse case.</p>
+            <ul>
+              <li>
+                <p>
+                  As an attacker, I can enter in a default username and password to gain
+                  access.
+                </p>
+              </li>
+            </ul>
+
+            <p>
+              This story contains the same message as the traditional requirement from ASVS, with
+              additional user or attacker details to help make the requirement more testable.
+            </p>
+          </dd>
+
+          <dt tabindex="0">Implementation</dt>
+          <dd>
+            <p>
+              Successful use of security requirements involves four steps. The process includes discovering /
+              selecting, documenting, implementing, and then confirming correct implementation of new
+              security features and functionality within an application.
+            </p>
+          </dd>
+
+          <dt tabindex="0">Discovery and Selection</dt>
+          <dd>
+            <p>
+              The process begins with discovery and selection of security requirements. In this phase, the
+              developer is understanding security requirements from a standard source such as ASVS and
+              choosing which requirements to include for a given release of an application. The point of
+              discovery and selection is to choose a manageable number of security requirements for this
+              release or sprint, and then continue to iterate for each sprint, adding more security
+              functionality over time.
+            </p>
+          </dd>
+
+          <dt tabindex="0">Investigation and Documentation</dt>
+          <dd>
+            <p>
+              During investigation and documentation, the developer reviews the existing application
+              against the new set of security requirements to determine whether the application currently
+              meets the requirement or if some development is required. This investigation culminates in
+              the documentation of the results of the review.
+            </p>
+          </dd>
+
+          <dt tabindex="0">Implementation and Test</dt>
+          <dd>
+            <p>
+              After the need is determined for development, the developer must now modify the
+              application in some way to add the new functionality or eliminate an insecure option. In this
+              phase the developer first determines the design required to address the requirement, and
+              then completes the code changes to meet the requirement. Test cases should be created to
+              confirm the existence of the new functionality or disprove the existence of a previously
+              insecure option.
+            </p>
+          </dd>
+
+          <dt tabindex="0">Vulnerabilities Prevented</dt>
+          <dd>
+            <p>
+              Security requirements define the security functionality of an application. Better security built
+              in from the beginning of an applications life cycle results in the prevention of many types of
+              vulnerabilities.
+            </p>
+          </dd>
+
+          <dt tabindex="0">References</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://www.owasp.org/images/6/67/OWASPApplicationSecurityVerificationStandard3.0.pdf" target="_blank">OWASP Application Security Verification Standard (ASVS) <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/images/6/61/MASVS_v0.9.4.pdf" target="_blank">OWASP Mobile Application Security Verification Standard (MASVS) <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="index.html" target="_blank">OWASP Top Ten <img src="bin/images/intlink.png" class="intlink" alt="- This is an internal link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

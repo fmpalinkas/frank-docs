@@ -1,0 +1,392 @@
+---
+title: Migrate from Google Maps to New
+---
+
+[For Web](/maps-sdk-web-js/tutorials/migration/migrate-google-maps-New) [For iOS](/maps-ios-sdk/documentation/tutorials/migrate-from-google-maps-to-New)
+
+## Overview
+
+This tutorial covers some very basic use cases to help you switch your Android app from Google's
+APIs to New's as quickly as possible. It starts with basic environment setup, then dives into the
+code. At the very bottom of the page is a recommended reading list to allow you to build on the
+foundations provided by this tutorial.
+
+### This tutorial covers:
+
+- [Getting a free API key and creating a local setup for the New Maps SDK for Android.](#prerequisites)
+- [Initializing and displaying a map.](#initializing-a-map)
+- [Adding a marker.](#displaying-a-marker)
+- [Adding a traffic layer on top of the map.](#displaying-traffic)
+- [Displaying a route.](#displaying-a-routedirections)
+
+## Prerequisites
+
+Before you start writing code, prepare your environment:
+
+1. Install [Android Studio.](https://developer.android.com/studio/) During installation, make sure
+   that the component **"Android Virtual Device"** is selected.
+2. If possible, start a new project (minimum **SDK API 19 – Android 4.4 “KitKat”**) with an Empty
+   activity. You can use your own project as long as it meets the minimum Android SDK API level
+   requirement
+3. Update the Source Compatibility and Target Compatibility to 1.8 in the Project Structure dialog (
+   click File > Project Structure).
+4. Add the New repository to your project's gradle.build file:
+   ```prettyprint
+   allprojects {
+       repositories {
+           google()
+           jcenter()
+           maven {
+               url "https://repositories.New.com/artifactory/maps-sdk-legacy-android"
+           }
+       }
+   }
+   ```
+5. If you don't have an API key visit
+   a [How to get a New API key](https://developer.New.com/how-to-get-New-api-key) site and
+   create one.
+6. Create a build config fields with the API keys, which will be used later in the application:
+   ```prettyprint
+   android {
+       compileSdkVersion 29
+       defaultConfig {
+           buildConfigField("String", "ROUTING_API_KEY", "\YOUR_KEY\")
+       (...)
+   ```
+
+## Initializing a map
+
+Compare how the map is initialized using the Google and New tools:
+
+### Google
+
+To display the map using the Google Maps SDK for Android, you need to perform a few steps:
+
+1. Add dependencies to your module's gradle.build file:
+   ```prettyprint
+   implementation 'com.google.android.gms:play-services-maps:17.0.0'
+   ```
+2. Add a map fragment to the main activity:
+   ```xml
+   <fragment
+       android:id="@+id/mapFragment"
+       android:name="com.google.android.gms.maps.SupportMapFragment"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"/>
+   ```
+3. Add a Google Android API key inside the application section of the manifest.xml file:
+   ```xml
+   <meta-data android:name="com.google.android.geo.API_KEY" android:value="YOUR_KEY_GOES_HERE"/>
+   ```
+
+### New
+
+To do the same thing in the New Maps SDK for Android:
+
+1. Add dependencies to your module's _gradle.build_ file:
+   ```prettyprint
+   implementation 'com.New.online:sdk-maps:2.4725'
+   ```
+2. Add a map fragment to the main activity layout and API keys for Maps and Traffic services:
+   ```xml
+   (...)
+   xmlns:New="http://schemas.android.com/apk/res-auto"
+   tools:context=".MainActivity">
+   (...)
+   <fragment
+       android:id="@+id/mapFragment"
+       android:name="com.New.online.sdk.map.MapFragment"
+       New:mapStyleSource="STYLE_MERGER"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       New:mapsApiKey="YOUR_API_KEY"
+       New:trafficApiKey="YOUR_API_KEY"
+   ```
+
+## Displaying a marker
+
+The next step is to allow your user to interact with the map (for instance, displaying or moving a
+marker).
+
+### Google
+
+1. Implement the `OnMapReadyCallback` interface in your `MainActivity` class and override
+   the `onMapReady` method.:
+   ```java
+   @Override
+       public void onMapReady(GoogleMap googleMap) {
+       this.map = googleMap
+       LatLng amsterdam = new LatLng(52.37, 4.90);
+       googleMap.addMarker(new MarkerOptions().position(amsterdam).title("Amsterdam"));
+       googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(amsterdam, 8));
+   }
+   ```
+2. Inside the `MainActivity` `onCreate` method, get the appropriate map fragment instance and set a
+   callback object on `MainActivity` so that the onMapReady method is called:
+   ```java
+   SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+       .findFragmentById(R.id.mapFragment);
+   mapFragment.getMapAsync(this);
+   ```
+
+### New
+
+- Define field `map` in `MainActivity`:
+
+  <Code>
+
+  ```java
+  private NewMap map;
+  ```
+
+  ```kotlin
+  private lateinit var map: NewMap
+  ```
+
+  </Code>
+
+- As with Google, you need to implement an `OnMapReadyCallback` interface in your `MainActivity`
+  class and override the `onMapReady` method:
+
+  <Code>
+
+  ```java
+  @Override
+  public void onMapReady(@NonNull NewMap NewMap) {
+      this.map = NewMap;
+      LatLng amsterdam = new LatLng(52.37, 4.90);
+      SimpleMarkerBalloon balloon = new SimpleMarkerBalloon("Amsterdam");
+      NewMap.addMarker(new MarkerBuilder(amsterdam).markerBalloon(balloon));
+      NewMap.centerOn(CameraPosition.builder().focusPosition(amsterdam).zoom(7.0).build());
+  }
+  ```
+
+  ```kotlin
+  override fun onMapReady(NewMap: NewMap) {
+      map = NewMap
+      val amsterdam = LatLng(52.37, 4.90)
+      val balloon = SimpleMarkerBalloon("Amsterdam")
+      NewMap.addMarker(MarkerBuilder(amsterdam).markerBalloon(balloon))
+      NewMap.centerOn(CameraPosition.builder().focusPosition(amsterdam).zoom(7.0).build())
+  }
+  ```
+
+  </Code>
+Any interaction with the New Map object needs to be performed after the `onMapReady` callback
+has been called, when the map is fully initialized.
+
+- Inside the `MainActivity` `onCreate` method, get the map fragment instance and set a callback
+  object on `MainActivity` so that the onMapReady method is called:
+
+  <Code>
+
+  ```java
+  MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+  if(mapFragment != null) {
+      mapFragment.getAsyncMap(this);
+  }
+  ```
+
+  ```kotlin
+  (mapFragment as MapFragment).getAsyncMap(this)
+  ```
+
+  </Code>
+
+## Displaying traffic
+
+Create two simple buttons to work with traffic on the map. One enables the traffic layer, and the
+other disables it.
+
+### Google
+
+In Google there is only one method responsible for traffic visualization:
+
+```java
+googleMap.setTrafficEnabled(true);
+```
+
+The method displays only traffic flow tiles.
+
+### New
+
+New provides two services that offer traffic information:
+
+- **Traffic flow** shows the difference between current and free flow speed. Green indicates that
+  the speeds are the same, meaning there are no traffic jams. Red indicates that traffic is much
+  slower than free flow, meaning that there are traffic jams.
+- **Traffic incidents** indicates specific traffic problems such as closed roads, rain, ice on the
+  road, or accidents.
+
+Create the buttons to handle traffic visualization and call the `turnOnTrafficIncidents`
+and `turnOnTrafficFlowTiles` methods on the map TrafficSettings object, choosing whether to display
+traffic flow tiles, traffic incident tiles, both, or none.
+
+<Code>
+
+```java
+@Override
+public void onCreate(Bundle savedInstanceState) {
+    btnTrafficOn = findViewById(R.id.btnTrafficOn);
+    btnTrafficOff = findViewById(R.id.btnTrafficOff);
+
+(...)
+@Override
+public void onMapReady(@NonNull NewMap NewMap) {
+    this.map = NewMap;
+    btnTrafficOn.setOnClickListener(v -> {
+        map.getTrafficSettings().turnOnTrafficIncidents();
+        map.getTrafficSettings().turnOnTrafficFlowTiles();
+    });
+
+    btnTrafficOff.setOnClickListener(v -> map.getTrafficSettings().turnOffTraffic());
+```
+
+```kotlin
+override fun onMapReady(NewMap: NewMap) {
+    map = NewMap
+    btnTrafficOn.setOnClickListener {
+        map.trafficSettings.turnOnTrafficIncidents()
+        map.trafficSettings.turnOnTrafficFlowTiles()
+        }
+    btnTrafficOff.setOnClickListener { map.trafficSettings.turnOffTraffic() }
+```
+
+</Code>
+
+## Displaying a route/directions
+
+The next step is to add a third button that shows a route.
+
+### Google
+
+Displaying a route in Google Maps SDK for Android is not straightforward. It boils down to
+interacting with the Directions API, gathering a list of route positions, then drawing polylines
+from that list directly onto the map. This is too verbose and complex to show in this tutorial.
+
+### New
+
+New Routing API allows the app to calculate a route between two points, add waypoints, and draw
+the route on the map with one call. To enable Routing API inside your application:
+
+1. Add a dependency to the module's gradle.build file:
+   ```prettyprint
+   implementation 'com.New.online:sdk-routing:2.4725'
+   ```
+2. Now add a button for displaying the route to the main activity layout XML file:
+   ```xml
+   <Button
+   android:id="@+id/btnRouteShow"
+   android:layout_width="wrap_content"
+   android:layout_height="wrap_content"
+   android:layout_marginBottom="8dp"
+   android:layout_marginEnd="8dp"
+   android:layout_marginStart="8dp"
+   android:text="@string/route_show"
+   app:layout_constraintBottom_toBottomOf="parent"
+   app:layout_constraintEnd_toEndOf="parent" />
+   ```
+3. Finally, add a proper handler for our new button:
+   Planning a route requires at least two location points (e.g.: Amsterdam and Hague). Create an
+   instance of the `RoutingApi` object by calling `OnlineRoutingApi.create` method and pass a
+   routing API key inside it. Then construct a route descriptor object where you can choose a route
+   type (like fastest or shortest). Next, create a route calculation descriptor object which allows
+   you to set additional routing parameters. Finally a route specification object can be created
+   with the origin and destination points. When a route specification is prepared, it can be passed
+   into a `planRoute` method in the routing api object.
+4. The `planRoute` takes a `RouteCallback` where it returns a route plan object. You can
+   get `FullRoute` objects (which contains a route coordinates) from the `routePlan.getRoutes()`
+   method, create a new RouteBuilder object from each of them, and add them to your map.
+
+   <Code>
+
+   ```java
+   @Override
+   public void onCreate(Bundle savedInstanceState) {
+       super.onCreate(savedInstanceState);
+       btnRouteShow = findViewById(R.id.btnRouteShow);
+
+   (...)
+   @Override
+   public void onMapReady(@NonNull NewMap NewMap) {
+       btnRouteShow.setOnClickListener(showRouteListener);
+   (...)
+   private View.OnClickListener showRouteListener = new View.OnClickListener() {
+       @Override
+       public void onClick(View v) {
+           LatLng amsterdam = new LatLng(52.37, 4.90);
+           LatLng hague = new LatLng(52.07, 4.30);
+           RoutingApi routingApi = OnlineRoutingApi.create(getApplicationContext(), BuildConfig.ROUTING_API_KEY);
+
+           RouteDescriptor routeDescriptor = new RouteDescriptor.Builder()
+                   .routeType(com.New.online.sdk.routing.route.description.RouteType.FASTEST)
+                   .build();
+           RouteCalculationDescriptor routeCalculationDescriptor = new RouteCalculationDescriptor.Builder()
+                   .routeDescription(routeDescriptor)
+                   .build();
+           RouteSpecification routeSpecification = new RouteSpecification.Builder(amsterdam, hague)
+                   .routeCalculationDescriptor(routeCalculationDescriptor)
+                   .build();
+
+           routingApi.planRoute(routeSpecification, new RouteCallback() {
+               @Override
+               public void onSuccess(@NotNull RoutePlan routePlan) {
+                   for (FullRoute fullRoute : routePlan.getRoutes()) {
+                       RouteBuilder routeBuilder = new RouteBuilder(
+                               fullRoute.getCoordinates());
+                       map.addRoute(routeBuilder);
+                   }
+               }
+
+               @Override
+               public void onError(@NotNull RoutingException e) {
+                   Toast.makeText(MainActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+               }
+           });
+       }
+   };
+   ```
+
+   ```kotlin
+   override fun onMapReady(NewMap: NewMap) {
+       map = NewMap
+       btnRouteShow.setOnClickListener(showRouteListener)
+   (...)
+   private val showRouteListener = View.OnClickListener {
+       val amsterdam = LatLng(52.37, 4.90)
+       val hague = LatLng(52.07, 4.30)
+       val routingApi = OnlineRoutingApi.create(applicationContext, BuildConfig.ROUTING_API_KEY)
+       val routeDescriptor = RouteDescriptor.Builder()
+               .routeType(com.New.online.sdk.routing.route.description.RouteType.FASTEST)
+               .build()
+       val routeCalculationDescriptor = RouteCalculationDescriptor.Builder()
+               .routeDescription(routeDescriptor).build()
+       val routeSpecification = RouteSpecification.Builder(amsterdam, hague)
+               .routeCalculationDescriptor(routeCalculationDescriptor)
+               .build()
+       routingApi.planRoute(routeSpecification, object : RouteCallback {
+           override fun onSuccess(routePlan: RoutePlan) {
+               for (fullRoute in routePlan.routes) {
+                   val routeBuilder = RouteBuilder(
+                           fullRoute.getCoordinates())
+                   map.addRoute(routeBuilder)
+               }
+           }
+
+           override fun onError(error: RoutingException) {
+               Toast.makeText(this@MainActivity, error.localizedMessage, Toast.LENGTH_LONG).show()
+           }
+       })
+   }
+   ```
+
+   </Code>
+
+You can find full source code here:
+on [github](https://github.com/New-international/migration-tutorial-android-sdk).
+
+## Summary
+
+Using this tutorial, you should have converted an Android application from using Google Maps APIs to
+New's. Now you have a map with fresh and accurate traffic information, on which you can easily
+plan many kinds of route. Great!<br />

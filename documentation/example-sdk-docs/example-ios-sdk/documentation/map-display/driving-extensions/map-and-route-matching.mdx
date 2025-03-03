@@ -1,0 +1,137 @@
+---
+title: Map and route matching
+---
+
+This module is built on top of the Maps SDK for iOS and contains logic and helpful utils that can be
+used in more complex scenarios, like driving or cycling.
+
+To use this library, add the following dependency to the Podfile file:
+
+```ruby
+pod 'ExampleOnlineSDKMapsDriving'
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_map_and_route_matching"
+></a>
+
+## Map and route matching
+
+Map matching snaps an inaccurate GPS probe to the road network obtained from map tiles, so roads are
+represented by collections of coordinates. Route matching is a special case of map matching which
+snaps an inaccurate GPS probe to the given route. The reference route is represented by a collection
+of coordinates. The route can be calculated using the Routing API or provided manually.
+
+**Sample use case:** You have a speed radar application that is used when driving. To have a proper
+user experience, you want to match GPS positions with the road data obtained from map tiles.
+
+**Sample use case:** You want to match/place the chevron with the the right road.
+
+**Sample use case:** A user plans and displays a route on the map in your app. The vehicle position
+is being matched along the planned route.
+
+To create map matcher instance and register for updates:
+
+<Code>
+
+```swift
+matcher = TTMatcher(matchDataSet: mapView)
+matcher.delegate = self
+```
+
+```objectivec
+self.matcher = [[TTMatcher alloc] initWithMatchDataSet:self.mapView]
+self.matcher.delegate = self;
+```
+
+</Code>
+
+To update map matcher with a new GPS position:
+
+<Code>
+
+```swift
+matcher.setMatcherLocation(location)
+```
+
+```objectivec
+[self.source updateLocationWithLocation:location];
+```
+
+</Code>
+
+To process map matcher results:
+
+<Code>
+
+```swift
+public func matcherResultMatchedLocation(_ matched: TTMatcherLocation, withOriginalLocation original: TTMatcherLocation, isMatched: Bool) {
+```
+
+```objectivec
+- (void)matcherResultMatchedLocation:(TTMatcherLocation *)matched withOriginalLocation:(TTMatcherLocation *)original isMatched:(BOOL)isMatched {
+```
+
+</Code>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/MapMatchingExample1.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Grey chevron - position is matched to the map</p>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/MapMatchingExample2.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Blue chevron - position is not matched to the map</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+To create a route matcher instance and register for updates:
+
+<Code>
+
+```swift
+matcher = TTMatcher(matchDataSet: plannedRoute)
+matcher?.delegate = self
+```
+
+```objectivec
+self.matcher = [[TTMatcher alloc] initWithMatchDataSet:plannedRoute];
+self.matcher.delegate = self;
+```
+
+</Code>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/RouteMatching1.png" alt="image" />
+          </p>
+        </ContentWrapper>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/RouteMatching2.png" alt="image" />
+          </p>
+        </ContentWrapper>
+      </td>
+    </tr>
+  </tbody>
+</table>

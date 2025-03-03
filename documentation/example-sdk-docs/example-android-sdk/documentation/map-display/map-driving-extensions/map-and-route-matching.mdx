@@ -1,0 +1,133 @@
+---
+title: Map and route matching
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_map_and_route_matching"
+></a>
+
+Map matching snaps an inaccurate GPS probe to the road network obtained from map tiles so roads are
+represented by collections of coordinates. Route matching is a special case of map matching which
+snaps an inaccurate GPS probe to the given route. The reference route is represented by a collection
+of coordinates. The route can be calculated using the Routing API or provided manually.
+
+**Sample use case:** You have a speed radar application that is used when driving. To have a proper
+user experience, you want to match GPS positions with the road data obtained from map tiles.
+
+**Sample use case:** You want to match/place the chevron with the right road.
+
+**Sample use case:** A user plans and displays a route on the map in your app. The vehicle position
+is being matched along the planned route.
+
+First you need to create a proper `MatchingDataProvider` based on your use case.
+
+To create the `MatchingDataProvider` from a route:
+
+<Code>
+
+```java
+MatchingDataProvider routeMatchingProvider = LatLngTraceMatchingDataProvider.fromPoints(getFirstRouteFromMap())
+```
+
+```kotlin
+val routeMatchingProvider = LatLngTraceMatchingDataProvider.fromPoints(routes.first().getCoordinates())
+```
+
+</Code>
+
+To create the `MatchingDataProvider` for map matcher:
+
+<Code>
+
+```java
+MatchingDataProvider matchingDataProvider = NewMap.asMatchingDataProvider();
+```
+
+```kotlin
+return NewMap.asMatchingDataProvider()
+```
+
+</Code>
+
+After you obtain the `MatchingDataProvider`, you can create and register matcher in the following
+manner:
+
+<Code>
+
+```java
+matcher = MatcherFactory.createMatcher(matchingDataProvider);
+matcher.setMatcherListener(matcherListener);
+```
+
+```kotlin
+val matcher = MatcherFactory.createMatcher(matchingDataProvider)
+matcher.setMatcherListener(this)
+```
+
+</Code>
+
+It is important to remove the matcher instance if it is not going to be used. Otherwise memory leaks
+may occur:
+
+<Code>
+
+```java
+matcher.dispose();
+```
+
+```kotlin
+matcher.dispose()
+```
+
+</Code>
+
+To update map matcher with a new GPS position:
+
+<Code>
+
+```java
+matcher.match(location);
+```
+
+```kotlin
+matcher.match(location)
+```
+
+</Code>
+
+To process map matcher results:
+
+<Code>
+
+```java
+@Override
+public void onMatched(MatchResult matchResult) {
+    ChevronPosition chevronPosition = new ChevronPosition.Builder(matchResult.getMatchedLocation()).build();
+
+    chevron.setDimmed(!matchResult.isMatched());
+    chevron.setPosition(chevronPosition);
+    chevron.show();
+
+    NewMap.getOverlaySettings().removeOverlays();
+    NewMap.getOverlaySettings().addOverlay(
+            CircleBuilder.create()
+                    .position(new LatLng(matchResult.originalLocation))
+                    .fill(GPS_DOT_FILL)
+                    .color(GPS_DOT_COLOR)
+                    .radius(GPS_DOT_RADIUS)
+                    .build()
+    );
+}
+```
+
+```kotlin
+val chevronPosition = ChevronPosition.Builder(it.matchedLocation).build()
+chevron.isDimmed = it.isDimmed
+chevron.position = chevronPosition
+chevron.show()
+showOriginalLocationDot(it)
+```
+
+</Code>

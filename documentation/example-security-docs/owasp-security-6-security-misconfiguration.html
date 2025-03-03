@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: OWASP 6. Security Misconfiguration</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-security-6-security-misconfiguration">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/6-security-misconfiguration.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 tabindex="0" id="headline">OWASP Top 10 Web App Security Risks - 2017</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">6. Security Misconfiguration </h3>
+
+      <section class="api">
+        <dl>
+          <dt tabindex="0">Risk Description</dt>
+          <dd>
+            <p>
+              Security misconfiguration is the most commonly seen issue.
+            </p>
+            <ul>
+              <li>
+                <p>This is commonly a result of insecure default configurations, incomplete or ad hoc configurations, open cloud storage, misconfigured HTTP headers, and verbose error messages containing sensitive information.</p>
+              </li>
+              <li><p>Not only must all operating systems, frameworks, libraries, and applications be securely configured, but they must be patched/upgraded in a timely fashion.</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Attack Vectors</dt>
+          <dd>
+            <p>Attackers will often attempt to exploit unpatched flaws or access default accounts, unused pages, unprotected files and directories, etc., to gain unauthorized access or knowledge of the system.</p>
+          </dd>
+
+          <dt tabindex="0">Security Weakness</dt>
+          <dd>
+            <p>Security misconfiguration can happen at any level of an application stack, including the:</p>
+            <ul>
+              <li><p>Network services</p></li>
+              <li><p>Platform</p></li>
+              <li><p>Web server</p></li>
+              <li><p>Application server</p></li>
+              <li><p>Database</p></li>
+              <li><p>Frameworks</p></li>
+              <li><p>Custom code</p></li>
+              <li><p>Pre-installed virtual machines, containers, or storage</p></li>
+            </ul>
+
+            <p>Automated scanners are useful for detecting misconfigurations like:</p>
+            <ul>
+              <li><p>Use of default accounts or configurations.</p></li>
+              <li><p>Unnecessary services.</p></li>
+              <li><p>Legacy options, etc.</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Impacts</dt>
+          <dd>
+            <p>
+              Such flaws frequently give attackers unauthorized access to some system data or functionality.
+            </p>
+            <ul>
+              <li><p>Occasionally, such flaws result in a complete system compromise.</p></li>
+              <li><p>The business impact depends on the protection needs of the application and data.</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Vulnerability</dt>
+          <dd>
+            <p>The application might be vulnerable if it is:</p>
+            <ol>
+              <li><p>Missing appropriate security hardening across any part of the application stack, or improperly configured permissions on cloud services.</p></li>
+              <li><p>Unnecessary features are enabled or installed (e.g., unnecessary ports, services, pages, accounts, or privileges).</p></li>
+              <li><p>Default accounts and their passwords still enabled and unchanged.</p></li>
+              <li><p>Error handling reveals stack traces or other overly informative error messages to users.</p></li>
+              <li><p>For upgraded systems, latest security features are disabled or not configured securely.</p></li>
+              <li><p>The security settings in the application servers, application frameworks (e.g., Struts, Spring, ASP.NET), libraries, databases, etc., not set to secure values.</p></li>
+              <li><p>The server does not send security headers or directives or they are not set to secure values.</p></li>
+              <li><p>The software is out of date or vulnerable.</p></li>
+            </ol>
+            <p>Without a concerted, repeatable application security configuration process, systems are at a higher risk.</p>
+          </dd>
+
+          <dt tabindex="0">Prevention</dt>
+          <dd>
+            <p>Secure installation processes should be implemented, including:</p>
+            <ol>
+              <li>
+                <p>A repeatable hardening process that makes it fast and easy to deploy another environment that is properly locked down.</p>
+                <ul>
+                  <li><p>Development, QA, and production environments should all be configured identically, with different credentials used in each environment.</p></li>
+                  <li><p>This process should be automated to minimize the effort required to setup a new secure environment.</p></li>
+                </ul>
+              </li>
+              <li><p>A minimal platform without any unnecessary features, components, documentation, and samples. Remove or do not install unused features and frameworks.</p></li>
+              <li><p>A task to review and update the configurations appropriate to all security notes, updates and patches as part of the patch management process. In particular, review cloud storage permissions (e.g., S3 bucket permissions).</p></li>
+              <li><p>A segmented application architecture that provides effective, secure separation between components or tenants, with segmentation, containerization, or cloud security groups (ACLs).</p></li>
+              <li><p>Sending security directives to clients, e.g., Security Headers.</p></li>
+              <li><p>An automated process to verify the effectiveness of the configurations and settings in all environments.</p></li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Example Attack Scenarios</dt>
+          <dd>
+            <p><strong>Scenario 1:</strong> The application server comes with sample applications that are not removed from the production server.</p>
+            <ul>
+              <li><p>These sample applications have known security flaws attackers use to compromise the server.</p></li>
+              <li><p>If one of these applications is the admin console, and default accounts weren't changed, the attacker logs in with default passwords and takes over.</p></li>
+            </ul>
+
+            <p><strong>Scenario 2:</strong> Directory listing is not disabled on the server.</p>
+            <ul>
+              <li><p>An attacker discovers they can simply list directories.</p></li>
+              <li><p>The attacker finds and downloads the compiled Java classes, which they decompile and reverse engineer to view the code.</p></li>
+              <li><p>The attacker then finds a serious access control flaw in the application.</p></li>
+            </ul>
+
+            <p><strong>Scenario 3:</strong> The application server's configuration allows detailed error messages, e.g., stack traces, to be returned to users. This potentially exposes sensitive information or underlying flaws such as component versions that are known to be vulnerable.</p>
+
+            <p><strong>Scenario 4:</strong> A cloud service provider has default sharing permissions open to the Internet by other CSP users. This allows sensitive data stored within cloud storage to be accessed.</p>
+          </dd>
+        </dl>
+
+        <dl>
+
+          <dt tabindex="0">OWASP References</dt>
+          <dd>
+
+            <ul>
+              <li><p><a href="https://www.owasp.org/index.php/Testing_for_configuration_management" target="_blank">OWASP Testing Guide: Configuration Management <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Testing_for_Error_Code_(OWASP-IG-006)" target="_blank">OWASP Testing Guide: Testing for Error Codes <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/OWASP_Secure_Headers_Project" target="_blank">OWASP Security Headers Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Related References</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://csrc.nist.gov/publications/detail/sp/800-123/final" target="_blank">NIST (National Institute of Standards and Technology) Guide to General Server Hardening <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://csrc.nist.gov/publications/detail/sp/800-123/final" target="_blank">CWE-2 (Common Weakness Enumeration): Environmental Security Flaws <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/16.html" target="_blank">CWE-16 (Common Weakness Enumeration): Configuration <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://cwe.mitre.org/data/definitions/388.html" target="_blank">CWE-388 (Common Weakness Enumeration): Error Handling <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.cisecurity.org/cis-benchmarks/" target="_blank">CIS (Center for Internet Security) Security Configuration Guides/Benchmarks <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://blog.websecurify.com/2017/10/aws-s3-bucket-discovery.html" target="_blank">Amazon S3 Bucket Discovery and Enumeration <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

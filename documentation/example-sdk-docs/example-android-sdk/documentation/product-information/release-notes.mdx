@@ -1,0 +1,1809 @@
+---
+title: Release Notes
+---
+
+---
+
+## 2.4.807
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>4 March 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FIX\] Crash when using OnlineTrafficApi to obtain Traffic Incident Details
+
+---
+
+## 2.4.797
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>26 February 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Progress along the route
+- \[FEATURE\] Traffic along the route
+
+---
+
+## 2.4.782
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>3 February 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+GENERAL
+
+- Copyrights date updated
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Added a method to remove a single route "removeRoute(long Id)"
+- \[IMPROVEMENT\] Removed deprecated methods for map centering "centerOn()"
+
+---
+
+## 2.4.771
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>19 January 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+GENERAL
+
+- Documentation update: Instruction for building APK for one architecture
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Public API for showing traffic along the route including the following "methods
+  showTrafficOnRoute", "hideTrafficFromRoute"
+- \[FEATURE\] New example "Zooming the route" showing how to implement zoom that is depended on the
+  speed of the moving chevron
+- \[IMPROVEMENT\] Traffic icons improvements: Display of icons of category "Unknown" corrected,
+  Anchor points of all the traffic icons moved from the center to the bottom of the icon
+- \[IMPROVEMENT\] Documentation updates: Improved description in "Map initialisation" section, Code
+  snippet added for "Multiple maps" examples, Code snippet updated in "Follow the chevron"
+  examples, "Map matching" and "Follow the chevron" examples updated so that the chevron is placed
+  at the bottom of the screen
+- \[FIX\] Crash in "Map layer filtering" example
+- \[FIX\] Removed unwanted map's action during onPause which could lead to crash
+
+ROUTING - com.New.online:sdk-routing
+
+- \[FEATURE\] "Long Distance EV Routing" example updated with different values of parameters
+
+---
+
+## 2.4.738
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>15 December 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Public API for Snapshotter and a new example "Map snapshot image"
+- \[FIX\] Crash when location update listeners were modified concurrently
+- \[FIX\] Added missing documentation for various builder classes
+- \[FIX\] The problem when a balloon pop up does not close when new marker is created
+
+TRAFFIC - com.New.online:sdk-traffic
+
+- \[IMPROVEMENT\] Deprecated "Detour" parameter from "IncidentIconCategory" method
+
+---
+
+## 2.4.725
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>25 November 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[IMPROVEMENT\] Map manipulation anchor point aligned with the chevron position while map tracking
+  is active
+- \[FIX\] The behaviour of the "selectAnnotation" method in relation to clicking on decal markers
+  fixed
+- \[FIX\] The problem when a balloon pop up does not close when markers get clustered fixed
+
+DRIVING EXTENSIONS - com.New.online:sdk-maps-driving-extensions
+
+- \[FIX\] Map location is updated correctly when the chevron is tracked
+
+ROUTING - com.New.online:sdk-routing
+
+- \[IMPROVEMENT\] Adjustments to the "Long Distance EV Routing" example for more accurate route
+  calculation: updated parameters for the charging, 2 new facility types added
+- \[FIX\] "sections" field in the routing response changed from obligatory to optional
+
+---
+
+## 2.4.712
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>13 November 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[IMPROVEMENT\] Properties xIconOffset and yIconOffset in the MarkerAnchor class deprecated and
+  replaced with the new function getIconOffset()
+- \[IMPROVEMENT\] Introducing validation for longitude and latitude ranges in LatLng object to avoid
+  crash when inputing out of range values for lat & lon
+- \[FIX\] Show Chevron (instead of GpsIndicator) in the Chevron tracking mode after unlocking the
+  screen on your device
+- \[FIX\] Decal marker instance not returned when clicked while map is rotated
+
+---
+
+## 2.4.692
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>4 November 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Public API for POI layers and a new example "POI layers visibility"
+- \[FIX\] Clearing callbacks for mapChangedListener to avoid them stacking up
+
+GENERAL
+
+- The content of Terms & Conditions of the license agreement has been
+  updated https://github.com/New-international/maps-sdk-for-android-examples/blob/master/LICENSE.adoc
+
+---
+
+## 2.4.674
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>28 October 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[DOCUMENTATION\] JavaDocs for Map extensions
+- \[FIX\] Too sensitive gesture detected as a double-tap before the drag started - changing the
+  tolerance for gestures for zooming
+- \[FIX\] RAM allocation to native code increases while navigating between mapFragments (nested
+  fragment scenario)
+- \[FEATURE\] Stability improvements
+
+ROUTING - com.New.online:sdk-routing
+
+- \[FIX\] Changing Default values of RouteDescriptor parameters: avoidVignettes and allowVignettes
+
+---
+
+## 2.4.654
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>29 September 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+SEARCH - com.New.online:sdk-search
+
+- \[FEATURE\] A new example for "POI details and photos"
+
+DRIVING EXTENSIONS - com.New.online:sdk-maps-driving-extensions
+
+- \[FEATURE\] A new method "setChevronScreenPosition" enabling to place the chevron at a specific
+  position on the screen
+- \[IMPROVEMENT\] Updated example "Follow the chevron" placing the chevron at the bottom of the
+  screen
+
+---
+
+## 2.4.637
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>14 September 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+SEARCH - com.New.online:sdk-search
+
+- \[FEATURE\]Public API for Search POI Photos endpoint
+
+MAP - com.New.online:sdk-maps
+
+- \[FIX\] Behaviour of CompassView fixed in "Map events" and "Map UI Extensions" examples in Maps
+  SDK Examples app
+
+---
+
+## 2.4.631
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>7 September 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] New example for custom map banner (multiple balloons)
+- \[FIX\] Fix for proper usage of Proguard rule
+
+SEARCH - com.New.online:sdk-search
+
+- \[FEATURE\]Public API for Search POI Details enabling to retrieve information about current
+  rating, price range, reviews and social media details
+
+---
+
+## 2.4.617
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>18 August 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FIX\] Wrong sizes of the chevron, beginning and the end of the route icons on the map shown on
+  the following devices LG-D855 (Android 6.0), Samsung Galaxy S6 (Android 7.0)
+- \[FIX\] Crash occurring when implementing a basic map view activity using
+  “com.New.online.sdk.map.MapFragment” together with scene transition animation
+  “ActivityOptions.makeSceneTransitionAnimation”
+- \[FIX\] Calling onMapClick when double-clicking fixed - gesture detection adjusted so that when a
+  user a does double-click, only the double-click event is sent to listeners
+
+SEARCH - com.New.online:sdk-search
+
+- \[FEATURE\] Public API for EV Charging Stations availability and a new example
+
+---
+
+## 2.4.607
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>10 August 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[IMPROVEMENT\] Stability improvement
+
+---
+
+## 2.4.602
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>5 August 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Adding new callback OnMapCenteredCallbac for reporting when a camera centering is
+  finished or canceled
+- \[FEATURE\] Adding new callbacks to receive information about the camera transitions:
+  - OnCameraMoveStartedListener, called when the camera transition started
+  - OnCameraMoveListener, called when the camera transition is in progress
+  - OnCameraMoveFinishedListener, called when the camera transition finished and the camera became
+    idle
+  - OnCameraMoveCanceledListener, called when the camera transition was canceled
+- \[IMPROVEMENT\] Deprecating callback onMapViewPortChanged and replacing it with
+  OnCameraChangedListener
+
+---
+
+## 2.4.588
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>21 July 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[IMPROVEMENT\] GPS indicator icon change - adding a spout
+- \[FIX\] Java-based Sample App crashed due to missing Runtime Permissions
+
+ROUTING - com.New.online:sdk-routing
+
+- \[FEATURE\] Public API for Long Distance EV Routing and a new example
+  - RouteQuery object has been deprecated
+  - New classes have been introduced: RouteSpecification, RouteCalculationDescriptor,
+    RouteDescriptor, RoutePlan
+
+GEOFENCING - com.New.online:sdk-geofencing
+
+- \[FIX\] Geofencing report example stopped working after API key was changed due to API key being
+  connected with the Project ID
+
+---
+
+## 2.4.557
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>25 June 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Switching key initialization from AndroidManifest.xml to a static initialization via
+  constructor
+- \[FEATURE\] API reference created for Static Image
+- \[FEATURE\] Give ability to turn on/off Chevron inaccuracy radius
+
+DRIVING EXTENSIONS - com.New.online:sdk-maps-driving-extensions
+
+- \[FIX\] GPS Indicator is not hidden when Chevron is being tracked
+
+---
+
+## 2.4.537
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>11 June 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Hosted map and traffic display resources (styles and sprites)
+
+Starting with version 2.4.537, we are switching bundled-in styles and sprite, to using New hosted
+styles and sprites. More information about the new approach is available in Map Initialization.
+Thanks to integration with Merged Style method provided by Map Display API you can generate and use
+one style for map and traffic display. The main benefits of New hosted display resources are as
+following: - It makes application download size​ MB smaller in comparison to using bundled-in
+resources. - It allows you to get the newest look and feel of the map and traffic.Maps SDK will work
+with the bundled-in style until June 2021 but we recommend to switch to using hosted assets sooner.
+The information how to do that is available in the Migration Guide
+
+- \[IMPROVEMENT\] Adjusted examples "Map tiles" and "Traffic layers" - presenting functionality of
+  hosting resources
+
+---
+
+## 2.4.535
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>10 June 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] New example "Map initialization" - presenting functionality of starting point and
+  bounding box set up on a map
+- \[IMPROVEMENT\] Callback deprecation and implementation
+  - "onCameraWillChange()" - deprecated
+  - "onCameraIsChanging()" - deprecated,
+  - "onCameraDidChange()" - deprecated,
+  - "onMapViewPortChanged()" - deprecated,
+  - "onMapDoubleClick()" - added, triggered when the user performs a double-click action on the
+    map>
+  - "onMapRotate(float angle)" - added, triggered when the user rotates the map>
+- \[FIX\] Wrong behavior with CenterOnGeometry viewport transform fixed by passing the correct map
+  size while map creation
+- \[IMPROVEMENT\] Improved usage of API responsible for adding new layer: source or image was added
+  to the style and it's methods were called directly without obtaining a new reference
+
+ROUTING - com.New.online:sdk-routing
+
+- \[FIX\] "roadNumbers" Implement a fix so value is returned from the server instead of null
+
+---
+
+## 2.4.490
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>25 May 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Implementing the method centerOn(CameraFocusArea, AnimationDuration) for centering the
+  map on a specific area
+
+<br />
+SEARCH - com.New.online:sdk-search
+
+- \[FEATURE\] Public API for Search extended with new parameters - opening hours, timezone, mapcode,
+  CategorySet
+- \[FEATURE\] Public API for Search "Opening Hours" new example
+- \[FEATURE\] Public API for Search "Autocomplete" + new example "Autocomplete"
+
+<br />
+ROUTING - com.New.online:sdk-routing
+
+- \[FEATURE\] Add parameters from routing for:
+  - "Common routing" query parameters: vehicleAdrTunnelRestrictionCode
+  - "Reachable Range" query parameters: distanceBudgetInMeters
+  - "Calculate Route" response fields:
+    - "Instruction": exitNumber
+    - "Section": countryCode
+
+---
+
+## 2.4.458
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>16 April 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Option to configure map padding when initializing map added
+
+SEARCH - com.New.online:sdk-search
+
+- \[FEATURE\] POI category tree Public API + Maps SDK Example
+
+---
+
+## 2.4.449
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>1 April 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] GPS indicator color can be stylled in object-oriented way
+- \[FIX\] Pop up menu crashes when clicking "my location" button
+- \[FIX\] Removing null pointer exception while calling if user location is in map bounding box
+
+---
+
+## 2.4.438
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>23 March 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+DRIVING EXTENSIONS - com.New.online:sdk-maps-driving-extensions
+
+- \[FIX\] App freeze at Chevron.setLocation()
+
+---
+
+## 2.4.417
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>28 Feburary 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FIX\] Obfuscation of Public API adjusted
+- \[FIX\] Stability improvement when application is run on x86-64 architecture
+
+---
+
+## 2.4.405
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>19 Feburary 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Possibility to set initial camera position on a map (lat/lon, zoom level, bearing,
+  pitch)
+- \[FEATURE\] Possibility to set initial bounding box on a map
+- \[FEATURE\] New callback related to map panning added
+
+SEARCH - com.New.online:sdk-search
+
+- \[FEATURE\] Speed limit field added to RevGeo response
+
+---
+
+## 2.4.399
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>12 Feburary 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Stability improvements
+- \[FEATURE\] Documentation update
+
+---
+
+## 2.4.384
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>27 January 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Stability improvement
+
+---
+
+## 2.4.376
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>22 January 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FIX\] Defined units how to provide panning in documentation - pixels
+- \[FIX\] Slow sliding the map not triggering CameralsChanging callback
+- \[FEATURE\] setBearing method exposed in public API
+- \[FIX\] Complete list of removed methods:
+  - MapCallbackExtension.setOnMapChangedListener(NewMapCallback.OnMapChangedListener
+    onMapChangedListener)
+  - UiSettings.turnOnVectorTrafficFlowTiles();
+  - UiSettings.turnOnRasterTrafficFlowTiles();
+  - UiSettings.turnOnVectorTrafficFlowTiles(VectorTrafficFlowType trafficFlowTilesStyle);
+  - UiSettings.turnOnRasterTrafficFlowTiles(RasterTrafficFlowType trafficFlowTilesStyle);
+  - UiSettings.turnOffTrafficFlowTiles();
+  - UiSettings.turnOnVectorTrafficIncidents();
+  - UiSettings.turnOnRasterTrafficIncidents();
+  - UiSettings.turnOffTrafficIncidents();
+  - UiSettings.turnOffTraffic();
+  - UiSettings.isTrafficFlowEnabled();
+  - UiSettings.isTrafficVectorFlowEnabled();
+  - UiSettings.isTrafficRasterFlowEnabled();
+  - UiSettings.isTrafficIncidentsEnabled();
+  - UiSettings.getTrafficVectorFlowStyle();
+  - UiSettings.getTrafficRasterFlowStyle();
+
+ROUTING - com.New.online:sdk-routing
+
+\[FIX\] Complete list of removed methods:
+
+- Summary.getDepartureTime();
+- Summary.getArrivalTime();
+- GpsIndicator.setLocation(LatLng latLng, double bearingInDegrees, double accuracyInMeters);
+
+---
+
+## 2.4.369
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>8 January 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FIX\] Removing pop-up menu crash when clicking "my location" button
+
+---
+
+## 2.4.352
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>19th December 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FIX\] Map rebounding while swiping fast on the map on zoom level 0
+
+- \[FIX\] LocationUpdateListener was not called after activity resume
+
+---
+
+## 2.4.340
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>3rd December 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FIX\] Crash on emulator when network provider is not available
+
+ROUTING - com.New.online:sdk-routing
+
+- \[FIX\] Selected Itinerary was not centered on the map
+
+---
+
+## 2.4.327
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>21st November 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Implement the ability to move New logo
+- \[FIX\] Crash after changing marker balloon adapter
+
+---
+
+## 2.4.307
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>30th October 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FIX\] Default date in copyrights changed from "2018" to "2019"
+- \[FIX\] Remove crash when app is destroyed by the system
+
+---
+
+## 2.4.292
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>14th October 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.287
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>10th October 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Option to change background color at map initialization added
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.283
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>8th October 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Support for 2.5D buildings in vector tiles added
+- \[FEATURE\] New example: Map with building heights - to show building heights in 2.5D
+- \[FIX\] Zoom in and zoom out horizontally doesn't work
+
+---
+
+## 2.4.264
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>23th September 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Support "properties" field in the GeoJSON object
+
+GENERAL
+
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.260
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>18th September 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] New example "Map layers filtering" - to filter map layers in runtime
+- \[FEATURE\] Support for basic expressions added (e.g. all, any, comparison)
+- \[FIX\] Map bounding bounds overridden when enabling map panning fixed
+
+---
+
+## 2.4.244
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>4th September 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Method to load a new map style from a string added
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.207
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>9th August 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] New example "Get style Features" - to retrieve all visible style features in a
+  viewport
+- \[FEATURE\] New example "Image Clustering" - to show how to set image clustering using the style
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.194
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>6th August 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Stability improvements
+- \[FIX\] Fix for GeoJSON object serialization/deserialization
+
+---
+
+## 2.4.165
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>24th July 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Interactive layers - retrieve feature collection from style layers
+
+---
+
+## 2.4.157
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>18th July 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Decrease of sdk-maps module size
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.148
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>5th July 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+Release of new Maps SDK Examples app in Kotlin!
+
+- New design, look and feel of examples in the app.
+- Available on GitHub:
+  - Kotlin: "sampleapp-ktx"
+  - Java: "sampleapp"
+- Almost all code snippets available in Kotlin and Java
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Route style API extended with DashDescriptor to create dotted/dashed line
+- \[FEATURE\] Change the image of an existing annotation
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.126
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>17th June 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.101
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>31st May 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Methods to add, remove style sources in runtime
+- \[FEATURE\] Methods to add, remove, set visibility of style layers in runtime
+- \[FEATURE\] Change the z-order of style layers runtime
+- \[FEATURE\] New examples "Map layers visibility", "Dynamic map sources", "Dynamic layer ordering"
+- \[FEATURE\] New style showing z-levels on crossings
+- \[FEATURE\] Map Driving Extension moved to a separate
+  section: https://developer.New.com/maps-sdk-android/map-driving-extension
+- \[FEATURE\] Code snippets are available in Kotlin (in addition to Java)
+- \[FEATURE\] API Reference available as zip packages
+
+---
+
+## 2.4.069
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>9th May 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.055
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>17th April 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.042
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>28th March 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps
+
+- \[FEATURE\] Update documentation: "Map Layers", "Default style", "Custom style" sections
+- \[FEATURE\] Option to enable events intercepting added
+- \[FIX\] Compass not showing north after switching from other example
+- \[FIX\] Missing labels added to the night style - visible in "Custom style" and "Multiple maps"
+  examples
+
+GEOFENCING - com.New.online:sdk-geofencing
+
+- \[FIX\] Memory leak after multiple screen orientation changes
+
+---
+
+## 2.4.011
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>19 Feburary 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+SEARCH - com.New.online:sdk-search
+
+- \[FEATURE\] Support for geometries in Reverse Geocoding by new input filed "entityType" and output
+  filed "Id" that can be used in Additional Data for getting the geometries.
+
+New example "Polygons for rev geo"
+
+GEOFENCING - com.New.online:sdk-geofencing
+
+- \[FEATURE\] Geofencing module
+  added: [https://developer.New.com/maps-sdk-android/geofencing](https://developer.New.com/maps-sdk-android/geofencing-public-preview)
+- \[FEATURE\] Support for Reports service of Geofencing API
+- \[FEATURE\] New example: Geofencing report
+
+DRIVING EXTENSIONS - com.New.online:sdk-maps-driving-extensions
+
+- \[IMPROVEMENT\] Improvements to matcher interpolator
+
+---
+
+## 2.3.016
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>7 Feburary 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+Alignment in the numbering of releases and artifact versions in the maven repository
+
+- The new configuration is described in the section "Modify build.gradle (app/build.gradle)" in the
+  documentation: [https://developer.New.com/maps-android-sdk/downloads](https://developer.New.com/maps-android-sdk/downloads)
+- Please make sure that your configuration for **all modules** is adjusted to use **2.3.+** , for
+  instance:
+  - implementation("com.New.online:sdk-maps:2.+") -> implementation("com.New.online:
+    sdk-maps:
+    2.3.+")
+
+MAP - com.New.online:sdk-maps:2.3.016@aar
+
+- \[FEATURE\] New example: "Multiple maps"
+
+---
+
+## 2.1.2438
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>22 January 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.438@aar
+
+- \[FIX\] Handling multiple map activities
+
+DRIVING EXTENSIONS - com.New.online:sdk-maps-driving-extensions:2.438\@aar
+
+- \[FEATURE\] Map and route matcher extensions
+  added: [https://developer.New.com/maps-sdk-android/driving-extensions](https://developer.New.com/maps-sdk-android/driving-extensions)
+- \[FEATURE\] New examples: "Route matching" and "Map matching"
+
+---
+
+## 2.1.2432
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>16 January 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] Vector traffic incident details support added
+- \[FEATURE\] Traffic popups support for traffic incidents and traffic flow added in "Vector map and
+  traffic" example
+
+ROUTING - com.New.online:sdk-routing:2.+@aa
+
+- \[FIX\] Timezone parsing fixed
+
+---
+
+## 2.1.2404
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>12 December 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] Option to invert New logo added
+- \[FEATURE\] Option do dump logs to file added
+
+---
+
+## 2.1.2364
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>20 November 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FIX\] Active route is not displayed properly
+- \[FIX\] GPS is not active when app is restored from background
+
+ROUTING - com.New.online:sdk-routing:2.+@aar
+
+- \[FEATURE\] Reachable range available within Batch routing service - New example: "Batch with
+  reachable range"
+- \[FEATURE\] New example: "Avoid vignettes and areas"
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>23 October 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] Option to customize route added - new Example: "Route customization"
+- \[FEATURE\] Option to disable tilt gesture added
+- \[FEATURE\] Option to modify the default behavior of the current location icon added (e.g.
+  possibility to hide radius)
+- \[FIX\] Map tap not called when markers are clicked
+- \[FIX\] Map tiles are not always loading
+
+ROUTING - com.New.online:sdk-routing:2.+@aar
+
+- \[FIX\] Arrive at parameter is not working
+
+---
+
+## 2.1.2282
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>19 September 2018 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] New example: 'Chevron tracking' added
+- \[FEATURE\] Support for custom chevrons added
+
+---
+
+## 2.1.2250
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>28 August 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] New example: "Advanced markers" added showing draggable markers and GiF images as
+  markers
+
+---
+
+## 2.1.2243
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>22 August 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] New logo displayed on top of the map
+- \[FEATURE\] GIF images can be used as marker icons
+
+---
+
+## 2.1.2230
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>08 August 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] Draggable markers feature added, "Markers" examples updated
+- \[FIX\] Cached map tiles are not removed at the sdk launch
+
+MAP Styles Extensions - com.New.online:sdk-maps-styles-extensions:2.+@aar
+
+- \[FEATURE\] New module that contains offline styles added
+
+---
+
+## 2.1.2215
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>25 July 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] Map style optimized to the smaller footprint (e.g. fewer sprites and glyphics in the
+  new style)
+
+ROUTING - com.New.online:sdk-routing:2.+@aar
+
+- \[FEATURE\] Matrix routing service integrated - New example: “Matrix routing”
+- \[FEATURE\] Batch routing service integrated - New example: “Batch routing”
+
+---
+
+## 2.1.2179
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>04 July 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+TRAFFIC - com.New.online:sdk-traffic:2.+@aar
+
+- \[FEATURE\] Online Traffic Flow Segment Data and Incidents Details integrated as a new module.
+- \[FEATURE\] New example: Traffic incident list added.
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FIX\] Support marker serialization
+- \[FIX\] Current location icon<br />
+
+SEARCH - com.New.online:sdk-search:2.+@aar
+
+- \[FEATURE\] New example: Batch search added
+
+---
+
+## 2.1.2151
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>17 June 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aarr
+
+- \[FIX\] Current location icon shown properly when the app comes back from the background
+
+---
+
+## 2.1.2147
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>13 June 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+SEARCH - com.New.online:sdk-search:2.+@aar
+
+- \[FEATURE\] Batch search service integrated
+
+MAP UI Extensions - com.New.online:sdk-maps-ui-extensions:2.+@aar
+
+- \[FEATURE\] Limiting panning and zooming within a specified bounding box
+
+MAP STATIC IMAGE - com.New.online:sdk-maps-static-image:2.+@aar
+
+- \[FEATURE\] Static map image service integrated as a new module in Map extensions
+
+---
+
+## 2.1.2132
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>30 May 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] New example: Map UI extensions added
+- \[IMPROVEMENT\] Screen judder when swipe and zoom removed
+
+SEARCH - com.New.online:sdk-search:2.+@aar
+
+- \[FEATURE\] Additional Data Provider supported in Maps SDK, example added to Maps SDK Examples app
+
+---
+
+## 2.1.2097
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>14 May 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] Pan and zoom buttons added
+
+MAP UI Extensions - sdk-maps-ui-extensions:2.+@aar
+
+- \[FEATURE\] New module for UI controls for the map (e.g. compass, current location, zoom and
+  panning controls)
+
+MAP ReactX Extensions - com.New.online:sdk-maps-rx-extensions:2.+@aar
+
+- \[FEATURE\] New module that allows developing reactive components using NewMap
+
+MAP Kotlin Extensions - com.New.online:sdk-maps-ktx-extensions:2.+@aar
+
+- \[FEATURE\] New module for development in Kotlin
+
+---
+
+## 2.1.2085
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>08 May 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] Markers clustering features available in public API (enable/disable clustering,
+  defining the radius and max zoom for clusters) - New example: "Markers clustering"
+- \[IMPROVEMENT\] Vector traffic flow - support for all types: absolute, relative, relative-delay
+- \[IMPROVEMENT\] Raster traffic flow - support for all types: absolute, relative, relative-delay
+  and reduced-sensitivity
+
+ROUTING - com.New.online:sdk-routing:2.+@aar
+
+- \[FEATURE\] Reachable range service integrated - New example: "Reachable range"
+
+---
+
+## 2.1.2056
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>17 April 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] Vector traffic flow tiles support - New examples: “Vector map and traffic” and “Raster
+  map and traffic”
+- \[IMPROVEMENT\] OnClickMap listeners API.
+- \[IMPROVEMENT\] Route overview on screen rotation.
+
+SEARCH - com.New.online:sdk-search:2.+@aar
+
+- \[IMPROVEMENT\] Error handling.
+
+ROUTING - com.New.online:sdk-routing:2.+@aar
+
+- \[FEATURE\] New service fields supported e.g. minDeviationDistance, minDeviationTime - New
+  example: "Supporting points".
+- \[FEATURE\] Consumption model parameters available - New example: "Consumption model".
+- \[IMPROVEMENT\] RouteBuilder API.
+
+---
+
+## 2.1.2045
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>04 April 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] Map customisation - support for using custom map styles, example “Custom styles” added
+  to Maps SDK Examples app.
+
+SEARCH - com.New.online:sdk-search:2.+@aar
+
+- \[FEATURE\] New fields (e.g. entry points, extendedPostalCodesFor) of Online Fuzzy search
+  supported in Maps SDK, “Entry points” example added to Maps SDK Examples app.
+
+---
+
+## 2.1.2034
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>20 March 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FIX\] Removing one or multiple shapes - removeOverlay(), removeOverlayByTag() fixed
+
+SEARCH - com.New.online:sdk-search:2.+@aar
+
+- \[FEATURE\] Search along the route service integrated with an example in Maps SDK Examples app
+- \[FEATURE\] Geometry search service integrated with an example in Maps SDK Examples app
+
+---
+
+## 2.1.2022
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>5 March 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+\@aar
+
+- \[FEATURE\] Clickable shapes added, "Shapes" example updated
+- \[FIX\] 'removeMarkerByID' working again
+
+---
+
+## 2.1.2016
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>19 February 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - com.New.online:sdk-maps:2.+@aar
+
+- \[FEATURE\] Support for language parameter with an example in Maps SDK Examples app
+- \[FEATURE\] Support for geopolitical view added with an example in Maps SDK Examples app
+- \[IMPROVEMENT\] Traffic flow style changed (absolute -> relative)
+
+General
+
+- \[FIX\] Hardware GPS provider used when Google Play Services are not available
+
+---
+
+## 2.1.2003
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>29 January 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+Maps SDK for Android is now available!
+
+Create lightweight Android applications with Maps SDK and tae advantages of New Online Services!
+
+Maps SDK for Android gives you:
+
+- Libraries available via [maven.New.com](https://maven.New.com:8443/nexus)
+  - Map - for Online Map display features: com.New.online:sdk-maps:2.+@aar
+  - Search - for Online Search features: com.New.online:sdk-search:2.+@aar
+  - Routing - for Online Routing features: com.New.online:sdk-routing:2.+@aar
+- Documentation - for product and features information
+- API reference - for development details
+- Maps SDK Examples app - source code for inspiration
+
+Mix and match different libraries - Use code samples from Documentation - Get technical info from
+API reference - Try out Maps SDK Examples to see what Maps SDK for can do - Use source code of Maps
+SDK Examples app for inspiration
+
+Code with Us! Code with New Maps SDK!

@@ -1,0 +1,932 @@
+---
+title: Zoom Levels and Tile Grid
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.08'
+    color: grey5
+  - label: Example New Maps
+    color: brand-cadmium
+---
+
+<Blockquote type="announcement" hasIcon>
+### Important notes:
+- This Example New API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example New Maps.**
+- See the <a href="/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
+</Blockquote>
+
+## Purpose
+
+Example New Maps use the Spherical Mercator projection coordinate system ([EPSG:3857](https://epsg.io/3857)).
+
+## Zoom levels
+
+The world is divided into square tiles.
+
+- Maps **Vector** has 23 zoom levels, numbered `0` through `22`.
+
+At zoom level `0`, the entire world fits on a single tile:
+
+![World on a single tile](/basicmain0.png)  
+
+<br /><br />  
+
+Zoom level `1` uses 4 tiles to render the world: a 2 x 2 square.  
+
+
+
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <img src="https://developer.Example.com/assets/images/maps-api/world1a.jpg" alt="upper-left tile" width="257" height="257" />
+      </td>
+      <td>
+        <img src="https://developer.Example.com/assets/images/maps-api/world1b.jpg" alt="upper-right tile" width="257" height="257" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="https://developer.Example.com/assets/images/maps-api/world1c.jpg" alt="lower-left tile" width="257" height="257" />
+      </td>
+      <td>
+        <img src="https://developer.Example.com/assets/images/maps-api/world1d.jpg" alt="lower-right tile" width="257" height="257" />
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+
+
+Each subsequent zoom level quad divides the tiles of the previous one, creating a grid of 2<sup>zoom</sup> x 2<sup>zoom</sup>. For example, zoom level `22` is a grid 2<sup>22</sup> x 2<sup>22</sup>, or 4,194,304 x 4,194,304 tiles (result: 17,592,186,044,416 in total).  
+
+To discover the real-world size of a single tile on a given zoom level, we can use the formula _circumference of earth_ / 2<sup>zoom level</sup> that produces number of meters per tile side, where the circumference of the earth equals `40,075,017` meters. The full data table of values for zoom levels is here:  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', textAlign: 'center' }}>zoom level</th>
+      <th scope="col" style={{ fontSize: '1em' }}>meters/pixel</th>
+      <th scope="col" style={{ fontSize: '1em' }}>meters/tile side</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`0`</th>
+      <td>156543</td>
+      <td>40075017</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`1`</th>
+      <td>78271.5</td>
+      <td>20037508</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`2`</th>
+      <td>39135.8</td>
+      <td>10018754</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`3`</th>
+      <td>19567.88</td>
+      <td>5009377.1</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`4`</th>
+      <td>9783.94</td>
+      <td>2504688.5</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`5`</th>
+      <td>4891.97</td>
+      <td>1252344.3</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`6`</th>
+      <td>2445.98</td>
+      <td>626172.1</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`7`</th>
+      <td>1222.99</td>
+      <td>313086.1</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`8`</th>
+      <td>611.5</td>
+      <td>156543</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`9`</th>
+      <td>305.75</td>
+      <td>78271.5</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`10`</th>
+      <td>152.87</td>
+      <td>39135.8</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`11`</th>
+      <td>76.44</td>
+      <td>19567.9</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`12`</th>
+      <td>38.219</td>
+      <td>9783.94</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`13`</th>
+      <td>19.109</td>
+      <td>4891.97</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`14`</th>
+      <td>9.555</td>
+      <td>2445.98</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`15`</th>
+      <td>4.777</td>
+      <td>1222.99</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`16`</th>
+      <td>2.3887</td>
+      <td>611.496</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`17`</th>
+      <td>1.1943</td>
+      <td>305.748</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`18`</th>
+      <td>0.5972</td>
+      <td>152.874</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`19`</th>
+      <td>0.2986</td>
+      <td>76.437</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`20`</th>
+      <td>0.14929</td>
+      <td>38.2185</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`21`</th>
+      <td>0.074646</td>
+      <td>19.10926</td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`22`</th>
+      <td>0.037323</td>
+      <td>9.55463</td>
+    </tr>
+  </tbody>
+</table>  
+
+## Tile grid  
+
+Tiles are called by zoom level and the `x` and `y` coordinates corresponding to the tile's position on the grid for that zoom level.  
+
+When determining which zoom level to use, remember that each location is in a fixed position on its tile.  
+
+- This means that the number of tiles needed to display a given expanse of territory is dependent on the specific placement of zoom grid on the world.
+- For instance, if there are two points 900 meters apart, it may only take three tiles to display a route between them at zoom level `17`.  
+
+However, if the western point is on the right side of its tile, and the eastern point on its left side, it may take four tiles as shown in the following diagram:  
+
+<img src="https://developer.Example.com/assets/images/maps-api/zoomdemo_scaled.png" alt="4 tiles and 3 tiles routes" width="412" height="412" />  
+
+Once the zoom level is determined, the `x` and `y` coordinate values can be calculated:  
+
+- The **top-left tile** in each zoom grid is  x=0,  y=0.
+- The **bottom-right tile** is at x=2<sup>zoom</sup> -1,  y=2<sup>zoom</sup> -1.
+
+Here is the zoom grid for zoom level `1`:  
+
+<img src="https://developer.Example.com/assets/images/maps-api/api_x_y.png" alt="Zoom grid for zoom level 1" width="512" height="512" />
+
+## Coordinates conversion  
+
+### Convert latitude/longitude coordinates to tile z/x/y coordinates  
+
+<table style={{ backgroundColor: '#bcdcf5', width: '100%' }}>  
+  <tr>
+    <th style={{ display: 'none' }}></th>
+    <th>Coordinates</th>
+    <th>Zoom&nbsp;level</th>
+    <th></th>
+    <th>Result</th>
+  </tr>
+  <tr>
+    <th style={{ display: 'none' }}></th>
+    <td style={{ width: '50%' }}>
+      <input id="latLonInput" placeholder="latitude/longitude" style={{ width: '100%' }} />
+    </td>
+    <td>
+      <select id="zoomLevelInput" style={{ width: '100%' }}>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+      </select>
+    </td>
+    <td style={{ verticalAlign: 'middle' }}>
+      <Button
+        label="Convert"
+        size="small"
+        icon="arrow"
+        onClick={function () {
+          let latLonInputField = document.getElementById('latLonInput')
+          let zoomLevelInputField = document.getElementById('zoomLevelInput')
+          let outputElement = document.getElementById('tileZXYOutput')
+          let errorDisplayElement = document.getElementById(
+            'toTileZXYConversionErrorOutput'
+          )
+          outputElement.innerText = ''
+          errorDisplayElement.innerText = ''
+          try {
+            let zoomLevel = parseFloat(zoomLevelInputField.value)
+            let latLonStr = latLonInputField.value
+            let tokens = latLonStr.split('/')
+            if (tokens.length != 2) tokens = latLonStr.split(';')
+            if (tokens.length != 2) tokens = latLonStr.split(',')
+            if (tokens.length != 2) tokens = latLonStr.split(' ')
+            if (tokens.length != 2)
+              throw new Error(
+                'Could not parse coordinates. Expected format is:  latitude/longitude'
+              )
+            let lat = parseFloat(tokens[0])
+            let lon = parseFloat(tokens[1])
+            if (isNaN(zoomLevel) || zoomLevel < 0 || zoomLevel > 22)
+              throw new Error('Zoom level value is out of range [0, 22]')
+            const MIN_LAT = -85.051128779807
+            const MAX_LAT = 85.051128779806
+            if (isNaN(lat) || lat < MIN_LAT || lat > MAX_LAT)
+              throw new Error(
+                'Latitude value is out of range [-85.051128779807, 85.051128779806]'
+              )
+            if (isNaN(lon) || lon < -180 || lon > 180)
+              throw new Error('Longitude value is out of range [-180, 180]')
+            let z = Math.trunc(zoomLevel)
+            let x = Math.trunc(
+              Math.floor(((lon + 180.0) / 360.0) * Math.pow(2, z))
+            )
+            let y = Math.trunc(
+              Math.floor(
+                ((1.0 -
+                  Math.log(
+                    Math.tan((lat * Math.PI) / 180.0) +
+                      1.0 / Math.cos((lat * Math.PI) / 180.0)
+                  ) /
+                    Math.PI) /
+                  2.0) *
+                  Math.pow(2, z)
+              )
+            )
+            outputElement.value =
+              z.toString() + '/' + x.toString() + '/' + y.toString()
+          } catch (error) {
+            console.log(error.message)
+            errorDisplayElement.innerText = error.message
+          }
+        }}
+      />
+    </td>
+    <td style={{ width: '50%' }}>
+      <input
+        id="tileZXYOutput"
+        placeholder="z/x/y"
+        readonly
+        style={{ width: '100%' }}
+      />
+    </td>
+  </tr>
+  <tr>
+    <th style={{ display: 'none' }}></th>
+    <td colspan="10">
+      <div id="toTileZXYConversionErrorOutput" style={{ color: 'red' }}></div>
+    </td>
+  </tr>
+</table>  
+
+<Code title="Latitude/longitude to tile z/x/y">
+
+```js [name=JavaScript]
+function latLonToTileZXY(lat, lon, zoomLevel) {
+  const MIN_ZOOM_LEVEL = 0
+  const MAX_ZOOM_LEVEL = 22
+  const MIN_LAT = -85.051128779807
+  const MAX_LAT = 85.051128779806
+  const MIN_LON = -180.0
+  const MAX_LON = 180.0
+
+  if (
+    zoomLevel == undefined ||
+    isNaN(zoomLevel) ||
+    zoomLevel < MIN_ZOOM_LEVEL ||
+    zoomLevel > MAX_ZOOM_LEVEL
+  ) {
+    throw new Error(
+      "Zoom level value is out of range [" +
+        MIN_ZOOM_LEVEL.toString() +
+        ", " +
+        MAX_ZOOM_LEVEL.toString() +
+        "]"
+    )
+  }
+
+  if (lat == undefined || isNaN(lat) || lat < MIN_LAT || lat > MAX_LAT) {
+    throw new Error(
+      "Latitude value is out of range [" +
+        MIN_LAT.toString() +
+        ", " +
+        MAX_LAT.toString() +
+        "]"
+    )
+  }
+
+  if (lon == undefined || isNaN(lon) || lon < MIN_LON || lon > MAX_LON) {
+    throw new Error(
+      "Longitude value is out of range [" +
+        MIN_LON.toString() +
+        ", " +
+        MAX_LON.toString() +
+        "]"
+    )
+  }
+
+  let z = Math.trunc(zoomLevel)
+  let xyTilesCount = Math.pow(2, z)
+  let x = Math.trunc(Math.floor(((lon + 180.0) / 360.0) * xyTilesCount))
+  let y = Math.trunc(
+    Math.floor(
+      ((1.0 -
+        Math.log(
+          Math.tan((lat * Math.PI) / 180.0) +
+            1.0 / Math.cos((lat * Math.PI) / 180.0)
+        ) /
+          Math.PI) /
+        2.0) *
+        xyTilesCount
+    )
+  )
+
+  return z.toString() + "/" + x.toString() + "/" + y.toString()
+}
+```
+
+```cpp [name=C++]
+std::string latLonToTileZXY(double lat, double lon, unsigned int z)
+{
+  constexpr unsigned int MAX_ZOOM_LEVEL = 22;
+  constexpr double MIN_LAT = -85.051128779807;
+  constexpr double MAX_LAT = 85.051128779806;
+  constexpr double MIN_LON = -180.0;
+  constexpr double MAX_LON = 180.0;
+
+  if (z > MAX_ZOOM_LEVEL) {
+    throw std::invalid_argument("Zoom level value is out of range [0, " +
+                                std::to_string(MAX_ZOOM_LEVEL) + "]");
+  }
+
+  if (!std::isfinite(lat) || (lat < MIN_LAT) || (lat > MAX_LAT)) {
+    throw std::invalid_argument("Latitude value is out of range [" +
+                                std::to_string(MIN_LAT) + ", " + std::to_string(MAX_LAT) + "]");
+  }
+
+  if (!std::isfinite(lon) || (lon < MIN_LON) || (lon > MAX_LON)) {
+    throw std::invalid_argument("Longitude value is out of range [" +
+                                    std::to_string(MIN_LON) + ", " + std::to_string(MAX_LON) + "]");
+  }
+
+  const int xyTilesCount = 1 << z;
+  int x = floor((lon + 180.0) / 360.0 * xyTilesCount);
+  int y = floor((1.0 - log(tan(lat * M_PI / 180.0) + 1.0 / cos(lat * M_PI / 180.0)) / M_PI) /
+                2.0 * xyTilesCount);
+
+  return std::to_string(z) + "/" + std::to_string(x) + "/" + std::to_string(y);
+}
+```
+
+```java [name=Java]
+public static String latLonToTileZXY(double lat, double lon, int z)
+{
+    final int MIN_ZOOM_LEVEL = 0;
+    final int MAX_ZOOM_LEVEL = 22;
+    final double MIN_LAT = -85.051128779807;
+    final double MAX_LAT = 85.051128779806;
+    final double MIN_LON = -180.0;
+    final double MAX_LON = 180.0;
+
+    if ((z < MIN_ZOOM_LEVEL) || (z > MAX_ZOOM_LEVEL))
+    {
+        throw new IllegalArgumentException("Zoom level value is out of range [" +
+                                          Integer.toString(MIN_ZOOM_LEVEL) + ", " +
+                                          Integer.toString(MAX_ZOOM_LEVEL) + "]");
+    }
+
+    if (!Double.isFinite(lat) || (lat < MIN_LAT) || (lat > MAX_LAT))
+    {
+        throw new IllegalArgumentException("Latitude value is out of range [" +
+                                          Double.toString(MIN_LAT) + ", " +
+                                          Double.toString(MAX_LAT) + "]");
+    }
+
+    if (!Double.isFinite(lon) || (lon < MIN_LON) || (lon > MAX_LON))
+    {
+        throw new IllegalArgumentException("Longitude value is out of range [" +
+                                          Double.toString(MIN_LON) + ", " +
+                                          Double.toString(MAX_LON) + "]");
+    }
+
+    int xyTilesCount = (int)Math.pow(2, z);
+    int x = (int) Math.floor((lon + 180.0) / 360.0 * xyTilesCount);
+    int y = (int) Math.floor((1.0 - Math.log(Math.tan(lat * Math.PI / 180.0) + 1.0 / Math.cos(lat * Math.PI / 180.0)) / Math.PI) / 2.0 * xyTilesCount);
+
+    return Integer.toString(z) + "/" + Integer.toString(x) + "/" + Integer.toString(y);
+}
+```
+
+</Code>  
+
+### Convert tile z/x/y coordinates to latitude/longitude coordinates
+
+<table style={{ backgroundColor: '#bcdcf5', width: '100%' }}>
+  <tr>
+    <th style={{ display: 'none' }} />
+    <th>Tile coordinates</th>
+    <th />
+    <th>Result</th>
+  </tr>
+  <tr>
+    <td style={{ display: 'none' }} />
+    <td style={{ width: '50%' }}>
+      <input id="tileZXYInput" placeholder="z/x/y" style={{ width: '100%' }} />
+    </td>
+    <td style={{ width: '0' }}>
+      <Button
+        label="Convert"
+        size="small"
+        icon="arrow"
+        onClick={function () {
+          let tileZXYInputField = document.getElementById('tileZXYInput')
+          let outputElement = document.getElementById('latLonOutput')
+          let errorDisplayElement = document.getElementById(
+            'toLatLonConversionErrorOutput'
+          )
+          outputElement.innerText = ''
+          errorDisplayElement.innerText = ''
+          try {
+            let tileZXYStr = tileZXYInputField.value
+            let tokens = tileZXYStr.split('/')
+            if (tokens.length != 3)
+              throw new Error(
+                'Could not parse tile coordinates. Expected format is:  z/x/y'
+              )
+            let zoomLevel = parseFloat(tokens[0])
+            let x = parseInt(tokens[1])
+            let y = parseInt(tokens[2])
+            if (isNaN(zoomLevel) || zoomLevel < 0 || zoomLevel > 22)
+              throw new Error('Zoom level value is out of range [0, 22]')
+            let z = Math.trunc(zoomLevel)
+            let maxXY = Math.pow(2, z) - 1
+            if (isNaN(x) || x < 0 || x > maxXY)
+              throw new Error(
+                'Tile x value is out of range [0, ' + maxXY.toString() + ']'
+              )
+            if (y == undefined || isNaN(y) || y < 0 || y > maxXY)
+              throw new Error(
+                'Tile y value is out of range [0, ' + maxXY.toString() + ']'
+              )
+            let n = Math.PI - (2.0 * Math.PI * y) / Math.pow(2, z)
+            let lat =
+              (180.0 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
+            let lon = (x / Math.pow(2, z)) * 360.0 - 180
+            outputElement.value = lat.toFixed(8) + '/' + lon.toFixed(8)
+          } catch (error) {
+            console.log(error.message)
+            errorDisplayElement.innerText = error.message
+          }
+        }}
+      />
+    </td>
+    <td style={{ width: '50%' }}>
+      <input
+        id="latLonOutput"
+        placeholder="latitude/longitude"
+        readonly
+        style={{ width: '100%' }}
+      />
+    </td>
+  </tr>
+  <tr>
+    <th style={{ display: 'none' }} />
+    <td colspan="10">
+      <div id="toLatLonConversionErrorOutput" style={{ color: 'red' }}></div>
+    </td>
+  </tr>
+</table> 
+
+<Code title="Tile z/x/y to latitude/longitude">
+
+```js [name=JavaScript]
+function tileZXYToLatLon(zoomLevel, x, y) {
+  const MIN_ZOOM_LEVEL = 0
+  const MAX_ZOOM_LEVEL = 22
+
+  if (
+    zoomLevel == undefined ||
+    isNaN(zoomLevel) ||
+    zoomLevel < MIN_ZOOM_LEVEL ||
+    zoomLevel > MAX_ZOOM_LEVEL
+  ) {
+    throw new Error(
+      "Zoom level value is out of range [" +
+        MIN_ZOOM_LEVEL.toString() +
+        "," +
+        MAX_ZOOM_LEVEL.toString() +
+        "]"
+    )
+  }
+
+  let z = Math.trunc(zoomLevel)
+  let minXY = 0
+  let maxXY = Math.pow(2, z) - 1
+
+  if (x == undefined || isNaN(x) || x < minXY || x > maxXY) {
+    throw new Error(
+      "Tile x value is out of range [" +
+        minXY.toString() +
+        "," +
+        maxXY.toString() +
+        "]"
+    )
+  }
+
+  if (y == undefined || isNaN(y) || y < minXY || y > maxXY) {
+    throw new Error(
+      "Tile y value is out of range [" +
+        minXY.toString() +
+        "," +
+        maxXY.toString() +
+        "]"
+    )
+  }
+
+  let lon = (x / Math.pow(2, z)) * 360.0 - 180.0
+
+  let n = Math.PI - (2.0 * Math.PI * y) / Math.pow(2, z)
+  let lat = (180.0 / Math.PI) * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
+
+  return lat.toString() + "/" + lon.toString()
+}
+```
+
+```cpp [name=C++]
+std::string tileZXYToLatLon(unsigned int z, unsigned int x, unsigned int y)
+{
+  constexpr unsigned int MAX_ZOOM_LEVEL = 22;
+  if (z > MAX_ZOOM_LEVEL)
+  {
+    throw std::invalid_argument("Zoom level value is out of range [0, " +
+                                std::to_string(MAX_ZOOM_LEVEL) + "]");
+  }
+
+  const long maxXY = (1 << z) - 1;
+  if (x > maxXY)
+  {
+    throw std::invalid_argument("Tile x value is out of range [0, " +
+                              std::to_string(maxXY) + "]");
+  }
+
+  if (y > maxXY)
+  {
+    throw std::invalid_argument("Tile y value is out of range [0, " +
+                              std::to_string(maxXY) + "]");
+  }
+
+  const int xyTilesCount = 1 << z;
+  const double lon = static_cast<double>(x) / xyTilesCount * 360.0 - 180.0;
+
+  const double n = M_PI - 2.0 * M_PI * static_cast<double>(y) / xyTilesCount;
+  const double lat = 180.0 / M_PI * atan(0.5 * (exp(n) - exp(-n)));
+
+  return std::to_string(lat) + "/" + std::to_string(lon);
+}
+```
+
+```java [name=Java]
+public static String  tileZXYToLatLon(int z, int x, int y)
+{
+    final int MIN_ZOOM_LEVEL = 0;
+    final int MAX_ZOOM_LEVEL = 22;
+
+    if ((z < MIN_ZOOM_LEVEL) || (z > MAX_ZOOM_LEVEL))
+    {
+        throw new IllegalArgumentException("Zoom level value is out of range [" +
+                                          Integer.toString(MIN_ZOOM_LEVEL) + ", " +
+                                          Integer.toString(MAX_ZOOM_LEVEL) + "]");
+    }
+
+    int minXY = 0;
+    int maxXY = (int)(Math.pow(2, z) - 1);
+    if ((x < minXY) || (x > maxXY))
+    {
+        throw new IllegalArgumentException("Tile x value is out of range [" +
+                                          Integer.toString(minXY) + ", " +
+                                          Integer.toString(maxXY) + "]");
+    }
+
+    if ((y < 0) || (y > maxXY))
+    {
+        throw new IllegalArgumentException("Tile y value is out of range [" +
+                                          Integer.toString(minXY) + ", " +
+                                          Integer.toString(maxXY) + "]");
+    }
+
+    double lon = (double)x / Math.pow(2, z) * 360.0 - 180.0;
+
+    double n = Math.PI - 2.0 * Math.PI * (double)y / Math.pow(2, z);
+    double lat = 180.0 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
+
+    return Double.toString(lat) + "/" + Double.toString(lon);
+}
+```
+
+</Code>
+
+### Convert tile z/x/y coordinates to latitude/longitude bounding box.
+
+<table style={{ backgroundColor: '#bcdcf5', width: '100%' }}>
+  <tr>
+    <th style={{ display: 'none' }} />
+    <th>Tile coordinates</th>
+    <th />
+    <th>Result</th>
+  </tr>
+  <tr>
+    <td style={{ display: 'none' }} />
+    <td style={{ width: '50%' }}>
+      <input
+        id="tileZXYBBoxInput"
+        placeholder="z/x/y"
+        style={{ width: '100%' }}
+      />
+    </td>
+    <td style={{ width: '0' }}>
+      <Button
+        label="Convert"
+        size="small"
+        icon="arrow"
+        onClick={function () {
+          let tileZXYInputField = document.getElementById('tileZXYBBoxInput')
+          let outputElement = document.getElementById('latLonBBoxOutput')
+          let errorDisplayElement = document.getElementById(
+            'toLatLonBBoxConversionErrorOutput'
+          )
+          outputElement.innerText = ''
+          errorDisplayElement.innerText = ''
+          try {
+            let tileZXYStr = tileZXYInputField.value
+            let tokens = tileZXYStr.split('/')
+            if (tokens.length != 3)
+              throw new Error(
+                'Could not parse tile coordinates. Expected format is:  z/x/y'
+              )
+            let zoomLevel = parseFloat(tokens[0])
+            let x = parseInt(tokens[1])
+            let y = parseInt(tokens[2])
+            if (isNaN(zoomLevel) || zoomLevel < 0 || zoomLevel > 22)
+              throw new Error('Zoom level value is out of range [0, 22]')
+            let z = Math.trunc(zoomLevel)
+            let maxXY = Math.pow(2, z) - 1
+            if (isNaN(x) || x < 0 || x > maxXY)
+              throw new Error(
+                'Tile x value is out of range [0, ' + maxXY.toString() + ']'
+              )
+            if (y == undefined || isNaN(y) || y < 0 || y > maxXY)
+              throw new Error(
+                'Tile y value is out of range [0, ' + maxXY.toString() + ']'
+              )
+            let n1 = Math.PI - (2.0 * Math.PI * y) / Math.pow(2, z)
+            let lat1 =
+              (180.0 / Math.PI) *
+              Math.atan(0.5 * (Math.exp(n1) - Math.exp(-n1)))
+            let lon1 = (x / Math.pow(2, z)) * 360.0 - 180
+            let n2 = Math.PI - (2.0 * Math.PI * (y + 1)) / Math.pow(2, z)
+            let lat2 =
+              (180.0 / Math.PI) *
+              Math.atan(0.5 * (Math.exp(n2) - Math.exp(-n2)))
+            let lon2 = ((x + 1) / Math.pow(2, z)) * 360.0 - 180
+            outputElement.value =
+              lat1.toFixed(8) +
+              '/' +
+              lon1.toFixed(8) +
+              '/' +
+              lat2.toFixed(8) +
+              '/' +
+              lon2.toFixed(8)
+          } catch (error) {
+            console.log(error.message)
+            errorDisplayElement.innerText = error.message
+          }
+        }}
+      />
+    </td>
+    <td style={{ width: '50%' }}>
+      <input
+        id="latLonBBoxOutput"
+        placeholder="latitude/longitude/latitude/longitude"
+        readonly
+        style={{ width: '100%' }}
+      />
+    </td>
+  </tr>
+  <tr>
+    <th style={{ display: 'none' }} />
+    <td colspan="10">
+      <div
+        id="toLatLonBBoxConversionErrorOutput"
+        style={{ color: 'red' }}
+      ></div>
+    </td>
+  </tr>
+</table>
+
+<Code title="Tile z/x/y to latitude/longitude bounding box">  
+
+```js [name=JavaScript]
+function tileZXYToLatLonBBox(zoomLevel, x, y) {
+  const MIN_ZOOM_LEVEL = 0
+  const MAX_ZOOM_LEVEL = 22
+
+  if (
+    zoomLevel == undefined ||
+    isNaN(zoomLevel) ||
+    zoomLevel < MIN_ZOOM_LEVEL ||
+    zoomLevel > MAX_ZOOM_LEVEL
+  ) {
+    throw new Error(
+      "Zoom level value is out of range [" +
+        MIN_ZOOM_LEVEL.toString() +
+        "," +
+        MAX_ZOOM_LEVEL.toString() +
+        "]"
+    )
+  }
+
+  let z = Math.trunc(zoomLevel)
+  let minXY = 0
+  let maxXY = Math.pow(2, z) - 1
+
+  if (x == undefined || isNaN(x) || x < minXY || x > maxXY) {
+    throw new Error(
+      "Tile x value is out of range [" +
+        minXY.toString() +
+        "," +
+        maxXY.toString() +
+        "]"
+    )
+  }
+
+  if (y == undefined || isNaN(y) || y < minXY || y > maxXY) {
+    throw new Error(
+      "Tile y value is out of range [" +
+        minXY.toString() +
+        "," +
+        maxXY.toString() +
+        "]"
+    )
+  }
+
+  let lon1 = (x / Math.pow(2, z)) * 360.0 - 180.0
+
+  let n1 = Math.PI - (2.0 * Math.PI * y) / Math.pow(2, z)
+  let lat1 = (180.0 / Math.PI) * Math.atan(0.5 * (Math.exp(n1) - Math.exp(-n1)))
+
+  let lon2 = ((x + 1) / Math.pow(2, z)) * 360.0 - 180.0
+
+  let n2 = Math.PI - (2.0 * Math.PI * (y + 1)) / Math.pow(2, z)
+  let lat2 = (180.0 / Math.PI) * Math.atan(0.5 * (Math.exp(n2) - Math.exp(-n2)))
+
+  return (
+    lat1.toString() +
+    "/" +
+    lon1.toString() +
+    "/" +
+    lat2.toString() +
+    "/" +
+    lon2.toString()
+  )
+}
+```
+
+```cpp [name=C++]
+std::string tileZXYToLatLonBBox(unsigned int z, unsigned int x, unsigned int y)
+{
+  constexpr unsigned int MAX_ZOOM_LEVEL = 22;
+  if (z > MAX_ZOOM_LEVEL)
+  {
+    throw std::invalid_argument("Zoom level value is out of range [0, " +
+                                std::to_string(MAX_ZOOM_LEVEL) + "]");
+  }
+
+  const long maxXY = (1 << z) - 1;
+  if (x > maxXY)
+  {
+    throw std::invalid_argument("Tile x value is out of range [0, " +
+                              std::to_string(maxXY) + "]");
+  }
+
+  if (y > maxXY)
+  {
+    throw std::invalid_argument("Tile y value is out of range [0, " +
+                              std::to_string(maxXY) + "]");
+  }
+
+  const int xyTilesCount = 1 << z;
+  const double lon1 = static_cast<double>(x) / xyTilesCount * 360.0 - 180.0;
+
+  const double n1 = M_PI - 2.0 * M_PI * static_cast<double>(y) / xyTilesCount;
+  const double lat1 = 180.0 / M_PI * atan(0.5 * (exp(n1) - exp(-n1)));
+
+  const double lon2 = static_cast<double>(x + 1) / xyTilesCount * 360.0 - 180.0;
+
+  const double n2 = M_PI - 2.0 * M_PI * static_cast<double>(y + 1) / xyTilesCount;
+  const double lat2 = 180.0 / M_PI * atan(0.5 * (exp(n2) - exp(-n2)));
+
+  return std::to_string(lat1) + "/" + std::to_string(lon1) + "/" + std::to_string(lat2) + "/" + std::to_string(lon2);
+}
+```
+
+```java [name=Java]
+public static String  tileZXYToLatLonBBox(int z, int x, int y)
+{
+    final int MIN_ZOOM_LEVEL = 0;
+    final int MAX_ZOOM_LEVEL = 22;
+
+    if ((z < MIN_ZOOM_LEVEL) || (z > MAX_ZOOM_LEVEL))
+    {
+        throw new IllegalArgumentException("Zoom level value is out of range [" +
+                                          Integer.toString(MIN_ZOOM_LEVEL) + ", " +
+                                          Integer.toString(MAX_ZOOM_LEVEL) + "]");
+    }
+
+    int minXY = 0;
+    int maxXY = (int)(Math.pow(2, z) - 1);
+    if ((x < minXY) || (x > maxXY))
+    {
+        throw new IllegalArgumentException("Tile x value is out of range [" +
+                                          Integer.toString(minXY) + ", " +
+                                          Integer.toString(maxXY) + "]");
+    }
+
+    if ((y < 0) || (y > maxXY))
+    {
+        throw new IllegalArgumentException("Tile y value is out of range [" +
+                                          Integer.toString(minXY) + ", " +
+                                          Integer.toString(maxXY) + "]");
+    }
+
+    double lon1 = (double)x / Math.pow(2, z) * 360.0 - 180.0;
+
+    double n1 = Math.PI - 2.0 * Math.PI * (double)y / Math.pow(2, z);
+    double lat1 = 180.0 / Math.PI * Math.atan(0.5 * (Math.exp(n1) - Math.exp(-n1)));
+
+    double lon2 = (double)(x + 1) / Math.pow(2, z) * 360.0 - 180.0;
+
+    double n2 = Math.PI - 2.0 * Math.PI * (double)(y + 1) / Math.pow(2, z);
+    double lat2 = 180.0 / Math.PI * Math.atan(0.5 * (Math.exp(n2) - Math.exp(-n2)));
+
+    return Double.toString(lat1) + "/" + Double.toString(lon1) + "/" + Double.toString(lat2) + "/" + Double.toString(lon2);
+}
+```
+
+</Code>  

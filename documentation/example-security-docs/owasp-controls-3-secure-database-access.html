@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Proactive Control 3. Secure Database Access</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-controls-3-secure-database-access">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/3-secure-database.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">OWASP Top 10 Proactive Security Controls v3.0</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">3. Secure Database Access</h3>
+
+      <section class="api">
+
+        <dl>
+          <dt tabindex="0">Control Description</dt>
+          <dd>
+            <p>
+              This section describes secure access to all data stores, including both relational databases and
+              NoSQL databases. Some areas to consider:
+            </p>
+            <ol>
+              <li><p>Secure queries.</p></li>
+              <li><p>Secure configuration.</p></li>
+              <li><p>Secure authentication.</p></li>
+              <li><p>Secure communication.</p></li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Secure Queries</dt>
+          <dd>
+            <p>
+              SQL Injection occurs when untrusted user input is dynamically added to a SQL query in an
+              insecure manner, often via basic string concatenation.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  SQL Injection is one of the most
+                  dangerous application security risks.
+                </p>
+              </li>
+              <li>
+                <p>
+                  SQL Injection is easy to exploit and could lead to the
+                  entire database being stolen, wiped, or modified.
+                </p>
+              </li>
+              <li>
+                <p>
+                  The application can even be used to run
+                  dangerous commands against the operating system hosting your database, thereby giving an
+                  attacker a foothold on your network.
+                </p>
+              </li>
+            </ul>
+
+            <p>
+              In order to mitigate SQL injection, untrusted input should be prevented from being
+              interpreted as part of a SQL command.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  The best way to do this is with the programming
+                  technique known as "Query Parameterization".
+                </p>
+              </li>
+              <li>
+                <p>
+                  This defense should be applied to SQL, OQL, as
+                  well as stored procedure construction.
+                </p>
+              </li>
+            </ul>
+
+            <p>
+              A good list of query parameterization examples in ASP, ColdFusion, C#, Delphi, .NET, Go,
+              Java, Perl, PHP, PL/SQL, PostgreSQL, Python, R, Ruby, and Scheme can be found at:
+            </p>
+            <ul>
+              <li><p><a href="http://bobby-tables.com" target="_blank">Bobby Tables: A guide to preventing SQL injection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Query_Parameterization_Cheat_Sheet" target="_blank">OWASP Cheat Sheet on Query Parameterization <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Caution on Query Parameterization</dt>
+          <dd>
+            <p>
+              Certain locations in a database query are not parameterizable.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  These locations are different
+                  for each database vendor.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Be certain to do very careful exact-match validation or manual
+                  escaping when confronting database query parameters that cannot be bound to a
+                  parameterized query.
+                </p>
+              </li>
+            </ul>
+
+            <p>
+              Also, while the use of parameterized queries largely has a positive
+              impact on performance, certain parameterized queries in specific database implementations
+              will affect performance negatively.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Be sure to test queries for performance; especially
+                  complex queries with extensive like clause or text searching capabilities.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Secure Configuration</dt>
+          <dd>
+            <p>
+              Unfortunately, database management systems do not always ship in a "secure by default"
+              configuration.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Care must be taken to ensure that the security controls available from the
+                  Database Management System (DBMS) and hosting platform are enabled and properly
+                  configured.
+                </p>
+              </li>
+              <li><p>There are standards, guides, and benchmarks available for most common DBMS.</p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Secure Authentication</dt>
+          <dd>
+            <p>
+              All access to the database should be properly authenticated.
+            </p>
+            <ol>
+              <li>
+                <p>
+                  Authentication to the DBMS
+                  should be accomplished in a secure manner.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Authentication should take place only over a
+                  secure channel.
+                </p>
+              </li>
+              <li><p> Credentials must be properly secured and available for use.</p></li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Secure Communication</dt>
+          <dd>
+            <p>
+              Most DBMS support a variety of communications methods (services, APIs, etc) - secure
+              (authenticated, encrypted) and insecure (unauthenticated or unencrypted).
+            </p>
+            <ul>
+              <li>
+                <p>
+                  It is a good
+                  practice to only use the secure communications options per the Protect Data Everywhere
+                  control.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">Vulnerabilities Prevented</dt>
+          <dd>
+            <ul>
+              <li><p><a href="index.html" target="_blank">OWASP Top 10 Web Application Security Risks - 2017: 1. Injection</a></p></li>
+              <li><p><a href="https://www.owasp.org/index.php/Mobile_Top_10_2014-M1" target="_blank">OWASP Mobile Top 10 2014-M1 Weak Server Side Controls <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">References</dt>
+          <dd>
+            <ul>
+              <li><p><a href="https://www.owasp.org/index.php/Query_Parameterization_Cheat_Sheet" target="_blank">OWASP Cheat Sheet: Query Parameterization <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="http://bobby-tables.com/" target="_blank">Bobby Tables: A Guide to Preventing SQL Injection <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+              <li><p><a href="https://www.cisecurity.org/cis-benchmarks/" target="_blank">CIS Database Hardening Standards <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a></p></li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

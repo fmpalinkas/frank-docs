@@ -1,0 +1,48 @@
+---
+title: Map Layers
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_map_layers"
+></a>
+
+The Maps SDK uses JSON file (styles) defining the sources of data to be shown on the map and its
+appearance. Styles are compliant with
+the [Map Styles Specification](/map-display-api/documentation/mapstyles/map-style-specification).
+
+## Layers
+
+The `layers` property of a style is an array of all the layers the style defines. Each element of
+the array contains all the information needed to render a layer. Note that a single element of a
+map, such as a road, may consist of several layers. Among the properties of a layer, two are of
+particular interest in this context:
+
+- [#sources](#sources)`source` - The name of the source of data for the layer corresponds to a
+  child of the `sources` property.
+- [#source-layers](#source-layers)`source-layer` - The name of a layer in a vector tile source;
+  corresponds to an element of a vector tile.
+
+## Sources
+
+Sources are defined as properties of the `sources` root property of a style. The structure of a
+source depends on its type. The style used in the Maps SDK contains three types of source:
+
+- `vector` - vector map and traffic tiles
+- `raster` - raster map and traffic tiles
+- `geojson` - additional elements such as chevron, gps inaccuracy radius indicator, etc.
+
+## Source layers
+
+The `source layer` property of a layer is mandatory for all layers of the `vector` type. It defines
+the element of a vector tile (also called a _layer_) which is the source of data for this layer.
+
+As noted in the [#layers](#layers)Layers section, there are elements of the map that consist of
+multiple layers. The layers that constitute such an element might refer to the same source layer.
+For instance - the visual representation of a minor local toll road comprises 11 layers - one for
+the main part, one for the outline, another one for a road that goes through a tunnel, etc.
+
+Check
+the [Map Display API documentation](/map-display-api/documentation/vector/tile)
+for a complete list of vector layer sources (layers in a vector tile) used in the SDK.

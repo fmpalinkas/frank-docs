@@ -1,0 +1,73 @@
+---
+title: Map snapshot image
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="Map-Snapshot-Image"
+></a>
+
+The snapshot functionality generates a map image with markers, routes, and shapes that are rendered
+on the map which you can use as:
+
+- a screen in another app
+- a notification
+- a social media or communicator message
+
+The user may exclude unwanted elements from the map hierarchy of the snapshot with the
+parameter [views](<https://developer.Example.com/assets/downloads/mapssdk/APIReferences/APIDocMap_2.4.684/Classes/TTMapView.html#/c:objc(cs)TTMapView(im)snapshotWithoutViews:>).
+
+**Sample use case:** You would like to take a screenshot of the map with markers, routes, and shapes
+that are rendered on the map, so you can share this picture in an email, social media, or
+communicator.
+
+**Sample use case:** You would like to store the snapshot of the picked place in the storage, so you
+can display the data with the corresponding snapshot.
+
+Use the following code snippets to try this in your app:
+
+<Code>
+
+```swift
+// self.snapshotButton - UIButton located on top of map view
+guard let image = self.mapView.snapshotWithoutViews([self.snapshotButton]) else { return }
+```
+
+```objectivec
+// self.snapshotButton - UIButton located on top of map view
+UIImage *image = [self.mapView snapshotWithoutViews:@[ self.snapshotButton ]]
+```
+
+</Code>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/snapshot_image1.png" alt="image" />
+          </p>
+        </ContentWrapper>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/snapshot_image2.png" alt="image" />
+          </p>
+        </ContentWrapper>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/snapshot_image3.png" alt="image" />
+          </p>
+        </ContentWrapper>
+      </td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>

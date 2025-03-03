@@ -1,0 +1,265 @@
+group: maps-sdk-for-ios
+isPrivate: false
+productName: Maps SDK for iOS
+description: Maps SDK for iOS is a convenient Software Development Kit that helps you developers make the most out of the Example Maps APIs in your mobile application, without the complexity of bare REST API calls.
+notification: <b>THIS SDK IS <a href="https://developer.Example.com/deprecation-policy/overview">DEPRECATED.</a></b>We rolled out a new and better SDK for you. <Button label="CHECK IT OUT" href="https://developer.Example.com/ios/maps/documentation/overview/introduction"/>
+notificationColor: yellow
+menuTitle: Documentation
+isMenuOpened: false
+menu:
+  - title: Product information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+      - fileId: /product-information/downloads
+        title: Downloads
+      - fileId: /product-information/release-notes
+        title: Release Notes
+  - title: Tutorials
+    items:
+      - title: Use Cases
+        items:
+          - fileId: /tutorials/use-cases/search-along-route
+            title: Search along a route
+          - fileId: /tutorials/use-cases/time-to-leave
+            title: Time to leave
+      - fileId: /tutorials/migrate-from-google-maps-to-Example
+        title: Migrate from Google Maps to Example
+  - title: Map Display
+    items:
+      - fileId: /map-display/introduction
+        title: Introduction
+      - fileId: /map-display/getting-started
+        title: Getting Started
+      - title: Documentation
+        items:
+          - fileId: /map-display/documentation/introduction
+            title: Introduction
+          - fileId: /map-display/documentation/map-initialization
+            title: Map initialization
+          - fileId: /map-display/documentation/traffic-flow-tiles
+            title: Traffic flow tiles
+          - fileId: /map-display/documentation/traffic-incident-tiles
+            title: Traffic incident tiles
+          - fileId: /map-display/documentation/online-resources-caching
+            title: Online resources caching
+          - fileId: /map-display/documentation/map-layers
+            title: Map Layers
+          - fileId: /map-display/documentation/default-style
+            title: Default style
+          - fileId: /map-display/documentation/custom-style
+            title: Custom style
+      - title: Examples
+        items:
+          - fileId: /map-display/examples/map-tiles
+            title: Map tiles
+          - fileId: /map-display/examples/traffic-layers
+            title: Traffic layers
+          - fileId: /map-display/examples/map-language
+            title: Map language
+          - fileId: /map-display/examples/geopolitical-view
+            title: Geopolitical view
+          - fileId: /map-display/examples/custom-styles
+            title: Custom styles
+          - fileId: /map-display/examples/switching-map-layers
+            title: Switching Map Layers
+          - fileId: /map-display/examples/dynamic-map-sources
+            title: Dynamic map sources
+          - fileId: /map-display/examples/dynamic-layer-ordering
+            title: Dynamic Layer Ordering
+          - fileId: /map-display/examples/interactive-map-layers
+            title: Interactive map layers
+          - fileId: /map-display/examples/image-clustering
+            title: Image clustering
+          - fileId: /map-display/examples/map-centering
+            title: Map centering
+          - fileId: /map-display/examples/map-initialization
+            title: Map Initialization
+          - fileId: /map-display/examples/map-perspective
+            title: Map perspective
+          - fileId: /map-display/examples/map-events
+            title: Map events
+          - fileId: /map-display/examples/annotations
+            title: Annotations
+          - fileId: /map-display/examples/annotations-clustering
+            title: Annotations clustering
+          - fileId: /map-display/examples/balloons
+            title: Balloons
+          - fileId: /map-display/examples/shapes
+            title: Shapes
+          - fileId: /map-display/examples/route-display
+            title: Route display
+          - fileId: /map-display/examples/multiple-maps
+            title: Multiple Maps
+          - fileId: /map-display/examples/map-with-building-heights
+            title: Map with building heights
+          - fileId: /map-display/examples/custom-gps-indicator
+            title: Custom GPS Indicator
+          - fileId: /map-display/examples/map-ui-extensions
+            title: Map UI Extensions
+          - fileId: /map-display/examples/poi-layer-visibility
+            title: Poi Layer Visibility
+          - fileId: /map-display/examples/map-snapshot-image
+            title: Map snapshot image
+          - fileId: /map-display/examples/traffic-along-the-route
+            title: Traffic along the route
+      - title: Driving Extensions
+        items:
+          - fileId: /map-display/driving-extensions/introduction
+            title: Introduction
+          - fileId: /map-display/driving-extensions/map-and-route-matching
+            title: Map and route matching
+          - fileId: /map-display/driving-extensions/follow-the-chevron
+            title: Follow the chevron
+          - fileId: /map-display/driving-extensions/zooming-the-route
+            title: Zooming the route
+          - fileId: /map-display/driving-extensions/api-reference
+            title: Api Reference
+          - fileId: /map-display/driving-extensions/progress-along-the-route
+            title: Progress along the route
+      - title: Extensions
+        items:
+          - fileId: /map-display/extensions/introduction
+            title: Introduction
+          - fileId: /map-display/extensions/map-ui-extensions
+            title: Map UI Extensions
+          - fileId: /map-display/extensions/static-map-image
+            title: Static Map Image
+          - fileId: /map-display/extensions/map-styles-extensions
+            title: Map Styles Extensions
+      - title: Api Reference
+        items:
+          - fileId: /map-display/api-reference/api-reference
+            title: API Reference
+          - fileId: /map-display/api-reference/api-reference-utils
+            title: API Reference Utils
+  - title: Traffic
+    items:
+      - fileId: /traffic/introduction
+        title: Introduction
+      - fileId: /traffic/getting-started
+        title: Getting Started
+      - fileId: /traffic/documentation
+        title: Documentation
+      - title: Examples
+        items:
+          - fileId: /traffic/examples/traffic-incident-list
+            title: Traffic incident list
+      - title: Api Reference
+        items:
+          - fileId: /traffic/api-reference/api-reference
+            title: API Reference
+          - fileId: /traffic/api-reference/api-reference-utils
+            title: API Reference Utils
+  - title: Search
+    items:
+      - fileId: /search/introduction
+        title: Introduction
+      - fileId: /search/getting-started
+        title: Getting Started
+      - fileId: /search/documentation
+        title: Documentation
+      - title: Examples
+        items:
+          - fileId: /search/examples/address-poi-search
+            title: Address & POI search
+          - fileId: /search/examples/poi-category-tree
+            title: POI Category tree
+          - fileId: /search/examples/category-search
+            title: Category search
+          - fileId: /search/examples/language-parameter
+            title: Language parameter
+          - fileId: /search/examples/typeahead-parameter
+            title: Typeahead parameter
+          - fileId: /search/examples/cancel-search
+            title: Cancel search
+          - fileId: /search/examples/fuzziness-parameter
+            title: Fuzziness parameter
+          - fileId: /search/examples/reverse-geocoding
+            title: Reverse geocoding
+          - fileId: /search/examples/polygons-for-reverse-geocoding
+            title: Polygons for reverse geocoding
+          - fileId: /search/examples/search-along-the-route
+            title: Search along the route
+          - fileId: /search/examples/geometry-search
+            title: Geometry search
+          - fileId: /search/examples/entry-points
+            title: Entry points
+          - fileId: /search/examples/additional-data
+            title: Additional data
+          - fileId: /search/examples/batch-search
+            title: Batch search
+          - fileId: /search/examples/autocomplete-search
+            title: Autocomplete search
+          - fileId: /search/examples/opening-hours
+            title: Opening hours
+          - fileId: /search/examples/ev-charging-stations-availability
+            title: EV Charging Stations Availability
+      - title: Api Reference
+        items:
+          - fileId: /search/api-reference/api-reference
+            title: API Reference
+          - fileId: /search/api-reference/api-reference-utils
+            title: API Reference Utils
+  - title: Routing
+    items:
+      - fileId: /routing/introduction
+        title: Introduction
+      - fileId: /routing/getting-started
+        title: Getting Started
+      - fileId: /routing/documentation
+        title: Documentation
+      - title: Examples
+        items:
+          - fileId: /routing/examples/travel-modes
+            title: Travel modes
+          - fileId: /routing/examples/route-types
+            title: Route types
+          - fileId: /routing/examples/route-avoids
+            title: Route avoids
+          - fileId: /routing/examples/routing-with-waypoints
+            title: Routing with waypoints
+          - fileId: /routing/examples/departure-arrival-time
+            title: Departure/Arrival time
+          - fileId: /routing/examples/route-alternatives
+            title: Route alternatives
+          - fileId: /routing/examples/routing-with-language-parameter
+            title: Routing with language parameter
+          - fileId: /routing/examples/maneuver-list
+            title: Maneuver list
+          - fileId: /routing/examples/consumption-model
+            title: Consumption Model
+          - fileId: /routing/examples/supporting-points
+            title: Supporting Points
+          - fileId: /routing/examples/reachable-range
+            title: Reachable range
+          - fileId: /routing/examples/batch-routing
+            title: Batch routing
+          - fileId: /routing/examples/matrix-routing
+            title: Matrix routing
+          - fileId: /routing/examples/long-distance-ev-routing
+            title: Long Distance EV Routing
+      - title: Api Reference
+        items:
+          - fileId: /routing/api-reference/api-reference
+            title: API Reference
+          - fileId: /routing/api-reference/api-reference-utils
+            title: API Reference Utils
+  - title: Geofencing
+    items:
+      - fileId: /geofencing/introduction
+        title: Introduction
+      - fileId: /geofencing/getting-started
+        title: Getting Started
+      - fileId: /geofencing/documentation
+        title: Documentation
+      - title: Examples
+        items:
+          - fileId: /geofencing/examples/report-service
+            title: Report service
+      - title: Api Reference
+        items:
+          - fileId: /geofencing/api-reference/api-reference
+            title: API Reference
+          - fileId: /geofencing/api-reference/api-reference-utils
+            title: API Reference Utils

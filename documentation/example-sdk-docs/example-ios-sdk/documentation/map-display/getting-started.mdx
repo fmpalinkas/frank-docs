@@ -1,0 +1,74 @@
+---
+title: Getting Started
+---
+
+The Example Maps SDK gives you the ability to use either online or offline styles in your mobile
+application.
+
+If you choose to use offline styles, they will be imported to your app with the Maps SDK
+framework `ExampleOnlineSDKMaps`. Thanks to that, the styles will already be included in your app at
+download time. The styles are added to the Maps SDK framework by default.
+
+To integrate the ExampleOnlineSDKMaps for iOS into your Xcode project using CocoaPods, specify it in
+your Podfile:
+
+```objectivec
+pod 'ExampleOnlineSDKMaps'
+```
+
+To integrate the ExampleOnlineSDKMaps with online styles (You will need to provide it
+using: `TTMapStyleConfiguration`) for iOS into your Xcode project using CocoaPods, specify it in
+your Podfile:
+
+```objectivec
+pod 'ExampleOnlineSDKMaps/Online'
+```
+
+Add the service key taken from the [My Dashboard](/user/me/apps) site.
+
+<Code>
+
+```swift
+let mapConfig = TTMapConfigurationBuilder.create().withMapKey(<Key>).withTrafficKey(<Key>).build()
+self.mapView = TTMapView(frame: view.bounds, mapConfiguration: mapConfig)
+```
+
+```objectivec
+TTMapConfiguration *mapConfig = [[[[[TTMapConfigurationBuilder createBuilder] withMapKey:<Key>] withTrafficKey:<Key>] build]
+self.mapView = [[TTMapView alloc] initWithFrame:self.view.bounds mapConfiguration:mapConfig];
+```
+
+</Code>
+
+Additionally, there is the ExampleOnlineSDKMapsUIExtensions framework with default UI controls and
+other assets for the map.
+
+To use this framework in your project add it to the podfile (it doesn’t require any key).
+
+```objectivec
+pod 'ExampleOnlineSDKMapsUIExtensions'
+```
+
+The basic steps for adding a map are:
+
+1. Set up your project as described in DOWNLOADS.
+2. Create the object 'TTMapView'.
+3. Obtain keys in config.
+
+Initializing a map:
+
+<Code>
+
+```swift
+let style = TTMapStyleDefaultConfiguration()
+let mapConfig = TTMapConfigurationBuilder.create().withMapKey(<Key>).withTrafficKey(<Key>).withMapStyleConfiguration(style)
+self.mapView = TTMapView(frame: view.bounds, mapConfiguration: mapConfig,build())
+```
+
+```objectivec
+TTMapStyleConfiguration *style = [TTMapStyleDefaultConfiguration new];
+TTMapConfiguration *mapConfig = [[[[[[TTMapConfigurationBuilder createBuilder] withMapKey:<Key>] withTrafficKey:<Key>] withMapStyleConfiguration:style] build];
+self.mapView = [[TTMapView alloc] initWithFrame:self.view.bounds mapConfiguration:mapConfig];
+```
+
+</Code>

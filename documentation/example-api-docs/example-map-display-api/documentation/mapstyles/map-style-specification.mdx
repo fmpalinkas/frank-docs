@@ -1,0 +1,7536 @@
+---
+title: Map Style Specification
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2023.08.01'
+    color: grey5
+---
+
+## Purpose  
+
+Map style is written in JSON format. It specifies how to:
+
+- Style the symbols, lines, polygons, background, hills' shades, heatmap points, raster tiles, circles, and extruded polygons.
+- Which of them should be drawn.
+- The order in which to draw them.
+
+## Root Properties
+
+Root level properties define Default values, tile sources, and the map's layers.
+
+### Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `name` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Name of the style.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `version` 
+        <br />
+         *number* 
+      </th>
+      <td>yes</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Version of the style specification.
+        <br />
+         **Value:**   `8`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `zoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Default zoom level. Only applies if the map has not been positioned by
+        any other means (e.g., user interaction).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `bearing` 
+        <br />
+         *number* 
+        <br />
+         *(degrees)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Default bearing. For instance, 90<sup>o</sup> sets east as the up
+        direction. Only applies if the map has not been positioned by any other
+        means (e.g., user interaction).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `center` 
+        <br />
+         *array of numbers* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Default map center. The array shall consist of two values: longitude and
+        latitude. They can be either integer or floating point numbers. Only
+        applies if the map has not been positioned by any other means (e.g.,
+        user interaction).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `pitch` 
+        <br />
+         *number* 
+        <br />
+         *(degrees)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Default pitch. The view is straight down at the map when the value is 0.
+        Greater values set the view towards the horizon. Only applies if the map
+        has not be positioned by any other means (e.g., user interaction).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `sources{}` 
+        <br />
+         *object* 
+      </th>
+      <td>yes</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Data source. Properties of the  `source`  object can be found
+        at  [source properties](#source-properties).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `light{}` 
+        <br />
+         *object* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Light source. Properties of the  `light{}`  object
+        can be found at  [light properties](#light-properties).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `glyphs{}` 
+        <br />
+         *object* 
+      </th>
+      <td>
+        no /<br />
+        yes (if any layer uses the  *text-field*  property)
+      </td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        The URL must contain the scheme, authority, path, and the
+        &#123;fontstack&#125; and &#123;range&#125; tokens. The property will be
+        used to load glyphs in PBF format.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `transition{}` 
+        <br />
+         *object* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Defines the default transition to use across the style. Properties of
+        the  `transition`  object can be found at
+         [transition properties](#transition-properties).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `layers` 
+        <br />
+         *array of objects* 
+      </th>
+      <td>yes</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        The array of layers. Layers will be drawn in the same order as they
+        appear in this property.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `sprite` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        no /<br />
+        yes (if any layer uses any of the following properties:  *icon-image, line-pattern, fill-extrusion-pattern, background-pattern,
+          fill-pattern* )
+      </td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        The URL must contain a scheme, authority, and path. The property is used
+        to load the sprite image. The file extension for the sprite image (.png)
+        and metadata (.json) will be added automatically.
+      </td>
+    </tr>
+  </tbody>
+</table>
+## Source Properties
+
+A source provides data that is displayed on the map.
+
+- The `source` object needs to have a property named `type`.
+- There are several types of source: `vector`, `raster`, `raster-dem` (Web SDK only), `geojson`, `image`, `video` (Web SDK Only).
+- Each of them have different properties which are described below.
+
+### Vector Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `url` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>URL to a resource.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `tiles` 
+        <br />
+         *array of strings* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        An array of the URLs to a resource. This property can contain one or
+        more URLs.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `attribution` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Attribution that is shown when the map is displayed.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `scheme` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>xyz</td>
+      <td>Scheme of the data.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `bounds` 
+        <br />
+         *array of numbers* 
+      </th>
+      <td>no</td>
+      <td>
+         `[-180, -85.051129, 180, 85.051129]` 
+      </td>
+      <td>
+        An array of the longitude and latitude pairs containing southwest and
+        northeast corners. No tiles will be requested outside of those bounds.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `minzoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>Minimum zoom level the tiles are available for.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `maxzoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>22</td>
+      <td>Maximum zoom level the tiles are available for.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Raster Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `url` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>URL to a resource.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `tiles` 
+        <br />
+         *array of strings* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        An array of the URLs to a resource. This property can contain one or
+        more URLs.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `attribution` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Attribution that is shown when the map is displayed.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `scheme` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>xyz</td>
+      <td>
+        Scheme of the data.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `xyz`  (Slippy map tilenames)
+          </li>
+          <li>
+             `tms`  (OSGeo spec)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `bounds` 
+        <br />
+         *array of numbers* 
+      </th>
+      <td>no</td>
+      <td>
+         `[-180, -85.051129, 180, 85.051129]` 
+      </td>
+      <td>
+        An array of the longitude and latitude pairs containing southwest and
+        northeast corners. No tiles will be requested outside of those bounds.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `minzoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>Minimum zoom level the tiles are available for.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `maxzoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>22</td>
+      <td>Maximum zoom level the tiles are available for.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `tileSize` 
+        <br />
+         *number* 
+        <br />
+         *(pixels)* 
+      </th>
+      <td>no</td>
+      <td>512</td>
+      <td>Minimum size to display tiles.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Raster-Dem Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `url` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>URL to a resource.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `tiles` 
+        <br />
+         *array of strings* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        An array of the URLs to a resource. This property can contain one or
+        more URLs.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `attribution` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Attribution that is shown when the map is displayed.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `encoding` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>mapbox</td>
+      <td>
+        Encoding used by source.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `mapbox`  (Mapbox Terrain RGB tiles)
+          </li>
+          <li>
+             `terrarium`  (Terrarium format PNG tiles)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `bounds` 
+        <br />
+         *array of numbers* 
+      </th>
+      <td>no</td>
+      <td>
+         `[-180, -85.051129, 180, 85.051129]` 
+      </td>
+      <td>
+        An array of the longitude and latitude pairs containing southwest and
+        northeast corners. No tiles will be requested outside of those bounds.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `minzoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>Minimum zoom level the tiles are available for.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `maxzoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>22</td>
+      <td>Maximum zoom level the tiles are available for.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `tileSize` 
+        <br />
+         *number* 
+        <br />
+         *(pixels)* 
+      </th>
+      <td>no</td>
+      <td>512</td>
+      <td>Minimum size to display tiles.</td>
+    </tr>
+  </tbody>
+</table>
+
+### GeoJSON Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `data` 
+        <br />
+         *string* 
+      </th>
+      <td>yes</td>
+      <td>
+         *none* 
+      </td>
+      <td>URL to a GeoJSON resource or inline GeoJSON.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `buffer` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>128</td>
+      <td>
+        Size of the tile buffer.
+        <ul>
+          <li>
+            The number must be between  `0`  and  `512` 
+            inclusive.
+          </li>
+          <li>
+             `0`  means no buffer.
+          </li>
+          <li>
+            Larger values result in slower performance and fewer rendering
+            artifacts.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `attribution` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Attribution that is shown when the map is displayed.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `tolerance` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>0.375</td>
+      <td>
+        Tolerance of Douglas-Peucker simplification. Lower values result in more
+        detailed geometries and slower performance.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `cluster` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>
+        If  `true`  and the data is a collection of point features, the
+        features are grouped into clusters by  `clusterRadius`. Groups
+        are new point features with extra properties:
+        <ul>
+          <li>
+             `cluster`  (Boolean value, the point is a cluster)
+          </li>
+          <li>
+             `cluster_id`  (Integer value, a unique cluster's id)
+          </li>
+          <li>
+             `point_count`  (Integer value, the number of points
+            grouped into this cluster)
+          </li>
+          <li>
+             `point_count_abbreviated`  (Integer value, the number of
+            an abbreviated point count)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `clusterRadius` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>50</td>
+      <td>
+        Radius to group points into clusters. Number must be equal to or greater
+        than  `0`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `clusterMaxZoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>
+         `maxzoom` -1
+      </td>
+      <td>Maximum zoom level to group points into clusters.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `clusterProperties{}` 
+        <br />
+         *object* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Allows the definition of custom properties for generated clusters,
+        combining values from clustered points.
+        <br />
+        Syntax:
+         `{propertyName: [operator, pointExpression]}` 
+        <ul>
+          <li>
+             `propertyName` : string which contains custom property
+            name.
+          </li>
+          <li>
+             `operator` : any expression which has at least 2
+            arguments.
+          </li>
+          <li>
+             `pointExpression` : any expression which returns result
+            for a single point.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `maxzoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>18</td>
+      <td>Maximum zoom level to create the tiles.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `lineMetrics` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>
+         `true`  if line distance metrics should be calculated. Needs
+        to be  `true`  for line layers which have
+         `line-gradient`  values specified.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `generateId` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>
+         `true`  if ids should be generated for GeoJSON features. The
+         `feature.id`  property will be created if it does not exist.
+        The property will be assigned a value based on its index in the features
+        array and will overwrite any existing value.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Image Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `url` 
+        <br />
+         *string* 
+      </th>
+      <td>yes</td>
+      <td>
+         *none* 
+      </td>
+      <td>URL to an image resource.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `coordinates` 
+        <br />
+         *array of arrays of numbers* 
+      </th>
+      <td>yes</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Corners of an image specified in  `[longitude, latitude]` 
+        pairs. Arrays containing coordinates are listed in clockwise order:
+        <ol>
+          <li>top-left</li>
+          <li>top-right</li>
+          <li>bottom-right</li>
+          <li>bottom-left</li>
+        </ol>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Video Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `urls` 
+        <br />
+         *array of strings* 
+      </th>
+      <td>yes</td>
+      <td>
+         *none* 
+      </td>
+      <td>URLs to video resources.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `coordinates` 
+        <br />
+         *array of arrays of numbers* 
+      </th>
+      <td>yes</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Corners of a video specified in  `[longitude, latitude]` 
+        pairs. Arrays containing coordinates are listed in clockwise order:
+        <ol>
+          <li>
+             `top-left` 
+          </li>
+          <li>
+             `top-right` 
+          </li>
+          <li>
+             `bottom-right` 
+          </li>
+          <li>
+             `bottom-left` 
+          </li>
+        </ol>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Source Type
+      </th>
+      <th scope="col" style={{ textAlign: 'center', fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ textAlign: 'center', fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `vector` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-dem` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2718;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `geojson` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `image` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `video` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2718;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Sprite property
+
+The sprite property provides the URL to load images used in the rendering process. Properties which use sprite are:
+
+- `icon-image`
+- `fill-extrusion-pattern`
+- `line-pattern`
+- `fill-pattern`
+- `background-pattern`
+
+A sprite source must contain index and image files.
+
+### Index file
+
+The Index file must be written in JSON format and contain a JSON object. The keys of the root object are identifiers to be used in style properties.
+
+```json [title=Index file - JSON]
+{
+  "145": {
+    "width": 24,
+    "height": 24,
+    "x": 697,
+    "y": 600,
+    "pixelRatio": 1
+  }
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `width` 
+        <br />
+         *number* 
+      </th>
+      <td>Width of the image.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `height` 
+        <br />
+         *number* 
+      </th>
+      <td>Height of the image.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `x` 
+        <br />
+         *number* 
+      </th>
+      <td>Horizontal location of the image.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `y` 
+        <br />
+         *number* 
+      </th>
+      <td>Vertical location of the image.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `pixelRatio` 
+        <br />
+         *array of numbers* 
+      </th>
+      <td>Pixel ratio of the image.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Sprite file
+
+The Sprite file contains PNG images.
+
+## Glyphs Property
+
+The URL template is used to load glyphs in PBF format.
+
+**Example**
+
+```shell
+http://localhost:6001/glyphs/{fontstack}/{range}.pbf
+```
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Token Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `{fontstack}` 
+        <br />
+      </th>
+      <td>
+        The token is replaced with requested glyphs from the text-font layout
+        property.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `{range}` 
+        <br />
+      </th>
+      <td>
+        The token is replaced with Unicode code points. Ranges are calculated at
+        runtime.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Transition Properties
+
+Defines timing for the interpolation between the style's property values. It can be set globally for the style, but also configured per layer.
+
+### Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ textAlign: 'center', fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ textAlign: 'center', fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `duration` 
+        <br />
+         *number
+           
+          (milliseconds)* 
+      </th>
+      <td style={{ textAlign: 'center' }}>no</td>
+      <td style={{ textAlign: 'center' }}>300</td>
+      <td>
+        Time needed to complete transitions. Value needs to be equal to or
+        greater than 0.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `delay` 
+        <br />
+         *number
+           
+          (milliseconds)* 
+      </th>
+      <td style={{ textAlign: 'center' }}>no</td>
+      <td style={{ textAlign: 'center' }}>0</td>
+      <td>Time before a transition starts.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ textAlign: 'center', fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ textAlign: 'center', fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `duration` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `delay` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Light Properties
+
+Defines the light source for the style.
+
+### Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ textAlign: 'center', fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ textAlign: 'center', fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `anchor` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>viewport</td>
+      <td>
+        Anchor of the source light.
+        <br />
+         **Values:** 
+        <br />
+        <ul>
+          <li>
+             `viewport` : The light source is aligned to the viewport.
+          </li>
+          <li>
+             `map` : The light source is aligned to the map.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `intensity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>0.5</td>
+      <td>
+        Intensity of the lighting. Value must be between  `0`  and
+         `1`  inclusive. The higher the value, the higher the contrast.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#ffffff</td>
+      <td>Color of the light source for extruded geometries.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `position` 
+        <br />
+         *array of numbers* 
+      </th>
+      <td>no</td>
+      <td>
+         `[1.15, 210, 30]` 
+      </td>
+      <td>
+        Position of the light source which is relative to extruded geometries.
+        <ul>
+          <li>
+            First element determines the distance between the light and the base
+            of an object.
+          </li>
+          <li>
+            Second element determines position of the light source relative to
+            its anchor.
+          </li>
+          <li>
+            Third element determines the height of the light source given in
+            degrees.
+            <ul>
+              <li>
+                The value must be between 0<sup>o</sup> and 180<sup>o</sup>,
+                while 0<sup>o</sup> means directly above and 180<sup>o</sup>
+                directly below.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ textAlign: 'center', fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ textAlign: 'center', fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `anchor` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `intensity` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `color` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `position` 
+      </th>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+      <td style={{ textAlign: 'center' }}>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Layer Properties
+
+Layer defines how specific features retrieved from a source are rendered on the map. The renderer decides how to draw a feature based on its properties and the style of the layer that describes it. Only the background type layer does not need a source property.
+
+### Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `id` 
+        <br />
+         *string* 
+      </th>
+      <td>yes</td>
+      <td>
+         *none* 
+      </td>
+      <td>ID of the layer. Must be unique.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `type` 
+        <br />
+         *string* 
+      </th>
+      <td>yes</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Type of the layer.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `fill` 
+          </li>
+          <li>
+             `symbol` 
+          </li>
+          <li>
+             `circle` 
+          </li>
+          <li>
+             `raster` 
+          </li>
+          <li>
+             `background` 
+          </li>
+          <li>
+             `line` 
+          </li>
+          <li>
+             `heatmap` 
+          </li>
+          <li>
+             `fill-extrusion` 
+          </li>
+          <li>
+             `hillshade` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `metadata{}` 
+        <br />
+         *object* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Attributes that do not affect rendering.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `source` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        no / yes (if  `type`  is not equal to  `background` )
+      </td>
+      <td>
+         *none* 
+      </td>
+      <td>Name of a source to be used.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `source-layer` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        no / yes (if  `source`  is equal to  `vector` )
+      </td>
+      <td>
+         *none* 
+      </td>
+      <td>A layer to use from vector source.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `minzoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        The minimum zoom level to draw the layer. Number must be between
+         `0`  and  `22`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `maxzoom` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        The maximum zoom level to draw the layer. Number must be between
+         `0`  and  `22`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `filter` 
+        <br />
+         *array
+           
+          (filter)* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        If the feature does not match the condition, then it is not drawn on the
+        map.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `layout{}` 
+        <br />
+         *object* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Layout properties. Properties of the  `layout{}` 
+        object can be found at
+         [layout properties](#layout-properties).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `paint{}` 
+        <br />
+         *object* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Paint properties. Properties of the  `paint{}` 
+        object can be found at  [paint properties](#paint-properties).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Layout Properties
+
+### Background Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>visible</td>
+      <td>
+        Visibility of the layer.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `visible` : Layer is visible.
+          </li>
+          <li>
+             `none` : Layer is hidden.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Fill Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>visible</td>
+      <td>
+        Visibility of the layer.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `visible` : Layer is visible.
+          </li>
+          <li>
+             `none` : Layer is hidden.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Line Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>visible</td>
+      <td>
+        Visibility of the layer.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `visible` : Layer is visible.
+          </li>
+          <li>
+             `none` : Layer is hidden.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-cap` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>butt</td>
+      <td>
+        Type of the line&#39;s endings.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `butt` : Squared-off end drawn to the endpoint of the
+            line.
+          </li>
+          <li>
+             `round` : Rounded end drawn beyond the endpoint of the
+            line with a radius of half of the line&#39;s width and centered on
+            the endpoint of the line.
+          </li>
+          <li>
+             `square` : Squared-off end drawn beyond the endpoint of
+            the line at a distance of half of the line&#39;s width.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-join` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>miter</td>
+      <td>
+        Type of the line&#39;s join.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `bevel` : Squared-off end join drawn beyond the endpoint
+            of the line at a distance of half of the line&#39;s width.
+          </li>
+          <li>
+             `round` : Rounded end join drawn beyond the endpoint of
+            the line at a radius of half of the line&#39;s width and centered on
+            the endpoint of the line.
+          </li>
+          <li>
+             `miter` : Sharp, angled corner join drawn with the outer
+            sides beyond the endpoint of the path until they meet.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-miter-limit` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>2</td>
+      <td>Used to convert miter joins to bevel ones for sharp angles.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-round-limit` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1.05</td>
+      <td>Used to convert round joins to miter ones for shallow angles.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-cap` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-join` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-miter-limit` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-round-limit` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+  </tbody>
+</table>
+
+### Symbol Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>visible</td>
+      <td>
+        Visibility of the layer.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `visible` : Layer is visible.
+          </li>
+          <li>
+             `none` : Layer is hidden.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `symbol-sort-key` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Used to sort features. Features are drawn in ascending order.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `symbol-z-order` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>auto</td>
+      <td>
+        Type of sorting features. Affects the order of overlapping features
+        within the same layer are being rendered.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `auto` : Sorting features is based on the symbol-sort-key
+            property. If it is not set, then features are sorted by their
+            vertical position relative to the viewport.
+          </li>
+          <li>
+             `viewport-y` : Features are sorted by their vertical
+            position relative to the viewport.
+          </li>
+          <li>
+             `source` : No sorting is enabled. They are drawn in the
+            same order as they appear in the source data.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `symbol-placement` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>point</td>
+      <td>
+        Placement of the label.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `point` : Places a label at its geometry.
+          </li>
+          <li>
+             `line` : Places a label along the line of the geometry.
+          </li>
+          <li>
+             `line-center` : Places a label at the center of the line
+            of the geometry.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `symbol-spacing` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>250</td>
+      <td>
+        Distance between symbol anchors.  `symbol-placement`  needs to
+        be  `line`. Number must be greater than  `0`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `symbol-avoid-edges` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>
+        The symbol will not be drawn when it crosses tile edge if this property
+        is set to  `true`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-allow-overlap` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>
+        The icon will be drawn even if a collision is detected with other
+        already drawn icons.  `icon-image`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-ignore-placement` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>
+        Other symbols will be visible even if a collision is detected with the
+        icon.  `icon-image`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-optional` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>Only text will be drawn if the icon collides with other symbols.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-rotation-alignment` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>auto</td>
+      <td>
+        Sets icon rotation alignment.  `text-field`  and
+         `icon-image`  both need to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `map` : Aligns the icon east-west if
+             `symbol-placement`  is set to  `point`. In case
+             `symbol-placement`  is set to  `line` , it aligns
+            the icon horizontal with the line.
+          </li>
+          <li>
+             `viewport` : The icon is aligned horizontally with the
+            viewport.
+          </li>
+          <li>
+             `auto` : If  `symbol-placement`  is set to
+             `point` , then the alignment is the same as viewport.
+            Otherwise, alignment is set to  `map`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-size` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Scales the icon image size by multiplying its original size by this
+        property.  `icon-image`  needs to be set. The number must be
+        greater than or equal to  `0`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-text-fit` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>none</td>
+      <td>
+        Scales the icon to fit the text.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `none` : The icon is not scaled.
+          </li>
+          <li>
+             `width` : The icon is scaled horizontally.
+          </li>
+          <li>
+             `height` : The icon is scaled vertically.
+          </li>
+          <li>
+             `both` : The icon is scaled both horizontally and
+            vertically.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-text-fit-padding` 
+        <br />
+         *array of numbers* 
+      </th>
+      <td>no</td>
+      <td>
+         `[0, 0, 0, 0]` 
+      </td>
+      <td>
+        Padding around the area defined by  `icon-text-fit`  in
+        clockwise order starting from the top.
+        <ul>
+          <li>
+             `icon-image`  and  `text-field`  both need to be
+            set.
+          </li>
+          <li>
+             `icon-text-fit`  needs to be set to any value but none.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-image` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Name of an image in the sprite config file.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-rotate` 
+        <br />
+         *number
+           
+          (degrees)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Icon is rotated clockwise by this property.  `icon-image` 
+        needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-padding` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>2</td>
+      <td>
+        Extra area surrounding an icon to detect collisions with other symbols.
+         `icon-image`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-keep-upright` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>
+        Prevents an icon from being rendered upside-down.
+        <ul>
+          <li>
+             `icon-image`  needs to be set.
+          </li>
+          <li>
+             `icon-rotation-alignment`  needs to be set to
+             `line`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-offset` 
+        <br />
+         *array of numbers
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>
+         `[0, 0]` 
+      </td>
+      <td>
+        An icon&#39;s distance from its anchor. Each element of the array is
+        multiplied by the value of  `icon-size`.
+        <ul>
+          <li>Positive values place the icon right and down.</li>
+          <li>Negative values place it left and up.</li>
+          <li>
+             `icon-image`  needs to be set.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-anchor` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>center</td>
+      <td>
+        Sets which part of the icon is closest to the anchor.
+         `icon-image`  needs to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `center` : The center of the icon is the closest to the
+            anchor.
+          </li>
+          <li>
+             `left` : The left side of the icon is the closest to the
+            anchor.
+          </li>
+          <li>
+             `right` : The right side of the icon is the closest to the
+            anchor.
+          </li>
+          <li>
+             `top` : The top of the icon is the closest to the anchor.
+          </li>
+          <li>
+             `top-left` : The top left corner of the icon is the
+            closest to the anchor.
+          </li>
+          <li>
+             `top-right` : The top right corner of the icon is the
+            closest to the anchor.
+          </li>
+          <li>
+             `bottom-left` : The bottom left corner of the icon is the
+            closest to the anchor.
+          </li>
+          <li>
+             `bottom-right` : The bottom right corner of the icon is
+            the closest to the anchor.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-pitch-alignment` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>auto</td>
+      <td>
+        Orientation of the icon when a map is pitched.  `icon-image` 
+        needs to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The orientation of the icon is aligned to the
+            plane of the viewport.
+          </li>
+          <li>
+             `map` : The orientation of the icon is aligned to the
+            plane of the map.
+          </li>
+          <li>
+             `auto` : The orientation of the icon is based on
+             `icon-rotation-alignment`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-pitch-alignment` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>auto</td>
+      <td>
+        Orientation of the text when a map is pitched.  `text-field` 
+        needs to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The orientation of the text is aligned to the
+            plane of the viewport.
+          </li>
+          <li>
+             `map` : The orientation of the text is aligned to the
+            plane of the map.
+          </li>
+          <li>
+             `auto` : The orientation of the text is based on
+             `text-rotation-alignment`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-rotation-alignment` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>auto</td>
+      <td>
+        Sets text rotation alignment.  `text-field`  needs to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The text is aligned horizontal with the
+            viewport.
+          </li>
+          <li>
+             `map` : Aligns the text east-west if
+             `symbol-placement`  is set to  `point`. In case
+             `symbol-placement`  is set to  `line` , it aligns
+            the icon horizontal with the line.
+          </li>
+          <li>
+             `auto` : If  `symbol-placement`  is set to
+             `point` , then the alignment is the same as viewport.
+            Otherwise, alignment is set to  `map`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-field` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Text to be displayed as a symbol label.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-font` 
+        <br />
+         *array of strings* 
+      </th>
+      <td>no</td>
+      <td>
+         `["Open Sans Regular", "Arial Unicode MS Regular"]` 
+      </td>
+      <td>
+        Font to be used to display text.  `text-field`  needs to be
+        set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-size` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>16</td>
+      <td>
+        Text size.  `text-field`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-max-width` 
+        <br />
+         *number
+           
+          (ems)* 
+      </th>
+      <td>no</td>
+      <td>10</td>
+      <td>
+        Maximum width of the text.  `text-field`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-line-height` 
+        <br />
+         *number
+           
+          (ems)* 
+      </th>
+      <td>no</td>
+      <td>1.2</td>
+      <td>
+        Text leading value for multi-line text.  `text-field`  needs to
+        be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-letter-spacing` 
+        <br />
+         *number
+           
+          (ems)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Sets spacing between letters.  `text-field`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-justify` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>center</td>
+      <td>
+        Justifies the text.  `text-field`  needs to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `auto` : The text is justified to the anchor position.
+          </li>
+          <li>
+             `left` : The text is justified to the left.
+          </li>
+          <li>
+             `right` : The text is justified to the right.
+          </li>
+          <li>
+             `center` : The text is centered.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-radial-offset` 
+        <br />
+         *number
+           
+          (ems)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Radial offset of the text in the direction of the symbol&#39;s anchor.
+         `text-field`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-variable-anchor` 
+        <br />
+         *array of strings* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Sets the position of the text. The render will try to place the label
+        using the values provided in the array.  `text-field`  needs to
+        be set.  `symbol-placement`  needs to be set to
+         `point`.<br />
+         **Values:** 
+        <ul>
+          <li>
+             `center` : The center of the text is the closest to the
+            anchor.
+          </li>
+          <li>
+             `left` : The left side of the text is the closest to the
+            anchor.
+          </li>
+          <li>
+             `right` : The right side of the text is the closest to the
+            anchor.
+          </li>
+          <li>
+             `top` : The top of the text is the closest to the anchor.
+          </li>
+          <li>
+             `bottom` : The bottom of the text is the closest to the
+            anchor.
+          </li>
+          <li>
+             `top-left` : The top-left corner of the text is the
+            closest to the anchor.
+          </li>
+          <li>
+             `top-right` : The top-right corner of the text is the
+            closest to the anchor.
+          </li>
+          <li>
+             `bottom-left` : The bottom-left corner of the text is the
+            closest to the anchor.
+          </li>
+          <li>
+             `bottom-right` : The bottom-right corner of the text is
+            the closest to the anchor.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-anchor` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>center</td>
+      <td>
+        Sets the position of the text. The render will try to place the label
+        using the values provided in the array.  `text-field`  needs to
+        be set. It has no effect if  `text-variable-anchor`  is set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `center` : The center of the text is the closest to the
+            anchor.
+          </li>
+          <li>
+             `left` : The left side of the text is the closest to the
+            anchor.
+          </li>
+          <li>
+             `right` : The right side of the text is the closest to the
+            anchor.
+          </li>
+          <li>
+             `top` : The top of the text is the closest to the anchor.
+          </li>
+          <li>
+             `bottom` : The bottom of the text is the closest to the
+            anchor.
+          </li>
+          <li>
+             `top-left` : The top left corner of the text is the
+            closest to the anchor.
+          </li>
+          <li>
+             `top-right` : The top right corner of the text is the
+            closest to the anchor.
+          </li>
+          <li>
+             `bottom-left` : The bottom left corner of the text is the
+            closest to the anchor.
+          </li>
+          <li>
+             `bottom-right` : The bottom right corner of the text is
+            the closest to the anchor.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-max-angle` 
+        <br />
+         *number
+           
+          (degrees)* 
+      </th>
+      <td>no</td>
+      <td>45</td>
+      <td>
+        Maximum angle change between adjacent characters.
+         `text-field`  needs to be set and
+         `symbol-placement`  needs to be set to  `line`  or
+         `line-center`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-rotate` 
+        <br />
+         *number
+           
+          (degrees)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Rotates the text clockwise.  `text-field`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-padding` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>2</td>
+      <td>
+        Extra area surrounding text for detecting collisions with other symbols.
+         `text-field`  needs to be set. Number has to be greater than
+        or equal to  `0`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-keep-upright` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>true</td>
+      <td>
+        Prevents text from being rendered upside-down.  `text-field` 
+        needs to be set,  `text-rotation-alignment`  needs to be set to
+         `map`  and  `symbol-placement`  needs to be set to
+         `line`  or  `line-center`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-transform` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>none</td>
+      <td>
+        Capitalizes text.  `text-field`  needs to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `none` : The text is displayed as it is.
+          </li>
+          <li>
+             `uppercase` : The text is displayed in uppercase.
+          </li>
+          <li>
+             `lowercase` : The text is displayed in lowercase.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-offset` 
+        <br />
+         *array of numbers
+           
+          (ems)* 
+      </th>
+      <td>no</td>
+      <td>
+         `[0, 0]` 
+      </td>
+      <td>
+        Text distance from its anchor.
+        <ul>
+          <li>Positive values place the icon right and down.</li>
+          <li>Negative values place it left and up.</li>
+          <li>
+             `text-field`  needs to be set.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-allow-overlap` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>
+        The text will be drawn even if a collision is detected with other
+        already drawn icons.  `text-field`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-ignore-placement` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>
+        Other symbols will be visible even if a collision is detected with the
+        text.  `text-field`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-ignore-placement` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>false</td>
+      <td>
+        Only an icon will be drawn if the text collides with other symbols.
+         `text-field`  and  `icon-image`  both need to be set.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `symbol-sort-key` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `symbol-z-order` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `symbol-placement` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `symbol-spacing` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `symbol-avoid-edges` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-allow-overlap` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-ignore-placement` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-optional` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-rotation-alignment` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-size` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-text-fit` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-text-fit-padding` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-image` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-rotate` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-padding` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-keep-upright` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-offset` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-anchor` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-pitch-alignment` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-pitch-alignment` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-rotation-alignment` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-field` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-font` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-size` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-max-width` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-line-height` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-letter-spacing` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-justify` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-radial-offset` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-variable-anchor` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-anchor` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-max-angle` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-rotate` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-padding` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-keep-upright` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-transform` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-offset` 
+      </th>
+      <td>✔ / ✔</td>
+      <td>✔ / ✔</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-allow-overlap` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-ignore-placement` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-optional` 
+      </th>
+      <td>✔ / ✖</td>
+      <td>✔ / ✖</td>
+    </tr>
+  </tbody>
+</table>
+
+### Raster Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" width="250px;">
+        Name
+      </th>
+      <th scope="col">Required</th>
+      <th scope="col">Default value</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>visible</td>
+      <td>
+        Visibility of the layer.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `visible` : Layer is visible.
+          </li>
+          <li>
+             `none` : Layer is hidden.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Circle Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>visible</td>
+      <td>
+        Visibility of the layer.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `visible` : Layer is visible.
+          </li>
+          <li>
+             `none` : Layer is hidden.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Fill-Extrusion Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>visible</td>
+      <td>
+        Visibility of the layer.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `visible` : Layer is visible.
+          </li>
+          <li>
+             `none` : Layer is hidden.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Heatmap Properties
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>visible</td>
+      <td>
+        Visibility of the layer.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `visible` : Layer is visible.
+          </li>
+          <li>
+             `none` : Layer is hidden.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Hillshade Properties
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>visible</td>
+      <td>
+        Visibility of the layer.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `visible` : Layer is visible.
+          </li>
+          <li>
+             `none` : Layer is hidden.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `visibility` 
+        <br />
+         *string* 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Paint Properties
+
+### Background Properties
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `background-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#000000</td>
+      <td>
+        Background's color. It has no effect if  `background-pattern` 
+        is set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `background-pattern` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Name of a sprite image to use.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `background-opacity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Opacity of the background. Number must be between  `0`  and
+         `1`  inclusive.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `background-color` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `background-pattern` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `background-opacity` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Fill Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `fill-antialias` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>true</td>
+      <td>
+        If  `true` , the layer should be antialiased.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-opacity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Opacity of the fill. Number must be between  `0`  and
+         `1`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#000000</td>
+      <td>
+        Fill's color. It has no effect if  `fill-pattern`  is set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-outline-color` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        The outline color of the fill.
+        <ul>
+          <li>
+            If not set, it has the same value as  `fill-color`.
+          </li>
+          <li>
+            It has no effect if  `fill-pattern`  is set.
+          </li>
+          <li>
+             `fill-antialias`  needs to be  `true`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-translate` 
+        <br />
+         *array of numbers
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>
+         `[0, 0]` 
+      </td>
+      <td>
+        The geometry's offset.
+        <ul>
+          <li>Positive values indicate right and down</li>
+          <li>Negative values indicate left and up.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-translate-anchor` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>map</td>
+      <td>
+        Defines what  `fill-translate`  is relative to.
+         `fill-translate`  needs to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The translation is relative to the viewport.
+          </li>
+          <li>
+             `map` : The translation is relative to the map.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-pattern` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Name of a sprite image to use as a fill.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" width="250px;">
+        Property Name
+      </th>
+      <th scope="col">
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col">
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `fill-antialias` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-opacity` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-color` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-outline-color` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-translate` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-translate-anchor` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-pattern` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Line Properties
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `line-opacity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Opacity of the line. Number must be between  `0`  and
+         `1`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#000000</td>
+      <td>
+        Line's color. It has no effect if  `line-pattern`  is set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-translate` 
+        <br />
+         *array of numbers
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>
+         `[0, 0]` 
+      </td>
+      <td>
+        The geometry's offset.
+        <ul>
+          <li>Positive values indicate right and down.</li>
+          <li>Negative values indicate left and up.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-translate-anchor` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>map</td>
+      <td>
+        Defines what  `line-translate`  is relative to.
+         `line-translate`  needs to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The translation is relative to the viewport.
+          </li>
+          <li>
+             `map` : The translation is relative to the map.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-pattern` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Name of a sprite image to draw the line.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-width` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Line's thickness. Number must be greater than or equal to  `0`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-gap-width` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>Width of the inner gap.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-offset` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        The line's offset.
+        <ul>
+          <li>A positive value places a line to the right.</li>
+          <li>A negative value places a line to the left.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-blur` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>Blur applied to the line.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-dasharray` 
+        <br />
+         *array of numbers
+           
+          (line widths)* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Defines lengths of the dashes and gaps. The lengths are scaled by the
+         `line-width`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-gradient` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Defines a gradient to color the line.
+        <ul>
+          <li>
+            It has no effect if  `line-pattern`  or
+             `line-dasharray`  is set.
+          </li>
+          <li>
+            The source needs to be  `geojson`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `line-opacity` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-color` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-translate` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-translate-anchor` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-width` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-gap-width` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-offset` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-blur` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-dasharray` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-pattern` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-gradient` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Symbol Properties
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `icon-opacity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Opacity of the icon.
+        <ul>
+          <li>
+             `icon-image`  needs to be set.
+          </li>
+          <li>
+            The number must be between  `0`  and  `1` 
+            inclusive.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#000000</td>
+      <td>
+        Icon's color.  `icon-image`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-translate` 
+        <br />
+         *array of numbers
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>
+         `[0, 0]` 
+      </td>
+      <td>
+        An icon's anchor is moved from its original placement.
+        <ul>
+          <li>Positive values place the icon right and down.</li>
+          <li>Negative values place the icon left and up.</li>
+          <li>
+             `icon-image`  needs to be set.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-translate-anchor` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>map</td>
+      <td>
+        Defines what  `icon-translate`  is relative to.
+         `icon-translate`  and  `icon-image`  both need to be
+        set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The translation is relative to the viewport.
+          </li>
+          <li>
+             `map` : The translation is relative to the map.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-halo-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>rgba(0, 0, 0, 0)</td>
+      <td>
+        Icon's halo color.  `icon-image`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-halo-width` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Icon's halo width.  `icon-image`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-halo-blur` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Fades out the halo.
+        <ul>
+          <li>
+            Number must be equal to or greater than  `0`.
+          </li>
+          <li>
+             `icon-image`  needs to be set.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-opacity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Opacity of the text.
+        <ul>
+          <li>
+             `text-field`  needs to be set.
+          </li>
+          <li>
+            Number must be between  `0`  and  `1`  inclusive.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#000000</td>
+      <td>
+        Text's color.  `text-field`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-halo-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>rgba(0, 0, 0, 0)</td>
+      <td>
+        Text's halo color.  `text-field`  needs to be set.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-halo-width` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Text's halo width.
+        <ul>
+          <li>
+             `text-field`  needs to be set.
+          </li>
+          <li>
+            Number must be equal to or greater than  `0`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-halo-blur` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>
+        Text's halo blur.
+        <ul>
+          <li>
+             `text-field`  needs to be set.
+          </li>
+          <li>
+            Number must be equal to or greater than  `0`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-translate` 
+        <br />
+         *array of numbers
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>
+         `[0, 0]` 
+      </td>
+      <td>
+        The text's anchor is moved from its original placement.
+        <ul>
+          <li>Positive values place the icon right and down.</li>
+          <li>Negative values place the icon left and up.</li>
+          <li>
+            The  `text-field`  needs to be set.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-translate-anchor` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>map</td>
+      <td>
+        Defines what  `text-translate`  is relative to.
+         `text-translate`  and  `text-field`  both need to be
+        set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The translation is relative to the viewport.
+          </li>
+          <li>
+             `map` : The translation is relative to the map.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `icon-opacity` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-color` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-halo-color` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-halo-width` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-halo-blur` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-translate` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `icon-translate-anchor` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-opacity` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-color` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-halo-color` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-halo-width` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-halo-blur` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-translate` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `text-translate-anchor` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Raster Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `raster-opacity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Opacity of the image. Number must be between  `0`  and
+         `1`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-hue-rotate` 
+        <br />
+         *number
+           
+          (degrees)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>Rotates hues around the color wheel.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-birghtness-min` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Minimum brightness of the image. Number must be between  `0` 
+        and  `1`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-birghtness-max` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Maximum brightness of the image. Number must be between  `0` 
+        and  `1`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-saturation` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Sets saturation of the image. Number must be between  `-1`  and
+         `1`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-contrast` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Sets contrast of the image. Number must be between  `-1`  and
+         `1`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-resampling` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>linear</td>
+      <td>
+        Type of the image resampling.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `linear` : Interpolates pixel values by weighted average
+            of the four closest pixels creating a smooth and blurry look when
+            overscaled.
+          </li>
+          <li>
+             `nearest` : Interpolates pixel values by the nearest pixel
+            creating a sharp and pixelated look when overscaled.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-fade-duration` 
+        <br />
+         *number
+           
+          (milliseconds)* 
+      </th>
+      <td>no</td>
+      <td>300</td>
+      <td>Fade in duration of a tile.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `raster-opacity` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-hue-rotate` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-brightness-min` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-brightness-max` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-saturation` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-contrast` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-resampling` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `raster-fade-duration` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Circle Properties
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `circle-opacity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Opacity of the circle. Number must be between  `0`  and
+         `1`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#000000</td>
+      <td>Color of the circle.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-translate` 
+        <br />
+         *array of numbers
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>
+         `[0, 0]` 
+      </td>
+      <td>
+        The geometry's offset.
+        <ul>
+          <li>Positive values indicate right and down.</li>
+          <li>Negative values indicate left and up.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-translate-anchor` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>map</td>
+      <td>
+        Defines what  `circle-translate`  is relative to.
+         `circle-translate`  needs to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The translation is relative to the viewport.
+          </li>
+          <li>
+             `map` : The translation is relative to the map.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-radius` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>5</td>
+      <td>
+        Radius of the circle. Number must be equal to or greater than
+         `0`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-blur` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Only the center point of the circle is not blurred when the value of
+        this property is equal to  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-pitch-scale` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>map</td>
+      <td>
+        Scaling type when map is pitched.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : Circles are not scaled.
+          </li>
+          <li>
+             `map` : Circles are scaled by their distance to the
+            camera.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-pitch-alignment` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>viewport</td>
+      <td>
+        Orientation of the circle when map is pitched.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The orientation of the circle is aligned to
+            the plane of the viewport.
+          </li>
+          <li>
+             `map` : The orientation of the circle is aligned to the
+            plane of the map.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-stroke-width` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        Width of the circle's stroke. Number must be equal to or greater than
+         `0`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-stroke-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#000000</td>
+      <td>Color of the circle's stroke.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-stroke-opacity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Opacity of the circle's stroke. Number must be between  `0` 
+        and  `1`  inclusive.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `circle-radius` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-color` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-blur` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-opacity` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-translate` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-translate-anchor` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-pitch-scale` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-pitch-alignment` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-stroke-width` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-stroke-color` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `circle-stroke-width` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Fill-Extrusion Properties
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-opacity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Opacity of the fill extrusion layer. Number must be between
+         `0`  and  `1`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#000000</td>
+      <td>
+        Color of the extruded fill.
+        <ul>
+          <li>
+            If set using  `rgba` , the alpha component is ignored.
+            Instead use  `fill-extrusion-opacity`.
+          </li>
+          <li>
+            The extrusion's surfaces are shaded using this color and the root
+            light properties.
+          </li>
+          <li>
+            It has no effect if  `fill-extrusion-pattern`  is set.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-translate` 
+        <br />
+         *array of numbers
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>
+         `[0, 0]` 
+      </td>
+      <td>
+        The geometry's offset.
+        <ul>
+          <li>Positive values indicate right and down.</li>
+          <li>Negative values indicate left and up.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-translate-anchor` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>map</td>
+      <td>
+        Defines what  `fill-extrusion-translate`  is relative to.
+         `fill-extrusion-translate`  needs to be set.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The translation is relative to the viewport.
+          </li>
+          <li>
+             `map` : The translation is relative to the map.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-pattern` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+         *none* 
+      </td>
+      <td>Name of a sprite image to draw extruded fills.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-height` 
+        <br />
+         *number
+           
+          (meters)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>The height to extrude this layer.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-base` 
+        <br />
+         *number
+           
+          (meters)* 
+      </th>
+      <td>no</td>
+      <td>0</td>
+      <td>
+        The height to extrude the base of this layer.
+        <ul>
+          <li>
+            The number must be equal to or greater than  `0`.
+          </li>
+          <li>
+            The value needs to be less than or equal to
+             `fill-extrusion-height`.
+          </li>
+          <li>
+             `fill-extrusion-height`  needs to be set.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-vertical-alignment` 
+        <br />
+         *boolean* 
+      </th>
+      <td>no</td>
+      <td>true</td>
+      <td>
+        If  `true` , the render applies a vertical gradient to the
+        sides of the  `fill-extrusion-layer`. The sides will be shaded
+        darker further down.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-opacity` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-color` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-translate` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-translate-anchor` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-pattern` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-height` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-base` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `fill-extrusion-vertical-gradient` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2716; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Heatmap Properties
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `heatmap-radius` 
+        <br />
+         *number
+           
+          (pixels)* 
+      </th>
+      <td>no</td>
+      <td>30</td>
+      <td>
+        Radius of one heatmap point. Number must be equal to or greater than
+         `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `heatmap-weight` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        The weight of a point.
+        <ul>
+          <li>
+            The greater the weight, the more the point contributes to the
+            heatmap.
+          </li>
+          <li>
+            The number must be equal to or greater than  `0`.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `heatmap-intensity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Unlike heatmap-weight, defines the intensity of the heatmap globally.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `heatmap-color` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>
+        ```shell
+        [
+          "interpolate",
+          [
+            "linear"
+          ],
+          [
+            "heatmap-density"
+          ],
+          0,
+          "rgba(0, 0, 255,0)",
+          0.1,
+          "royalblue",
+          0.3,
+          "cyan",
+          0.5,
+          "lime",
+          0.7,
+          "yellow",
+          1,
+          "red"
+        ]
+        ```
+      </td>
+      <td>
+        Defines color of a pixel based on its density value in the heatmap.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `heatmap-opacity` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>1</td>
+      <td>
+        Opacity of the heatmap. Number must be between  `0`  and
+         `1`  inclusive.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `heatmap-radius` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `heatmap-weight` 
+      </th>
+      <td>&#x2714; / &#x2714;</td>
+      <td>&#x2714; / &#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `heatmap-intensity` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `heatmap-color` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `heatmap-opacity` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+### Hillshade Properties
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Default value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `hillshade-illumination-direction` 
+        <br />
+         *number
+           
+          (degrees)* 
+      </th>
+      <td>no</td>
+      <td>335</td>
+      <td>
+        The direction of the light source. Number must be between  `0` 
+        and  `359`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `hillshade-illumination-anchor` 
+        <br />
+         *string* 
+      </th>
+      <td>no</td>
+      <td>viewport</td>
+      <td>
+        Light source direction when map is rotated.
+        <br />
+         **Values:** 
+        <ul>
+          <li>
+             `viewport` : The hillshade illumination is relative to the
+            top of the viewport.
+          </li>
+          <li>
+             `map` : The hillshade illumination is relative to the
+            north.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `hillshade-exaggeration` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>0.5</td>
+      <td>
+        Hillshade's intensity. Number must be between  `0`  and
+         `1`  inclusive.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `hillshade-shadow-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#000000</td>
+      <td>
+        The shading color of areas that face opposite direction from the light
+        source.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `hillshade-highlight-color` 
+        <br />
+         *number* 
+      </th>
+      <td>no</td>
+      <td>#ffffff</td>
+      <td>The shading color of areas that face towards the light source.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `hillshade-accent-color` 
+        <br />
+         *color* 
+      </th>
+      <td>no</td>
+      <td>#000000</td>
+      <td>The shading color of areas like gorges.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Property Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+        <br />
+        supported / expression
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+        <br />
+        supported / expression
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `hillshade-illumination-direction` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `hillshade-illumination-anchor` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `hillshade-exaggeration` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `hillshade-shadow-color` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `hillshade-highlight-color` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `hillshade-accent-color` 
+      </th>
+      <td>&#x2714; / &#x2716;</td>
+      <td>&#x2714; / &#x2716;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Types
+
+### Color
+
+Color type represents a color. The type is written as a JSON string and can be written in different formats: hex values, predefined names, rgb, rgba, hsl, hsla.
+
+```json [title=Type formats - JSON]
+{
+  "text-color": "#f4f4f4",
+  "text-color": "green",
+  "text-color": "rgb(255, 255, 255)",
+  "text-color": "rgba(255, 255, 255, 1)",
+  "text-color": "hsl(240, 100%, 58%)",
+  "text-color": "hsla(240, 100%, 58%, 1)"
+}
+```
+
+### Boolean
+
+Boolean type can be set to either  `true`  or  `false`.
+
+### String
+
+String type is a text written in quotes.
+
+### Number
+
+Number type is a value that can be an integer or floating point number.
+
+## Filter
+
+The syntax described below is deprecated. It is recommended to use [Expressions](#expressions) instead, since they have more flexible syntax than the legacy filters. Expressions syntax and legacy filters syntax cannot be mixed.
+
+### Existential Filters
+
+They can be used to check if a feature has a specific attribute or not.
+
+- `["has", key]`: Checks if the feature contains a specified key.
+- `["!has", key]`: Checks if the feature does not contain a specified key.
+
+### Comparison Filters
+
+They can be used to compare value of feature's attribute.
+
+- `["==", key, value]` is equal to `feature[key] == value`
+- `["!=", key, value]` is equal to `feature[key] != value`
+- `["&gt;", key, value]` is equal to `feature[key] > value`
+- `["&gt;=", key, value]` is equal to `feature[key] >= value`
+- `["&lt;", key, value]` is equal to `feature[key] < value`
+- `["&lt;=", key, value]` is equal to `feature[key] <= value`
+
+### Set Membership Filters
+
+They can be used to compare value of feature's attribute against mutliple values.
+
+- `["in", key, v0, ..., vn]`: Checks if any of the values (v0, ..., vn) is the same as `feature[key]`.
+- `["!in", key, v0, ..., vn]`: Checks if none of the values (v0, ..., vn) is the same as `feature[key]`.
+
+A value must be a `number`, `boolean`, or `string` to compare against the feature's attribute.
+
+### Combining Filters
+
+They can be used to combine other filters.
+
+- `["all", f0, ..., fn]`: All of the filters must be `true`.
+- `["any", f0, ..., fn]`: At least one of the filters must be `true`.
+- `["none", f0, ..., fn]`: None of the filters must be `true`.
+
+`(f0, ..., fn)` is a set of the filters.
+
+### Special Keys
+
+There are some special keys.
+
+- `$type`: The feature's type that can be either `Point`, or `LineString`, or `Polygon`.
+- `$id`: The feature's unqiue id.
+
+`(f0, ..., fn)` is a set of the filters.
+
+## Expressions
+
+Expressions can be used as filters, and for any [layout properties](#layout-properties) and [paint properties](#paint-properties) to define formulas for computing values.
+
+Expressions are JSON arrays where:
+
+- The first element is a `string` which is the name of the expression.
+- The next elements are arguments to the expression. The arguments can be `string`, `number`, `boolean`, `null`, or another expression.
+
+### Expression syntax
+
+`[expression_name, argument0, argument1, ..., argumentN]`
+
+### Expression operators
+
+- Logical operators: `! != &lt; &lt;= == &gt; &gt;=`
+- Mathematical operators: `- * / % ^ +`
+- String operators
+- Data operators: allow the getting of features' properties
+- Camera operators: allow access to properties of the current map view, for example, zoom level
+
+### Data expressions
+
+Data expressions allow access to a feature's data and decide how to display it on the map. They can help to differentiate features if they are present in the same layer.
+
+```cpp [title=Data expressions example]
+"text-font": [
+  "match",
+  ["get", "category"], // get features category
+    // if category matches "Large city" or "Capital city" text-font will have '["Noto-Bold"]' value
+  "Large city", ["literal", ["Noto-Bold"]],
+  "Capital city", ["literal", ["Noto-Bold"]],
+    // if category doesnt match any of the above, text-font will use fallback value instead
+  ["literal", ["Noto-Regular"]]
+]
+```
+
+The above example sets the font based on the name of the category of a feature. It uses a `get` expression to get the name of the feature's category, then sets the right font based on the match.
+
+### Camera expression
+
+Camera expresssion is every expression which makes use of the `zoom` operator.
+
+```cpp [title=Camera expression example]
+"text-size": [
+  "interpolate", ["linear"], ["zoom"],
+  3, [
+    "match",
+    ["get", "category"],
+    "Country name", 10,
+    5
+  ],
+  5, [
+    "match",
+    ["get", "category"],
+    "Country name", 14,
+    8
+  ]
+]
+```
+
+In the above example `interpolate` is used to define the relation between zoom level and text size basing it on the feature's attribute.
+
+- The example sets `text-size` to 10 pixels when the zoom level is 3 or below, and `text-size` is set to 14 pixels when the zoom level is 5 or above only when `category` matches `Country name`.
+- The value is linearly interpolated between 10 and 14 pixels.
+- If a feature's category does not match `Country name` then fallback values are taken into account.
+
+The `["zoom"]` operator may only be used as the input for `interpolate` and `step` expressions. It can be used in an expression inside the `let` expression.
+
+#### Examples
+
+```cpp [title=let expression example]
+[ "step", ["zoom"], ... ]
+[ "interpolate", interpolation_type, ["zoom"], ... ]
+[ "let", binding_variables, [ "step", ["zoom"], ... ]]
+[ "let", binding_variables, [ "interpolate", interpolation_type, ["zoom"], ... ]]
+```
+
+The layout property camera expression is evaluated only on integer levels, while the paint property camera expression is evaluated on every zoom level change.
+
+### Composition
+
+Expressions can contain other expressions and operators within themselves. It allows you to decide how to display features based on their attributes and other factors like zoom level.
+
+```cpp [title=Expression composition example]
+"text-size": [
+  "interpolate", ["linear"], ["zoom"],
+  3, 5,
+  5, [
+    "match",
+    ["get", "category"],
+    "Country name", 14,
+    8
+  ]
+]
+```
+
+### Type system
+
+Expressions are type safe. Each of the them has a specified return type and arguments' types. Types of arguments passed to the expressions are checked by the SDK. For instance, the return type of the `filter` property has to be `boolean`.
+
+Types can be unknown when using data expressions. The SDK checks if the value's type of the feature's data is valid for a specific property. If it is not, then the Default value will be used instead.
+
+Types can be unknown when using data expressions like:
+
+```cpp [title=Unknown types example]
+["<", ["get", "priority"], ["get", "category"]]
+```
+
+To be sure if a feature's data is the right type, [type assertion operators](#assertion-op) should be used, for instance,
+
+```cpp [title=Type assertion operators example]
+["<", ["number", ["get", "priority"]], ["number" ["get", "category"]]]
+```
+
+A failed check means that the property will use the Default value instead.
+
+Conversion between types does not happen automatically. The only exception is where a property expects `color`, then the color represented as a string is converted to a color value. If there is a need to convert other types, then [type conversion operators](#type-conversion-op) have to be used.
+
+#### Assertion operators
+
+- `number`
+- `string`
+- `boolean`
+- `array`
+
+#### Type conversion operators
+
+- `to-number`
+- `to-string`
+- `to-boolean`
+- `to-color`
+
+```cpp [title= Type conversion operator example]
+"text-size": ["to-number", ["get", "size"]]
+```
+
+### Expression reference
+
+**Types:** This section describes type conversion operators and operators which can be useful for testing purposes. Most of the time they are not needed, but they can be in the cases described above.
+
+### array
+
+Asserts that the input is an array. The size and the type can be also checked if needed. If the assertion fails the expression is aborted.
+
+- `type`: type of the array. (optional)
+- `size`: size of the array. (optional)
+- `input`: input value to be checked.
+
+```cpp [title=Type assertion operators example]
+["array", input]: array
+
+["array",
+type: "string" | "number" | "boolean",
+input]: array<type>
+
+["array",
+type: "string" | "number" | "boolean",
+size: number (literal),
+input]: array<type, size>
+```
+
+### boolean
+
+Asserts that the input is a boolean. If multiple values are provided, they are evaluated in order until one of them passes the check. If the assertion fails the expression is errored.
+
+- `input`: input value to be checked.
+- `fallback`: fallback values to be checked. (optional)
+
+```cpp [title=boolean input and fallback example]
+["boolean", input: value]: boolean
+
+["boolean", input: value, fallback: value, ..., fallback: value]: boolean
+```
+
+### collator
+
+Returns `collator` which is used for locale-dependent comparisons.
+
+- `case-sensitive`: `true` if comparison should be case-sensitive, `false` otherwise.
+- `diacritic-sensitive`: `true` if comparison should be diacritic-sensitive, `false` otherwise.
+- `locale`: The IETF language tag. If none is provided, then the default locale is used. If a requested locale is not available, the system-defined fallback locale will be used.
+
+```cpp [title=collater example]
+["collator",
+  { "case-sensitive": boolean, "diacritic-sensitive": boolean, "locale": string}]: collator
+```
+
+### format
+
+Returns formatted text to use within `text-field`.
+
+- `input`: string to be formatted.
+- `options`: defines how to format `input`.
+  - `text-color`: if set, it overrides the root `text-color` paint property.
+  - `text-font`: if set, it overrides the root `text-font` layout property.
+  - `font-scale`: scalling factor relative to the root `text-size` layout property.
+
+```cpp [title=format example]
+["format",
+  input1: string, option1: { "font-scale": number, "text-font": array<string>, "text-color": color },
+  input2: string, option2: { "font-scale": number, "text-font": array<string> "text-color": color },
+  ...,
+  inputN: string, optionN: { "font-scale": number, "text-font": array<string>, "text-color": color }]: formatted
+```
+
+### literal
+
+Returns a literal array or object value.
+
+```cpp [title=Literal array and object example]
+["literal", [...]]: array<T, N>
+
+["literal", {...}]: object
+```
+
+### number
+
+Asserts that the input is a number. If multiple values are provided, they are evaluated in order until one of them passes the check. If the assertion fails the expression is errored.
+
+- `input`: input value to be checked.
+- `fallback`: fallback values to be checked. (optional)
+
+```cpp [title=number input and fallback and example]
+["number", input: value]: number
+["number", input: value, fallback: value, ..., fallback: value]: number
+```
+
+### number-format
+
+Returns `number` as a `string` using specified formatting rules.
+
+- `input`: input number to be returned as a `string`.
+- `options`: formatting rules.
+- `locale`: locale to use, needs to be BCP 47 langauge tag.
+- `currency`: used for currency style formatting, needs to be ISO 4217 code.
+- `min-fraction-digits`: minium number of fractional digits to include.
+- `max-fraction-digits`: maximum number of fractional digits to include.
+
+### object
+
+Asserts that the input is an object. If multiple values are provided, they are evaluated in order until one of them passes the check. If the assertion fails the expression is errored.
+
+- `input`: input value to be checked.
+- `fallback`: fallback values to be checked. (optional)
+
+```cpp [title=object input and fallback example]
+["object", input: value]: object
+["object", input: value, fallback: value, ..., fallback: value]: object
+```
+
+### string
+
+Asserts that the input is a `string`. If multiple values are provided, they are evaluated in order until one of them passes the check. If the assertion fails the expression is errored.
+
+-  `input` : input value to be checked.
+-  `fallback` : fallback values to be checked. (optional)
+
+```cpp [title=string input and fallback example]
+["string", input: value]: string</code></pre>
+["string", input: value, fallback: value, ..., fallback: value]: string
+```
+
+### to-boolean
+
+Converts the input value to a boolean. Converted boolean is `false` when one of the provided values is an empty `string`, `false`, `NaN`, `0` or `null`. Otherwise the converted boolean is `true`.
+
+- `input`: input value to be converted.
+
+```cpp [title=input value conversion example]
+["to-boolean", input: value]: boolean
+```
+
+### to-color
+
+Converts the input value to a color. If multiple values are provided, they are evaluated in order until one of them is successfully converted. If none of them has been converted, the expression is errored.
+
+- `input`: input value to be converted.
+
+```cpp [title=input value conversion example]
+["to-color", input: value, fallback: value, ..., fallback: value]: color
+```
+
+### to-number
+
+Converts the input value to a `number`. If the provided input value is either `null` or `false` the converted `number` will be equal to `0`. The algorithm  ["ToNumber Applied to the String Type"](https://tc39.es/ecma262/#sec-tonumber-applied-to-the-string-type)  of the ECMAScript Language Specification is used to convert `string` into `number`. If multiple values are provided, they are evaluated in order until one of them is successfully converted. If none of them has been converted, the expression is errored.
+
+- `input`: input value to be converted.
+
+```cpp [title=input value conversion example]
+["to-number", input: value, fallback: value, ..., fallback: value]: number
+```
+
+### to-string
+
+Converts the input value to a `string`. Boolean values are converted to either `false` or `true`. Null value is converted to `" "`. For the numbers, the  ["NumberToString"](https://tc39.es/ecma262/#sec-tostring-applied-to-the-number-type)  algorithm of the ECMAScript Language Specification is used for conversion. Color values are converted into `rgba(r, g, b, a)`, where `r`, `g`, `b` &isin; `[0; 255]`, and `a` &isin; `[0; 1]`.
+
+- `input`: input value to be converted.
+
+```cpp [title=input value conversion example]
+["to-string", input: value]: string
+```
+
+### typeof
+
+Returns the type of the input values as `string`.
+
+- `input`: input value to be converted.
+
+```cpp [title=input value conversion example]
+["typeof", input: value]: string
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `array` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `boolean` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `collator` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `format` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `image` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `literal` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `number` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `number-format` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `object` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `string` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `to-boolean` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `to-color` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `to-number` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `to-string` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `typeof` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Feature data
+
+### accumulated
+
+Returns the accumulated value of a cluster property. Can only be used in the `clusterProperties`.
+
+```cpp [title=accumulated value example]
+["accumulated"]: value
+```
+
+### feature-state
+
+Returns the property from the current feature's state. If the requested property is not available, then `null` will be returned. To identify features, use their `id` attribute which is an `integer` or a `string` castable to an `integer`. The feature's state has to be set programmatically on each future since they are not part of vector tile data or GeoJSON.
+
+- `property`: property name to get.
+
+```cpp [title=property example]
+["feature-state", property: string]: value
+```
+
+### geometry-type
+
+Returns the feature's geometry type as `string`.
+
+**Values:**
+
+- `Point`
+- `MultiPoint`
+- `LineString`
+- `MultiLineString`
+- `Polygon`
+- `MultiPolygon`
+
+```cpp [title=geometry type as string example]
+["geometry-type"]: string
+```
+
+### id
+
+Returns a feature's id.
+
+```cpp [title=feature id example]
+["id"]: value
+```
+
+### line-progress
+
+Gets the progress along a gradient line.
+
+```cpp [title=gradient line progress example]
+["line-progress"]: number
+```
+
+### properties
+
+Returns a feature's properties.
+
+```cpp [title=feature properties example]
+["properties"]: object
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `accumulated` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `feature-state` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `geometry-type` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `id` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `line-progress` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `properties` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Lookup
+
+### at
+
+Returns an item from an array.
+
+- `pos`: item's position.
+- `array`: array from which to get an item.
+
+```cpp [title=Returning an item from an array example]
+["at", pos: number, array: array]: item
+```
+
+### get
+
+Returns a property value from the feature's properties or provided object. Returns `null` if the property is not available.
+
+- `key`: if `object` is not provided then it is the name of current feature's property, otherwise it is the name of the key to get from the provided object.
+- `object`: an object to get value from. (optional)
+
+```cpp [title=Returning property values example]
+["get", key: string]: value
+["get", key: string, object: object]: value
+```
+
+### has
+
+Checks if the current feature's property or provided object's key exists.
+
+- `key`: if `object` is not provided then it is the name of current feature's property, otherwise it is the name of the key to get from the provided object.
+- `object`: an object to get value from. (optional)
+
+```cpp [title=Checking key examples]
+["has", key: string]: boolean
+["has", key: string, object: object]: boolean
+```
+
+### length
+
+Returns the length of a `string` or `array`.
+
+- `input`: `string` or `array` to check the length.
+
+```cpp [title=Returning a length example]
+["length", input: string | array]: number
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `at` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `get` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `has` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `length` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Decision
+
+The following expressions can be used to add conditional logic to the styles.
+
+### !
+
+Logical negation.
+
+`input`: boolean to negate.
+
+```cpp [title=Negating a boolean example]
+["!", input: boolean]: boolean
+```
+
+### !=
+
+Returns `true` if inputs are different, `false` otherwise. If the types of the input values can be deduced at the parse time and happen to be different, then the comparison will produce an error. If the types of the input values happen to be different at the runtime, then the result will be always `false`.
+
+- `input1`: value to compare.
+- `input2`: value to compare.
+- `collator`: collator for locale-dependent string comparison (optional).
+
+```cpp [title=Deducing input examples]
+["!=", input1: value, input2: value]: boolean
+["!=", input1: value, input2: value, collator: collator]: boolean
+```
+
+### &lt;
+
+Returns `true` if the first input is less than the second one, `false` otherwise. The types of the inputs need both to be strings or numbers. If during runtime or parsing time they happen to be different, comparison will produce an error.
+
+- `input1`: value to compare.
+- `input2`: value to compare.
+- `collator`: collator for locale-dependent string comparison (optional).
+
+```cpp [title=Comparing input value examples]
+["<", input1: value, input2: value]: boolean
+["<", input1: value, input2: value, collator: collator]: boolean
+```
+
+### &lt;=
+
+Returns `true` if the first input is less than or equal to the second one, `false` otherwise. The types of the inputs need both to be strings or numbers. If during runtime or parsing time they happen to be different, comparison will produce an error.
+
+- `input1`: value to compare.
+- `input2`: value to compare.
+- `collator`: collator for locale-dependent string comparison (optional).
+
+```cpp [title=Comparing input value examples]
+["<=", input1: value, input2: value]: boolean
+["<=", input1: value, input2: value, collator: collator]: boolean
+```
+
+### ==
+
+Returns `true` if the inputs are equal, `false` otherwise. If the types of the input values can be deduced at the parse time and happen to be different, then the comparison will produce an error. If the types of the input values happen to be different at the runtime, then the result will be always `false`.
+
+- `input1`: value to compare.
+- `input2`: value to compare.
+- `collator`: collator for locale-dependent string comparison (optional).
+
+```cpp [title=Deducing input value examples]
+["==", input1: value, input2: value]: boolean
+["==", input1: value, input2: value, collator: collator]: boolean
+```
+
+### &gt;
+
+Returns `true` if the first input is greater than the second one, `false` otherwise. The types of the inputs need both to be strings or numbers. If during runtime or parsing time they happen to be different, comparison will produce an error.
+
+- `input1`: value to compare.
+- `input2`: value to compare.
+- `collator`: collator for locale-dependent string comparison (optional).
+
+```cpp [title=Deducing input value examples]
+[">", input1: value, input2: value]: boolean
+[">", input1: value, input2: value, collator: collator]: boolean
+```
+
+### &gt;=
+
+Returns `true` if the first input is greater than or equal to the second one, `false` otherwise. The types of the inputs need both to be strings or numbers. If during runtime or parsing time they happen to be different, comparison will produce an error.
+
+- `input1`: value to compare.
+- `input2`: value to compare.
+- `collator`: collator for locale-dependent string comparison (optional).
+
+```cpp [title=Comparing input value examples]
+[">=", input1: value, input2: value]: boolean
+[">=", input1: value, input2: value, collator: collator]: boolean
+```
+
+### all
+
+Returns `true` if all inputs are `true`, `false` otherwise. If one of the inputs is `false`, then the remaining inputs are not checked and the expression returns `false`.
+
+- `input`: input expression.
+
+```cpp [title=Checking input examples]
+["all", input1: boolean, input2: boolean, ..., inputN: boolean]: boolean
+["all", input1: boolean, input2: boolean, ..., inputN: boolean]: boolean
+```
+
+### any
+
+Returns `true` if any of the inputs is `true`, `false` otherwise. If one of the inputs is `true`, then the remaining inputs are not checked and the expression returns `true`.
+
+- `input`: input expression.
+
+```cpp [title=Checking input examples]
+["all", input1: boolean, input2: boolean, ..., inputN: boolean]: boolean
+["all", input1: boolean, input2: boolean, ..., inputN: boolean]: boolean
+```
+
+### case
+
+Returns a value of the first input expression that evaluates to `true`.
+
+- `input`: input expression.
+- `output`: value to return when the input evaluates to `true`.
+- `fallback`: value to return when none of the inputs expressions evaluates to `true`.
+
+```cpp [title=Returns value of the first true input expression examples]
+["case",
+  input1: boolean, output1: value,
+  input2: boolean, output2: value,
+  ...,
+  fallback: value]: value
+```
+
+### coalesce
+
+Returns the first non-null value.
+
+- `input`: input expression.
+
+```cpp [title=Returns the first non-null value example]
+["coalesce", input1: value, input2: value, ..., inputN: value]: value
+```
+
+### match
+
+Returns the `output` whose label matches the `input`. The `input` can be any expression. Labels must have unique names. If `input` values match no label then `fallback` is returned. The label can only be:
+
+- A single literal number or string.
+- An array of literals, numbers, or strings. If the input matches any of the values in the array, then `output` is returned.
+
+```cpp [title=Output label matches input label]
+["match",
+  input: number | string,
+  label: number | string | [number, number, ..., number] | [string, string, ..., string], output: value,
+  label: number | string | [number, number, ..., number] | [string, string, ..., string], output: value,
+  ...
+  label: number | string | [number, number, ..., number] | [string, string, ..., string], output: value,
+  fallback: value]: value
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `!` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `!=` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `<` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `<=` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `==` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `>` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `>=` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `all` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `any` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `case` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `coalesce` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `match` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Ramps, scales, curves
+
+### interpolate
+
+Interpolates between pairs of the `input` and `output` values. Stop `input` values must be in ascending order.
+
+Interpolate types:
+
+- linear `["linear"]` interpolates linearly between the pair of stops.
+- exponential: `["exponential", base]` interpolates exponentially between the pair of stops. High `base` values increase output values more towards the end of the range while low values increase output linearly.
+- cubic-bezier: `["cubic-bezier", x1, y1, x2, y2]` interpolates using the cubic bezier curve.
+
+```cpp [title=Interpolates pairs of input and output values]
+["interpolate",
+    interpolation: interpolationType
+    input: number,
+    stopInput1: number, stopOutput1: number, array&lt;number&gt;, color,
+    stopInput2: number, stopOutput2: number, array&lt;number&gt;, color,
+    ...
+    stopInputN: number, stopOutputN: number, array&lt;number&gt;, color]: number, array&lt;number&gt;, color
+```
+
+### interpolate-hcl
+
+Interpolates between pairs of the `input` and `output` values. Stop `input` values must be in ascending order. Interpolation is performed in the Hue-Chroma-Luminance color space.
+
+Interpolate types:
+
+- linear: `["linear"]` interpolates linearly between the pair of stops.
+- exponential: `["exponential", base]` interpolates exponentially between the pair of stops. High `base` values increase output values more towards the end of the range while low values increase output linearly.
+- cubic-bezier: `["cubic-bezier", x1, y1, x2, y2]` interpolates using the cubic bezier curve.
+
+```cpp [title=Interpolates between pairs of input and output values]
+["interpolate-hcl",
+  interpolation: interpolationType
+  input: number,
+  stopInput1: number, stopOutput1: color,
+  stopInput2: number, stopOutput2: color,
+  ...
+  stopInputN: number, stopOutputN: color]: color
+```
+
+### interpolate-lab
+
+Interpolates between pairs of the `input` and `output` values. Stop `input` values must be in ascending order. Interpolation is performed in the CIELAB color space.
+
+Interpolate types:
+
+- linear: `["linear"]` interpolates linearly between the pair of stops.
+- exponential: `["exponential", base]` interpolates exponentially between the pair of stops. High `base` values increase output values more towards the end of the range while low values increase output linearly.
+- cubic-bezier: `["cubic-bezier", x1, y1, x2, y2]` interpolates using the cubic bezier curve.
+
+```cpp [title=Interpolates between pairs of input and output values]
+["interpolate-lab",
+  interpolation: interpolationType
+  input: number,
+  stopInput1: number, stopOutput1: color,
+  stopInput2: number, stopOutput2: color,
+  ...
+  stopInputN: number, stopOutputN: color]: color
+```
+
+### step
+
+Interpolates between pairs of the `input` and `output` values. Stop `input` values must be in ascending order.
+
+```cpp [title=Interpolates between pairs of input and output values]
+["step",
+  input: number,
+  stopOutput0: value,
+  stopInput1: number, stopOutput1: value,
+  stopInput2: number, stopOutput2: value,
+  ...
+  stopInputN: number, stopOutputN: value]: value
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `interpolate` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `interpolate-hcl` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `interpolate-lab` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2716;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `step` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Variable binding
+
+### let
+
+Binds expression to variables.
+
+```cpp [title=Binds expression to variables]
+["let", variable: string, any, ..., value]: value
+```
+
+### var
+
+References variable bound using "let".
+
+```cpp [title=variable bound using "let"]
+["var", variable: string]: bound expression's type
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `let` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `var` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## String
+
+### concat
+
+Concats pass inputs, converting them to a  `string`  beforehand.
+
+```cpp [title=Concats pass inputs]
+["concat", input1: value, input2: value, ..., inputN: value]: string
+```
+
+### downcase
+
+Converts the input string to lowercase.
+
+```cpp [title=Converts the input string]
+["downcase", input: string]: string
+```
+
+### is-supported-script
+
+Checks if the input renders as it should without losing meaning.
+
+```cpp [title=Checks input rendering]
+["is-supported-script", input: string]: boolean
+```
+
+### resolved-locale
+
+Returns the language tag of the locale used by `collator`. It can be used to check if the requested locale has been successfully loaded.
+
+```cpp [title=Returns the locale language tag]
+["resolved-locale", input: collator]: string
+```
+
+### upcase
+
+Converts the input string to uppercase.
+
+```cpp [title=Converts input string to uppercase]
+["upcase", input: string]: string
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `concat` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `downcase` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `is-supported-script` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `resolved-locale` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `upcase` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Color
+
+### rgb
+
+Creates color based on `red`, `green`, and `blue` input values with the alpha component set to `1`. Input colors &isin; `[0; 255]`.
+
+```cpp [title=Creates color]
+["rgb", red: number, green: number, blue: number]: color
+```
+
+### rgba
+
+Creates color based on `red`, `green`, and `blue`, and `alpha` components. Input colors &isin; `[0; 255]`. Alpha component &isin; `[0; 1]`.
+
+```cpp [title=Creates color]
+["rgba", red: number, green: number, blue: number, alpha: number]: color
+```
+
+### to-rgba
+
+Returns an array that contains input rgba colors.
+
+```cpp [title=Returns an array containing input rgba colors]
+["to-rgba", input: color]: array<number, 4>
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `rgb` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `rgba` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `to-rgba` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Math
+
+### -
+
+Subtracts the second input from the first one. If there is only one input, then the input is subtracted from `0`.
+
+```cpp [title=Subtracts the second input from the first one]
+["-", input: number, input: number]: number
+["-", input: number]: number
+```
+
+### \*
+
+Returns the product of the passed numbers.
+
+```cpp [title=Returns the product]
+["*", input1: number, input2: number, ..., inputN: number]: number
+```
+
+### /
+
+Returns the quotient of the two numbers.
+
+```cpp [title=Returns the quotient]
+["/", input1: number, input2: number]: number
+```
+
+### %
+
+Returns the remainder of the division of the first input by the second one.
+
+```cpp [title=Returns the remainder of the division]
+["%", input1: number, input2: number]: number
+```
+
+### ^
+
+Returns the result of raising the `input` to the `power`.
+
+```cpp [title=Returns the result of raising the input to the power]
+["^", input: number, power: number]: number
+```
+
+### +
+
+Returns the result of raising the  `input`  to the  `power`.
+
+```cpp [title=Returns the result of raising the input to the power]
+["+", input1: number, input2: number, ..., inputN: number]: number
+```
+
+### sqrt
+
+Returns the square root of the input.
+
+```cpp [title=Returns the square root]
+["sqrt", input: number]: number
+```
+
+### abs
+
+Returns the absolute value of the input.
+
+```cpp [title=Returns the absolute value]
+["abs", input: number]: number
+```
+
+### sin
+
+Returns the sine of the input.
+
+```cpp [title=Returns the sine]
+["sin", input: number]: number
+```
+
+### cos
+
+Returns the cosine of the input.
+
+```cpp [title=Returns the cosine]
+["cos", input: number]: number
+```
+
+### tan
+
+Returns the tangent of the input.
+
+```cpp [title=Returns the tangent]
+["tan", input: number]: number
+```
+
+### asin
+
+Returns the arcsine of the input.
+
+```cpp [title=Returns the arcsine]
+["asin", input: number]: number
+```
+
+### acos
+
+Returns the arccosine of the input.
+
+```cpp [title=Returns the arccosine]
+["acos", input: number]: number
+```
+
+### atan
+
+Returns the arctangent of the input.
+
+```cpp [title=Returns the arctangent]
+["atan", input: number]: number
+```
+
+### ceil
+
+Returns the smallest integer that is greater than or equal to the input.
+
+```cpp [title=Returns the smallest integer]
+["ceil", input: number]: number
+```
+
+### e
+
+Returns the mathematical constant `e`.
+
+```cpp [title=Returns e]
+["e"]: number
+```
+
+### pi
+
+Returns the mathematical constant &pi;.
+
+```cpp [title=Returns pi]
+["pi"]: number
+```
+
+### ln
+
+Returns the natural logarithm of the input.
+
+```cpp [title=Returns the natural logarithm]
+["ln", input: number]: number
+```
+
+### ln2
+
+Returns the mathematical constant ln(2).
+
+```cpp [title=Retuerns the mathematical constant ln(2)]
+["ln2", input: number]: number
+```
+
+### log10
+
+Returns the base ten logarithm of the input.
+
+```cpp [title=Returns the base ten logarithm]
+["log10", input: number]: number
+```
+
+### log2
+
+Returns the base two logarithm of the input.
+
+```cpp [title=Returns the base two logarithm]
+["log2", input: number]: number
+```
+
+### max
+
+Returns the maximum number of the inputs.
+
+```cpp [title=Returns the maximum number of inputs]
+["max", input1: number, input2: number, ..., inputN: number]: number
+```
+
+### min
+
+Returns the minimum number of the inputs.
+
+```cpp [title=Returns the minimum number of inputs]
+["min", input1: number, input2: number, ..., inputN: number]: number
+```
+
+### round
+
+Rounds the input to the nearest integer. Halfway values are rounded away from zero.
+
+```cpp [title=Returns the input to the nearest integer]
+["round", input: number]: number
+```
+
+### floor
+
+Returns the largest integer that is less than or equal to the input.
+
+```cpp [title=Returns the largest integer]
+["floor", input: number]: number
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `-` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `*` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `/` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `%` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `^` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `+` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `sqrt` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `abs` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `sin` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `cos` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `tan` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `asin` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `acos` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `atan` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `ceil` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `e` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `pi` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `ln` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `ln2` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `log10` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `log2` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `max` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `min` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `round` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `floor` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Zoom
+
+### zoom
+
+Returns the current zoom level. In the layout and paint properties, the `zoom` expression may only be used as an input in the top level `step` or `interpolate` expression.
+
+```cpp [title=Returns the current zoom level]
+["zoom"]: number
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `zoom` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Heatmap
+
+### heatmap-density
+
+Returns estimated density of the center of a pixel in a heatmap layer. This is useful to determine how many data points are crowded around a pixel.
+
+```cpp [title=Returns estimated density]
+["heatmap-density"]: number
+```
+
+<h4 style={{ fontSize: '1em' }}>SDK Support</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Expression Name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Web SDK
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Mobile SDK
+      </th>
+    </tr>
+  </thead>
+  <tbody style={{ textAlign: 'center' }}>
+    <tr>
+      <th scope="row">
+         `heatmap-density` 
+      </th>
+      <td>&#x2714;</td>
+      <td>&#x2714;</td>
+    </tr>
+  </tbody>
+</table>
+
+The Example vector map style specification is derived from the Style Specification of Mapbox, which is licensed under the BSD 3-Clause "New" or "Revised" License as described below.
+
+Modifications and additions are © Example, and are provided under the same license terms.
+
+\_
+
+Mapbox Style Specification
+
+Copyright (c) 2019, Mapbox
+
+\_
+
+All rights reserved.
+
+\_
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+\_
+
+- Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+- Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+- Neither the name of Mapbox GL JS nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+\_
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

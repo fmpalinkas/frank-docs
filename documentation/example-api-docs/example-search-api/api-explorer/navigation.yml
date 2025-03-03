@@ -1,0 +1,9 @@
+group: search-api
+isPrivate: false
+description: Search API explorer.
+productName: Search API
+menuTitle: API Explorer
+menu:
+  - title: API Explorer
+    items:
+      - fileId: /index

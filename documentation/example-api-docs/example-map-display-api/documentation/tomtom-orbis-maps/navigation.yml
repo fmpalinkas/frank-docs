@@ -1,0 +1,83 @@
+group: map-display-api
+isPrivate: false
+description: The Map Display API is a suite of web services designed for developers to create web and mobile applications around mapping. These web services can be used via RESTful APIs.
+productName: New Map Display API
+menuTitle: Documentation
+isMenuOpened: false
+menu:
+  - title: Product Information
+    isPrivate: false
+    items:
+      - fileId: /introduction
+        title: Introduction
+        isPrivate: false
+      - fileId: /supported-languages
+        title: Supported Languages
+        isPrivate: false
+      - fileId: /zoom-levels-and-tile-grid
+        title: Zoom Levels and Tile Grid
+        isPrivate: false
+      - fileId: /market-coverage
+        title: Market Coverage
+        isPrivate: false
+  - title: Vector Tiles
+    isPrivate: false
+    items:
+      - fileId: /vector-service
+        title: Vector Tiles service
+        isPrivate: false
+      - fileId: /content
+        title: Tile Content
+        isPrivate: false
+      - fileId: /tile
+        title: Vector Tiles
+        isPrivate: false
+        suffix: get
+  - title: Raster Tiles
+    isPrivate: false
+    items:
+      - fileId: /raster-service
+        title: Raster Tiles service
+        isPrivate: false
+      - fileId: /raster-tile
+        title: Raster Tiles
+        isPrivate: false
+        suffix: get
+      - fileId: /satellite-tile
+        title: Satellite Tile
+        isPrivate: false
+        suffix: get
+      - fileId: /hillshade-tile
+        title: Hillshade Tile
+        isPrivate: false
+        suffix: get
+  - title: 3D
+    isPrivate: true
+    items:
+      - fileId: /3D-service
+        title: 3D tile service
+        isPrivate: true
+      - fileId: /landmarks
+        title: 3D Landmarks
+        suffix: get
+        isPrivate: true
+  - title: Extended Tiles
+    isPrivate: true
+    items:
+      - fileId: /extended-tiles
+        title: Extended Tiles
+        isPrivate: true
+  - title: Map Styling
+    isPrivate: false
+    items:
+      - url: https://developer.Example.com/assets-api/documentation/Example-New-maps/product-information/introduction
+        title: Assets API
+        isPrivate: false
+  - title: Copyrights
+    isPrivate: false
+    items:
+      - fileId: /copyrights
+        title: Copyrights
+        isPrivate: false
+        suffix: get  
+

@@ -1,0 +1,2006 @@
+---
+title: Place by ID
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.23'
+    color: grey5
+  - label: 'PUBLIC PREVIEW'
+    color: grey5
+  - label: Example New Maps
+    color: brand-cadmium
+---
+
+## Public Preview Notice  
+
+<Blockquote type="announcement" hasIcon>
+### Important notes:
+- This Example New Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.Example.com/public-preview)  page to see what this means.
+- This API is powered by **Example New Maps**.
+- See the <a href="https://developer.Example.com/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
+</Blockquote>  
+
+## Purpose  
+
+The Place by Id service endpoint provides detailed information about the Place found by its identifier (`entityId`). Currently, Place by Id supports all types by ids.  
+
+## Request data  
+
+### HTTPS Method: `GET`  
+
+For ease of viewing and identification:  
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.  
+
+**Important note:** Either `apiVersion` parameter or `Example-Api-Version` header needs to be present.  
+
+```shell [type=get] [title=URL request format]
+https://{baseURL}/maps/New/places/place.{ext}?entityId={Poi_id}&key={Your_API_Key}&apiVersion={apiVersion}&language={one_of_the_supported_languages}&openingHours={openingHours}&timeZone={timeZone}&mapcodes={mapcodes}&view={view}
+```
+
+```shell [type=get] [URL request example]
+https://api.Example.com/maps/New/places/place.json?entityId=00004e4c-3100-3c00-0000-0000685e23c7&key={Your_API_Key}&apiVersion=1
+```
+
+```shell [type=get] [title=curl command request example]
+curl 'https://api.Example.com/maps/New/places/place.json?entityId=00004e4c-3100-3c00-0000-0000685e23c7&key={Your_API_Key}&apiVersion=1'
+```
+
+### Request parameters  
+
+The following table describes the parameters that can be used in a request.  
+
+- Required parameters **must** be used or the call will fail.
+- Optional parameters _may_ be used.
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `baseURL`  
+        *string*
+      </th>
+      <td>
+        Base URL for calling the API.  
+        **Value:** `api.Example.com`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `place`  
+        *string*
+      </th>
+      <td>
+        Endpoint name.  
+        **Value:** `place`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `ext`  
+        *string*
+      </th>
+      <td>
+        A valid response format.  
+        **Values:** `json`, `jsonp`, `js`, or `xml`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `entityId`  
+        *string*
+      </th>
+      <td>
+        A unique `POI`, `Street`, `Geography`, `Point Address`, 
+        `Address Range`, or `Cross Street` identifier.  
+        **Value:** The identifier of a specific POI, Street, Geography, 
+        Point Address, Address Range, or Cross Street.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `key`  
+        *string*
+      </th>
+      <td>
+        An API Key valid for the requested service.  
+        **Value:** Your valid `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `apiVersion`  
+        *string*
+      </th>
+      <td>
+        Service version. If the `Example-Api-Version` header is not present the 
+        `apiVersion` parameter is required.  
+        **Value:** A service version value. The current value is `1`.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `language`  
+        *string*
+      </th>
+      <td>
+        Language in which details about a specific POI should be returned. 
+        When information about a specific POI is not available in the 
+        requested language or the language is not specified, 
+        the NGT (neutral ground truth) language is used.  
+        **Value:** One of the Example IETF [Supported Languages](../product-information/supported-languages)
+        tags except `NGT` and `NGT-Latn`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `openingHours`  
+        *string*
+      </th>
+      <td>
+        List of opening hours for a POI (Points of Interest).  
+        **Values:** `nextSevenDays` mode shows the opening hours
+        for next week, starting with the current day in the local 
+        time of the POI.  
+        **Usage example:** `openingHours=nextSevenDays`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `timeZone`  
+        *string*
+      </th>
+      <td>
+        Used to indicate the mode in which the `timeZone` object
+        should be returned.  
+        **Values:** `iana` mode shows the IANA ID which allows the
+        user to determine the current time zone for the POI.  
+        **Usage example:** `timeZone=iana`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `mapcodes`  
+        *string*
+      </th>
+      <td>
+        Enables the return of a comma-separated mapcodes list. 
+        Can also filter the response to only show selected mapcode 
+        types. See the [`mapcodes`](#mapcodes-object) object in 
+        the response.  
+        **Values:**  One or more of: `Local`, `International`, and 
+        `Alternative`. A mapcode represents a specific location to 
+        within a few meters. Every location on Earth can be 
+        represented by a mapcode. Mapcodes are designed to be 
+        short, easy to recognize, remember, and communicate. Visit 
+        [the Mapcode project website](http://www.mapcode.com) 
+        for more information.  
+        **Usage examples:**  
+        <ul>
+          <li>
+            `mapcodes=Local`: only returns the local mapcode for a
+            location.
+          </li>
+          <li>
+            `mapcodes=Local,Alternative`: returns both of the local
+            and alternative mapcodes for a location.
+          </li>
+          <li>
+            `mapcodes=Local,Alternative,International`: returns all
+            possible mapcodes for a location.
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `relatedPois`  
+        *string*  
+        **Not supported**
+      </th>
+      <td>
+        An optional parameter that provides the possibility 
+        to return related Points Of Interest.  
+        **Default value:** `off`    
+        **Values:** `off, child, parent, all`  
+        Points Of Interest can be related to each other when 
+        one is physically part of another. For example, an 
+        airport terminal can physically belong to an airport. 
+        This relationship is expressed as a parent/child relationship: 
+        the airport terminal is a child of the airport. 
+        If the value `child` or `parent` is given, a related 
+        Points Of Interest with a specified relation type will 
+        be returned in the response. If the value `all` is given, 
+        then both child and parent relations are returned.  
+        **Usage examples:**  
+        <ul>
+          <li>
+            `relatedPois=child`: only returns Points Of Interest with
+            a child relation.
+          </li>
+          <li>
+            `relatedPois=parent`: only returns Points Of Interest
+            with a parent relation.
+          </li>
+          <li>
+            `relatedPois=all`: returns Points Of Interest with all
+            possible relations.
+          </li>
+        </ul>  
+        <Blockquote type="announcement" hasIcon>
+           **Not supported**
+           **As of Sep 28, 2023**
+          <ul>
+            <li>
+              The request `relatedPois` parameter field is not supported.
+            </li>
+          </ul>
+        </Blockquote>               
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `view`  
+        *string*
+      </th>
+      <td>
+        Geopolitical View. The context used to resolve the handling 
+        of disputed territories. Views include only `Unified`.  
+        **Default value:** `Unified`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Request headers  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Example-Api-Version</th>
+        <td>
+          Service version. If the `apiVersion` parameter is not 
+          present the `Example-Api-Version` header is required.  
+          **Value:** A service version value. The current value is `1`.  
+        </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>[Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding)</th>
+      <td>
+        Enables response compression.  
+        **Value:** `gzip`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## Response data  
+
+### Response body  
+
+For illustrative purposes the example below is neatly indented and includes all possible response fields. Actual responses are more compact and the fields present will vary based on the result type and the data available. See the following response fields documentation for more information. When requesting JSON output, the response has the following structure:
+
+```json [title=Response structure - JSON]
+{
+  "summary": {
+    "query": "n/a",
+    "queryTime": 24,
+    "numResults": 1,
+    "totalResults": 1,
+  },
+  "results": []
+}
+```
+
+Each element of the `results` array is in the following format:  
+
+<Accordion label="results array elements format - JSON" isClosed>
+
+```json
+{
+  "type": "POI",
+  "id": "g6JpZK84NDAwNjEwMDE4NjUxNDKhY6NVU0GhdqdVbmlmaWVk",
+  "score": 5,
+  "dist": 0,
+  "poi": {
+    "name": "Upper Crust Pizza & Pasta",
+    "phone": "+(1)-(831)-4762333",
+    "url": "www.uppercrustsc.com/",
+    "brands": [
+      {
+        "name": "Upper Crust"
+      }
+    ],
+    "categorySet": [
+      {
+        "id": 7315015
+      }
+    ],
+    "openingHours": {
+      "mode": "NEXT_SEVEN_DAYS",
+      "timeRanges": [
+        {
+          "startTime": {
+            "date": "2019-02-05",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-05",
+            "hour": 21,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-06",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-06",
+            "hour": 21,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-07",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-07",
+            "hour": 21,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-08",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-08",
+            "hour": 21,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-09",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-09",
+            "hour": 21,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-10",
+            "hour": 7,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-10",
+            "hour": 12,
+            "minute": 0
+          }
+        },
+        {
+          "startTime": {
+            "date": "2019-02-10",
+            "hour": 14,
+            "minute": 0
+          },
+          "endTime": {
+            "date": "2019-02-10",
+            "hour": 21,
+            "minute": 0
+          }
+        }
+      ]
+    },
+    "timeZone": {
+      "ianaId": "Europe/Andorra"
+    },
+    "features": [
+      {
+        "order": 0,
+        "category": "company_or_office",
+        "group": "business"
+      },
+      {
+        "order": 1,
+        "category": "theater",
+        "group": "cultural"
+      }
+    ]
+  },
+  "address": {
+    "streetNumber": "2501",
+    "streetName": "Soquel Dr",
+    "municipalitySubdivision": "Santa Cruz, Live Oak",
+    "municipality": "Santa Cruz, Live Oak",
+    "countrySecondarySubdivision": "Santa Cruz",
+    "countryTertiarySubdivision": "Santa Cruz",
+    "countrySubdivision": "CA",
+    "postalCode": "95065",
+    "extendedPostalCode": "950652023",
+    "countryCode": "US",
+    "country": "United States Of America",
+    "countryCodeISO3": "USA",
+    "freeformAddress": "2501 Soquel Dr, Santa Cruz, CA 95065",
+    "countrySubdivisionName": "California",
+    "localName": "Santa Cruz"
+  },
+  "position": {
+    "lat": 36.98844,
+    "lon": -121.97483
+  },
+  "mapcodes": [
+    {
+      "type": "Local",
+      "fullMapcode": "US-CA FS.WRH3",
+      "territory": "US-CA",
+      "code": "FS.WRH3"
+    },
+    {
+      "type": "International",
+      "fullMapcode": "S4ZW4.990V"
+    },
+    {
+      "type": "Alternative",
+      "fullMapcode": "US-CA 4349.S8W",
+      "territory": "US-CA",
+      "code": "4349.S8W"
+    },
+    {
+      "type": "Alternative",
+      "fullMapcode": "US-CA JJCH.H9DF",
+      "territory": "US-CA",
+      "code": "JJCH.H9DF"
+    },
+    {
+      "type": "Alternative",
+      "fullMapcode": "USA JJCH.H9DF",
+      "territory": "USA",
+      "code": "JJCH.H9DF"
+    }
+  ],
+  "viewport": {
+    "topLeftPoint": {
+      "lat": 36.98934,
+      "lon": -121.97596
+    },
+    "btmRightPoint": {
+      "lat": 36.98754,
+      "lon": -121.9737
+    }
+  },
+  "entryPoints": [
+    {
+      "type": "main",
+      "position": {
+        "lat": 36.98817,
+        "lon": -121.97487
+      }
+    }
+  ],
+  "chargingPark": {
+    "connectors": [
+      {
+        "connectorType": "Tesla",
+        "ratedPowerKW": 25,
+        "voltageV": 400,
+        "currentA": 62,
+        "currentType": "DC"
+      }
+    ]
+  },
+  "dataSources": {
+    "chargingAvailability": {
+      "id": "442009000132285"
+    },
+    "geometry": {
+      "id": "00004e4c-3100-3c00-0000-0000685e23c7"
+    }
+  }
+}
+```
+
+</Accordion>  
+
+### Response fields  
+
+The following table describes all of the fields that can appear in a response. Fields are listed by the response section they belong to, and the order that they appear in the response.
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Primary&nbsp;fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `summary`  
+        *object*
+      </th>
+      <td>
+        Summary information about the search that was performed.  
+        [`summary`](#summary-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `results`  
+        *array*
+      </th>
+      <td>
+        Result list, sorted in descending order by score.  
+        [`results`](#results-array) array
+      </td>
+    </tr>
+    <tr>
+      <th id="summary-object" colspan="2" style={{ fontSize: '1em' }}>summary object</th>
+    </tr>
+      <tr>
+        <th>Field</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <th scope="row">
+          `query`  
+          *string*
+        </th>
+        <td>Query as interpreted by the search engine.</td>
+      </tr>
+      <tr>
+        <th scope="row">
+          `queryTime`  
+          *integer*
+        </th>
+        <td>Time spent on resolving the query.</td>
+        </tr>
+        <tr>
+          <th scope="row">
+            `numResults`  
+            *integer*
+          </th>
+          <td>Number of results in the response.</td>
+        </tr>
+        <tr>
+          <th scope="row">
+            `offset`  
+            *integer*  
+            **Deprecated**
+          </th>
+          <td>
+            Starting offset of the returned results within the full result set.  
+            <Blockquote type="announcement" hasIcon>
+              **Deprecated:**
+              **As of Sep 28, 2023**
+              <ul>
+                <li>
+                  The response `offset` field has been deprecated.
+                </li>
+                <li>
+                  It will be withdrawn following a 12 month deprecation period.
+                </li>
+                <li>
+                  The planned withdrawal date is **Sep 28, 2024**.
+                </li>
+              </ul>  
+            </Blockquote>  
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">
+            `totalResults`  
+            *integer*
+          </th>
+          <td>Total number of results found.</td>
+        </tr>
+        <tr>
+          <th scope="row">
+            `fuzzyLevel`  
+            *integer*  
+            **Deprecated**
+          </th>
+          <td>
+            Maximum fuzzy level required to provide results.  
+            <Blockquote type="announcement" hasIcon>
+              **Deprecated:**
+              **As of Sep 28, 2023**
+              <ul>
+                <li>
+                  The response `fuzzyLevel` field has been deprecated.
+                </li>
+                <li>
+                  It will be withdrawn following a 12 month deprecation period.
+                </li>
+                <li>
+                  The planned withdrawal date is **Sep 28, 2024**.
+                </li>
+              </ul>  
+            </Blockquote>  
+          </td>
+        </tr>
+    <tr>
+      <th id="results-array" colspan="2" style={{ fontSize: '1em' }}>results array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `type`  
+        *string*
+      </th>
+      <td>
+        Type of result. One of: `POI`, `Street`, 
+        `Geography`, `Point Address`, `Address Range`, 
+        `Cross Street`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `id`  
+        *string*
+      </th>
+      <td>
+        A stable unique id for the POI index, and a non-stable 
+        unique id for the other indexes. **Note:** Stable id means 
+        that it doesn't change between data releases
+        without changing the location, attribution or classification.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `score`  
+        *double*
+      </th>
+      <td>
+        Score of the result. A larger score means there is a 
+        probability that a result meeting the query criteria is higher.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `dist`  
+        *double*
+      </th>
+      <td>
+        Unit: meters. This is the distance to an object if `geoBias` 
+        was provided.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `info`  
+        *string*  
+        **Deprecated**
+      </th>
+      <td>
+        Information about the original data source of the result.  
+        <Blockquote type="announcement" hasIcon>
+           **Deprecated:**  
+           **As of Sep 28, 2023**
+          <ul>
+            <li>
+              The response  `info`  field has been deprecated.
+            </li>
+            <li>
+              It will be withdrawn following a 12 month deprecation period.
+            </li>
+            <li>
+              The planned withdrawal date is  **Sep 28, 2024**.
+            </li>
+          </ul>  
+        </Blockquote>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `entityType`  
+        *string*
+      </th>
+      <td>
+        Optional section. Only present if `type == Geography`. One
+        of:  
+        <ul>
+          <li>
+            `Country`
+          </li>
+          <li>
+            `CountrySubdivision`
+          </li>
+          <li>
+            `CountrySecondarySubdivision`
+          </li>
+          <li>
+            `CountryTertiarySubdivision`
+          </li>
+          <li>
+            `Municipality`
+          </li>
+          <li>
+            `MunicipalitySubdivision`
+          </li>
+          <li>
+            `MunicipalitySecondarySubdivision`
+          </li>
+          <li>
+            `Neighbourhood`
+          </li>
+          <li>
+            `PostalCodeArea`
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `poi`  
+        *object*
+      </th>
+      <td>
+        Information about the Points of Interest in the result. 
+        Optional section. Only present if `type == POI`.  
+        [`poi`](#poi-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `relatedPois`  
+        *object*  
+        **Not supported**
+      </th>
+      <td>
+        List of related Points Of Interest.  
+        [`relatedPois`](#relatedpois-object) object  
+        <Blockquote type="announcement" hasIcon>
+           **Not supported**
+           **As of Sep 28, 2023**
+          <ul>
+            <li>
+              The request `relatedPois` parameter field is not supported.
+            </li>
+          </ul>  
+        </Blockquote>             
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `address`  
+        *object*
+      </th>
+      <td>
+        Structured address for the result.  
+        [`address`](#address-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `position`  
+        *object*
+      </th>
+      <td>
+        Position of the result.  
+        [`LatLon`](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `mapcodes`  
+        *array*
+      </th>
+      <td>
+        List of `mapcode` objects.  
+        [`mapcodes`](#mapcodes-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `viewport`  
+        *object*
+      </th>
+      <td>
+        A viewport which can be used to display the result on a map.    
+        [`viewport`](#viewport-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `boundingBox`  
+        *object*
+      </th>
+      <td>
+        Optional section. Only present if `type == Geography`. A
+        bounding box which can be used to display the result on a map 
+        defined by minimum and maximum longitudes and latitudes.  
+        [`boundingBox`](#boundingbox-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `entrypoints`  
+        *array*
+      </th>
+      <td>
+        List of entry points of the POI.  
+        [`entryPoints`](#entrypoints-array)
+        array
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `addressRanges`  
+        *object*
+      </th>
+      <td>
+        Address ranges on a street segment. Available only for 
+        results where the result type is equal to 
+        &quot;Address Range&quot;.  
+        [`addressRanges`](#addressranges-object)
+        object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `chargingPark`  
+        *object*
+      </th>
+      <td>
+        A list of `chargingPark{}` objects. Present only when the
+        Points of Interest are of the Electric Vehicle Station type.  
+        [`chargingPark`](#chargingpark-object)
+        object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `dataSources`  
+        *object*
+      </th>
+      <td>
+        Optional section. Reference ids for use with the
+        [Additional Data service](../additional-data-service/additional-data).  
+        [`dataSources`](#datasources-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `fuelTypes`  
+        *array*
+      </th>
+      <td>
+        Optional section. List of fuel types served 
+        by the petrol station.  
+        `fuelTypes` array   
+        [Fuel Types available](../product-information/supported-fuel-types)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `vehicleTypes`  
+        *array*
+      </th>
+      <td>
+        Optional section. List of vehicle types supported 
+        by the petrol station.  
+        `vehicleTypes` array  
+        Available vehicle types: `Car`, `Truck`
+      </td>
+    </tr>
+    <tr>
+      <th id="poi-object" colspan="2" style={{ fontSize: '1em' }}>poi object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`  
+        *string*
+      </th>
+      <td>Name of the POI.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `phone`  
+        *string*
+      </th>
+      <td>Telephone number.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `brands`  
+        *array*
+      </th>
+      <td>
+        The list of POI brands.  
+        [`brands`](#brands-array) array
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `url`  
+        *string*
+      </th>
+      <td>Website URL.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `categorySet`  
+        *array*
+      </th>
+      <td>
+        The list of the most specific POI categories.  
+        [`categorySet`](#categoryset-array) array
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `openingHours`  
+        *object*
+      </th>
+      <td>
+        List of opening hours for a POI (Points of Interest).  
+        [`openingHours`](#openinghours-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `classifications`  
+        *array*  
+        **Deprecated**
+      </th>
+      <td>
+        The list of POI category classifications.  
+        [`classifications`](#classifications-array) array  
+        <Blockquote type="announcement" hasIcon>
+           **Deprecated:**  
+           **As of Sep 28, 2023**
+          <ul>
+            <li>
+              The respons `classifications` field has been deprecated.
+            </li>
+            <li>
+              It will be withdrawn following a 12 month deprecation period.
+            </li>
+            <li>
+              The planned withdrawal date is **Sep 28, 2024**.
+            </li>
+          </ul>  
+        </Blockquote>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `timeZone`  
+        *object*
+      </th>
+      <td>
+        Time zone information for the POI.  
+        [`timeZone`](#timezone-object) object
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `features`  
+        *array*
+      </th>
+      <td>
+        The list of the POI features.  
+        [`features`](#features-array) array
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="categoryset-array" style={{ fontSize: '1em' }}>categorySet array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *number*
+      </th>
+      <td>
+        Category id. A full list of available categories is 
+        available under the [POI Categories](../poi-categories-service/poi-categories) endpoint.
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="brands-array" style={{ fontSize: '1em' }}>brands array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`  
+        *string*
+      </th>
+      <td>Brand name.</td>
+    </tr>
+    <tr>
+      <th colspan="2" id="classifications-array" style={{ fontSize: '1em' }}>classifications array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`  
+        *string*
+      </th>
+      <td>
+        Fixed top level category code.  
+        [Supported Category Codes](../product-information/supported-category-codes)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `names`  
+        *array*
+      </th>
+      <td>
+        List of category names with locale code information. Currently only the 
+        `en-US` locale is returned.  
+        [`names`](#names-array) array
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="names-array" style={{ fontSize: '1em' }}>names array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `nameLocale`  
+        *string*
+      </th>
+      <td>Locale code of this category name.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`  
+        *string*
+      </th>
+      <td>Category name in given locale.</td>
+    </tr>
+    <tr>
+      <th colspan="2" id="relatedpois-object" style={{ fontSize: '1em' }}>relatedPois object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `relationType`  
+        *string*
+      </th>
+      <td>
+        Relation type: `child`, `parent`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as `entityId` to the [Place by ID](../place-by-id-service/place-by-id) 
+        service to fetch additional data for the Point Of Interest.
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="address-object" style={{ fontSize: '1em' }}>address object</th>
+    </tr>
+    <tr>
+      <th>Field</th> 
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `streetNumber`  
+        *string* 
+      </th>
+      <td>The building number on the street.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `streetName`  
+        *string*
+      </th>
+      <td>The street name.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `municipality
+        Subdivision`  
+        *string*
+      </th>
+      <td>Sub City</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `municipalitySecondary
+        Subdivision`  
+        *string*
+      </th>
+      <td>Sub Sub City</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `neighbourhood`  
+        *string*
+      </th>
+      <td>Neighbourhood</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `municipality`  
+        *string*
+      </th>
+      <td>City / Town</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countrySecondary
+        Subdivision`  
+        *string*
+      </th>
+      <td>County</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countryTertiary
+        Subdivision`  
+        *string*
+      </th>
+      <td>Named Area</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `country
+        Subdivision`  
+        *string*
+      </th>
+      <td>State or Province</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `postalCode`  
+        *string*
+      </th>
+      <td>Postal Code / Zip Code</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `postalName`  
+        *string*
+      </th>
+      <td>
+        An address component which represents the name for a 
+        postal code that is related to a single administrative area, 
+        city, town, or other populated place. **Note:** This 
+        field only appears for geographies having `entityType == PostalCodeArea`. 
+        It is only supported for the USA.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `extendedPostalCode`  
+        *string*
+      </th>
+      <td>Extended postal code (availability dependent on region).</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countryCode`  
+        *string*
+      </th>
+      <td>
+        Country (**Note:** This is a two-letter code, not a country name.)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `country`  
+        *string*
+      </th>
+      <td>Country name</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countryCodeISO3`  
+        *string*
+      </th>
+      <td>ISO alpha-3 country code</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `freeformAddress`  
+        *string*
+      </th>
+      <td>
+        An address line formatted according to the formatting rules of the
+        result's country of origin. In the case of countries, its full
+        country name. For the USA, in the case of geographies with 
+        `entityType == PostalCodeArea` it will contain the 
+        `postalName` field value.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countrySubdivision
+        Name`  
+        *string*
+      </th>
+      <td>
+        The full name of the first level of a country's administrative 
+        hierarchy. This field appears only in case 
+        `countrySubdivision` is presented in an abbreviated form. 
+        Supported only for USA, Canada, and Great Britain.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countrySubdivision
+        Code`  
+        *string*
+      </th>
+      <td>
+        `countrySubdivisionCode` prefixed by `countryCode`
+        (`countryCode-countrySubdivisionCode`) and the hyphen forms
+        the ISO 3166-2 code. It is only present if the returned document has
+        `entityType == CountrySubdivision`. 
+        `countrySubdivisionCode`  examples: `TX` for Texas, 
+        `SCT` for Scotland, `ON` for Ontario, `ZE` for Zeeland and 
+        `BB` for Brandenburg.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `localName`  
+         *string*
+      </th>
+      <td>
+        An address component which represents the name of a geographic area or
+        locality that groups a number of addressable objects for addressing
+        purposes, without being an administrative unit.
+      </td>
+    </tr>
+    <tr>
+      <th id="mapcodes-object" colspan="2" style={{ fontSize: '1em' }}>mapcodes object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `type`  
+         *string*
+      </th>
+      <td>
+        Type of mapcode.  
+          <ul>
+            <li>**`Local`:** The shortest possible 
+            (and easiest to remember) mapcode. Local mapcodes are especially 
+            useful when the user knows what territory the mapcode is in 
+            (for example, when an application is designed to be used inside just 
+            one European country or US state). Note that the code element of a 
+            Localmapcode is ambiguous when used without the territory element. 
+            For example, the &quot;4J.P2&quot; mapcode can mean the Eiffel Tower 
+            location (`48.858380, 2.294440`) (with the territory set to `FRA`), 
+            but also some place in Amsterdam-Noord, Netherlands 
+            (52.382184, 4.911021) (with the territory set to  `NLD` ).</li>
+            <li>**`International`:** This mapcode is unambiguous. 
+            It is also the longest.</li>
+            <li>**`Alternative`:** Alternatives to Local mapcodes. 
+            Each Alternative mapcode points to slightly different coordinates 
+            due to the way mapcodes are computed (see the [mapcode documentation](http://www.mapcode.com/documentation ). 
+            For example, the position from a response can be encoded as 
+            &quot;5DM.WC&quot; (`51.759244, 19.448316`) and the 
+            &quot;VHJ.036&quot; (`51.759245, 19.448264`), which are close 
+            to each other, but not exactly the same place.</li>
+          </ul>  
+        </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `fullMapcode`  
+        *string*
+      </th>
+      <td>
+        The full form of a mapcode (`territory` + `code`). 
+        It is always unambiguous. The territory element is always in the Latin 
+        alphabet. In an International mapcode, the territory part is empty.
+      </td>
+    </tr>
+    <tr>
+      <th id="territory">
+        `territory`  
+        *string*
+      </th>
+      <td>
+        The `territory` element of the mapcode. The 
+        `territory` element is always in the Latin alphabet. 
+        Usually, the `territory` is the [ISO 3166-1 alpha 3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) 
+        abbreviation for the country name. However in these 
+        eight very large countries:  
+        <ul>
+          <li>USA</li>
+          <li>Canada</li>
+          <li>Mexico</li>
+          <li>Brazil</li>
+          <li>India</li>
+          <li>Russia</li>
+          <li>China</li>
+        </ul>  
+        an address has little meaning unless the user also knows what state 
+        it's in (just as, elsewhere, an address has little meaning if the 
+        user doesn’t know what country it’s in). More information about 
+        `territory` codes is available at [Territories for mapcodes](http://www.mapcode.com/isos.html). 
+        This field is not returned for an `International` mapcode.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `code`  
+        *string*
+      </th>
+      <td>
+        The mapcode *without* the `territory` element. It 
+        consists of two groups of letters and digits separated by a dot. 
+        The `code` is using the same language and alphabet as the 
+        response. The `language` parameter may be used to modify the 
+        language and alphabet of both the response and the `code` 
+        (for example: Cyrillic for the `language` &#39;ru-RU&#39;). 
+        This field is not returned for the `International` mapcodes. 
+        Use `fullMapcode` instead.
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="viewport-object" style={{ fontSize: '1em' }}>viewport object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `topLeftPoint`  
+        *object*
+      </th>
+      <td>
+        Top-left corner of the rectangle.  
+        [`LatLon`](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `btmRightPoint`  
+        *object*
+      </th>
+      <td>
+        Bottom-right corner of the rectangle.  
+        [`LatLon`](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="boundingbox-object" style={{ fontSize: '1em' }}>boundingBox object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `topLeftPoint`  
+        *object*
+      </th>
+      <td>
+        Top-left position of the bounding box.  
+        [`LatLon`](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `btmRightPoint`  
+        *object*
+      </th>
+      <td>
+        Bottom-right position of the bounding box.  
+        [`LatLon`](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="entrypoints-array" style={{ fontSize: '1em' }}>entryPoints array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `type`  
+        *string*
+      </th>
+      <td>
+        The main entry point. One of: `main`, `minor`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `functions`  
+        *array*
+      </th>
+      <td>
+        If present, represents the type of access for the POI.  
+        **Example:** `FrontDoor`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `position`  
+        *object*
+      </th>
+      <td>
+        Position of the entry point.  
+        [LatLon](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="addressrange-object" style={{ fontSize: '1em' }}>addressRanges object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `rangeLeft`  
+        *string*
+      </th>
+      <td>
+        An address range on the left side of a street 
+        segment (assuming looking from the &quot;from&quot; end 
+        toward the &quot;to&quot; end).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `rangeRight`  
+        *string*
+      </th>
+      <td>
+        An address range on the right side of a street segment 
+        (assuming looking from the &quot;from&quot; end toward 
+        the &quot;to&quot; end).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `from`  
+        *object*
+      </th>
+      <td>
+        A beginning point of a street segment.  
+        [`LatLon`](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `to`  
+        *object*
+      </th>
+      <td>
+        An end point of a street segment.  
+        [`LatLon`](#latlon)
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="chargingpark-object" style={{ fontSize: '1em' }}>chargingPark object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `connectors`  
+        *array*
+      </th>
+      <td>
+        A list of connectors available in the Points Of Interest 
+        of an Electric Vehicle Station type.  
+        [`connectors`](#connectors-array) array
+      </td>
+    </tr>
+    <tr>
+      <th id="connectors-array" colspan="2" style={{ fontSize: '1em' }}>connectors array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `connectorType`  
+        *string*
+      </th>
+      <td>
+        Type of the connector available in Electric Vehicle Station. 
+        See: [Supported Connector Types](../product-information/supported-connector-types).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `ratedPowerKW`  
+        *double*
+      </th>
+      <td>Rated power of the connector in kilowatts (kW).</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `currentA`  
+        *integer*
+      </th>
+      <td>Current value of the connector in amperes (A).</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `currentType`  
+        *string*
+      </th>
+      <td>Current type of the connector.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `voltageV`  
+        *integer*
+      </th>
+      <td>Voltage of the connector in Volts (V).</td>
+    </tr>
+    <tr>
+      <th colspan="2" id="datasources-object" style={{ fontSize: '1em' }}>dataSources object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `chargingAvailability`  
+        *object*
+      </th>
+      <td>
+        Information about the charging stations availability. 
+        Only present if `type == POI`.  
+        [`chargingAvailability`](#chargingavailability-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `parkingAvailability`  
+        *object*
+      </th>
+      <td>
+        Information about the parking site availability. 
+        Only present if `type == POI`.  
+        [`parkingAvailability`](#parkingavailability-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `fuelPrice`  
+        *object*
+      </th>
+      <td>
+        Information about the fuel station prices. Only present if 
+        `type == POI`.  
+        [`fuelPrice`](#fuelprice-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `geometry`  
+        *object*
+      </th>
+      <td>
+        Information about the geometric shape of the result. 
+        Only present if `type == Geography` or `POI`.  
+        [`geometry`](#geometry-object) object
+      </td>
+    </tr>
+    <tr>
+      <th id="chargingavailability-object" colspan="2" style={{ fontSize: '1em' }}>chargingAvailability object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as `chargingAvailability` to the [EV Charging Stations Availability](https://developer.Example.com/ev-charging-stations-availability-api/documentation/product-information/introduction) 
+        service to fetch charging availability information for this result.
+      </td>
+    </tr>
+    <tr>
+      <th id="parkingavailability-object" colspan="2" style={{ fontSize: '1em' }}>parkingAvailability object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as `parkingAvailability` to the [Parking Availability](https://developer.Example.com/parking-availability-api/documentation/Example-New-maps/product-information/introduction) service 
+        to fetch parking availability information for this result.
+      </td>
+    </tr>
+    <tr>
+      <th id="fuelprice-object" colspan="2" style={{ fontSize: '1em' }}>fuelPrice object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as `fuelPrice` to the [Fuel Prices](https://developer.Example.com/fuel-prices-api/documentation/Example-New-maps/product-information/introduction) service 
+        to fetch fuel price information for this result.
+      </td>
+    </tr>
+    <tr>
+      <th id="geometry-object" colspan="2" style={{ fontSize: '1em' }}>geometry object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as `geometryId` to the
+        [Additional Data](../additional-data-service/additional-data)
+        service to fetch geometry information for this result.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `sourceName`  
+        *string*
+      </th>
+      <td>Name of an additional data provider.</td>
+    </tr>
+    <tr>
+      <th colspan="2" id="latlon"style={{ fontSize: '1em' }}>LatLon</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `lat`  
+        *float*
+      </th>
+      <td>
+        Latitude. min/max: `-90` to `+90`  
+        **Reference:*** [Latitude, Longitude, and Coordinate System Grids](https://gisgeography.com/latitude-longitude-coordinates/)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `lon`  
+        *float*
+      </th>
+      <td>
+        Longitude. min/max: `-180` to `+180`  
+        **Reference:** [Latitude, Longitude, and Coordinate System Grids](https://gisgeography.com/latitude-longitude-coordinates/)
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="openinghours-object" style={{ fontSize: '1em' }}>openingHours object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `mode`  
+        *string*
+      </th>
+      <td>Mode used in the request.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `timeRanges`  
+        *array*
+      </th>
+      <td>
+        List of time ranges for the next 7 days.  
+        [`timeRanges`](#timeranges-array) array
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="timeranges-array" style={{ fontSize: '1em' }}>timeRanges array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `startTime`  
+        *object*
+      </th>
+      <td>
+        The point in the next 7 days range when a given POI is 
+        being opened, or the beginning of the range if it was 
+        opened before the range, inclusive.  
+        [`startTime`](#starttime-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>
+        `endTime`  
+        *object*
+      </th>
+      <td>
+        The point in the next 7 days range when a given POI is 
+        being opened, or the beginning of the range if it was 
+        opened before the range, exclusive.  
+        [`endTime`](#starttime-object) object
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="starttime-object" style={{ fontSize: '1em' }}>startTime object, endTime object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `date`  
+        *string*
+      </th>
+      <td>Represents current day in calendar year in POI time zone.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `hour`  
+        *integer*
+      </th>
+      <td>
+        Hours are in the 24 hour format in the local time of a POI; 
+        possible values are `0` - `23`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `minute`  
+        *integer*
+      </th>
+      <td>
+        Minutes are in the local time of a POI; 
+        possible values are `0` - `59`.
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="timezone-object" style={{ fontSize: '1em' }}>timeZone object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `ianaId`  
+        *string*
+      </th>
+      <td>
+        ID from the [IANA Time Zone Database](https://www.iana.org/time-zones).
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="features-array" style={{ fontSize: '1em' }}>features array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `order`  
+        *number*
+      </th>
+      <td>
+        The order is a 0-based value indicating relative order. 
+        The order defines the importance of the category.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `category`  
+        *string*
+      </th>
+      <td>
+        The POI feature category.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `group`  
+        *string*
+      </th>
+      <td>
+        The group of the POI feature category.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response codes  
+
+The following table contains response codes signifying successful and failed requests to an API server.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', textAlign: 'center' }}>Code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Meaning &amp; possible causes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`200`</th>
+      <td>
+         **OK**: The search successfully returned zero or more results.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`400`</th>
+      <td>
+         **Bad Request**: One or more parameters were incorrectly specified.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top', textAlign: 'center' }}>`403`</th>
+      <td>
+         **Forbidden**: Possible causes include:  
+        <ul>
+          <li>Service requires SSL</li>
+          <li>Not authorized</li>
+          <li>Rate or volume limit exceeded</li>
+          <li>Unknown referer</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`405`</th>
+      <td>
+        **Method Not Allowed**: The HTTP method (`GET`, 
+        `POST`, etc.) is not supported for this request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`404/596`</th>
+      <td>
+        **Not Found**: The HTTP request method (`GET`, 
+        `POST`, etc.) or path is incorrect.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`5xx`</th>
+      <td>
+        **Server Error**: The service was unable to process 
+        your request. Contact support to resolve the issue.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response headers  
+
+The following table contains response headers sent back from an API server.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>[Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)</th>
+      <td>
+        Ensures that clients implementing the CORS security model are able to 
+        access the response from this service.  
+        **Value:**  An asterisk ` * ` that signifies access to the 
+        Example API using the Access-Control-Allow-Origin (ACAO) header in its 
+        response indicating which origin sites are allowed.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)</th>
+      <td>
+        Indicates the format of the response, as chosen by the client.  
+        **Format:** `type/subtype; charset=utf-8`  
+        **Value:**  `type/subtype` is one of 
+        `application/json`, `text/javascript`, or 
+        `text/xml`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ verticalAlign: 'top' }}>[Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)</th>
+      <td>
+        If requested by the client, the Search service applies gzip 
+        compression to the responses with the Accept-Encoding header.  
+         **Value:** `gzip`
+      </td>
+    </tr>
+  </tbody>
+</table>  

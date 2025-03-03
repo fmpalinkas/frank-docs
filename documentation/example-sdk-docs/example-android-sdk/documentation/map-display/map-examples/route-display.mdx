@@ -1,0 +1,111 @@
+---
+title: Route display
+---
+
+You can display a route on the map and customize its origin and destination icons. It is also
+possible to specify the fill color, outline color, and width of the route.
+
+**Sample use case:** When you add the route, you would like to highlight the starting and the
+destination points. Also, you would like to plan several routes simultaneously with different origin
+and destination points and use different icons.
+
+Prerequisites:
+
+The `NewMap NewMap` object was created and configured. Route coordinates are prepared.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_origin_and_destination_icons_customization"
+></a>
+
+## Origin and destination icons customization
+
+If you need to customize start and destination icons, you should create icons through the `Icon`
+class.
+
+The icon can be created in following ways:
+
+- with a constructor:
+  ```java
+  Icon startIcon = new Icon(name, drawable)
+  ```
+- with the `Icon.Factory.fromDrawable` method:
+
+  ```java
+  Icon startIcon = Icon.Factory.fromDrawable(name, drawable);
+  ```
+
+  where `name` is a `String` object and `drawable` is a `Drawable` object.
+
+- with the `Icon.Factory.fromResources` method:
+
+  ```java
+  Icon endIcon = Icon.Factory.fromResources(context, iconId);
+  ```
+
+  where `context` is your `Context` object and `iconId` is an icon resource identifier.
+
+When icons are created, you can add them to the route using the `startIcon` and `endIcon` methods of
+the `RouteBuilder` class,
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_route_customization"
+></a>
+
+## Route customization
+
+You can create a route with custom style properties like fill color, outline color, and width.
+First, you need to create the `RouteStyle` object:
+
+<Code>
+
+```java
+RouteStyleBuilder.create()
+        .withWidth(2.0)
+        .withFillColor(Color.BLACK)
+        .withOutlineColor(Color.RED)
+        .build();
+```
+
+```kotlin
+RouteStyleBuilder.create()
+    .withWidth(ROUTE_WIDTH)
+    .withFillColor(Color.BLACK)
+    .withOutlineColor(Color.RED)
+    .build()
+```
+
+</Code>
+
+Next, you need to pass `routeBuilder` to the `addRoute` method of `NewMap`:
+
+<Code>
+
+```java
+RouteBuilder routeBuilder = new RouteBuilder(route.getCoordinates())
+        .endIcon(endIcon)
+        .startIcon(startIcon)
+        .style(routeStyle);
+final Route mapRoute = NewMap.addRoute(routeBuilder);
+```
+
+```kotlin
+val routeBuilder = RouteBuilder(route.getCoordinates())
+    .style(RouteStyle.DEFAULT_ROUTE_STYLE)
+    .startIcon(createIcon(R.drawable.ic_map_route_departure))
+    .endIcon(createIcon(R.drawable.ic_map_route_destination))
+    .tag(routeIdx.toString())
+NewMap.addRoute(routeBuilder)
+```
+
+</Code>
+
+If you don’t call `startIcon` and `endIcon` there will be no icons on route. You can specify only a
+start icon by calling only `startIcon` or only an end icon by calling only `endIcon`.
+
+If you don’t call `style` then the default style will be applied.
+
+You can use different images and styles for different routes.

@@ -1,0 +1,1086 @@
+---
+title: Asynchronous Matrix Download
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2023.07.15'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+## Purpose
+
+This endpoint lets clients download the result of their matrix job.
+
+- A `matrixJobId` is required for a result download. This Id is available inside the body of a successful  [Asynchronous Matrix Submission](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-submission)  response.
+- To download the result, the job must be in the `Completed` state.
+- The current state of a job may be checked using the  [Asynchronous Matrix Status](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-status)  endpoint.
+- The result of a completed job will be included in the HTTP 200 response body, or can be downloaded by following the HTTP 302 response Location header.
+
+<Blockquote type="announcement" hasIcon>
+  **Jul 15, 2023**
+  <p>
+  From Oct 15, 2023, the download endpoint will respond with HTTP 302 redirection for all matrices.
+  If you are interested in testing that behavior earlier, please [contact us](/contact-us).
+  </p>
+</Blockquote>
+
+- A result download request for a non-`Completed` matrix job will end with an HTTP 404 response.
+
+## Types
+
+The following data table describes the complex data types that can be used in the Matrix Routing v2 service.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Types</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="types-point" scope="row">
+        `point`<br />
+        *object*
+      </th>
+      <td>
+        Latitude, longitude pair (in [EPSG:4326](https://spatialreference.org/ref/epsg/4326/
+)
+        projection), with the following constraints:
+        <ul>
+          <li>
+            Latitude values must be in the range  `[-90, +90]`.
+          </li>
+          <li>
+            Longitude values must be in the range  `[-180, +180]`.
+          </li>
+        </ul>  
+        Example: `{"latitude": 52.37245, "longitude": 4.89406}`
+      </td>
+    </tr>
+    <tr>
+      <th id="types-dateTime" scope="row">
+        `dateTime`<br />
+        *string*
+      </th>
+      <td>
+        A date and time specified in [RFC 3339](https://tools.ietf.org/html/rfc3339) format with an optional time zone offset.<br />
+        Example:
+        <ul>
+          <li>
+            `2023-12-19T16:39:57`
+          </li>
+          <li>
+            `2023-12-19T16:39:57-08:00`
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## Request data
+
+### HTTPS method: `GET`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL request format</h4>
+
+All of the following parameters are required:
+
+```shell [type=get] [title=URL request format]
+https://{baseURL}/routing/matrix/{versionNumber}/async/{matrixJobId}/result?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>URL request example</h4>
+
+```shell [type=get] [title=URL request example]
+https://api.Example.com/routing/matrix/2/async/00-00000000-0000-0000-0000-000000000000-0000/result?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command request format</h4>
+
+```shell [type=get] [title=curl command request format]
+curl 'https://{baseURL}/routing/matrix/{versionNumber}/async/{matrixJobId}/result?key={Your_API_Key}'
+```
+
+### Request headers
+
+The following table describes HTTP request headers of particular interest to Large-scale Matrix Routing service clients.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">[Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding)</th>
+      <td>
+        Restricts the content codings that are acceptable in the response. This
+        header is required so that the service can apply gzip compression.<br />
+        **Value:**   `gzip`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="trackingid-request" scope="row">Tracking-ID</th>
+      <td>
+        Specifies an identifier for the request.
+        <ul>
+          <li>It can be used to trace a call.</li>
+          <li>
+            The value must match the regular expression `'^[a-zA-Z0-9-]{1,100}$'`.
+          </li>
+          <li>
+            An example of the format that matches this regular expression is
+            UUID: (e.g.,  `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For details check [RFC 4122](https://tools.ietf.org/html/rfc4122).
+          </li>
+          <li>
+            If specified, it is replicated in the [Tracking-ID](#trackingid-response)  response header.
+          </li>
+          <li>
+            It is only meant to be used for support and does not involve tracking of you or your users in any form.
+          </li>
+        </ul>  
+        **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Request parameters  
+
+The following table describes the request parameters.  
+
+- Required parameters **must be used** or the call will fail.
+- Optional parameters may be used.
+- A parameter&#39;s data type is beneath its name.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `baseURL`<br />
+        *string*
+      </th>
+      <td>
+        Base URL for calling the API.<br />
+        **Values:**
+        <ul>
+          <li>
+            `api.Example.com`: The default global API endpoint.
+          </li>
+          <li>
+            `kr-api.Example.com`: The region-specific endpoint for
+            South Korea. See the [region-specific content documentation](https://developer.Example.com/region-specific-content)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `versionNumber`<br />
+        *string*
+      </th>
+      <td>
+        The version of the service to call.<br />
+        **Value:**   `2`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `matrixJobId`<br />
+        *string*
+      </th>
+      <td>
+        Id of the matrix job to check. It is provided in the response body of a
+        submission request.<br />
+        **Value:**   `string`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `key`<br />
+        *string*
+      </th>
+      <td>
+        An API Key valid for the requested service.<br />
+        **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## Response data  
+
+### HTTP status codes  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', textAlign: 'center' }}>Code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Meaning &amp; possible causes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`200`</th>
+      <td>
+        **Request successful**: Matrix job's result will be included in the
+        response body.
+      </td>
+    </tr>
+    <tr>
+      <th id="response-code-302" scope="row" style={{ textAlign: 'center' }}>`302`</th>
+      <td>
+        **Request successful**: Matrix job's result is available at the address given in the [Location](#location-header) header.
+        Your HTTP client may perform an automatic redirect, depending on its configuration.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`403`</th>
+      <td>
+        **Forbidden**: The API Key is missing, inactive, invalid, not
+        entitled to use Matrix Routing v2 API, or exceeded the available quota.
+        This can also occur when using HTTP instead of HTTPS.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`404`</th>
+      <td>
+         **The requested resource could not be found**, possible reasons:
+        <ul>
+          <li>
+            A job with the provided Id exists, but it's not in `Completed`  state.
+          </li>
+          <li>A job with the provided Id doesn't exist.</li>
+          <li>
+            A job with the provided Id did exist but the retention period has passed, and the status is no longer available.
+          </li>
+          <li>The provided job Id and the API Key do not match.</li>
+          <li>URI path not found.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`405`</th>
+      <td>
+        **Method Not Allowed**: The client used an HTTP method other than `GET`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`406`</th>
+      <td>
+        **Not Acceptable**: The client should declare readiness for receiving
+        the gzip compressed response by using the Accept-Encoding header.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`414`</th>
+      <td>
+        **Requested URI is too long**: Indicates that the URI requested by
+        the client is longer than the server is willing to interpret.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`429`</th>
+      <td>
+        **Too Many Requests**: Quota was exceeded for the API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`500`</th>
+      <td>
+        **An error occurred while processing the request**. Please try again
+        later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`502`</th>
+      <td>
+        **Internal network connectivity issue**. Please try again later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`503`</th>
+      <td>
+        **Service currently unavailable**. Please try again later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`504`</th>
+      <td>
+        **Internal network connectivity issue or a request that has taken too long to complete**. Please try again later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`596`</th>
+      <td>
+        **Service not found**. Request contains an incorrect FQDN and/or
+        path.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response headers  
+
+The following table lists HTTP response headers of particular interest to Matrix Routing v2 service clients.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="location-header" scope="row">[Location](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Location)</th>
+      <td>
+        The Location header indicates the URL the client should follow to download the matrix job's result.
+        The header is present in the response if the response code is [HTTP 302](#response-code-302).
+        The URL is temporary and may change; therefore HTTP client must not cache this address. Instead, the client should make a request to download endpoint every time they need to download the result.
+        **Value:** the URL of the the matrix job's result
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Access-Control-Expose-Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Access-Control-Expose-Headers)</th>
+      <td>
+        A comma separated list of HTTP header names that browsers are allowed to
+        access.<br />
+        **Value:**   `Content-Length`
+      </td>
+    </tr>
+    <tr></tr>
+    <tr>
+      <th scope="row">[Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin)</th>
+      <td>
+        A header instructing browsers to allow customer websites to contact the
+        Matrix Routing v2 service.<br />
+        **Value:**   `*`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)</th>
+      <td>
+        The Matrix Routing v2 service applies gzip compression to the response
+        if it is requested by the client with the [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) header.<br />
+        **Value:**   `gzip`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)</th>
+      <td>
+        The format of the response as chosen by the client (see the
+        `contentType`  request parameter).<br />
+        **Value:**   `application/json;charset=utf-8`
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">Tracking-ID</th>
+      <td>
+        An identifier for the request. If the [Tracking-ID](#trackingid-request)  header was specified, it is replicated in the response. Otherwise, it is generated automatically by the service. It is only meant to be used for support and does not involve tracking of you or your users in any form.<br />
+        **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Successful response  
+
+```json [title=Response body format - JSON]
+HTTP 200 OK
+{
+  "data": [
+    {
+      "originIndex": integer,
+      "destinationIndex": integer,
+      "routeSummary": {
+        "lengthInMeters": integer,
+        "travelTimeInSeconds": integer,
+        "trafficDelayInSeconds": integer,
+        "departureTime": dateTime,
+        "arrivalTime": dateTime
+      },
+      "detailedError": object
+    },
+    ...
+  ],
+  "statistics": {
+    "totalCount": integer,
+    "successes": integer,
+    "failures": integer,
+    "failureDetails": [
+      {
+        "code": string,
+        "count": integer
+      },
+      ...
+    ]
+  }
+}
+```
+
+```json [title=Response body example - JSON]
+HTTP 200 OK
+{
+  "data": [
+    {
+      "originIndex": 0,
+      "destinationIndex": 0,
+      "routeSummary": {
+        "lengthInMeters": 681999,
+        "travelTimeInSeconds": 25106,
+        "trafficDelayInSeconds": 1769,
+        "departureTime": "2018-08-10T10:20:42+02:00",
+        "arrivalTime": "2018-08-10T17:19:07+02:00"
+      }
+    },
+    {
+      "originIndex": 0,
+      "destinationIndex": 1,
+      "detailedError": {
+        "code": "CELL_PROCESSING_ERROR",
+        "message": "Cell could not be processed",
+        "innerError": {
+          "code": "MAP_MATCHING_FAILURE",
+          "message": "Engine error while executing route request: MAP_MATCHING_FAILURE: Destination (2.2, 2.2)"
+        }
+      }
+    },
+    {
+      "originIndex": 0,
+      "destinationIndex": 2,
+      "detailedError": {
+        "code": "CELL_PROCESSING_ERROR",
+        "message": "Cell could not be processed",
+        "innerError": {
+          "code": "UNKNOWN",
+          "message": "Unknown error occurred"
+        }
+      }
+    }
+  ],
+  "statistics": {
+    "totalCount": 3,
+    "successes": 1,
+    "failures": 2,
+    "failureDetails": [
+      {
+        "code": "MAP_MATCHING_FAILURE",
+        "count": 1
+      },
+      {
+        "code": "UNKNOWN",
+        "count": 1
+      }
+    ]
+  }
+}
+```
+
+### Successful response fields  
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>Primary fields</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `data`<br />
+        *array*
+      </th>
+      <td>
+        Contains all calculated route summaries for this matrix. Comparing to
+        the matrix submission body structure, which is two-dimensional, the `data`  structure is flattened to a single dimension. In order
+        to be able to refer to a specific origin/destination pair, also the `originIndex`  and the  `destinationIndex`  fields are also available.<br />
+        [`data`](#data-array) array
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `statistics`<br />
+        *object*
+      </th>
+      <td>
+        Optional field, present when the state is  `Completed`.
+        Contains information about statistics for this matrix.<br />
+        [`statistics`](#statistics-object) object
+      </td>
+    </tr>
+    <tr>
+      <th id="data-array" colspan="2" style={{ fontSize: '1em' }}>data array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `originIndex`<br />
+        *integer*
+      </th>
+      <td>Zero-based index of the origin of a route.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `destinationIndex`<br />
+        *integer*
+      </th>
+      <td>Zero-based index of the destination of a route.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `routeSummary`<br />
+        *object*
+      </th>
+      <td>
+        Optional field containing the result of a successful route summary calculation.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `lengthInMeters`<br />
+        *integer*
+      </th>
+      <td>
+        Element of  `routeSummary`. The route length in meters.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `trafficDelayInSeconds`<br />
+        *integer*
+      </th>
+      <td>
+        Element of  `routeSummary`. The delay in seconds compared to
+        free-flow conditions according to real-time traffic information.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `departureTime`<br />
+        *dateTime*
+      </th>
+      <td>
+        Element of  `routeSummary`. If  `departAt`  or  `arriveAt`  is  `any`, then  `departureTime`  is absent. In
+        all other cases  `departureTime`  contains the estimated departure
+        time for the route. Specified as a  [`dateTime`](#types-dateTime).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `arrivalTime`<br />
+        *dateTime*
+      </th>
+      <td>
+        Element of  `routeSummary`. If  `departAt`  or `arriveAt`  is  `any`, then  `arrivalTime`
+        is absent. In all other cases  `arrivalTime`  contains the
+        estimated arrival time for the route. Specified as a [`dateTime`](#types-dateTime).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `travelTimeInSeconds`<br />
+        *integer*
+      </th>
+      <td>
+        Element of  `routeSummary`. The estimated travel time in seconds depending on [`traffic`](/routing-api/documentation/matrix-routing-v2/asynchronous-matrix-submission#post-body-field-traffic).
+        <ul>
+          <li>
+            If  `traffic=historical`, then
+            `travelTimeInSeconds`  includes historical travel times on
+            the route.
+          </li>
+          <li>
+            If  `traffic=live`, then  `travelTimeInSeconds`
+            includes historical travel times as well as traffic jams during the
+            travel time window on the route.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th id="fieldDataDetailedError" scope="row">
+        `detailedError`<br />
+        *object*
+      </th>
+      <td>
+        Optional field, present in an HTTP 200 response body only when there was
+        a problem processing a matrix cell. This field describes the details of
+        a failure, per matrix cell. It is possible that the whole matrix job may
+        be completed and the result is downloaded having an HTTP 200 status
+        while at the same time multiple, or even all the cells have failed. The
+        content of this object is defined the same as in the case of an error
+        response:<br />
+        [`detailedError`](#fieldDetailedError) object
+      </td>
+    </tr>
+    <tr>
+      <th id="statistics-object" colspan="2" style={{ fontSize: '1em' }}>statistics object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `totalCount`<br />
+        *integer*
+      </th>
+      <td>Total number of routes within this matrix.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `successes`<br />
+        *integer*
+      </th>
+      <td>Number of successful routes within this matrix.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `failures`<br />
+        *integer*
+      </th>
+      <td>Number of failed routes within this matrix.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `failureDetails`<br />
+        *array*
+      </th>
+      <td>
+        When there are any failed cells, this field contains the details about
+        the failure(s).<br />
+        [`failureDetails`](#failuredetails-array) array
+      </td>
+    </tr>
+    <tr>
+      <th id="failuredetails-array" colspan="2" style={{ fontSize: '1em' }}>failureDetails array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`<br />
+        *string*
+      </th>
+      <td>
+        One of the defined  [error codes](#error-code-hierarchy).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `count`<br />
+        *integer*
+      </th>
+      <td>
+        Number of failed route calculations within this matrix caused by errors
+        having given  `code`.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Error response
+
+```json [title=Error response format - JSON]
+{
+  "detailedError": {
+    "code": string,
+    "message": string,
+    "details": [
+      {
+        "code": string,
+        "message": string,
+        "target": string,
+        "details": [
+          ...
+        ],
+        "innerError": {
+          "code": string,.
+          "message": string,
+          "innerError": {
+            ...
+          }
+        }
+      },
+      ...
+    ]
+  }
+}
+```
+
+```json [title=Error response example - JSON]
+HTTP 404 NOT FOUND
+{
+  "detailedError": {
+    "code": "MATRIX_NOT_FOUND",
+    "message": "Matrix not found for provided id."
+  }
+}
+```
+
+### Error response fields
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>Primary fields</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `detailedError`<br />
+        *object*
+      </th>
+      <td>
+        Detailed information about the error.<br />
+        [`detailedError`](#fieldDetailedError) object
+      </td>
+    </tr>
+    <tr>
+      <th id="fieldDetailedError" colspan="2" style={{ fontSize: '1em' }}>detailedError object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`<br />
+        *string*
+      </th>
+      <td>
+        One of the defined  [error codes](#error-code-hierarchy).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `message`<br />
+        *string*
+      </th>
+      <td>
+        A human-readable description of the error code. It is intended as an aid
+        to developers and is not suitable for exposure to end users.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `target`<br />
+        *string*
+      </th>
+      <td>
+        Optional.<br />
+        Target of the particular error. For example, a parameter name, a path to
+        a JSON property, and others. Contents of this field may change over
+        time.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `details`<br />
+        *array*
+      </th>
+      <td>
+        Optional.<br />
+        An array of root causes (more detailed errors) that led to this error.<br />
+        [`detailedError`](#fieldDetailedError) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `innerError`<br />
+        *object*
+      </th>
+      <td>
+        Optional.<br />
+        A higher level of details about this error.<br />
+        [`innerError`](#innererror-object) object
+      </td>
+    </tr>
+    <tr>
+      <th id="innererror-object" colspan="2" style={{ fontSize: '1em' }}>innerError object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`<br />
+        *string*
+      </th>
+      <td>
+        One of the defined  [error codes](#error-code-hierarchy).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `message`<br />
+        *string*
+      </th>
+      <td>
+        Optional. A human-readable representation of the error code. It is intended
+        as an aid to developers and is not suitable for exposure to end users.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `innerError`<br />
+        *object*
+      </th>
+      <td>
+        Optional. A higher level of details about this error.<br />
+        [`innerError`](#innererror-object) object
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Error code hierarchy  
+
+List of predefined, hierarchical, human-readable error codes.  
+
+- Top level codes relate to HTTP error codes.
+- They may be refined by error codes in `details` or `innerError`.
+- Further levels of refinement are possible by nesting `innerError` inside `innerError`.
+
+In the future, the list may be extended with additional codes. New or existing codes may be introduced as children of codes already present in the hierarchy. The application must be ready for the occurrence of an unknown error code (e.g., by stopping error processing at the last understood level of detail).
+
+Each of the following error codes has a scope assigned. Scope assignment is subject to change and extension. Possible scopes are:
+
+<h4 style={{ fontSize: '1em' }}>`job`</h4>
+
+- The error code concerns the whole job.
+- It may be included in the optional  [`detailedError`](#fieldDetailedError)  structure.
+
+<h4 style={{ fontSize: '1em' }}>`cell`</h4>
+
+- The error code concerns failed processing of one of the matrix cells.
+- It may be included in the optional  [`data.detailedError`](#fieldDataDetailedError)  structure.
+- Codes in this scope, apart from the `CELL_PROCESSING_ERROR` code, may also be included in the optional  [`failureDetails`](#failuredetails-array)  array.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Error code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Scope</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>`MATRIX_NOT_FOUND`</th>
+      <td>
+        Top level code for requests which failed with an HTTP `404` status code. May be caused by requesting the Id of a matrix job which:
+        <ul>
+          <li>Does not exist.</li>
+          <li>Doesn't match the API Key provided.</li>
+          <li>Has the job result not ready.</li>
+          <li>Is no longer available because the [24 hour retention period](/routing-api/documentation/matrix-routing-v2/matrix-routing-v2-service#data-retention-period-notice) has passed.</li>
+        </ul>
+      </td>
+      <td>
+        `job`
+      </td>
+    </tr>
+    <tr>
+      <th>`NOT_FOUND`</th>
+      <td>
+        Top level code for requests which failed with an HTTP  `404`
+        status code, caused by providing an incorrect request path.
+      </td>
+      <td>
+        `job`
+      </td>
+    </tr>
+    <tr>
+      <th>`BAD_REQUEST`</th>
+      <td>
+        Top level code for requests which failed with an HTTP  `400`
+        status code.<br />
+        Current possible details:  `BAD_ARGUMENT`
+      </td>
+      <td>
+        `job`
+      </td>
+    </tr>
+    <tr>
+      <th>`INTERNAL_SERVER_ERROR`</th>
+      <td>
+        Top level code for requests which failed with an HTTP  `500`
+        status code. The service cannot handle the request right now, an
+        unexpected condition was encountered.
+      </td>
+      <td>
+        `job`
+      </td>
+    </tr>
+    <tr>
+      <th>`SERVICE_UNAVAILABLE`</th>
+      <td>
+        Top level code for requests which failed with an HTTP  `503`
+        status code. The service cannot handle the request right now, this is
+        certainly a temporary state.
+      </td>
+      <td>
+        `job`
+      </td>
+    </tr>
+    <tr>
+      <th>`BAD_ARGUMENT`</th>
+      <td>
+        One of the request parameters did not pass validation.<br />
+        Current possible inner errors:  `INVALID_PARAMETER_VALUE`
+      </td>
+      <td>
+        `job`,  `cell`
+      </td>
+    </tr>
+    <tr>
+      <th>`INVALID_PARAMETER_VALUE`</th>
+      <td>The value of one of the parameters is invalid.</td>
+      <td>
+        `job`
+      </td>
+    </tr>
+    <tr>
+      <th id="cell-processing-errors">`CELL_PROCESSING_ERROR`</th>
+      <td>
+        This is the top level code for the  `cell`  scope.<br />
+        It is expected to have details about the issue in the
+        `innerError`  or  `details`  field.<br />
+        Current possible inner errors:
+        <ul>
+          <li>
+            `OVER_TRANSACTION_LIMIT`
+          </li>
+          <li>
+            `UNKNOWN`
+          </li>
+          <li>
+            `MAP_MATCHING_FAILURE`
+          </li>
+          <li>
+            `NO_ROUTE_FOUND`
+          </li>
+          <li>
+            `BAD_ARGUMENT`
+          </li>
+          <li>
+            `CELL_TIMEOUT`
+          </li>
+          <li>
+            `OUT_OF_REGION`
+          </li>
+        </ul>  
+        The NO_ROUTE_FOUND and MAP_MATCHING_FAILURE cell failures are charged like successful route calculations.
+      </td>
+      <td>
+        `cell`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `OVER_TRANSACTION_LIMIT`
+      </th>
+      <td>
+        Client has exceeded the transaction limit.<br />
+      </td>
+      <td>
+        `cell`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `UNKNOWN`
+      </th>
+      <td>
+        Unknown error has occurred.<br />
+      </td>
+      <td>
+        `cell`
+      </td>
+    </tr>
+    <tr>
+      <th>`MAP_MATCHING_FAILURE`</th>
+      <td>
+        One of the input points (origin, destination) could not be matched to
+        the map because there is no known drivable section near this point.
+      </td>
+      <td>
+        `cell`
+      </td>
+    </tr>
+    <tr>
+      <th>`NO_ROUTE_FOUND`</th>
+      <td>
+        No valid route could be found for the given origin and destination pair.
+      </td>
+      <td>
+        `cell`
+      </td>
+    </tr>
+    <tr>
+      <th>`CELL_TIMEOUT`</th>
+      <td>
+        Failed to calculate route summary for the given origin and destination
+        pair within timeout.
+      </td>
+      <td>
+        `cell`
+      </td>
+    </tr>
+    <tr>
+      <th>`OUT_OF_REGION`</th>
+      <td>
+        The distance between the given origin and destination pair is too long
+        to calculate the route, considering other requested options.<br />
+        See the API Limitations table on the [Asynchronous Matrix Submission page](/routing-api/documentation/Example-maps/matrix-routing-v2/asynchronous-matrix-submission#apiLimitationsTable)
+        for more information.
+      </td>
+      <td>
+        `cell`
+      </td>
+    </tr>
+  </tbody>
+</table>  

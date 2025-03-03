@@ -1,0 +1,76 @@
+---
+title: Documentation
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_documentation"
+></a>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_initialization"
+></a>
+
+## Initialization
+
+The **TTL2Search** class encapsulates a connection bridge to the Example Search API service.
+
+<Code>
+
+```swift
+let search = TTSearch(key: Key.Search)
+```
+
+```objectivec
+self.search = [[TTSearch alloc] initWithKey:Key.Search]
+```
+
+</Code>
+
+Call the **searchWithQuery** method to perform a search. The call uses the **TTL2SearchQuery**
+parameter from the **TTL2Search** class. Use the builder design pattern to simplify construction
+of the **TTL2SearchQuery**.
+
+The API reference contains a detailed specification of the search objects and options. It also
+includes a number of functional examples to illustrate different uses cases.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_search_result_delegate"
+></a>
+
+## Search result delegate
+
+Every search Request requires a TTL2SearchDelegate object. The object asynchronously calls one of
+two methods when the search result is ready:
+
+1. If the search query is successful, the first method returns an array of search results.
+2. If the query fails, the second method returns an error code and an error message.
+
+<Code>
+
+```swift
+func search(_: TTSearch, completedWith response: TTSearchResponse) {
+    progress.hide()
+    displayResults(response.results)
+}
+func search(_: TTSearch, failedWithError error: TTResponseError) {
+    handleError(error)
+}
+```
+
+```objectivec
+- (void)search:(TTSearch *)search completedWithResponse:(TTSearchResponse *)response {
+    [self.progress hide];
+    [self displayResults:response.results];
+}
+- (void)search:(TTSearch *)search failedWithError:(TTResponseError *)error {
+    [self handleError:error];
+}
+```
+
+</Code>

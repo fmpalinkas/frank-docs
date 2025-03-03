@@ -1,0 +1,114 @@
+---
+title: Zooming the route
+---
+
+Zooming in and out are used to navigate through map areas that are too large or too small to be
+conveniently displayed within a single window. While following the chevron, zooming alters the map
+scale because it changes the proportion of the workspace shown in each window.
+
+**Sample use case:** You are a taxi driver navigating through the city of Łódź, and thanks to the
+zoom level adjusted to the velocity of your car you see a convenient map area for you to move.
+
+Use the following code snippets to try this in your app:
+
+<Code>
+
+```swift
+func updateZoomLevelBaseOnNewLocation(_ location: CLLocation) {
+    guard updateZoom else { return }
+    var zoom: Double
+    switch location.speed {
+    case SMALL_SPEED_RANGE_IN_KMH:
+        zoom = SMALL_SPEED_ZOOM_LEVEL
+    case MEDIUM_SPEED_RANGE_IN_KMH:
+        zoom = MEDIUM_SPEED_ZOOM_LEVEL
+    case GREATER_SPEED_RANGE_IN_KMH:
+        zoom = GREATER_SPEED_ZOOM_LEVEL
+    case BIG_SPEED_RANGE_IN_KMH:
+        zoom = BIG_SPEED_ZOOM_LEVEL
+    default:
+        zoom = HUGE_SPEED_ZOOM_LEVEL
+    }
+    guard mapView.zoom() != zoom else { return }
+    let cameraPostion = TTCameraPositionBuilder.create(withCameraPosition: mapView.cameraPosition().cameraPosition).withZoom(zoom).withAnimationDuration(Int32(ZOOM_CHANGE_ANIMATION_MILLIS)).build()
+    mapView.setCameraPosition(cameraPostion)
+}
+```
+
+```objectivec
+- (void)updateZoomLevelBaseOnNewLocation:(CLLocation *)location {
+    if (!_updateZoom) {
+        return
+    }
+    double zoom;
+    if (location.speed < SMALL_SPEED_RANGE_END_IN_KMH) {
+        zoom = SMALL_SPEED_ZOOM_LEVEL;
+    } else if (location.speed < MEDIUM_SPEED_RANGE_END_IN_KMH) {
+        zoom = MEDIUM_SPEED_ZOOM_LEVEL;
+    } else if (location.speed < GREATER_SPEED_RANGE_END_IN_KMH) {
+        zoom = GREATER_SPEED_ZOOM_LEVEL;
+    } else if (location.speed < BIG_SPEED_RANGE_END_IN_KMH) {
+        zoom = BIG_SPEED_ZOOM_LEVEL;
+    } else {
+        zoom = HUGE_SPEED_ZOOM_LEVEL;
+    }
+    TTCameraPosition *cameraPosition = [[[[TTCameraPositionBuilder createWithCameraPosition:self.mapView.cameraPosition.cameraPosition] withZoom:zoom] withAnimationDuration:ZOOM_CHANGE_ANIMATION_MILLIS] build];
+    [self.mapView setCameraPosition:cameraPosition];
+}
+```
+
+</Code>
+
+Lookup for the constants used in the sample code:
+
+<Code>
+
+```swift
+let ZOOM_CHANGE_ANIMATION_MILLIS = 300
+let SMALL_SPEED_ZOOM_LEVEL = 19.0
+let MEDIUM_SPEED_ZOOM_LEVEL = 18.0
+let GREATER_SPEED_ZOOM_LEVEL = 17.0
+let BIG_SPEED_ZOOM_LEVEL = 16.0
+let HUGE_SPEED_ZOOM_LEVEL = 14.0
+let SMALL_SPEED_RANGE_IN_KMH = 0.0 ..< 10.0
+let MEDIUM_SPEED_RANGE_IN_KMH = 10.0 ..< 20.0
+let GREATER_SPEED_RANGE_IN_KMH = 20.0 ..< 40.0
+let BIG_SPEED_RANGE_IN_KMH = 40.0 ..< 70.0
+let HUGE_SPEED_RANGE_IN_KMH = 70.0 ..< 120.0
+```
+
+```objectivec
+#define ZOOM_CHANGE_ANIMATION_MILLIS 300
+#define SMALL_SPEED_ZOOM_LEVEL 19.0
+#define MEDIUM_SPEED_ZOOM_LEVEL 18.0
+#define GREATER_SPEED_ZOOM_LEVEL 17.0
+#define BIG_SPEED_ZOOM_LEVEL 16.0
+#define HUGE_SPEED_ZOOM_LEVEL 14.0
+#define SMALL_SPEED_RANGE_END_IN_KMH 10.0
+#define MEDIUM_SPEED_RANGE_END_IN_KMH 20.0
+#define GREATER_SPEED_RANGE_END_IN_KMH 40.0
+#define BIG_SPEED_RANGE_END_IN_KMH 70.0
+#define HUGE_SPEED_RANGE_END_IN_KMH 120.0
+```
+
+</Code>
+
+Screen shots presenting how the programmatic zooming functionality works:
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/zooming_route.gif" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Zooming route</p>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+  </tbody>
+</table>

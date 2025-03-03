@@ -1,0 +1,7 @@
+menuTopTitle: Geocoding API
+menu:
+  - items:
+      - url: /geocoding-api/documentation/product-information/introduction
+        title: Documentation
+      - url: /geocoding-api/api-explorer
+        title: API Explorer

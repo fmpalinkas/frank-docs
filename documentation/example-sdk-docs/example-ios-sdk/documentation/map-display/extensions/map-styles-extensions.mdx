@@ -1,0 +1,117 @@
+---
+title: Map Styles Extensions
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="styles-extensions"
+></a>
+
+The Example Maps SDK gives you the ability to use either online or offline styles in your mobile
+application.
+
+- If you choose to use offline styles, they will be imported to your app with the Maps SDK package.
+  Thanks to that, the styles will already be included in your app at download time. The styles are
+  added to the Maps SDK package by default.
+- If you choose to use online styles, they will be downloaded into your application when the map is
+  displayed for the first time. Thanks to that, your mobile app size is smaller at the app’s
+  download time so your app downloadable is lighter. In this case you need to exclude offline styles
+  from the SDK.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_offline_styles"
+></a>
+
+## Offline styles
+
+To use the offline style framework, no actions are required because offline styles are attached to
+the map by default. To use the offline style library, no actions are required because offline styles
+are attached to the map by default i.e. the offline style framework 'ExampleOnlineSDKMapsStyle' will
+be added automatically while fetching 'ExampleOnlineSDKMaps'.
+
+```code
+pod 'ExampleOnlineSDKMaps'
+```
+
+If offline styles are not attached to the project, nor online style is setup for the map, a black
+screen will render in mapView.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_online_styles"
+></a>
+
+## Online styles
+
+To exclude offline styles from the ExampleOnlineSDKMaps framework, use an exclude declaration when
+the ExampleOnlineSDKMaps framework is declared as shown in the following code example.
+
+```code
+pod 'ExampleOnlineSDKMaps/Online'
+```
+
+When offline styles are excluded, the online styles should be set up.
+
+<Code>
+
+```swift
+let mapStyleConfiguration = TTMapStyleDefaultConfiguration()
+let mapConfig = TTMapConfigurationBuilder.create().withMapStyleConfiguration(mapStyleConfiguration).build()
+let mapView = TTMapView(mapConfiguration: mapConfig)
+```
+
+```objectivec
+TTMapStyleDefaultConfiguration *style = [[TTMapStyleDefaultConfiguration alloc] init]
+TTMapConfiguration *config = [[[[[TTMapConfigurationBuilder createBuilder] withMapKey:Key.Map] withTrafficKey:Key.Traffic] withMapStyleConfiguration:style] build];
+TTMapView *mapView = [[TTMapView alloc] initWithMapConfiguration:config];
+```
+
+</Code>
+
+    self.view = mapView;
+    self.mapView = mapView;
+
+You can set up online styles in `TTMapView`:
+
+<Code>
+
+```swift
+let mapStyleConfiguration = TTMapStyleConfiguration(styleURL: "<style json>")
+let mapConfig = TTMapConfigurationBuilder.create().withMapStyleConfiguration(mapStyleConfiguration).build()
+let mapView = TTMapView(mapConfiguration: mapConfig)
+```
+
+```objectivec
+TTMapStyleConfiguration *mapStyleConfiguration = [[TTMapStyleConfiguration alloc] initWithStyleURL:@"<style json>"];    TTMapConfiguration *mapConfig = [[[TTMapConfigurationBuilder createBuilder] withMapStyleConfiguration:mapStyleConfiguration] build];
+TTMapView *mapView = [[TTMapView alloc] initWithMapConfiguration:mapConfig];
+```
+
+</Code>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_styling_from_source"
+></a>
+
+## Styling from source
+
+You can use your offline style files in a similar manner to online hosted ones. You need just to
+pass a file path to the JSON file in your project as styleUrl.
+
+<Blockquote type="announcement" hasIcon>
+
+If you want to use `style.json` located in the main project catalog,
+use: `"asset://../../style.json"`
+
+</Blockquote>
+
+<ContentWrapper maxWidth="350px" objectFit="contain">
+
+![image](../images/style_in_project.png)
+
+</ContentWrapper>

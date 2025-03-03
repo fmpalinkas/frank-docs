@@ -1,0 +1,49 @@
+---
+title: Routing API Release Notes
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.15'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+## Overview
+
+This Example Release Notes page records additions, improvements, deprecations, removals, and known issues. The release dates are in descending order starting with the most recent update.
+
+## Release date: 2024.09.30
+
+### Added
+
+- [Vehicle Has Electric Toll Collection Transponder](../common-routing-parameters): Added an option to specify whether the vehicle has an electric toll collection (ETC) transponder (`vehicleHasElectricTollCollectionTransponder`).
+- [Include Toll Payment Types](../calculate-route): Added an option to include toll payment types in the toll section (`includeTollPaymentTypes`).
+
+## Release date: 2023.07.03
+
+### Added
+
+- [Reconstruction Mode](../common-routing-parameters): Added an option to influence how a given polyline route is matched to road network (`reconstructionMode`).
+
+## Release date: 2023.05.22
+
+### Added
+
+- [Vehicle number of axles](../calculate-route): Added the option to add the number of axles of the vehicle as a routing algorithm parameter (`vehicleNumberOfAxles`).
+
+### Removed
+
+- The deprecated `error` element in error responses has been removed.
+
+## Release date: 2023.01.26
+
+### Added
+
+- [Low-Emission Zones](../calculate-route): Added the option to ask for low-emission zone sections in the route (`sectionType=lowEmissionZone`).
+
+## Release date: 2023.01.24
+
+### Added
+
+- [Avoid Low-Emission Zones](../common-routing-parameters): Added the option to avoid low-emission zones in the list of avoid parameters (`avoid=lowEmissionZones`).

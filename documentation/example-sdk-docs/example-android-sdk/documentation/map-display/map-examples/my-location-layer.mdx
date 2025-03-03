@@ -1,0 +1,36 @@
+---
+title: My location layer
+---
+
+Allow your users to display and track their current location by default it is disabled. Permissions
+to use GPS are automatically handled by the map.
+
+**Sample use case:** You want to display the user’s current location and use it to plan a route.
+
+To enable location tracking:
+
+<Code>
+
+```java
+NewMap.setMyLocationEnabled(true);
+```
+
+```kotlin
+NewMap.isMyLocationEnabled = true
+```
+
+</Code>
+
+To get user’s current location:
+
+<Code>
+
+```java
+Location location = NewMap.getUserLocation();
+```
+
+```kotlin
+val location = NewMap.userLocation
+```
+
+</Code>

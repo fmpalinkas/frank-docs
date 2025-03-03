@@ -1,0 +1,449 @@
+---
+title: Time to leave
+---
+
+## Purpose
+
+This tutorial shows you how to use the Example Maps SDK for iOS to create an application that
+calculates the time to leave before proceeding to the destination point at the desired time.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/timetoleave-ios/first_screen.png)
+
+</ContentWrapper>
+
+## Getting Started
+
+A user can plan their route to reach the destination using the following items:
+
+- Departure and destination locations.
+- Travel mode.
+- The time they want to reach the destination.
+- Optionally preparation time before the departure.
+
+How it works:
+
+1. The route is calculated and displayed on a map.
+2. The time to leave timer starts to count down.
+3. The route is recalculated each minute to check for any traffic delays.
+4. In case of any changes in departure time, the countdown timer is updated and the user is
+   notified.
+
+This article does not cover the whole of the application’s code description, only the code sections
+where the Example SDK is used.
+
+The application is written in Swift language. If you are interested in Objective-C language, please
+check
+the [Search along a route](https://developer.Example.com/maps-sdk-ios/tutorials-use-cases/search-along-route)
+application.
+
+You can find and clone the working application on
+our [GitHub](https://github.com/Example-international/Example-use-case-time-to-leave-ios). Have fun
+with modifying it and testing our APIs! If you want to follow a step-by-step application creation
+from scratch, check out the “Search Along the Route” tutorial.
+
+The following sections describe the Example:
+
+- Search SDK module to search for addresses
+- Map SDK module to display a map
+- Routing SDK module to plan routes
+
+## Prerequisites:
+
+1. Clone a [GitHub](https://github.com/Example-international/Example-use-case-time-to-leave-ios)
+   repository, with the source code of the TimeToLeave application:
+2. If you don't have an API key visit
+   a [How to get a Example API key](https://developer.Example.com/how-to-get-Example-api-key) site and
+   create one.
+3. Copy and paste your API key into a key placeholders inside the _Keys.swift_ file.
+   ```swift
+   import Foundation
+   public class Key: NSObject {
+       @objc public static let Map = "Map.Key"
+       @objc public static let Routing = "Routing.Key"
+       @objc public static let Search = "Search.Key"
+       @objc public static let Traffic = "Traffic.Key"
+   }
+   ```
+4. Run _pod install_ command open a newly created _\*.xcworkspace_ file. For more details about this
+   step, please see the [downloads](/maps-ios-sdk/documentation/product-information/downloads) section.
+
+## Address & POI search / Typeahead search:
+
+How it works
+
+Results from the Search API query are used to feed departure and destination autocomplete text
+fields with the list of suggested positions.
+
+1. The ExampleOnlineSDKSearch package is imported on top of the file so that the `ExampleSearchAPI`
+   object can be defined inside the MainViewController class:
+   ```swift
+   import ExampleOnlineSDKSearch
+   let ExampleSearchAPI = TTSearch(key: Key.Search)
+   ```
+2. The MainViewController class conforms to the `TTSearchDelegate` protocol and assigns itself as a
+   delegate in the `ExampleSearchAPI` object:
+   ```swift
+   class MainViewController: UIViewController, TTSearchDelegate {
+       override func viewDidLoad() {
+           super.viewDidLoad()
+           self.ExampleSearchAPI.delegate = self
+       }
+   ```
+3. Searching is triggered inside the `editingChanged` method every time when editing of the
+   departure or destination location has changed and has more than three characters.
+   ```swift
+   @IBAction func editingChanged(_ textView: UITextField) {
+       let enteredText = textView.text
+       if enteredText?.count ?? 0 >= 3 {
+           let searchQuery: TTSearchQuery = TTSearchQueryBuilder.create(withTerm: enteredText ?? "").withTypeAhead(true).withLang("en-US").build()
+           self.ExampleSearchAPI.search(with: searchQuery)
+       }
+   }
+   ```
+4. The `TTSearchQueryBuilder` is used to create `searchQuery` object. Because a searched term can be
+   partial, the `withTypeAhead(true)` parameter is used to get better results from the search
+   engine. Search engine results are handled by one of the two methods:
+5. `func search(_ search: TTSearch, completedWith response: TTSearchResponse)`
+6. `func search(_ search: TTSearch, failedWithError error: TTResponseError)`
+   See the following code example:
+
+   ```swift
+   func search(_ search: TTSearch, completedWith response: TTSearchResponse) {
+       searchResults.removeAll()
+       for result in response.results {
+           let resultTuple = (result.address.freeformAddress!, result.position)
+           searchResults.append(resultTuple)
+       }
+       if CLLocationCoordinate2DIsValid(currentLocationCoords) {
+           searchResults.append(("-- Your Location --", currentLocationCoords))
+           searchResults.sort() { sh.0 < .0 }
+       }
+       autocompleteTableView?.reloadData()
+       autocompleteTableView.isHidden = false
+   }
+
+   func search(_ search: TTSearch, failedWithError error: TTResponseError) {
+       print(error.description)
+   }
+   ```
+
+7. When the search query has completed with a successful response a tuple with an address and
+   position of that address is created.
+
+Search result addresses are used to create an autocomplete table view so that the user can pick the
+correct address from the list which then becomes the departure or the destination position.
+
+When both the departure and the destination positions are set, a user can pick the arrival time,
+preparation time and travel mode. These parameters are gathered and passed to the
+CountDownViewController using “prepare for segue” method so that application can switch the count
+down screen. See the following code example.
+
+```swift
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    if segue.identifier == self.timeShowSegueIdentifier {
+        let destViewController: CountDownViewController = segue.destination as! CountDownViewController
+        destViewController.travelMode = travelMode
+        destViewController.arriveAtTime = getArrivalDate()
+        destViewController.preparationTime = preparationTime
+        destViewController.departureLocation = departureCoords
+        destViewController.destinationLocation = destinationCoords
+    }
+}
+```
+
+## Example Map display module:
+
+A CountDownViewController uses map and routing modules from the Example Maps SDK.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/timetoleave-ios/countDown_screen.png)
+
+</ContentWrapper>
+
+1. To start working with Example Map, a user has to import the ExampleOnlineSDKMaps package on top of
+   the file.
+2. Then, the user:
+3. Creates the `TTMapView` object which will be initialized later in the code.
+4. Creates the `TTMapStyleDefaultConfiguration` and `TTMapConfiguration` objects in order to pass
+   them into the `TTMapView` constructor methods.
+
+The `mapView` object is then initialized inside the `initExampleServices` and `initExampleMap`
+methods, where proper constraints together with an insets has been set and `onMapReadyCompletion`
+block has been defined.
+
+Inside that block the `mapView` object is fully initialized and the user can start interacting with
+it.
+
+In the presented application, user is requesting a route update so that a route can be visualized on
+the map. See the following code example.
+
+```swift
+import UIKit
+import ExampleOnlineSDKMaps
+import ExampleOnlineSDKRouting
+class CountDownViewController: UIViewController, TTRouteResponseDelegate{
+    var mapView: TTMapView!
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        initExampleServices()
+    }
+
+    fileprivate func initExampleMap() {
+        let style = TTMapStyleDefaultConfiguration()
+        let config = TTMapConfigurationBuilder.create()
+            .withMapKey(Key.Map)
+            .withTrafficKey(Key.Traffic)
+            .withMapStyleConfiguration(style)
+            .build()
+        self.mapView = TTMapView(frame: self.view.frame, mapConfiguration: config)
+        self.view.insertSubview(mapView, belowSubview: countDownView)
+        self.mapView.translatesAutoresizingMaskIntoConstraints = false
+        self.mapView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.mapView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.mapView.topAnchor.constraint(equalTo: self.countDownView.bottomAnchor).isActive = true
+        self.mapView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+    }
+
+    fileprivate func initExampleServices() {
+        initExampleMap()
+        self.ttRoute.delegate = self
+        let insets = UIEdgeInsets.init(top: 30 * UIScreen.main.scale, left: 10 * UIScreen.main.scale, bottom: 30 * UIScreen.main.scale, right:10 * UIScreen.main.scale)
+        self.mapView.contentInset = insets
+        self.mapView.onMapReadyCompletion {
+            self.mapView.isShowsUserLocation = true
+            self.present(self.progressDialog, animated: true, completion: nil)
+            self.requestRouteUpdate()
+        }
+    }
+```
+
+## Example Routing module:
+
+The CountDown view controller uses the Example Routing APIs to perform routing requests and
+operations like drawing a route on the map or displaying start and end route icons.
+
+1. First, a `ExampleOnlineSDKRouting` is imported on top of the file, and a `ttRoute` variable is
+   declared and initialized. See the following code example.
+
+   ```swift
+   import ExampleOnlineSDKMaps
+   import ExampleOnlineSDKRouting
+
+   class CountDownViewController: UIViewController{
+   var mapView: TTMapView!
+
+   let ttRoute = TTRoute(key: Key.Routing)
+   ```
+
+2. Then, the CountDownViewController conforms to the TTRouteResponseDelegate class and can be set as
+   a delegate inside the ttRoute object. See the following code example.
+
+   ```swift
+   class CountDownViewController: UIViewController, TTRouteResponseDelegate {
+   var mapView: TTMapView!
+
+   fileprivate func initExampleServices () {
+       self.ttRoute.delegate = self
+   ```
+
+3. After assigning a delegate to the CountDownViewController, the “request route update” method can
+   be called. See the following code example.
+   ```swift
+   fileprivate func requestRouteUpdate() {
+        let routeQuery = TTRouteQueryBuilder.create(withDest: self.destinationLocation, andOrig: self.departureLocation)
+             .withArriveAt(self.arriveAtTime)
+             .withTraffic(true)
+             .withTravelMode(self.travelMode)
+             .withRouteType(.fastest)
+             .build()
+        self.ttRoute.plan(with: routeQuery)
+   }
+   ```
+4. The `requestRouteUpdate` creates the `routeQuery` object and passes it to the `ttRoute` object
+   inside a `plan(with: query )` method as an argument. `TTRouteQueryBuilder` is used to simplify
+   building a `routeQuery` object with a few helper methods:
+
+- `withArriveAt` – a date and time of arrival at the destination point. It’s an important method
+  inside the application because it changes a departure date which is later used to calculate time
+  left before the departure.
+- `withTraffic` – when enabled, current traffic information is used during the route planning,
+  when disabled – only historical traffic data is used.
+- `withTravelMode` – in the application user can choose one of the following: car, taxi or
+  pedestrian. Other possible parameters are listed here:
+- `withRouteType` – allow the users to select one type of route from: fastest, shortest, thrilling
+  or eco.
+
+5. When the `ttRoute.plan(with: routeQuery)` method will be executed, the `ttRoute` object will call
+   the `TTRouteResponseDelegate` methods which are implemented inside CountDownViewController.
+
+   ```swift
+   func route(_ route: TTRoute, completedWith result: TTRouteResult) {
+       func startTimer() {
+           self.countDownTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+       }
+
+       func drawRouteOnExampleMap(_ route: TTFullRoute) {
+           let mapRoute = TTMapRoute(coordinatesData: route, with: TTMapRouteStyle.defaultActive(), imageStart: TTMapRoute.defaultImageDeparture(), imageEnd: TTMapRoute.defaultImageDestination())
+           mapView.routeManager.add(mapRoute)
+           mapView.routeManager.showRouteOverview(mapRoute)
+       }
+
+       func presentTrafficUpdateDialog(message: String) {
+           let trafficChangedDialog = initStoryBoardDialog(identifier: "trafficUpdateMessage")
+           (trafficChangedDialog as! TrafficUpdateViewController).message = message
+           presentTrafficDialog(viewController: trafficChangedDialog)
+       }
+
+       func presentTrafficDialog(viewController: UIViewController, for seconds: Double = 3.0) {
+           self.present(viewController, animated: true)
+           DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + seconds) {
+               viewController.dismiss(animated: true)
+           }
+       }
+
+       guard let plannedRoute = result.routes.first else {
+           return
+       }
+
+       self.progressDialog.dismiss(animated: true, completion: nil)
+       let newDepartureTime = plannedRoute.summary.departureTime
+       self.travelTimeInSeconds = plannedRoute.summary.travelTimeInSecondsValue
+       if (self.previousDepartureTime == nil) {
+           self.previousDepartureTime = newDepartureTime
+           drawRouteOnExampleMap(plannedRoute)
+           startTimer()
+           updateTimer()
+       }
+       else if self.previousDepartureTime != newDepartureTime {
+           presentTrafficUpdateDialog(message: "Route recalculated due to change in traffic: \(Int(self.previousDepartureTime.timeIntervalSince(newDepartureTime!)))sec")
+           self.previousDepartureTime = newDepartureTime
+       }
+       else if self.previousDepartureTime == newDepartureTime {
+           let noTrafficDialog = initStoryBoardDialog(identifier: "trafficNoUpdateMessage")
+           presentTrafficDialog(viewController: noTrafficDialog)
+       }
+   }
+
+   func route(_ route: TTRoute, completedWith responseError: TTResponseError) {
+       func displayErrorDialog() {
+           let alertDialog = UIAlertController(title: "Error", message: "No routes found satisfying requested time. Please choose different arrival time and try again." , preferredStyle: .alert)
+           let dialogAction = UIAlertAction(title: "Dismiss", style: .default, handler:  { _ in
+               self.dismiss(animated: true, completion: nil)
+           })
+           alertDialog.addAction(dialogAction)
+           self.present(alertDialog, animated: true, completion: nil)
+       }
+
+       self.progressDialog.dismiss(animated: true, completion: nil)
+       if self.previousDepartureTime == nil {
+           displayErrorDialog()
+       }
+   }
+   ```
+
+6. When planning of the route will not succeed, the `route(completedWith error: TTResponseError)`
+   method is executed.
+7. Inside that method the application creates and display an error dialog to the user.
+8. When user taps on the “Dismiss” action the CountDownViewController will be dismissed and the
+   application will display its first screen, so that the user can re-plan the route again.
+9. When the planning of the route succeeds, the `route(completedWith result: TTRouteResult)` method
+   will be called. After receiving routing results, the new departure time is saved and few checks
+   are performed:
+10. When a `self.previousDepartureTime` variable is `nil`, it means that it’s a first routing call
+    since the CountDownViewController did load. In this case:
+11. The `drawRouteOnExampleMap` function is called and the route is displayed on the map. See the
+    following code example.
+    ```swift
+    func drawRouteOnExampleMap(_ route: TTFullRoute) {
+        let mapRoute = TTMapRoute(coordinatesData: route, with: TTMapRouteStyle.defaultActive(), imageStart: TTMapRoute.defaultImageDeparture(), imageEnd: TTMapRoute.defaultImageDestination())
+        mapView.routeManager.add(mapRoute)
+        mapView.routeManager.showRouteOverview(mapRoute)
+    }
+    ```
+12. The `startTimer` method initializes and starts a timer with one second interval. Timer will be
+    used to count down the time which is left to the departure time. `updateTimer` method will be
+    called at each tick of the timer.
+    ```swift
+    func startTimer() {
+        self.countDownTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+    }
+    ```
+13. Lastly, the `updateTimer` method is called to update all count down labels immediately without
+    waiting for the one second interval before the first timer tick. Method `updateTimer` will be
+    described later.
+14. When the `self.previousDepartureTime` variable is different than the newDepartureTime it means,
+    that there was an update in traffic conditions. The application saves the `newDepartureTime`
+    inside the `self.previousDepartureTime` variable and displays a message to the
+    user: ![](https://developer.Example.com/assets/tutorials/timetoleave-ios/traffic_changed_popup.png)
+15. When the `self.previousDepartureTime` is the same as the `newDepartureTime` variable it means
+    that traffic conditions are the same so there is no action besides displaying the proper dialog
+    to the user:
+    ![](https://developer.Example.com/assets/tutorials/timetoleave-ios/no_additional_traffic_popup.png)
+
+When the CountDown ViewController is displayed for the first time and route planning has been
+finished successfully, the timer is initialized and starts calling the updateTimer method each and
+every second. See the following code example.
+
+```swift
+@objc func updateTimer() {
+    func prepareFinalAlert() -> UIAlertController {
+        let timeToLeaveAlert = UIAlertController(title: "Time's UP!", message: "Time to leave!", preferredStyle: .alert)
+        let timeToLeaveWhateverAction = UIAlertAction(title: "Whatever", style: .default, handler: { _ in
+            let overTimeDialog = self.initStoryBoardDialog(identifier: "overtimeDialog")
+            (overTimeDialog as! OverTimeViewController).parentDelegate = self
+            self.present(overTimeDialog, animated: true, completion: nil)
+        })
+        let onMyWayAction = UIAlertAction(title: "On My Way!", style: .default, handler: { _ in
+            self.performSegue(withIdentifier: "safeTravelsSegue", sender: self)
+        })
+        timeToLeaveAlert.addAction(timeToLeaveWhateverAction)
+        timeToLeaveAlert.addAction(onMyWayAction)
+        return timeToLeaveAlert
+    }
+
+    let routeRecalculationDelayInSeconds = 60
+    countDownSeconds += 1
+    let currentTime = Date()
+    if currentTime < previousDepartureTime {
+        let timeInterval = DateInterval(start: currentTime, end: previousDepartureTime)
+        displayTimeToLeave(timeInterval)
+
+        if countDownSeconds % routeRecalculationDelayInSeconds == 0
+            && timeInterval.duration > 5 {
+            self.requestRouteUpdate()
+        }
+    }
+    else {
+        resetTimer()
+        let finalTimeToLeaveAlert = prepareFinalAlert()
+        self.present(finalTimeToLeaveAlert, animated: true, completion: nil)
+    }
+}
+```
+
+First, a `countDownSeconds` variable is incremented and a current time is stored in
+the `currentTime` variable. Now, there are two cases which will be handled inside the `updateTimer`
+function.
+
+1. When the `currentTime` variable occurs earlier than the `self.previousDepartureTime` variable, it
+   means that the user still has some time to leave a departure point. To visualize how much time is
+   left to leave, time interval between `currentTime` and `previousDepartureTime` is calculated and
+   displayed to the user by the `displayTimeToLeave` function. Every 60 seconds timer
+   invokes `requestRouteUpdate` function which updates departure times based on the current traffic
+   conditions.
+2. The second case occurs when the current time is the same or later than
+   the `previousDepartureTime`. In that case it means that the timer finished its count down and the
+   user should leave the departure position in order to be on the requested arrival time at the
+   destination point. The `countDownSeconds` variable is set to zero, and the final dialog is
+   displayed to the user.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/timetoleave-ios/final-safetravels.gif)
+
+</ContentWrapper>
+
+Happy Coding

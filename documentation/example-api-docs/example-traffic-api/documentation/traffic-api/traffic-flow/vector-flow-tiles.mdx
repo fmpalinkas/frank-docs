@@ -1,0 +1,805 @@
+---
+title: Vector Flow Tiles
+titleTags:
+  - label: "Service version: 10"
+    color: grey5
+  - label: "Last edit: 2023.03.22"
+    color: grey5
+---
+
+<Blockquote type="announcement" hasIcon>
+   **Important note:** 
+  <br />
+  This document is restricted to private viewing.
+</Blockquote>
+
+## Purpose
+
+The Traffic Vector Flow Tiles API endpoint provides data on zoom levels ranging from  `0`  to  `22`.
+
+- For zoom level `0`, the world is displayed on a _single tile_.
+- At zoom level `22`, the world is divided into _2<sup>44</sup> tiles_. See the  [Zoom Levels and Tile Grid](/map-display-api/documentation/zoom-levels-and-tile-grid).
+
+The service delivers traffic flow data packaged in a vector representation of squared sections called **vector tiles**.
+
+- Each tile includes a pre-defined collection of road shapes with traffic flow data.
+- The format of the tile is formally described using the  [protobuf schema](/traffic-api-v10/documentation/vector-tile-structure/vector-tile-structure#schema-data).
+
+It can show both the _current speed of traffic_ on different road segments, and the _difference between current speed and the free-flow speed_ on the road segment.
+
+### Tiles resolution
+
+Road geometry is stored as coordinates in the range of `0-4095`. Coordinates `(0,0)` define the **top-left corner of the tile**.
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/traffic-api-v10/api-explorer/)  page and follow the directions.
+
+## Vector format
+
+The Vector format is a binary format created by using Google Protocol Buffers to serialize the data according to this defined  [vector schema](/traffic-api-v10/documentation/vector-tile-structure/vector-tile-structure#schema-data).
+
+- The data is mapped to a protobuf layer called "Traffic flow".
+- Besides the protobuf layers, the _protobuf tags_ are also used to further describe the traffic.
+- The protobuf tags are split into two categories: default and on-demand.
+  - The **default** tags are used unless they are filtered out by the `tags` request parameter.
+  - The **on-demand** tags are used only if they were added by the `tags` request parameter.
+
+Currently, the following **Traffic flow tags** are used.
+
+<h4 style={{ fontSize: '1em' }}>Default tags</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Tag
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `road_category`<br />
+        *string*
+      </th>
+      <td>
+        The tag value describes the road category.<br />
+        **Allowed values:**
+        <ul>
+          <li>`motorway`</li>
+          <li>`motorway_link`</li>
+          <li>`trunk`</li>
+          <li>`trunk_link`</li>
+          <li>`primary`</li>
+          <li>`primary_link`</li>
+          <li>`secondary`</li>
+          <li>`secondary_link`</li>
+          <li>`tertiary`</li>
+          <li>`tertiary_link`</li>
+          <li>`street`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `road_subcategory`<br />
+        *string*
+      </th>
+      <td>
+        The tag presence indicates if the road has a subcategory. Not all road categories have subcategories.<br />
+        **Allowed values:**
+        <ul>
+          <li>
+            For the `street` road category:
+              <ul>
+                <li>`unclassified`</li>
+                <li>`residential`</li>
+                <li>`living_street`</li>
+              </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+       `relative_speed`<br />
+       *double*
+      </th>
+      <td>
+        The tag value indicates the speed relative to free-flow traffic.<br/>
+        **Allowed values:**<br/>
+        **Fractional value:** `0.00` - `1.00`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+       `left_hand_traffic`<br />
+       *boolean*
+      </th>
+      <td>
+        The tag presence indicates if the road has left-hand traffic.<br />
+        If the tag is not present the road has right-hand traffic.<br />
+        **Allowed values:**   `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+       `road_closure`<br />
+       *boolean*
+      </th>
+      <td>
+        The tag presence indicates if the road is closed to traffic.<br />
+        If the tag is not present the road is not closed and is passable.<br />
+        **Allowed values:**   `true`
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>On-demand tags</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Tag
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `absolute_speed`<br />
+        *double*
+      </th>
+      <td>
+        The tag value indicates the absolute speed in kmph (kilometers per hour).<br/>
+        **Allowed values:**<br/>
+        **Absolute value:**  Greater than or equal to  `0`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `part_of_two_way_road`<br />
+        *boolean*
+      </th>
+      <td>
+        The tag presence indicates if the traffic is part of a two-way road (two different geometries, each with a value for one side). If the tag is not present, the flow covers the whole one-way road.<br />
+        **Allowed value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `openlr`<br />
+        *string*
+      </th>
+      <td>
+        The OpenLR code describing the flow section.<br />
+        **Allowed value:** `text`
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Request data
+
+### HTTPS method: `GET`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Generic request URL]
+https://{baseURL}/traffic/map/{versionNumber}/tile/flow/{zoom}/{x}/{y}.{format}?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>
+
+```shell [type=get] [title=Example]
+https://api.Example.com/traffic/map/10/tile/flow/5/4/8.pbf?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=curl command]
+curl 'https://api.Example.com/traffic/map/10/tile/flow/5/4/8.pbf?key={Your_API_Key}
+```
+
+### Request parameters
+
+These elements are used in calls to generate all vector tile layers.
+
+- Required parameters **must be used** or the call will fail.
+- Parameters and values are case-sensitive.
+- Optional parameters may be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling Example services.
+        <br />
+         **Value:**   `api.Example.com` 
+        <br />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current value is  `10`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `zoom` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The zoom level of a tile to be rendered.
+        <br />
+         **Value:**   `0`.. `22` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `x` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The x coordinate of a tile on the zoom grid.
+        <br />
+         **Value:**  0..2 <sup>zoom</sup> -1
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `y` 
+        <br />
+         *integer* 
+      </th>
+      <td>
+        The y coordinate of a tile on the zoom grid.
+        <br />
+         **Value:**  0..2 <sup>zoom</sup> -1
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `format` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The format of the response.
+        <br />
+         **Value:**  pbf (
+         [Protocolbuffer Binary Format](https://wiki.openstreetmap.org/wiki/PBF_Format) 
+        )
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        An API Key valid for the requested service.
+        <br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `roadCategoryFilter`<br />
+        *string*
+      </th>
+      <td>
+        This filter allows the choice of types of road categories to be included in the response.
+        The filter narrows down the road categories available at a particular zoom level.
+        Multiple values are supported and should be separated by a comma.<br />
+        **Default value:** all road categories<br />
+        **Allowed values:**
+        <ul>
+          <li>`motorway`</li>
+          <li>`motorway_link`</li>
+          <li>`trunk`</li>
+          <li>`trunk_link`</li>
+          <li>`primary`</li>
+          <li>`primary_link`</li>
+          <li>`secondary`</li>
+          <li>`secondary_link`</li>
+          <li>`tertiary`</li>
+          <li>`tertiary_link`</li>
+          <li>`street`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `tags`<br />
+        *array*
+      </th>
+      <td>
+        The list of the values representing the available tags in the tile.<br />
+        **Default value:** `road_category,road_subcategory,left_hand_traffic,road_closure,relative_speed`<br />
+        **Allowed values:**
+        <ul>
+          <li>`road_category`</li>
+          <li>`road_subcategory`</li>
+          <li>`left_hand_traffic`</li>
+          <li>`road_closure`</li>
+          <li>`relative_speed`</li>
+          <li>`absolute_speed`</li>
+          <li>`part_of_two_way_road`</li>
+          <li>`openlr`</li>
+        </ul>
+        By default, only the default tags are attached to the tile geometry. See [Vector format](#vector-format) for details.
+        <ul>
+          <li>Each value in the list must be separated by a comma.</li>
+          <li>The parameter behaves as a filter, narrowing down the list of tags enclosed in each tile.</li>
+          <li>The fewer tags chosen, the smaller the tile size because of better geometry merging.</li>
+        </ul>
+        **Value:** Comma separated list.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+### Request headers
+
+**Note:** There are no required headers in this endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Optional&nbsp;headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) 
+      </th>
+      <td>
+        Contains the content encoding (usually a compression algorithm), that
+        the client is able to understand.
+        <br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [If-None-Match](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match) 
+      </th>
+      <td>
+        Contains an identifier for a specific version of a resource. The server
+        will send back the requested resource with a 200 HTTP status code, only
+        if it doesn't have an ETag matching the given one.
+        <br />
+         **Value:**   `string`
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-request" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        Specifies an identifier for the request.
+        <ul>
+          <li>It can be used to trace a call.</li>
+          <li>
+            The value must match the regular expression
+             `'^[a-zA-Z0-9-]{1,100}$'`.
+          </li>
+          <li>
+            An example of the format that matches this regular expression is a
+            UUID (e.g.,  `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For
+            details check
+             [RFC 4122](https://tools.ietf.org/html/rfc4122).
+          </li>
+          <li>
+            If specified, it is replicated in the
+             [Tracking-ID](#trackingid-response)  response header.
+          </li>
+          <li>
+            It is only meant to be used for support and does not involve
+            tracking of you or your users in any form.
+          </li>
+        </ul>
+        <br />
+         **Value:**   `string`
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+### Successful response
+
+The Traffic Vector Flow Tiles API endpoint, for a single request, returns a _binary_ response body which must be deserialized by client code generated by the Google Protocol Buffers compiler.
+
+The following examples use a simple textual representation of the serialized binary vector tile data to illustrate the response content.
+
+```shell [type=get] [title=Request example]
+https://api.Example.com/map/10/tile/flow/17/64989/42178.pbf?key={Your_API_Key}
+```
+
+```cpp [title=Response example]
+layer: 0
+    name: Traffic flow
+    version: 2
+    extent: 4096
+    feature: 0
+      id: (none)
+      geomtype: linestring
+      geometry:
+        LINESTRING[count=3](3002 -409,2964 1292,2842 2382)
+        LINESTRING[count=3](2842 2382,2964 1292,3002 -409)
+      properties:
+        road_category="primary" [string]
+        realtive_speed=0 [double]
+        left_hand_traffic=1 [bool]
+    feature: 1
+      id: (none)
+      geomtype: linestring
+      geometry:
+        LINESTRING[count=8](-409 656,-108 810,1260 1620,1832 1914,2842 2382,3792 2644,4400 2770,4505 2783)
+      properties:
+        road_category="primary" [string]
+        relative_speed=0.7 [double]
+        left_hand_traffic=1 [bool]
+    feature: 2
+      id: (none)
+      geomtype: linestring
+      geometry:
+        LINESTRING[count=10](4505 2766,4418 2752,3882 2660,3406 2552,2920 2430,2700 2308,2276 2114,1952 1958,940 1430,-409 648)
+      properties:
+        road_category="secondary" [string]
+        relative_speed=0.77 [double]
+        left_hand_traffic=1 [bool]
+    feature: 3
+      id: (none)
+      geomtype: linestring
+      geometry:
+        LINESTRING[count=7](2842 2382,2806 2752,2826 2932,3062 3494,3528 3882,4122 4366,4222 4505)
+        LINESTRING[count=7](4222 4505,4122 4366,3528 3882,3062 3494,2826 2932,2806 2752,2842 2382)
+      properties:
+        road_category="primary" [string]
+        relative_speed=1 [double]
+        left_hand_traffic=1 [bool]
+```
+
+### Error response
+
+The Traffic Vector Flow Tiles API endpoint for an invalid single request returns a response body in JSON format.
+
+<h4 style={{ fontSize: '1em' }}>Error response field structure</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `detailedError` 
+        <br />
+         *object* 
+      </th>
+      <td>Main object of the error response.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code` 
+        <br />
+         *string* 
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `message` 
+        <br />
+         *string* 
+      </th>
+      <td>A human-readable description of the error code.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json [title=Error response example - JSON]
+{
+  "detailedError": {
+    "code": "INVALID_REQUEST",
+    "message": "Invalid zoom value. Allowed values are <0,22>."
+  }
+}
+```
+
+### Response codes
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Meaning &amp; possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `200` 
+      </th>
+      <td>
+         **OK** 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `400` 
+      </th>
+      <td>
+         **Bad request** :
+        <ul>
+          <li>
+            The combination of layer, type, and query parameters is not
+            supported.
+          </li>
+          <li>
+             **zoom  *n*  is out of range [0,22]:** 
+            The requested zoom level is out of the possible range.
+          </li>
+          <li>
+             **x  *n*  is out of range [0,2 zoom -1]:** 
+            The requested x coordinate is out of the possible range.
+          </li>
+          <li>
+             **y  *n*  is out of range [0,2 zoom -1]:** 
+            The requested y coordinate is out of the possible range.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `403` 
+      </th>
+      <td>
+         **Forbidden** : The supplied API Key is not valid for this request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `405` 
+      </th>
+      <td>
+         **Method Not Allowed** : The provided HTTP request method is known by
+        the server, but is not supported by the target resource.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `429` 
+      </th>
+      <td>
+         **Too Many Requests** : Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `500` 
+      </th>
+      <td>
+         **Internal Server Error** : There is a problem with the Example Traffic
+        Vector Flow Tiles API endpoint.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `503` 
+      </th>
+      <td>
+         **Service currently unavailable**.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `596` 
+      </th>
+      <td>
+         **Service Not Found** : Unknown version of the service.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Response headers
+
+The following table lists HTTP response headers of particular interest to clients of the Traffic Vector Flow Tiles API endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin) 
+      </th>
+      <td>
+        Indicates that cross-origin resource sharing (CORS) is allowed.
+        <br />
+         **Value:**   `*`  universal.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Allow](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Allow) 
+      </th>
+      <td>
+        Lists the set of supported HTTP methods. The header is sent in case a
+         `405`  HTTP response code is returned.
+        <br />
+         **Value:**   `GET` ,  `HEAD` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding) 
+      </th>
+      <td>
+        Indicates which encodings were applied to the response body.
+        <br />
+         **Value:**   `gzip` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Length](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length) 
+      </th>
+      <td>
+        Contains information about the size of the response body.
+        <br />
+         **Value:**   `decimal number` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) 
+      </th>
+      <td>
+        Indicates the media type of the resource returned.
+        <br />
+         **Value:**   `image/pbf` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Date](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date) 
+      </th>
+      <td>
+        Contains the date and time when the message was originated.
+        <br />
+         **Value:**   `http-date` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [ETag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) 
+      </th>
+      <td>
+        Contains an identifier for a specific version of resource.
+        <br />
+         **Value:**   `W/"2fdbd61f30456"` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Expires](https://developer.mozilla.org/en/docs/Web/HTTP/Headers/Expires) 
+      </th>
+      <td>
+        Contains the date after which the response is considered outdated.
+        <br />
+         **Value:**   `http-date` 
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        An identifier for the request.
+        <ul>
+          <li>
+            If the  [Tracking-ID](#trackingid-request)  header was
+            specified in the request, it is replicated in the response.
+          </li>
+          <li>
+            Otherwise, it is generated automatically by the service. For details
+            check
+             [RFC 4122](https://tools.ietf.org/html/rfc4122).
+          </li>
+          <li>
+            It is only meant to be used for support and does not involve
+            tracking of you or your users in any form.
+          </li>
+        </ul>
+        <br />
+         **Value:**   `string`
+      </td>
+    </tr>
+  </tbody>
+</table>  

@@ -1,0 +1,123 @@
+---
+title: Introduction
+titleTags:
+  - label: "Service version: 10"
+    color: grey5
+  - label: "Last edit: 2022.03.30"
+    color: grey5
+---
+
+<Blockquote type="announcement" hasIcon>
+   **Important note:** 
+  <br />
+  This document is restricted to private viewing.
+</Blockquote>
+
+## What is Example's Traffic API?
+
+The Traffic API is a suite of web services designed for developers to create web and mobile applications around real-time traffic. These web services can be used via RESTful APIs.
+
+The Example Traffic team offers a wide range of solutions to enable you to get the most out of your applications. Make use of the real-time traffic products or the historical traffic analytics to create applications and analysis that fits the needs of your end-users.
+
+The offering is split into:
+
+- **Traffic Incidents:** This provides an accurate view about _traffic jams_ and _incidents_ around a road network.
+- **Traffic Flow:** This provides _real time observed speeds_ and _travel times_ for all key roads in a network.
+
+The Traffic API web services are based on the real-time traffic data Example Traffic&trade.
+
+The Traffic API consists of the the following services with endpoints:
+
+<DocsArticles
+  articles={[
+    {
+      title: 'Traffic Incidents',
+      body: 'The Traffic Incidents service is a suite of web services designed for developers to create web and mobile applications around real-time traffic.',
+      button: {
+        label: 'Traffic Incidents',
+        href: '../traffic-incidents/traffic-incidents-service',
+      },
+    },
+    {
+      title: 'Traffic Flow',
+      body: 'The Traffic Flow service is a suite of web services designed for developers to create web and mobile applications around real-time traffic.',
+      button: {
+        label: 'Traffic flow',
+        href: '../traffic-flow/traffic-flow-service',
+      },
+    },
+    {
+      title: 'Vector Tile Structure',
+      body: 'Vector Tiles are served in binary format, which uses Google Protocol Buffers as the method of serializing structured data.',
+      button: {
+        label: 'Vector Tile Structure',
+        href: '../vector-tile-structure/vector-tile-structure',
+      },
+    },
+    {
+      title: 'Traffic API Release Notes',
+      body: 'Records the release date with the addition, improvement, deprecation, removal, and known issues associated with a product release.',
+      button: {
+        label: 'Traffic API Release Notes',
+        href: '../product-information/release-notes',
+      },
+    },
+    {
+      title: 'Traffic API Market Coverage',
+      body: 'Indicates where in the world the Traffic Incidents API and Traffic Flow API are covered.',
+      button: {
+        label: 'Traffic API Market Coverage',
+        href: '../product-information/market-coverage',
+      },
+    },
+  ]}
+/>
+
+## Getting started
+
+1. To get your API Key, you first need to be registered for the Example Developer Portal. If you don't have an account, no worries!  [Register](https://developer.Example.com/member/register)  /  [Sign in](https://developer.Example.com/user/login)  now before continuing.
+2. Once you are registered, go to your  [Dashboard](https://developer.Example.com/user/me/apps)  and locate the API Key that you would like to use (we've created the first one for you, it's called My first API Key).
+3. Read the documentation and start coding.
+4. Consider using the Example Maps SDK for  [Web](https://developer.Example.com/maps-sdk-web-js) , for  [iOS](https://developer.Example.com/maps-sdk-ios) , and for  [Android](https://developer.Example.com/maps-sdk-android).
+5. Check related  [Blog articles](https://developer.Example.com/blog/tag/traffic)  for further information.
+
+<GettingStarted />
+
+## Features
+
+Harness the power of  [Example Traffic&trade;](https://developer.Example.com/blog/build-different/using-traffic-data-maps-and-routes)  for your application!
+
+In both the Traffic Flow and Traffic Incident RESTful APIs, different road categories are displayed depending on the zoom level.
+
+### Example&#39;s Traffic Incident RESTful API
+
+- Is updated every minute with the very latest traffic incident and delay information.
+- Returns detailed information about _traffic jams_ and _traffic related incidents_.
+  - Details include: start-location, end-location, road-name, type of delay, length (in time) of the delay, significance, and distance.
+- The **Raster and Vector Incident Tile APIs** provide traffic incident and delay information for display on your map view.
+
+### Example&#39;s Traffic Flow RESTful API
+
+- Is updated every minute with very latest traffic speed information.
+- Returns detailed information about  *traffic speed*.
+  - Details include: current speed, freeflow speed, and quality indicator.
+- The **Raster and Vector Flow Tile APIs** provide traffic speed information for display on your map view.
+- An option is provided to use the absolute or relative speed information.
+
+## Common use cases you can implement
+
+### Display
+
+- Real-time traffic incident data on a map, or display real-time traffic segment speed data on a map.
+- Traffic delay data with delay details like location, length, and delay.
+- Segment details like free-flow speed, current speed, and confidence values.
+- Obtain current traffic speed information with information about the real-time speed per road segment and display them on a Example map.
+
+### Indicate
+
+- The _severity of the current traffic condition_ with colored tubes indicating the delay severity.
+- The _accurate location of slowdowns_ with colored tubes indicating the delay severity.
+
+### Combine
+
+The _Traffic Flow Speed information_ with other real-time traffic information for a Traffic Management Monitoring application.

@@ -1,0 +1,62 @@
+---
+title: Routing with departure/arrival time
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="Route-With-Time-Travel"
+></a>
+
+Allow your users to get a route planned for a specific arrival and departure time so they can use
+this information to adjust their commute plans.
+
+**Sample use case:** You have a busy schedule and you need to plan your day optimally. You can use
+the _arrival at_ option to learn when you need to depart to be at a specific time at a specific
+place. You can use _depart at_ to know the time of arrival to the place you have your next
+appointment at.
+
+In the following example you can see an implementation of using the arrive at and depart at
+parameters for a trip from Amsterdam to Berlin using the departAt parameters. The departAt value
+must be in the future. The departAt parameter cannot be used in conjunction with arriveAt.
+
+```java
+RouteDescriptor routeDescriptor = new RouteDescriptor.Builder()
+        .departAt(departureTime)
+        .considerTraffic(false)
+        .build()
+
+RouteCalculationDescriptor routeCalculationDescriptor = new RouteCalculationDescriptor.Builder()
+        .routeDescription(routeDescriptor)
+        .reportType(ReportType.EFFECTIVE_SETTINGS)
+        .instructionType(InstructionsType.TEXT)
+        .build();
+
+return new RouteSpecification.Builder(routeConfig.getOrigin(), routeConfig.getDestination())
+        .routeCalculationDescriptor(routeCalculationDescriptor)
+        .build();
+```
+
+The date and time of arrival at the destination point must be specified as a dateTime. The arriveAt
+value must be in the future. The arriveAt parameter cannot be used in conjunction with departAt,
+minDeviationDistance, or minDeviationTime. It cannot be used in calculateReachableRange requests.
+
+```java
+RouteDescriptor routeDescriptor = new RouteDescriptor.Builder()
+        .considerTraffic(false)
+        .build();
+
+RouteCalculationDescriptor routeCalculationDescriptor = new RouteCalculationDescriptor.Builder()
+        .routeDescription(routeDescriptor)
+        .arriveAt(arrivalTime)
+        .reportType(ReportType.EFFECTIVE_SETTINGS)
+        .instructionType(InstructionsType.TEXT)
+        .build();
+
+RouteSpecification routeSpecification = new RouteSpecification.Builder(
+        routeConfig.getOrigin(),
+        routeConfig.getDestination()
+)
+        .routeCalculationDescriptor(routeCalculationDescriptor)
+        .build();
+```

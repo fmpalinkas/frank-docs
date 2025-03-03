@@ -1,0 +1,1403 @@
+---
+title: Release Notes
+---
+
+---
+
+## 2.4.714
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>23 February, 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Progress along the route
+- \[FEATURE\] Traffic along the route
+
+---
+
+## 2.4.699
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>22 December, 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[IMPROVEMENT\] Deprecated method for setting geopolitical map view setGeopoliticalView and
+  replaced with setGeopoliticalViewLocal
+
+---
+
+## 2.4.697
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>7 December, 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[IMPROVEMENT\] Stability improvements
+
+TRAFFIC - ExampleOnlineSDKTraffic
+
+- \[IMPROVEMENT\] Deprecated enum "TTTrafficDetailsCategoryIconDetour" from "
+  TTTrafficDetailsCategoryIcon"
+
+---
+
+## 2.4.694
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>18 November, 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[IMPROVEMENT\] Map manipulation anchor point aligned with the chevron position while map tracking
+  is active
+- \[FIX\] The behaviour of the "selectAnnotation" method in relation to clicking on decal markers
+  fixed
+
+DRIVING EXTENSIONS - ExampleOnlineSDKDriving
+
+- \[FIX\] API references for the ExampleOnlineSDKMapsDriving framework available again
+- \[FIX\] Map location is updated correctly when the chevron is tracked
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FEATURE\] Support for "BrandSet" parameter in the Fuzzy/Geometry/Along the Route search queries
+  and responses
+
+ROUTING - ExampleOnlineSDKRouting
+
+- \[FIX\] "sections" field in routing response changed from obligatory to optional
+
+---
+
+## 2.4.690
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>4 November, 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] A new method "setChevronScreenPosition" enabling to place the chevron at a specific
+  position on the screen. Updated example "Follow the chevron", "Map matching" and "Route matching"
+  placing the chevron at the bottom of the screen
+- \[FEATURE\] Public API for Snapshotter and a new example "Map snapshot image"
+- \[FEATURE\] Public API for POI layers and a new example "POI layers visibility"
+- \[IMPROVEMENT\] Stability improvements
+- \[FIX\] Road shields disappearing in Custom style example when style is switched to "Custom"
+- \[FIX\] Long Distance EV Routing example - short range route improvements: changing parameters for
+  charging curve and adding 2 new facility types
+
+SEARCH – ExampleOnlineSDKSearch
+
+- \[IMPROVEMENT\] Stability improvements
+- \[IMPROVEMENT\] Optimization of the way of preparing and sending batch queriers for EV Charging
+  Stations availability
+
+GENERAL
+
+- Support for Xcode 12 available
+- The content of Terms & Conditions of the license agreement has been
+  updated https://github.com/Example-international/maps-sdk-for-ios-examples/blob/master/LICENSE.pdf
+
+---
+
+## 2.4.653
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>29 September, 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+SEARCH – ExampleOnlineSDKSearch
+
+- \[FEATURE\] Public API for POI details and photos endpoint and a new example "POI details and
+  photos"
+
+---
+
+## 2.4.631
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>4 September, 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Dynamic map padding
+
+---
+
+## 2.4.619
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>19 August, 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] A new callback "onCenterStatusChanged" called when the map finishes centering
+- \[FEATURE\] New states added to onCameraChanged callback for when the map viewport is
+  moving:<br />
+  - TTMapCameraChangeStateBegin: called when the map will begin changing the camera
+    viewport.<br />
+  - TTMapCameraChangeStateChanged: called when changing the camera viewport is in progress.<br />
+  - TTMapCameraChangeStateEnd: called when the camera viewport change is finished.
+
+SEARCH – ExampleOnlineSDKSearch
+
+- \[FEATURE\] Public API for EV Charging Stations availability and a new example
+
+---
+
+## 2.4.610
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>5 August, 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+SEARCH – ExampleOnlineSDKSearch
+
+- \[FEATURE\] Public API for Search POI Details enabling to retrieve information about current
+  rating, price range, reviews and social media details
+- \[FEATURE\] Public API for filtering "Get Place by ID" providing detailed information about the
+  Place found by its identifier (entityId)
+
+---
+
+## 2.4.606
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>23 July 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\] GPS indicator spout is not scaling
+- \[FIX\] Map in not initialised on vector tile in Maps SDK Examples app
+
+ROUTING - ExampleOnlineSDKRouting
+
+- \[FEATURE\] Public API for Long Distance EV Routing and a new example
+
+---
+
+## 2.4.593
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>26 June 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Switching key initialization from info.plist to a static initialization via
+  constructor
+- \[FEATURE\] Give ability to turn on/off Chevron inaccuracy radius
+- \[IMPROVEMENT\] Adjusted examples "Map tiles" and "Traffic layers" - presenting functionality of
+  hosting resources
+- \[FEATURE\] Hosted map and traffic display resources (styles and sprites)
+
+Starting with version 2.4.593, we are switching bundled-in styles and sprite, to using Example hosted
+styles and sprites. More information about the new approach is available
+in [Map Initialization](https://developer.Example.com/maps-sdk-android/map-initialization).<br />
+Thanks to integration
+with [Merged Style](/maps-android-sdk/documentation/map-display/documentation/custom-style) method
+provided by Map Display API you can generate and use one style for map and traffic display.<br />
+The main benefits of Example hosted display resources are as following:<br />
+
+- It makes application download size​ MB smaller in comparison to using bundled-in resources.<br />
+- It allows you to get the newest look and feel of the map and traffic.Maps SDK will work with the
+  bundled-in style until June 2021 but we recommend to switch to using hosted assets sooner.
+
+UTILS - ExampleOnlineUtils
+
+- \[FIX\] API diffs did not generate
+
+DRIVING EXTENSIONS - ExampleOnlineSDKDriving
+
+- \[FIX\] GPS Indicator is not hidden when Chevron is being tracked
+
+---
+
+## 2.4.581
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>9 June 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[IMPROVEMENT\] Callback deprecation and implementation
+  - "onCameraChanged" - added, use when the map viewport moves. It is executed each time the user
+    interacts with the map (e.g., the map is panned or zoomed)
+  - "didChangCameraPosition" - deprecated, use callback onCameraChanged instead
+  - "isChangingCameraPosition" - deprecated, use callback onCameraChanged instead
+  - "willChangeCameraPosition" - deprecated, use callback onCameraChanged instead
+- \[FEATURE\] Implementing the method "centerOn(CameraFocusArea, AnimationDuration)" for centering
+  the map on a specific area
+
+Search - ExampleOnlineSDKSearch
+
+- \[FEATURE\] Public API for Search parameters - "CategorySet"
+- \[FEATURE\] Public API for Search "Opening Hours" and a new example
+
+---
+
+## 2.4.523
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>13 May 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[IMPROVEMENT\] Fixed issue that caused wrong map centering while TTCenterOnGeometry usage
+
+Search - ExampleOnlineSDKSearch
+
+- \[FEATURE\] Public API for Search extended with new parameters - opening hours, timezone, mapcode
+- \[FEATURE\] Public API for Search Autocomplete and a new example "Autocomplete"
+
+---
+
+## 2.4.519
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>28 Apr 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+Search - ExampleOnlineSDKSearch
+
+- \[FEATURE\] Public API for Search Along the Route parameters - detour: distance, offset and
+  spreading
+- \[FEATURE\] Public API for Search Autocomplete
+
+---
+
+## 2.4.513
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>15 Apr 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\] Stability improvements
+
+---
+
+## 2.4.512
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>9 Apr 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\] Improvement of the style loading path from the file for the 'TTMapStyleConfiguration (
+  styleURL) method
+
+ROUTING - ExampleOnlineSDKRouting
+
+- \[FEATURE\] Add parameters from routing for:
+  - "Common routing" query parameters: vehicleAdrTunnelRestrictionCode
+  - "Reachable Range" query parameters: distanceBudgetInMeters
+  - "Calculate Route" response fields:
+    - "Instruction": exitNumber
+    - "Section": countryCode
+
+---
+
+## 2.4.501
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>1 Apr 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] GPS indicator color can be styled
+- \[FEATURE\] New example "Map initialization" - presenting functionality of starting point and
+  bounding box set up on a map
+- \[FEATURE\] Adding padding on centering point
+- \[FIX\] Correcting the language table: add hu-HU and bg-BG to the list, correct Slovenia to sl-SLV
+
+ROUTING - ExampleOnlineSDKRouting
+
+- \[FIX\] Improving route visibility in "Consumption model" examples Objective-C Maps SDK Examples
+  app
+
+---
+
+## 2.4.474
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>24 Mar 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\] Removing problem with the language table for Bulgarian (bg-BG), Hungarian (hu-HU) and
+  Slovenian (sl-SI)
+
+---
+
+## 2.4.464
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>13 Mar 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] The possibility to move Example logo on the various corners of a map
+- \[FEATURE\] Usage of Online style for Maps SDK
+- \[FIX\] Map rebounding if swiping fast on the map on zoom level 0
+
+---
+
+## 2.4.460
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>28 Feb 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\] Removing crash occuring while Showing long routes
+
+---
+
+## 2.4.454
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>18 Feb 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] The possibility to give the "starting point" on a map (lat/lon, zoom level, bearing)
+- \[FEATURE\] Allowing to configure map bounding box before initialization
+
+---
+
+## 2.4.436
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>22 Jan 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FEATURE\] POI category tree - allow your users to easily search for the appropriate category of
+  POI
+
+---
+
+## 2.4.416
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>18 Dec 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FIX\] Search along the route example crash removal
+
+ROUTING - ExampleOnlineSDKRouting
+
+- \[FIX\] Selected itinerary not centering on the map
+
+---
+
+## 2.4.414
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>11 Dec 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+<br />
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\] Stability improvements
+
+---
+
+## 2.4.412
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>4 Dec 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+<br />
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\] Stability improvements
+
+---
+
+## 2.4.402
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>21 Nov 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\] Copyrights crashing in iPad
+- \[FEATURE\] New Traffic (20.0.2-7) and Map (20.0.2-2) styles update
+
+---
+
+## 2.4.376
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>14 Nov 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Stability improvements
+
+---
+
+## 2.4.338
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>24 Oct 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+ExampleOnlineSDKMapsDriving
+
+- \[FIX\] Animation for displaying chevron's location in examples "Follow the chevron", "Map
+  matching", "Route matching"
+
+---
+
+## 2.4.281
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>27 Sept 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[IMPROVEMENT\] support for 2.5D buildings in vector tiles added
+- \[FEATURE\] New example: Map with building heights - to show building heights in 2.5D
+- \[FEATURE\] Stability improvements
+- \[FEATURE\] Support "properties" field in the GeoJSON object
+- \[FIX\] Mutliple maps were not working correctly
+- \[FIX\] Issue with adding a vector source layer
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FIX\] Entry points were not shown
+
+---
+
+## 2.4.257
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>10 Sept 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Interactive layers - retrieve feature collection from style layers
+- \[FEATURE\] New example "Get style Features" - to retrieve specified visible style features in a
+  viewport
+- \[FEATURE\] New example "Image Clustering" - to show how to set image clustering using the style
+- \[FEATURE\] Method to load a new map style from a string added
+- \[FEATURE\] Stability improvements
+
+GEOFENCING - ExampleOnlineSDKGeofencing
+
+- \[IMPROVEMENT\] API reference for UTILS on developer portal page - Appledocs documentation for the
+  UTILS framework
+
+---
+
+## 2.4.223
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>7 Aug 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+UTILS - ExampleOnlineUtils
+
+- \[FEATURE\] TTHTTPHeaders created to support tracking in SEARCH, ROUTING, TRAFFIC, GEOFENCING.
+
+The trackingID parameter is a specific request ID to be used for debugging the flow of the request.
+
+SEARCH - ExampleOnlineSDKSearch, TRAFFIC - ExampleOnlineSDKTraffic, ROUTING - ExampleOnlineSDKRouting,
+GEOFENCING - ExampleOnlineSDKGeofencing
+
+- \[FEATURE\] withHTTPHeaders parameter added to query builders
+
+---
+
+## 2.4.205
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>1 Jul 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Route style API extended with dashArray builder method in TTMapRouteStyleBuilder.
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FEATURE\] "connectorSet" parameter added to TTSearch and TTAlongRouteSearch
+- \[FEATURE\] "brandSet" parameter and "brands" field added to TTSearch and TTAlongRouteSearch
+
+---
+
+## 2.4.197
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>31 May 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] New examples: Dynamic map sources, Dynamic Layer Ordering
+- \[FEATURE\] Change the image of an existing annotation
+- \[FEATURE\] New style showing z-levels on crossings
+- \[FIX\] Crash in GPSIndicator destructor
+- \[FIX\] Crashes in Core related to "invokeOnMapThread" and asynchronous function calls
+
+---
+
+## 2.4.188
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>16 May 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Additional data sources supported e.g. geoJSON, Image sources (TTMapStyle,
+  TTMapSource, TTMapGeoJSONSource, TTMapImageSource, TTMapLayer)
+- \[FEATURE\] Methods to add, remove, set visibility of layers, change the z-order of layers (
+  addLayer, removeLayer, moveLayerToFront, moveLayerToFrontWithId, etc)
+- \[FEATURE\] "Switching Map Layers" example updated to use new
+  methods: [https://developer.Example.com/maps-sdk-ios/switching-map-layers](https://developer.Example.com/maps-sdk-ios/switching-map-layers)
+
+---
+
+## 2.4.173
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>17 April 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Segmented route customization added, "Route display" example updated with this feature
+- \[FEATURE\] Map logo icon available in two modes: default - suitable for e.g. regular map style,
+  inverted - suitable for e.g. dark styled map
+- \[FEATURE\] Incident ID included in traffic data
+- \[IMPROVEMENT\] Traffic viewport implementation
+
+---
+
+## 2.4.143
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>13 March 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Switching map layers in runtime, new example: "Switch map layers"
+- \[FEATURE\] Update documentation: "Map Layers", "Default style", "Custom style" sections
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FEATURE\] Support for geometries in Reverse Geocoding by new input filed "entityType" and output
+  filed "Id" that can be used in Additional Data for getting the geometries.
+
+New example "Polygons for rev geo"
+
+DRIVING EXTENSIONS - ExampleOnlineSDKMapsDriving
+
+- \[FEATURE\] New sections in documentation "Map Driving
+  Extension": [https://developer.Example.com/maps-sdk-ios/map-driving-extension](https://developer.Example.com/maps-sdk-ios-test/map-driving-extension)
+
+---
+
+## 2.4.121
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>19 February 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+GEOFENCING - ExampleOnlineSDKGeofencing
+
+- \[FEATURE\] Support for Reports service of Geofencing API
+- \[FEATURE\] Geofencing module
+  added: [https://developer.Example.com/maps-sdk-ios/geofencing](https://developer.Example.com/maps-sdk-ios/geofencing-public-preview)
+- \[FEATURE\] New example: Geofencing report
+
+---
+
+## 2.3.155
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>08 February 2019 </td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Vector traffic incident details support added
+- \[FEATURE\] Traffic popups support for traffic incidents and traffic flow added in "Vector map and
+  traffic" example
+- \[FEATURE\] Customisation of location icons
+- \[FIX\] Exception "Cannot start transaction within transaction" fixed<br />
+
+DRIVING EXTENSIONS - ExampleOnlineSDKMapsDriving
+
+- \[FEATURE\] Map and route matcher extensions
+  added: [https://developer.Example.com/maps-sdk-ios-test/driving-extensions](https://developer.Example.com/maps-sdk-ios-test/driving-extensions)
+- \[FEATURE\] New examples: "Route matching" and "Map matching"
+
+---
+
+## 2.3.121
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>16 January 2019</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\] Memory leak when leaving map display
+
+<br />
+MAP - ExampleOnlineSDKSearch
+
+- \[FEATURE\] New service field "Geopolitical view" supported in Search and Reverse geocoder with
+  TTGeoView enumerations
+
+<br />
+ROUTING - ExampleOnlineSDKRouting
+
+- \[FEATURE\] New example: "Avoid vignettes and areas"
+- \[FIX\] Parsing of "Time zone" in the response
+
+<br />
+Language support - TTLanguage enum deprecated, strings should be used instead
+
+---
+
+## 2.3.98
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>11 December 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+Maps SDK for iOS ready for Xcode 10.0 MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Multiple maps
+- \[FEATURE\] Callback for visible map region change
+- \[FEATURE\] Macro for source code 'TT_DEPRECATED_SINCE'
+
+---
+
+## 2.3.79
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>27 November 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Option to disable tilt gesture added
+- \[FEATURE\] Option to modify the default behavior of the current location icon added (e.g.
+  possibility to hide radius)
+- \[FEATURE\] New example: Follow the chevron
+- \[FIX\] Fixes on iOS 10 and later didReceiveMemoryWarning
+- \[FIX\] Active route is not displayed properly
+- \[FIX\] Map tap not called when markers are clicked
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FEATURE\] Update ADP example with new land use
+
+---
+
+## 2.3.54
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>19 October 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- New Example logo
+- \[FIX\] Bug fixes
+
+---
+
+## 2.3.12
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>01 October 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+Maps SDK Examples app available also in SWIFT!
+
+- Downloads for Maps SDK Examples app in Objective-C and Swift available
+  here: https://developer.Example.com/maps-sdk-ios/downloads
+- All code snippets available in Objective-C and Swift
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\]Fixed bug that sent multiple long press events on a single press
+- \[IMPROVEMENT\] Method names updated:
+  - leftLayoutConstarintCompassButton to leftLayoutConstraintCompassButton
+  - leftLayoutConstarintCenterButton to leftLayoutConstraintCenterButton
+  - rightLayoutConstarintTTZoomView to rightLayoutConstraintTTZoomView
+  - rightLayoutConstarintTTPanControlView to rightLayout ConstraintTTPanControlView
+
+ROUTING - ExampleOnlineSDKRouting
+
+- \[FEATURE\] Batch routing service integrated - New example: “Batch routing”
+
+---
+
+## 2.3.6
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>29 August 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] New example: "Advanced markers" added showing draggable markers and GiF images as
+  markers
+
+---
+
+## 2.3.5
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>22 August 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Example logo displayed on top of the map
+- \[FEATURE\] Draggable markers feature added, "Markers" examples updated
+- \[FIX\] Cached map tiles are not removed at the sdk launch
+
+---
+
+## 2.3.3
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>23 July 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Map style changed
+
+TRAFFIC - ExampleOnlineSDKTraffic
+
+- \[FEATURE\] Online Traffic Flow Segment Data and Incidents Details integrated as a new module.
+- \[FEATURE\] New example: Traffic incident list added.
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FEATURE\] Batch search service integrated - New example: Batch search
+
+---
+
+## 2.2.39
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>26 June 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAPS Static Image - ExampleOnlineSDKMapsStaticImage
+
+- \[FEATURE\] Static Map Image integrated as a new module. It allows to render a user-defined,
+  rectangular image, containing a map section.
+
+---
+
+## 2.2.35
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>13 June 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAPS UI Extensions - ExampleOnlineSDKMapsUIExtensions
+
+- \[FEATURE\] Limiting panning and zooming within a specified bounding box
+- \[IMPROVEMENT\] Support for Swift
+
+---
+
+## 2.2.34
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>04 June 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FIX\] Memory leak fixed in TTMapView.
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FEATURE\] Additional Data provider service integrated - New example: “Additional Data”.
+
+<br />
+ROUTING - ExampleOnlineSDKRouting
+
+- \[FEATURE\] New service fields supported e.g. minDeviationDistance, minDeviationTime - New
+  example: "Supporting points".
+- \[FEATURE\] Consumption model parameters available - New example: "Consumption model".
+- \[FEATURE\] Reachable range service integrated - New example: "Reachable range".
+
+<br />
+MAPS UI Extensions - ExampleOnlineSDKMapsUIExtensions
+
+- \[FEATURE\] Customisation of zoom and pan controls. Example “Compass and current location”
+  replaced with "Map UI extensions"
+
+---
+
+## 2.1.33
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>09 May 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Markers clustering features available in public API (enable/disable clustering,
+  defining the radius and max zoom for clusters) - New example: "Markers clustering"
+- \[FEATURE\] 'onMapReady' delegate method added to inform when all map is ready to use.
+
+---
+
+## 2.1.31
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>24 April 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] All styles supported for raster and vector traffic flow tiles,
+  see: https://developer.Example.com/maps-sdk-ios/traffic-layers
+- \[FEATURE\] "Traffic layer" example replaced with "Vector map and traffic" and "Raster map and
+  traffic" examples in Maps SDK Examples app.
+
+---
+
+## 2.1.29
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>18 April 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Vector traffic flow tiles support - "Traffic layer" example updated.
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FEATURE\] New fields (e.g. entry points, extendedPostalCodesFor) of Online Fuzzy search
+  supported in Maps SDK, “Entry points” example added to Maps SDK Examples app.
+
+MAPS UI Extensions - ExampleOnlineSDKMapsUIExtensions
+
+- \[FEATURE\] Default zoom and pan controls added.
+
+---
+
+## 2.1.26
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>9 April 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Map customisation - support for using custom map styles, example “Custom styles” added
+  to Maps SDK Examples app.
+
+Details on: [https://developer.Example.com/maps-sdk-ios/custom-styles](https://developer.Example.com/maps-sdk-ios/custom-styles)
+
+MAPS UI Extensions - ExampleOnlineSDKMapsUIExtensions
+
+- \[FEATURE\] New framework for UI controls for the map. It currently contains the default "Current
+  location" and "Compass" controls.
+
+Details on: [https://developer.Example.com/maps-ios-sdk/download](https://developer.Example.com/maps-ios-sdk/download)
+, [https://developer.Example.com/maps-sdk-ios/compass-and-current-location-0](https://developer.Example.com/maps-sdk-ios/compass-and-current-location-0)
+
+---
+
+## 2.0.9
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>20 March 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Enabling and disabling gestures (zoom, pan/scroll, rotate)
+
+SEARCH - ExampleOnlineSDKSearch
+
+- \[FEATURE\] Search along the route service integrated with an example in Maps SDK Examples app
+- \[FEATURE\] Geometry search service with an example in Maps SDK Examples app
+
+---
+
+## 2.0.6
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>15 February 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+MAP - ExampleOnlineSDKMaps
+
+- \[FEATURE\] Support for language parameter with an example in Maps SDK Examples app
+- \[FEATURE\] Support for geopolitical view added with an example in Maps SDK Examples app
+- \[IMPROVEMENT\] Traffic flow style changed (absolute -> relative)
+
+General
+
+- \[FIX\] Issue with Bitcode for XCode 9
+
+---
+
+## 2.0.1
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>29 January 2018</td>
+    </tr>
+  </tbody>
+</table>
+
+Maps SDK for iOS is now available!
+
+Create lightweight iOS applications with Maps SDK and take advantages of Example Online Services!
+
+Maps SDK for iOS gives you:
+
+- Libraries available via Cocoapods:
+  - Map - for Online Map display features: ExampleOnlineSDKMaps
+  - Search - for Online Search features: ExampleOnlineSDKSearch
+  - Routing - for Online Routing features: ExampleOnlineSDKRouting
+- Documentation - for product and features information
+- API reference - for development details
+- Maps SDK Examples app - source code for inspiration
+
+Mix and match different libraries - Use code samples from Documentation - Get technical info from
+API reference - Try out Maps SDK Examples to see what Maps SDK for can do - Use source code of Maps
+SDK Examples app for inspiration
+
+Code with Us! Code with Example Maps SDK!

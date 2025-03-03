@@ -1,0 +1,26 @@
+---
+title: Local alternatives
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.05.07'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+## Purpose  
+
+Path alternatives trying to find distinct paths after the first waypoint do not address the user's need in many cases. Sometimes, more local paths in the vicinity are more helpful, meaning fork points are close, detour is minimal, and the major roads of the trip are secured. This is especially true if requesting alternatives during the drive.
+Furthermore, driving on an alternative path has different requirements if asking for a better proposal. Instead of re-proposing the primary route again, the corridor of the driven path should be taken into account.
+
+
+### Request parameters  
+
+Two additional values have been added for the `AlternativeType` parameter:
+
+- `LocalRoute`:
+  The provided alternatives will try to give a distinct path at the beginning of the route and only for the current route leg.
+- `CorridorRoute`:
+This type results in a better proposal while trying to keep the corridor of the driven path. This is suitable especially if the reference route is suboptimal with regard to the cost model, e.g., if it is a path alternative or comes from a planning ignoring traffic conditions.
+

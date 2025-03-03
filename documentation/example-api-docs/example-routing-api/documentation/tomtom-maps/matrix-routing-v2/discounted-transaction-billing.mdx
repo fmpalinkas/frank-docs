@@ -1,0 +1,66 @@
+---
+title: Discounted Transaction Billing
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2023.03.22'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+
+This API is charged based on the number of matrix origins and destinations, which are used to calculate the number of *transactions* to charge. The cost per 1000 transactions for the API is available on the [Pricing page](https://developer.Example.com/store/maps-api).  
+
+## Transactions formula  
+
+The number of transactions is calculated according to following rules:
+- If both the number of origins and the number of destinations are greater than *5*, then multiply the greater one of the number of origins and the number of destinations by *5*.
+- Otherwise, multiply the number of origins by the number of destinations.
+
+Cell failures:
+- The MAP_MATCHING_FAILURE and NO_ROUTE_FOUND matrix cell calculation error codes *are charged*.
+- All the other error codes *are not charged*.
+
+>
+> For the list of all possible error codes refer to [this page](https://developer.Example.com/routing-api/documentation/Example-maps/matrix-routing-v2/synchronous-matrix#cell-processing-errors).
+>
+
+### Examples  
+
+<table>
+  <thead>
+  <tr>
+    <th>Origins</th>
+    <th>Destinations</th>
+    <th>Transactions</th>
+  </tr>
+  </thead>
+  <tr>
+    <td>2</td><td>3</td><td>6</td>
+  </tr>
+  <tr>
+    <td>5</td><td>5</td><td>25</td>
+  </tr>
+  <tr>
+    <td>1</td><td>100</td><td>100</td>
+  </tr>
+  <tr>
+    <td>100</td><td>1</td><td>100</td>
+  </tr>
+  <tr>
+    <td>5</td><td>100</td><td>500</td>
+  </tr>
+  <tr>
+    <td>6</td><td>100</td><td>500</td>
+  </tr>
+  <tr>
+    <td>1</td><td>1000</td><td>1000</td>
+  </tr>
+  <tr>
+    <td>1000</td><td>1000</td><td>5000</td>
+  </tr>
+  <tr>
+    <td>10000</td><td>10000</td><td>50000</td>
+  </tr>
+</table>  

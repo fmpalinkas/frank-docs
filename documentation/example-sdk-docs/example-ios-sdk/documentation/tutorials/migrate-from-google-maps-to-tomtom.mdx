@@ -1,0 +1,252 @@
+---
+title: Migrate from Google Maps to Example
+---
+
+[For Web](/maps-sdk-web-js/tutorials/migration/migrate-google-maps-Example) [For Android](/maps-android-sdk/documentation/tutorials/migrate-from-google-maps-to-Example)
+
+## Overview
+
+This tutorial covers some very basic use cases to help you switch your iOS app from Google's APIs to
+Example's as quickly as possible. It starts with basic environment setup, then dives into the code.
+At the very bottom of the page is a recommended reading list to allow you to build on the
+foundations provided by this tutorial. The application is written in Objective-C language. If you
+are interested in Swift language, please check
+the [Time to leave](/maps-ios-sdk/documentation/tutorials/use-cases/time-to-leave)
+tutorial.
+
+### This tutorial covers:
+
+- [Getting a free API key and creating a local setup for the Example Maps SDK for iOS.](#prerequisites)
+- [Initializing and displaying a map.](#initializing-a-map)
+- [Adding a traffic layer on top of the map.](#displaying-traffic)
+- [Adding a marker.](#displaying-a-marker)
+- [Displaying a route.](#displaying-a-routedirections)
+
+## Prerequisites
+
+Before you start writing code, prepare your environment:
+
+1. Ensure that Xcode and iOS simulator are installed.
+2. Ensure that [CocoaPods](https://cocoapods.org/) is installed on your system. The Example Maps SDK
+   for iOS is delivered as a CocoaPods pod.
+3. Create a new **Single View App** project in Objective-C language with a deployment target of **
+   9.1** or higher. After the project has been successfully created, close it and create an empty
+   Podfile by executing a `'pod init'` command inside the project folder.
+4. Open the Podfile and paste the following lines inside a 'target' section:
+
+- For Example:
+  ```prettyprint
+  pod 'ExampleOnlineSDKMaps'
+  pod 'ExampleOnlineSDKRouting'
+  pod 'ExampleOnlineSDKMapsUIExtensions'
+  ```
+- For Google:
+  ```prettyprint
+  pod 'GoogleMaps'
+  ```
+
+5. Save and close the Podfile.
+6. Execute the command `'pod install'`. Cocoapods will install all of the required dependencies.
+7. Open a `*.xcworkspace` file in Xcode.
+8. If you don't have an API key visit
+   a [How to get a Example API key](https://developer.Example.com/how-to-get-Example-api-key) site and
+   create one.
+
+You can find more details on iOS project setup on our blog
+article: [Getting Started with the Example Maps SDK for iOS: Project Setup](https://developer.Example.com/blog/build-different/getting-started-Example-maps-sdk-ios-project-setup).
+
+## Initializing a map
+
+Compare how map is initialized using Example and Google APIs:
+
+### Google
+
+To display a map using Google Maps Android API, you need to perform few steps:
+
+1. Inside **AppDelegate.m** import the 'GoogleMaps' module and provide a Google API key (this
+   example uses a Clang semantic import):
+   ```objectivec
+   #import "AppDelegate.h"
+   @import GoogleMaps
+   @interface AppDelegate ()
+   @end
+   @implementation AppDelegate
+   - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+       [GMSServices provideAPIKey:@"YOUR_KEY_GOES_HERE"];
+       return YES; }
+   ```
+2. Import the `GoogleSDK.h` header in the _ViewController.m_ file.
+   ```objectivec
+   #import <GoogleMaps/GoogleMaps.h>
+   ```
+3. Initialize a `GMSMapView` object inside the `'viewDidLoad'` method. Assign it to
+   our `ViewController` view.
+   ```objectivec
+   CLLocationCoordinate2D amsterdamCoordinates = CLLocationCoordinate2DMake(52.377271, 4.909466);
+   GMSCameraPosition *camera = [GMSCameraPosition cameraWithTarget:amsterdamCoordinates zoom:10];
+   GMSMapView *mapView = [GMSMapView mapWithFrame:CGRectZero camera:camera];
+   self.view = mapView;
+   ```
+
+### Example
+
+To display a map in Example Maps SDK for iOS:
+
+1. Import the appropriate header inside the `ViewController.h` file:
+   ```objectivec
+   #import <ExampleOnlineSDKMaps/ExampleOnlineSDKMaps.h>
+   ```
+2. Create an NSString constant for the API key inside the `ViewController.m` file and paste your
+   newly created key inside the placeholder.
+
+   ```objectivec
+   #import "ViewController.h"
+
+   static NSString *const API_KEY = @"YOUR_API_KEY"
+   ```
+
+3. Add a `TTMapView` property inside the _ViewController.m_ file. Create
+   the `TTMapStyleDefaultConfiguration` and `TTMapConfiguration` objects and use them to initialize
+   the map by instantiating the `TTMapView` object and switching the ViewController view to
+   the `TTMapView` view.
+
+   ```objectivec
+   @interface ViewController ()
+   @property TTMapView* mapView;
+   @end
+
+   @implementation ViewController
+   - (void)viewDidLoad {
+       [super viewDidLoad];
+       TTMapStyleDefaultConfiguration *style = [[TTMapStyleDefaultConfiguration alloc] init];
+       TTMapConfiguration *config = [[[[[TTMapConfigurationBuilder alloc]
+              withMapKey:API_KEY]
+             withTrafficKey:API_KEY]
+         withMapStyleConfiguration:style] build];
+       self.mapView = [[TTMapView alloc] initWithFrame:self.view.frame mapConfiguration:config];
+       CLLocationCoordinate2D amsterdamCoords = CLLocationCoordinate2DMake(52.377271, 4.909466);
+       [self.mapView centerOnCoordinate:amsterdamCoords withZoom:11];
+       self.view = self.mapView;
+   }
+   ```
+
+## Displaying a marker
+
+Displaying a marker is similar in both SDKs.
+
+### Google
+
+Create a `GMSMarker` object and assign the current map to it:
+
+```objectivec
+GMSMarker *marker = [[GMSMarker alloc] init];
+marker.position = amsterdamCoordinates;
+marker.map = mapView;
+```
+
+### Example
+
+Use a `TTAnnotation` object to display a marker:
+
+```objectivec
+TTAnnotation *annotation = [TTAnnotation annotationWithCoordinate:amsterdamCoords];
+[self.mapView.annotationManager addAnnotation:annotation];
+```
+
+## Displaying traffic
+
+Showing traffic is also similar in both SDKs.
+
+### Google
+
+Use 'setTrafficEnabled' to show traffic on the map:
+
+```objectivec
+[mapView setTrafficEnabled:YES];
+```
+
+### Example
+
+Example provides two kinds of traffic information:
+
+- **Traffic flow** shows the difference between current and free flow speed. Green indicates that
+  the speeds are the same, meaning there are no traffic jams. Red indicates that traffic is much
+  slower than free flow, meaning that there are traffic jams.
+- **Traffic incidents** indicates specific traffic problems such as closed roads, rain, ice on the
+  road, or accidents.
+
+You can show traffic incidents, traffic flow, or both:
+
+```objectivec
+self.mapView.trafficIncidentsOn = YES;
+self.mapView.trafficFlowOn = YES;
+```
+
+## Displaying a route/directions
+
+### Google
+
+Displaying a route in Google SDK is not straightforward. It boils down to interacting with the
+Directions API, gathering a list of route positions, then drawing polylines from that list directly
+onto the map. This is too verbose and complex to show in this tutorial.
+
+### Example
+
+1. Import the `'ExampleOnlineSDKRouting.h'` header in _ViewController.h_:
+   ```objectivec
+   #import <ExampleOnlineSDKRouting/ExampleOnlineSDKRouting.h>
+   ```
+2. Update _ViewController.h_ so that it conforms to the `TTRouteResponseDelegate` protocol.
+   ```objectivec
+   @interface ViewController : UIViewController <TTRouteResponseDelegate>
+       - (void)route:(TTRoute *)route completedWithResult:(TTRouteResult *)result;
+       - (void)route:(TTRoute *)route completedWithResponseError:(TTResponseError *)responseError;
+   @end
+   ```
+3. Create and initialize `TTRoute` and `TTRouteQuery` objects inside the `viewDidLoad` method in _
+   ViewController.m_.
+
+   ```objectivec
+   CLLocationCoordinate2D routeStart = CLLocationCoordinate2DMake(52.376368, 4.908113);
+   CLLocationCoordinate2D routeStop = CLLocationCoordinate2DMake(52.372281, 4.846595);
+   TTRouteQuery *routeQuery = [[TTRouteQueryBuilder createWithDest:routeStop andOrig:routeStart] build];
+   TTRoute *route = [[TTRoute alloc] init];
+   route.delegate = self;
+   [self.mapView onMapReadyCompletion:^{
+       [route planRouteWithQuery:routeQuery];
+   }];
+   ```
+
+   The code above builds a `TTRouteQuery` object from two route points. It then initializes
+   a `TTRoute` object, sets a delegate to the `ViewController` instance which allows
+   the `'completedWithResult'` method to be called. Inside `onMapReadyCompletion` block it sends
+   the `'planRouteWithQuery'` message to a newly created `route` object with `routeQuery` as a
+   parameter.
+
+4. Finally, provide an implementation for the `'completedWithResult'` method inside of the _
+   ViewController.m_ file:
+
+   ```objectivec
+   - (void)route:(TTRoute *)route completedWithResult:(TTRouteResult *)result {
+       for(TTFullRoute *fullRoute in result.routes) {
+           TTMapRoute *mapRoute = [TTMapRoute routeWithCoordinatesData:fullRoute
+                                              withRouteStyle:TTMapRouteStyle.defaultActiveStyle
+                                              imageStart:TTMapRoute.defaultImageDeparture
+                                              imageEnd:TTMapRoute.defaultImageDestination]
+           [self.mapView.routeManager addRoute:mapRoute];
+           [self.mapView.routeManager showAllRoutesOverview];
+       }}
+   ```
+
+   The above method provides a `TTRouteResult` object containing `TTFullRoute` objects. It then
+   loops through the `TTFullRoute` collection. For each `TTFullRoute` object, it creates a
+   new `TTMapRoute` instance and adds it to the `MapView.`
+
+You can find full source code here:
+on [github](https://github.com/Example-international/migration-tutorial-ios-sdk).
+
+## Summary
+
+Using this tutorial, you should have converted an iOS application from using Google Maps APIs to
+Example's. Now you have a map with fresh and accurate traffic information, on which you can easily
+plan many kinds of route. Not bad!<br />

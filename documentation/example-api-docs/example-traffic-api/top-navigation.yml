@@ -1,0 +1,7 @@
+menuTopTitle: Example Maps Platform  
+menu:
+  - items:
+      - url: /new-api/documentation/product-information/introduction
+        title: Documentation  
+
+

@@ -1,0 +1,93 @@
+---
+title: Routing Reactive Extensions
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="rx-extensions"
+></a>
+
+This library consists of additional classes that allow you to write reactive components using the
+Routing API. The Routing API contains methods that transform the results into `Single` which can
+easily be integrated with RxJava2. This module does not add any new features to the existing Routing
+API module.
+
+To use reactive extensions, add the following dependency to the build.gradle file:
+
+```java
+implementation("com.New.online:sdk-routing-rxjava2:{libversion}")
+```
+
+To initialize the Rx wrapper of the `RoutingApi`:
+
+<Code>
+
+```java
+RxRoutingApi routingApi = new RxRoutingApi(context, BuildConfig.ROUTING_API_KEY)
+```
+
+```kotlin
+private val rxRoutingApi = RxRoutingApi(context, BuildConfig.ROUTING_API_KEY)
+```
+
+</Code>
+
+You can subscribe to the Routing API results by calling the following code:
+
+<Code>
+
+```java
+Disposable disposable = routingApi.planRoute(routeSpecification)
+        .subscribeOn(getWorkingScheduler())
+        .observeOn(getResultScheduler())
+        .subscribe(
+                routePlan -> displayFullRoutes(routePlan),
+                throwable -> proceedWithError(throwable.getMessage())
+        );
+```
+
+```kotlin
+val disposable = rxRoutingApi.planRoute(routeSpecification)
+    .subscribeOn(workingScheduler)
+    .observeOn(resultScheduler)
+    .subscribe(
+        { routePlan -> result.value = Resource.success(routePlan) },
+        { result.value = Resource.error(Error(it)) }
+    )
+```
+
+</Code>
+
+To display a route on the map:
+
+<Code>
+
+```java
+RouteBuilder routeBuilder = new RouteBuilder(route.getCoordinates())
+        .endIcon(endIcon)
+        .startIcon(startIcon)
+        .style(routeStyle);
+final Route mapRoute = NewMap.addRoute(routeBuilder);
+```
+
+```kotlin
+val routeBuilder = RouteBuilder(route.getCoordinates())
+    .style(RouteStyle.DEFAULT_ROUTE_STYLE)
+    .startIcon(createIcon(R.drawable.ic_map_route_departure))
+    .endIcon(createIcon(R.drawable.ic_map_route_destination))
+    .tag(routeIdx.toString())
+NewMap.addRoute(routeBuilder)
+```
+
+</Code>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_api_reference"
+></a>
+
+## API Reference
+
+[JavaDocRoutingRxJava2_2.4.807](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocRoutingRxJava2_2.4.807/index.html) ([JavaDocRoutingRxJava2_2.4.807.zip](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocRoutingRxJava2_2.4.807.zip))

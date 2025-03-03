@@ -1,0 +1,8 @@
+platformSwitcherItems:
+  - title: Example Maps  
+    fallbackUrl: /routing-api/documentation/Example-maps/routing-service
+    platformRootDirectory: /routing-api/documentation/Example-maps/
+  - title: Example New Maps
+    fallbackUrl: /routing-api/documentation/Example-New-maps/routing-service
+    platformRootDirectory: /routing-api/documentation/Example-New-maps/
+    

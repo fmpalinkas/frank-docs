@@ -1,0 +1,45 @@
+---
+title: Documentation
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_documentation"
+></a>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_initialization"
+></a>
+
+## Initialization
+
+The **TTTrafficFlow** and **TTTrafficIncidents** classes encapsulate a connection bridge to the
+Example Traffic API service.
+
+Call the **flowSegmentDataWithQuery** method to perform a flow segment. The call uses the **
+TTFlowSegmentDataQuery** parameter from the **TTTrafficFlow** class. Use the builder design
+pattern to simplify construction of the **TTFlowSegmentDataQuery**.
+
+The API reference contains a detailed specification of the search objects and options. It also
+includes a number of functional examples to illustrate different uses cases.
+
+This works analogically for both traffic services. An example query and corresponding callback for
+the Traffic Incident Details service is as follows:
+
+<Code>
+
+```swift
+let bounds = TTLatLngBoundsMake(TTCoordinate.LONDON_TOP_LEFT(), TTCoordinate.LONDON_BOTTOM_RIGHT())
+let query = TTIncidentDetailsQueryBuilder.create(with: .S1, withBoundingBox: bounds, withZoom: 12, withTrafficModelID: "-1")
+    .build()
+```
+
+```objectivec
+TTLatLngBounds bounds = TTLatLngBoundsMake([TTCoordinate LONDON_TOP_LEFT], [TTCoordinate LONDON_BOTTOM_RIGHT])
+TTIncidentDetailsQuery *query = [[TTIncidentDetailsQueryBuilder createWithStyle:TTTrafficIncidentStyleTypeS1 withBoundingBox:bounds withZoom:12 withTrafficModelID:@"-1"] build];
+```
+
+</Code>

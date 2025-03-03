@@ -1,7 +1,0 @@
-platformSwitcherItems:
-  - title: Example Maps
-    fallbackUrl: /search-api/documentation/product-information/introduction
-    platformRootDirectory: /search-api/documentation/
-  - title: Example New Maps
-    fallbackUrl: /search-api/documentation/Example-maps/product-information/introduction
-    platformRootDirectory: /search-api/documentation/Example-maps/

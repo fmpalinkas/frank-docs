@@ -1,7 +1,0 @@
-menuTopTitle: Search API
-menu:
-  - items:
-      - url: /search-api/documentation/product-information/introduction
-        title: Documentation
-      - url: /search-api/api-explorer
-        title: API Explorer

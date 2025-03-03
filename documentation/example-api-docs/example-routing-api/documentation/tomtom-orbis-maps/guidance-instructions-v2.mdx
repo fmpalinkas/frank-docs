@@ -1,0 +1,2450 @@
+---
+title: Guidance Instructions V2
+titleTags:
+  - label: "Service version: 2"
+    color: grey5
+  - label: "Last edit: 2024.01.16"
+    color: grey5
+  - label: "Example New Maps 2"
+    color: brand-cadmium
+---
+
+<Blockquote type="announcement" hasIcon>
+    ### Important notes:
+    - This Example New Maps Routing API document collection is **restricted to private viewing**.
+    - This API is powered by **Example New Maps.**
+    - See the <a href="/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
+</Blockquote>
+
+## Purpose
+
+This document describes route planning parameters that are related to guidance instructions.  
+They can be used in the [Calculate Route](./calculate-route) service.
+
+Please be aware that this document does not specify the complete request or response format.
+To maintain forward compatibility you must be able to process responses with additional non-documented data fields.
+Our deprecation policy only covers the documented subset of these formats.
+
+## Request data
+
+### HTTPS methods: `GET`&nbsp;`POST`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+
+#### Generic request format
+
+The functionality described here extends the functionality of the endpoint described in <a href="./calculate-route" target="_blank">Calculate Route</a>.
+
+**Note:** Only parameters that behave differently from the ones listed in <a href="./calculate-route" target="_blank">Calculate Route</a> are explicitly listed.
+
+```shell [type=get] [title=URL request example]
+https://{baseURL}/maps/New/routing/calculateRoute/{routePlanningLocations}/json?key={Your_API_Key}
+&instructionsType=coded
+&guidanceVersion=2
+&instructionPhonetics={instructionPhonetics}
+&instructionRoadShieldReferences=all
+&roadAndExitIconReferencesVersion={string}
+&language={language}
+&sectionType={sectionType}
+```
+
+### Extensions of existing features
+
+#### instructionsType parameter
+
+To enable Guidance Instructions, you need to set the <code>instructionsType</code> parameter.
+The only allowed value is <code>coded</code>.  
+If set, <code>guidanceVersion</code>, <code>instructionPhonetics</code>, <code>instructionRoadShieldReferences</code> and <code>language</code> also need to be set.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+   <tr>
+      <th scope="row">
+        <code>instructionsType</code>  
+        *string*
+      </th>
+      <td>
+        It is optional and when set the only allowed value is: <code>coded</code>.  
+        If set, <code>guidanceVersion</code>, <code>instructionPhonetics</code>, <code>instructionRoadShieldReferences</code>,
+        and <code>language</code> also need to be set.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### guidanceVersion parameter
+
+If Guidance Instructions are enabled by setting <code>instructionsType</code>,
+the <code>guidanceVersion</code> parameter is mandatory.  
+If Guidance Instructions are not enabled, this parameter can't be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>guidanceVersion</code>  
+        *number*
+      </th>
+      <td>
+        Only allowed value: <code>2</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### instructionPhonetics parameter
+
+If Guidance Instructions are enabled by setting <code>instructionsType</code>,
+the <code>instructionPhonetics</code> parameter is mandatory.  
+If Guidance Instructions are not enabled, this parameter can't be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>instructionPhonetics</code>
+        *string*
+      </th>
+      <td>
+        <p>
+          Specifies the format of the phonetic transcription of street
+          names, signpost text, and road numbers in the instructions of the
+          response.
+        </p>
+        <p>Possible values are:</p>
+        <ul>
+          <li>
+            <code>LHP</code>: Return phonetic transcriptions in the L&amp;H+
+            format from Cerence Inc.
+          </li>
+          <li>
+            <code>IPA</code>: Return phonetic transcriptions in the IPA
+            (International Phonetic Alphabet) format.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### instructionRoadShieldReferences parameter
+
+If Guidance Instructions are enabled by setting <code>instructionsType</code>,
+the <code>instructionRoadShieldReferences</code> parameter is mandatory.  
+If Guidance Instructions are not enabled, this parameter can't be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>instructionRoadShieldReferences</code>  
+        *string*
+      </th>
+      <td>
+        Only allowed value: <code>all</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### language parameter
+
+If Guidance Instructions are enabled by setting <code>instructionsType</code>,
+the <code>language</code> parameter is mandatory.  
+If Guidance Instructions are not enabled, this parameter can't be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>language</code>  
+        *string*
+      </th>
+      <td>
+        The <code>language</code> parameter determines the language of the
+        guidance messages.
+        <ul>
+          <li>
+            Proper nouns (the names of streets, plazas, etc.) are returned in
+            the specified language, or if that is not available, they are
+            returned in an available language that is close to it.
+          </li>
+          <li>
+            The currently supported languages are listed in the
+            <a href="#supported-languages">Supported languages</a> section.
+          </li>
+        </ul>
+        If the selected language isn't supported, <code>en-GB</code> is used instead.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### roadAndExitIconReferencesVersion parameter
+
+If Guidance Instructions are not enabled, this parameter can't be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>roadAndExitIconReferencesVersion</code>  
+        *string*
+      </th>
+      <td>
+        When this parameter is set, <code>iconReference</code> objects in the response will
+        contain <code>reference</code> values corresponding to the specified version.
+        Possible values are implementation defined.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+### sectionType parameter
+
+Besides the values documented in [Calculate Route](./calculate-route#request-parameters) for the
+<code>sectionType</code> parameter, the following values are also allowed when requesting guidance instructions:
+
+Note: these values of <code>sectionType</code> can only be used if Guidance Instructions are enabled.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>sectionType</code>  
+        *string*
+      </th>
+      <td>
+        The following section types can additionally be requested:
+        <ul>
+          <li>
+            <code>lanes</code>: Sections with lane information. This is a
+            combination of lane directions (<code>directions</code>), including
+            the follow direction (<code>follow</code>) where recommended, and
+            lane markings on the road (<code>laneSeparators</code>).
+            <ul>
+              <li>
+                Lanes are given left-to-right with the direction of travel.
+              </li>
+              <li>
+                Separators are also given left-to-right, starting with the
+                marking to left of the left-most lane and ending with the
+                marking to the right of the right-most lane, such that
+                <code>laneSeparator[x]</code> is to the left of <code>
+                  lane[x]
+                </code>.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+### Example of a successful response
+
+A response could look like this: (Note: Comments are contained within `... ...` .)
+
+<b>Note</b>: for the purpose of brevity the following example contains <b>
+  all
+</b> the fields described in this document. In practice some fields are
+incompatible with others, and only a subset of them will be present in the
+response depending on the given instruction `maneuver` value.
+
+<Accordion label="Successful response body" isClosed>
+
+```json
+{
+  [...]
+  "roadShieldAtlasReference": "https://api.Example.com/map/1/roadshield/1.0.0/",
+  "routes": [
+    {
+      "summary": [...]
+      "legs": [...],
+      "guidance": {
+        "instructions": [
+  ...prior instructions...
+          {
+            "routeOffsetInMeters": 1141,
+            "maneuverPoint": {
+              "latitude": 52.37236,
+              "longitude": 4.90861
+            },
+            "routePath": [
+              {
+                "point" : {
+                  "latitude": 52.37236,
+                  "longitude": 4.90861
+                },
+                "distanceInMeters" : 1150,
+                "travelTimeInSeconds" : 45
+              },
+              {
+                "point" : {
+                  "latitude": 52.37245,
+                  "longitude": 4.90831
+                },
+                "distanceInMeters" : 1160,
+                "travelTimeInSeconds" : 46
+              },
+              {
+                "point" : {
+                  "latitude": 52.37255,
+                  "longitude": 4.90805
+                },
+                "distanceInMeters" : 1170,
+                "travelTimeInSeconds" : 47
+              }
+            ],
+            "maneuver": "TURN_RIGHT",
+            "previousRoadInfo": {
+              "properties": ["MOTORWAY"],
+              "streetName": {
+                "text": "Max-Brauer-Allee",
+                "phonetic": "maks \"braU|6 ?a|\"le:",
+                "phoneticLanguageCode": "de-DE"
+              },
+              "roadShields": [
+                {
+                  "roadNumber": {
+                    "text": "b208",
+                    "phonetic": "be: %tsvaI|hUn|d6t|\"?axt",
+                    "phoneticLanguageCode": "de-DE",
+                  },
+                  "iconReference": {
+                    "reference": "rectangle-green-white-3",
+                    "shieldContent": "208",
+                    "affixes": ["N"],
+                  },
+                  "countryCode": "NLD"
+                },
+ ...further road shields...
+              ],
+            },
+            "nextRoadInfo": {
+              "properties": ["MOTORWAY", "URBAN"],
+              "streetName": {
+                "text": "Schnellstraße",
+                "phonetic": "SnEl|%Stra:|s@",
+                "phoneticLanguageCode": "de-DE"
+              },
+              "roadShields": [
+                {
+                  "roadNumber": {
+                    "text": "a2",
+                    "phonetic": "?a: \"tsvaI",
+                    "phoneticLanguageCode": "de-DE",
+                  },
+                  "iconReference": {
+                    "reference": "rectangle-red-2",
+                    "shieldContent": "2",
+                    "affixes": ["E"],
+                  },
+                  "countryCode": "NLD"
+                },
+                {
+                  "roadNumber": {
+                    "text": "a12",
+                    "phonetic": "?a: \"tsv9lf",
+                    "phoneticLanguageCode": "de-DE",
+                  },
+                  "iconReference": {
+                    "reference": "hexagon-blue-white-2",
+                    "shieldContent": "12",
+                    "affixes": ["N"],
+                  },
+                  "countryCode": "NLD"
+                },
+ ...further road shields...
+              ]
+            },
+            "signpost": {
+              "exitName": {
+                "text": "Grünewald",
+                "phonetic": "gru:|n@|%valt",
+                "phoneticLanguageCode": "de-DE"
+              },
+              "exitNumber": {
+                "text": "3",
+                "phonetic": "dRaI",
+                "phoneticLanguageCode": "de-DE"
+              },
+              "towardName": {
+                "text": "Potsdam",
+                "phonetic": "pOts|dam",
+                "phoneticLanguageCode": "de-DE"
+              },
+              "exitIconReference": {
+                "reference": "exit-deu-right",
+                "shieldContent": "3"
+              }
+            },
+            "intersectionName": {
+              "text": "Oranienenburger Tor",
+              "phonetic": "?o:|\"ra:|nj@n|%bUr|g6 \"to:6^",
+              "phoneticLanguageCode": "de-DE"
+            },
+            "isManeuverObligatory": false,
+            "changeOfAngleInDegrees": 45,
+            "roundaboutExitNumber": 2,
+            "tollgateName": {
+              "text": "Koblenz",
+              "phonetic": "ko:|blEnts",
+              "phoneticLanguageCode": "de-DE"
+            },
+            "tollgatePaymentTypes": [
+              "CREDIT_CARD",
+              "DEBIT_CARD",
+              "ETC",
+              "ETC_TRANSPONDER",
+              "ETC_VIDEO_CAMERA",
+              "SUBSCRIPTION"
+            ],
+            "countryCrossingFromName": {
+              "text": "Frankreich",
+              "phonetic": "fraNk|raIC",
+              "phoneticLanguageCode": "de-DE"
+            },
+            "countryCrossingFromCode": "FRA",
+            "countryCrossingToName": {
+              "text": "Deutschland",
+              "phonetic": "dOYtS|lant",
+              "phoneticLanguageCode": "de-DE"
+            },
+            "countryCrossingToCode": "DEU",
+            "drivingSide": "RIGHT",
+            "landmark": "AT_TRAFFIC_LIGHT",
+            "trafficLightOffsetInMeters": 18,
+            "offsetOfAmbiguousExitFromManeuverInMeters": 27,
+            "sideRoads": [
+              {
+                "side": "LEFT",
+                "offsetFromManeuverInMeters": 66
+              },
+              {
+                "side": "RIGHT",
+                "offsetFromManeuverInMeters": 42
+              },
+  ...further side roads...
+            ]
+          },
+  ...further instructions...
+        ],
+      }
+    }
+  ...further routes...
+  ],
+  ...
+}
+```
+
+</Accordion>
+
+### Structure of the `instruction` object
+
+This section describes the `instruction` object. Note that this definition
+overrides the `instruction` definition in the <a href="./calculate-route" target="_blank">Calculate Route</a> documentation.
+
+#### Common fields for all maneuvers
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', minWidth: '10em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>maneuverPoint</code>  
+        *<code>point</code> object*
+      </th>
+      <td>
+        A representative point of the maneuver.  
+        Note: Can be used to depict a maneuver as a single point on the map, but
+        no further assumptions how it relates to other attributes must be made.
+        Example:  
+        ```json [title=A location of the maneuver]
+        "maneuverPoint": {
+          "latitude": 52.36965,
+          "longitude": 4.70208
+        }
+        ```
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>routeOffsetInMeters</code>  
+        *number*
+      </th>
+      <td>
+        The distance on route from the start of the route to
+        <code>maneuverPoint</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>maneuver</code>  
+        *string*
+      </th>
+      <td>
+        A code identifying the maneuver (e.g., "Turn right"). See the following
+        maneuver codes section.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>routePath</code>  
+        *array of <code>RoutePathPoint</code> objects*
+      </th>
+      <td>
+        A maneuver can occupy more than one point. For such a maneuver, this
+        field will contain a sequence of all the points it occupies on the map.
+        For maneuvers that only occupy a single point, this field will contain a
+        single array item, with a <code>point</code> value equal to
+        <code>maneuverPoint</code>.  
+        For details, see the "Structure of the <code>RoutePathPoint</code>
+        object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>previousRoadInfo</code>  
+        *<code>RoadInformation</code> object*
+      </th>
+      <td>
+        Provides information about the road in the link before the maneuver.  
+        Example:  
+        ```json [title=Aggregate]
+        "previousRoadInfo": {
+          "properties": ["MOTORWAY","REGULAR"],
+          "streetName": {
+            "text": "Schnellstraße",
+            "phonetic": "SnEl|%Stra:|s@",
+            "phoneticLanguageCode": "de-DE"
+          },
+          "roadShields": [{road shield},{road shield}, ...]
+        }
+        ```
+        For the road information definition, see "Structure of the
+        <code>roadInformation</code> object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>nextRoadInfo</code>  
+        *<code>RoadInformation</code> object*
+      </th>
+      <td>
+        Provides information about the road we are heading to (past the
+        maneuver). The source of this information is either the road past the
+        maneuver or the signpost at the maneuver if such exists.  
+        Example:  
+        ```json [title=Aggregate]
+        "nextRoadInfo": {
+          "properties": ["REGULAR"],
+          "streetName": {
+            "text": "Schnellstraße",
+            "phonetic": "SnEl|%Stra:|s@",
+            "phoneticLanguageCode": "de-DE"
+          },
+          "roadShields": [{road shield},{road shield}, ...]
+        }
+        ```
+        For the road information definition, see "Structure of the
+        <code>roadInformation</code> object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>signpost</code>  
+        *<code>signpost</code> object*
+      </th>
+      <td>
+        Included if a signpost is available for this maneuver.  
+        Provides the information displayed in the signpost indicating the
+        direction on route.  
+        Example:  
+        ```json [title=Aggregate]
+        "signpost": {
+          "exitName": {
+            "text": "Grünewald",
+            "phonetic": "gru:|n@|%valt",
+            "phoneticLanguageCode": "de-DE"
+          },
+          "exitNumber": {
+            "text": "3",
+            "phonetic": "dRaI",
+            "phoneticLanguageCode": "de-DE"
+          },
+          "towardName": {
+            "text": "Potsdam",
+            "phonetic": "pOts|dam",
+            "phoneticLanguageCode": "de-DE"
+          },
+          "exitIconReference": {
+            "reference": "exit-deu-right",
+            "shieldContent": "3"
+          }
+        }
+        ```
+        For the signpost definition, see the "Structure of the
+        <code>signpost</code> object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>intersectionName</code>  
+        *<code>TextWithPhonetics</code> object*
+      </th>
+      <td>
+        Name of the intersection at which the maneuver must be performed.  
+        Included if intersection name is available for this maneuver.  
+        For details, see the "Structure of the <code>TextWithPhonetics</code>
+        object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>drivingSide</code>  
+        *string*
+      </th>
+      <td>
+        Indicates left-hand vs. right-hand side driving at the point of the
+        maneuver.  
+        <b>Possible values:</b>
+        <ul>
+          <li>
+            <code>LEFT</code>
+          </li>
+          <li>
+            <code>RIGHT</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>landmark</code>  
+        *string*
+      </th>
+      <td>
+        Included if instruction has a landmark.  
+        <b>Possible values:</b>
+        <ul>
+          <li>
+            <code>END_OF_ROAD</code>
+          </li>
+          <li>
+            <code>AT_TRAFFIC_LIGHT</code>
+          </li>
+          <li>
+            <code>ON_TO_BRIDGE</code>
+          </li>
+          <li>
+            <code>ON_BRIDGE</code>
+          </li>
+          <li>
+            <code>AFTER_BRIDGE</code>
+          </li>
+          <li>
+            <code>INTO_TUNNEL</code>
+          </li>
+          <li>
+            <code>INSIDE_TUNNEL</code>
+          </li>
+          <li>
+            <code>AFTER_TUNNEL</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>trafficLightOffsetInMeters</code>  
+        *number*
+      </th>
+      <td>
+        Included if the landmark is <code>AT_TRAFFIC_LIGHT</code>, and a
+        maneuver takes place at the second traffic light (out of two consequent
+        traffic lights).  
+        In such case this attribute represents the distance on the route (in
+        meters) between those traffic lights.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>sideRoads</code>  
+        *array of sideRoad*
+      </th>
+      <td>
+        List of roads connected to the route but not part of it, right before
+        the maneuver. These are roads which the driver can accidentally take
+        based on the instruction without considering the dynamic restriction of
+        the route like time or vehicle profile dependent restriction.
+        Dual-carriageway roads might be represented as a single or several side
+        roads, depending on how the driver might perceive them. The list will be
+        empty if no road is crossing the route before the maneuver. This
+        information can be used to allow a richer graphical presentation of the
+        maneuver and visualize connected roads preceding it in proximity. The
+        list is ordered in ascending order of offset on route.  
+        Included if there are side roads within a reasonable distance before the
+        maneuver.  
+        For the side road definition, see "Structure of the
+        <code>sideRoad</code> object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>roadShieldAtlasReference</code>  
+        *string*
+      </th>
+      <td>
+        The base URL of the Road Shields service to fetch the road shield atlas
+        and metadata resources.  
+        Currently available resources are:
+        <ul>
+          <li>
+            <code>sprite.png</code>
+          </li>
+          <li>
+            <code>sprite.json</code>
+          </li>
+        </ul>
+        We recommend to cache the sprite atlas (<code>sprite.png</code>) and
+        metadata (<code>sprite.json</code>) as it changes infrequently and is
+        large compared to a typical road shield description.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>roadShieldReferences</code>  
+        *arrays of <code>roadShieldReference</code> objects*
+      </th>
+      <td>
+        A <code>roadShieldReference</code> object. See the next table for a description.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>signpostRoadShieldReferences</code>  
+        *arrays of <code>roadShieldReference</code> objects*
+      </th>
+      <td>
+        A <code>roadShieldReference</code> object. See the next table for a description.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### <code>roadShieldReference</code> object
+
+A <code>roadShieldReference</code> object describes a single road shield
+reference. It contains the following fields:
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', minWidth: '10em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        <code>reference</code>  
+        *string*
+      </th>
+      <td>A unique identifier for the road shield.</td>
+    </tr>
+    <tr>
+      <th>
+        <code>shieldContent</code>  
+        *string*
+      </th>
+      <td>An optional string to be shown on the road shield.</td>
+    </tr>
+    <tr>
+      <th>
+        <code>affixes</code>  
+        *array of strings*
+      </th>
+      <td>
+        An optional list of possible affixes that can be shown in addition
+        to the <code>shieldContent</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### <code>iconReference</code> object
+
+An <code>iconReference</code> object describes a single road or exit shield
+reference. It contains the following fields:
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', minWidth: '10em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        <code>reference</code>
+        *string*
+      </th>
+      <td>A unique identifier for the shield.</td>
+    </tr>
+    <tr>
+      <th>
+        <code>shieldContent</code>
+        *string*
+      </th>
+      <td>An optional string to be shown on the shield.</td>
+    </tr>
+    <tr>
+      <th>
+        <code>affixes</code>
+        *array of strings*
+      </th>
+      <td>
+        An optional list of possible affixes that can be shown in addition
+        to the <code>shieldContent</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Additional fields for turn maneuvers
+
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>isManeuverObligatory</code>  
+        *boolean*
+      </th>
+      <td>
+        Marks this maneuver as obligatory. For example, when a driver reaches a
+        T-junction, where one option is drivable, while the other is not.  
+        Included if the maneuver is a turn maneuver, i.e., <code>maneuver</code>
+        is one of the following:
+        <ul>
+          <li>
+            <code>SLIGHT_RIGHT</code>
+          </li>
+          <li>
+            <code>TURN_RIGHT</code>
+          </li>
+          <li>
+            <code>SHARP_RIGHT</code>
+          </li>
+          <li>
+            <code>SLIGHT_LEFT</code>
+          </li>
+          <li>
+            <code>TURN_LEFT</code>
+          </li>
+          <li>
+            <code>SHARP_LEFT</code>
+          </li>
+          <li>
+            <code>MAKE_UTURN</code>
+          </li>
+        </ul>
+        Note that the <code>STRAIGHT</code> maneuver is not included in the
+        list, since there is no meaning for such maneuver to be obligatory.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Additional fields for turn and roundabout maneuvers
+
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>changeOfAngleInDegrees</code>  
+        *number*
+      </th>
+      <td>
+        Gives the total change of angle (in degrees) from the entry until the
+        exit of the maneuver, in the range [-180,180). For example, -90 means
+        "forks off to the left in a perpendicular angle".  
+        At complex junctions, the angle is relative to the entry road.  
+        Included if the maneuver is a turn or roundabout maneuver, i.e.,
+        <code>maneuver</code> is one of the following:
+        <ul>
+          <li>
+            <code>STRAIGHT</code>
+          </li>
+          <li>
+            <code>SLIGHT_RIGHT</code>
+          </li>
+          <li>
+            <code>TURN_RIGHT</code>
+          </li>
+          <li>
+            <code>SHARP_RIGHT</code>
+          </li>
+          <li>
+            <code>SLIGHT_LEFT</code>
+          </li>
+          <li>
+            <code>TURN_LEFT</code>
+          </li>
+          <li>
+            <code>SHARP_LEFT</code>
+          </li>
+          <li>
+            <code>MAKE_UTURN</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_STRAIGHT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_SLIGHT_RIGHT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_RIGHT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_SHARP_RIGHT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_SLIGHT_LEFT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_LEFT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_SHARP_LEFT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_BACK</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Additional fields for exit motorway, switch motorway, and exit roundabout maneuvers
+
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>offsetOfAmbiguousExitFromManeuverInMeters</code>  
+        *number*
+      </th>
+      <td>
+        Included if current maneuver is an exit, and there is another exit
+        before the current maneuver within reasonable distance, which may cause
+        ambiguity. In such case there might be a need to resolve the ambiguity
+        on client side, and compose an instruction like "Take the 2nd exit".
+        Represents the offset (on route) of the ambiguous exit from the maneuver
+        point (represented by <code>maneuverPoint</code>), in meters. The offset
+        is absolute, i.e., it is a positive integer despite the ambiguous exit
+        being located before the maneuver on the route.  
+        Applicable for maneuvers where <code>maneuver</code> is one of the
+        following values:
+        <ul>
+          <li>
+            <code>EXIT_ROUNDABOUT</code>
+          </li>
+          <li>
+            <code>EXIT_MOTORWAY_LEFT</code>
+          </li>
+          <li>
+            <code>EXIT_MOTORWAY_RIGHT</code>
+          </li>
+          <li>
+            <code>SWITCH_MOTORWAY_LEFT</code>
+          </li>
+          <li>
+            <code>SWITCH_MOTORWAY_RIGHT</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Additional fields for roundabout maneuvers
+
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>roundaboutExitNumber</code>  
+        *number*
+      </th>
+      <td>
+        The ordinal number of the exit to take at a roundabout, e.g., "take the
+        first/second exit".  
+        Included if the maneuver is a roundabout maneuver, i.e.,
+        <code>maneuver</code> is one of the following:
+        <ul>
+          <li>
+            <code>ROUNDABOUT_STRAIGHT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_SLIGHT_RIGHT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_RIGHT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_SHARP_RIGHT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_SLIGHT_LEFT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_LEFT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_SHARP_LEFT</code>
+          </li>
+          <li>
+            <code>ROUNDABOUT_BACK</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Additional fields for tollgate maneuvers
+
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>tollgateName</code>  
+        *<code>TextWithPhonetics</code> object*
+      </th>
+      <td>
+        The name of the tollgate, if available.  
+        Included if the maneuver is a tollgate maneuver, i.e.,
+        <code>maneuver</code> is <code>TOLLGATE</code>.  
+        For details, see the "Structure of the <code>
+          TextWithPhonetics
+        </code> object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>tollPaymentTypes</code>  
+        *array*
+      </th>
+      <td>
+        Included if the maneuver is a tollgate maneuver, i.e.,
+        <code>maneuver</code> is <code>TOLLGATE</code>.  
+        Array containing one or more available toll payment options for this tollgate.  
+        <b>Possible values:</b>
+        <ul>
+          <li>
+            <code>CASH_COINS_AND_BILLS</code>
+          </li>
+          <li>
+            <code>CASH_BILLS_ONLY</code>
+          </li>
+          <li>
+            <code>CASH_COINS_ONLY</code>
+          </li>
+          <li>
+            <code>CASH_EXACT_CHANGE</code>
+          </li>
+          <li>
+            <code>CREDIT_CARD</code>
+          </li>
+          <li>
+            <code>DEBIT_CARD</code>
+          </li>
+          <li>
+            <code>TRAVEL_CARD</code>
+          </li>
+          <li>
+            <code>ETC</code>
+          </li>
+          <li>
+            <code>ETC_TRANSPONDER</code>
+          </li>
+          <li>
+            <code>ETC_VIDEO_CAMERA</code>
+          </li>
+          <li>
+            <code>SUBSCRIPTION</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Additional fields for maneuvers leading to a border crossing
+
+<table>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>countryCrossingFromName</code>  
+        *<code>TextWithPhonetics</code> object*
+      </th>
+      <td>
+        The name of the country the border crossing occurs from.  
+        Included if the maneuver is a border crossing maneuver, or leads to a
+        border crossing, i.e., <code>maneuver</code> is one of:
+        <ul>
+          <li>
+            <code>CROSS_BORDER</code>
+          </li>
+          <li>
+            <code>TAKE_SHIP_FERRY</code>
+          </li>
+          <li>
+            <code>TAKE_CAR_TRAIN</code>
+          </li>
+          <li>
+            <code>LEAVE_SHIP_FERRY</code>
+          </li>
+          <li>
+            <code>LEAVE_CAR_TRAIN</code>
+          </li>
+        </ul>
+        For details, see the "Structure of the <code>TextWithPhonetics</code>
+        object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>countryCrossingFromCode</code>  
+        *string*
+      </th>
+      <td>
+        The code (ISO 3166-1 alpha-3) of the country the border crossing occurs
+        from.  
+        Included if the maneuver is a border crossing maneuver, i.e.,
+        <code>maneuver</code> is one of:
+        <ul>
+          <li>
+            <code>CROSS_BORDER</code>
+          </li>
+          <li>
+            <code>TAKE_SHIP_FERRY</code>
+          </li>
+          <li>
+            <code>TAKE_CAR_TRAIN</code>
+          </li>
+          <li>
+            <code>LEAVE_SHIP_FERRY</code>
+          </li>
+          <li>
+            <code>LEAVE_CAR_TRAIN</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>countryCrossingToName</code>  
+        *<code>TextWithPhonetics</code> object*
+      </th>
+      <td>
+        The name of the country the border crossing occurs to.  
+        Included if the maneuver is a border crossing maneuver, i.e.,
+        <code>maneuver</code> is one of:
+        <ul>
+          <li>
+            <code>CROSS_BORDER</code>
+          </li>
+          <li>
+            <code>TAKE_SHIP_FERRY</code>
+          </li>
+          <li>
+            <code>TAKE_CAR_TRAIN</code>
+          </li>
+          <li>
+            <code>LEAVE_SHIP_FERRY</code>
+          </li>
+          <li>
+            <code>LEAVE_CAR_TRAIN</code>
+          </li>
+        </ul>
+        For details, see the "Structure of the <code>TextWithPhonetics</code>
+        object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>countryCrossingToCode</code>  
+        *string*
+      </th>
+      <td>
+        The code (ISO 3166-1 alpha-3) of the country the border crossing occurs
+        to.  
+        Included if the maneuver is a border crossing maneuver, i.e.,
+        <code>maneuver</code> is one of:
+        <ul>
+          <li>
+            <code>CROSS_BORDER</code>
+          </li>
+          <li>
+            <code>TAKE_SHIP_FERRY</code>
+          </li>
+          <li>
+            <code>TAKE_CAR_TRAIN</code>
+          </li>
+          <li>
+            <code>LEAVE_SHIP_FERRY</code>
+          </li>
+          <li>
+            <code>LEAVE_CAR_TRAIN</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Maneuver codes
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Maneuver value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Example translation
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>DEPART</code>
+      </th>
+      <td>Leave.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>WAYPOINT_REACHED</code>
+      </th>
+      <td>
+        You have reached the waypoint. The exact waypoint location could not be
+        determined.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>WAYPOINT_LEFT</code>
+      </th>
+      <td>
+        You have reached the waypoint. It is on the left side of the road.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>WAYPOINT_RIGHT</code>
+      </th>
+      <td>
+        You have reached the waypoint. It is on the right side of the road.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>WAYPOINT_AHEAD</code>
+      </th>
+      <td>You have reached the waypoint. It is ahead on the road.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ARRIVE</code>
+      </th>
+      <td>
+        You have arrived. The exact arrival location could not be determined.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ARRIVE_LEFT</code>
+      </th>
+      <td>
+        You have arrived. Your destination is on the left side of the road.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ARRIVE_RIGHT</code>
+      </th>
+      <td>
+        You have arrived. Your destination is on the right side of the road.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ARRIVE_AHEAD</code>
+      </th>
+      <td>You have arrived. Your destination is ahead on the road.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>STRAIGHT</code>
+      </th>
+      <td>Keep straight on.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>KEEP_LEFT</code>
+      </th>
+      <td>Keep left (on the fork).</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>KEEP_RIGHT</code>
+      </th>
+      <td>Keep right (on the fork).</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SLIGHT_RIGHT</code>
+      </th>
+      <td>Slight right.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>TURN_RIGHT</code>
+      </th>
+      <td>Turn right.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SHARP_RIGHT</code>
+      </th>
+      <td>Turn sharp right.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SLIGHT_LEFT</code>
+      </th>
+      <td>Slight left.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>TURN_LEFT</code>
+      </th>
+      <td>Turn left.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SHARP_LEFT</code>
+      </th>
+      <td>Turn sharp left.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>MAKE_UTURN</code>
+      </th>
+      <td>Make a U-turn.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ROUNDABOUT_STRAIGHT</code>
+      </th>
+      <td>Continue straight across the roundabout.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ROUNDABOUT_SHARP_RIGHT</code>
+      </th>
+      <td>At the roundabout take the exit in the sharp right direction.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ROUNDABOUT_RIGHT</code>
+      </th>
+      <td>At the roundabout take the exit in the right direction.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ROUNDABOUT_SLIGHT_RIGHT</code>
+      </th>
+      <td>At the roundabout take the exit in the slight right direction.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ROUNDABOUT_SLIGHT_LEFT</code>
+      </th>
+      <td>At the roundabout take the exit in the slight left direction.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ROUNDABOUT_LEFT</code>
+      </th>
+      <td>At the roundabout take the exit in the left direction.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ROUNDABOUT_SHARP_LEFT</code>
+      </th>
+      <td>At the roundabout take the exit in the sharp left direction.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ROUNDABOUT_BACK</code>
+      </th>
+      <td>Go around the roundabout.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>EXIT_ROUNDABOUT</code>
+      </th>
+      <td>Exit the roundabout.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>EXIT_MOTORWAY_LEFT</code>
+      </th>
+      <td>On the motorway take the left exit.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>EXIT_MOTORWAY_RIGHT</code>
+      </th>
+      <td>On the motorway take the right exit.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SWITCH_MOTORWAY_LEFT</code>
+      </th>
+      <td>Take the left exit to switch motorway.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SWITCH_MOTORWAY_RIGHT</code>
+      </th>
+      <td>Take the right exit to switch motorway.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ENTER_CARPOOL_LANE_LEFT</code>
+      </th>
+      <td>Enter the carpool lane on the left side of the road.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>ENTER_CARPOOL_LANE_RIGHT</code>
+      </th>
+      <td>Enter the carpool lane on the right side of the road.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>EXIT_CARPOOL_LANE_LEFT</code>
+      </th>
+      <td>Leave the carpool by moving to the left lanes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>EXIT_CARPOOL_LANE_RIGHT</code>
+      </th>
+      <td>Leave the carpool by moving to the right lanes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>MERGE_LEFT_LANE</code>
+      </th>
+      <td>Merge the road into its leftmost lane.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>MERGE_RIGHT_LANE</code>
+      </th>
+      <td>Merge the road into its rightmost lane.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>TAKE_SHIP_FERRY</code>
+      </th>
+      <td>Take the ship ferry.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>TAKE_CAR_TRAIN</code>
+      </th>
+      <td>Take the car train.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>LEAVE_SHIP_FERRY</code>
+      </th>
+      <td>Leave the ship ferry.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>LEAVE_CAR_TRAIN</code>
+      </th>
+      <td>Leave the car train.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>CROSS_BORDER</code>
+      </th>
+      <td>Cross the border.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>TOLLGATE</code>
+      </th>
+      <td>Approaching a toll booth or ETC terminal.</td>
+    </tr>
+  </tbody>
+</table>
+
+#### Structure of the <code>RoutePathPoint</code> object
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', minWidth: '10em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>point</code>  
+        *<code>point</code> object*
+      </th>
+      <td>
+        A <code>point</code> represented as a JSON object. The object should contain the two fields <code>latitude</code> and
+        <code>longitude</code> each containing a number, and expressed in the
+        same reference frame and with the same constraints as for the
+        <code>location</code> type.  
+        Example:
+        <code>&#123;"latitude": 52.37245, "longitude": 4.89406&#125;</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>distanceInMeters</code>  
+        *number*
+      </th>
+      <td>Distance (in meters) from the start of the route to this point.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>travelTimeInSeconds</code>  
+        *number*
+      </th>
+      <td>
+        Travel time (in seconds) from the start of the route to this point.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Structure of the <code>TextWithPhonetics</code> object
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', minWidth: '10em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>text</code>  
+        *string*
+      </th>
+      <td>The name as a text string.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>phonetic</code>  
+        *string*
+      </th>
+      <td>
+        The phonetic transcription of the name.  
+        Included if phonetic transcription is available for the specific name,
+        and phonetic transcriptions have been requested by the client.  
+        <b>Note:</b> The phonetic transcription can contain double quote
+        characters (<code>"</code>). In this case those characters are escaped
+        with a backslash (<code>&bsol;</code>).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>phoneticLanguageCode</code>  
+        *string*
+      </th>
+      <td>
+        Encodes the language using an IETF language tag, e.g.,
+        <code>en-GB</code>, <code>en-US</code>.  
+        Included if phonetic transcription is available for the specific name, and
+        phonetic transcriptions have been requested by the client.  
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Structure of the <code>roadInformation</code> object
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', minWidth: '10em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>properties</code>  
+        *array of strings*
+      </th>
+      <td>
+        The properties of road, as a possible combination of several values.  
+        <b>Possible values:</b>
+        <ul>
+          <li>
+            <code>URBAN</code>: represents an urban road type.
+          </li>
+          <li>
+            <code>MOTORWAY</code>: represents a motorway road type.
+          </li>
+          <li>
+            <code>CONTROLLED_ACCESS</code>: represents a controlled access road with regulated traffic flow and regulated entries and exits.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>streetName</code>  
+        *<code>TextWithPhonetics</code> object*
+      </th>
+      <td>
+        The street name for the road.  
+        Included if street name is available for this road.  
+        For details, see the "Structure of the <code>TextWithPhonetics</code>
+        object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>roadShields</code>  
+        *array of <code>RoadShield</code> objects*
+      </th>
+      <td>
+        Lists the road shields for this road.  
+        The list can be empty if no road shields are available.  
+        For road shield definition, see "Structure of the
+        <code>roadShield</code> object".
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Structure of the <code>roadShield</code> object
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', minWidth: '10em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>roadNumber</code>  
+        *<code>TextWithPhonetics</code> object*
+      </th>
+      <td>
+        The road number. Most road numbers have a 'letter' prefix, which is also
+        returned.  
+        For example, a call for the German motorway returns "A40" rather than
+        "40".  
+        For details, see the "Structure of the <code>TextWithPhonetics</code>
+        object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>iconReference</code>
+        *<code>iconReference</code> object*
+      </th>
+      <td>
+        Information allowing the client to build an image of the shield.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>roadShieldReference</code>  
+        *<code>roadShieldReference</code> object*
+      </th>
+      <td>
+        Information allowing the client to build an image of the road shield
+        using the Example RoadShield API. Included if
+        <code>instructionRoadShieldReferences</code> was requested.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>stateCode</code>  
+        *string*
+      </th>
+      <td>
+        The state code of the state the shield is in (second part of an ISO
+        3166-2 identifier).  
+        Included if state codes are available for the country the road shield is
+        located in.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>countryCode</code>  
+        *string*
+      </th>
+      <td>
+        The country code (ISO 3166-1 alpha-3) of the country the shield is in.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Structure of the <code>signpost</code> object
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', minWidth: '10em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>exitName</code>  
+        *<code>TextWithPhonetics</code> object*
+      </th>
+      <td>
+        Exit name of the controlled access road.  
+        Included if an exit name is available for this signpost.  
+        For details, see the "Structure of the <code>TextWithPhonetics</code>
+        object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>exitNumber</code>  
+        *<code>TextWithPhonetics</code> object*
+      </th>
+      <td>
+        Exit number of the controlled access road. Included if an exit number is
+        available for this signpost.  
+        Multiple exit numbers can be encoded in the string, e.g. "E10/E12". If
+        exit number is not available, the field will be absent.  
+        For details, see the "Structure of the <code>TextWithPhonetics</code>
+        object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>towardName</code>  
+        *<code>TextWithPhonetics</code> object*
+      </th>
+      <td>
+        The toward name from the signpost.  
+        For details, see the "Structure of the <code>TextWithPhonetics</code>
+        object".
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>exitIconReference</code>
+        *<code>iconReference</code> object*
+      </th>
+      <td>
+        Information allowing the client to build an image of an exit shield.
+        Included if an exit shield icon is available for this signpost.  
+        For details, see the "Structure of the <code>iconReference</code>
+        object".
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Structure of the <code>sideRoad</code> object
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', minWidth: '10em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>side</code>  
+        *string*
+      </th>
+      <td>
+        Side from where the road connects to the route.  
+        <b>Possible values:</b>
+        <ul>
+          <li>
+            <code>LEFT</code>: left side
+          </li>
+          <li>
+            <code>RIGHT</code>: right side
+          </li>
+          <li>
+            <code>LEFT_AND_RIGHT</code>: both left and right sides
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>offsetFromManeuverInMeters</code>  
+        *number*
+      </th>
+      <td>
+        Offset (on route) of the side road from the maneuver point (represented
+        by <code>maneuverPoint</code>), in meters. The offset is absolute, i.e.,
+        it is a positive integer despite that the side road is located before
+        the maneuver on the route.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Supported languages
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Language name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Language tag
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Afrikaans (South Africa)</th>
+      <td>
+        <code>af-ZA</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Arabic</th>
+      <td>
+        <code>ar</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Bulgarian</th>
+      <td>
+        <code>bg-BG</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Chinese (Taiwan)</th>
+      <td>
+        <code>zh-TW</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Czech</th>
+      <td>
+        <code>cs-CZ</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Danish</th>
+      <td>
+        <code>da-DK</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Dutch</th>
+      <td>
+        <code>nl-NL</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (Great Britain)</th>
+      <td>
+        <code>en-GB</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">English (USA)</th>
+      <td>
+        <code>en-US</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Finnish</th>
+      <td>
+        <code>fi-FI</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">French</th>
+      <td>
+        <code>fr-FR</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">German</th>
+      <td>
+        <code>de-DE</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Greek</th>
+      <td>
+        <code>el-GR</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Hungarian</th>
+      <td>
+        <code>hu-HU</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Indonesian</th>
+      <td>
+        <code>id-ID</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Italian</th>
+      <td>
+        <code>it-IT</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Korean</th>
+      <td>
+        <code>ko-KR</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Lithuanian</th>
+      <td>
+        <code>lt-LT</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Malay</th>
+      <td>
+        <code>ms-MY</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Norwegian</th>
+      <td>
+        <code>nb-NO</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Polish</th>
+      <td>
+        <code>pl-PL</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese (Brazil)</th>
+      <td>
+        <code>pt-BR</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese (Portugal)</th>
+      <td>
+        <code>pt-PT</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Russian</th>
+      <td>
+        <code>ru-RU</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Slovak</th>
+      <td>
+        <code>sk-SK</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Slovenian</th>
+      <td>
+        <code>sl-SI</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish (Castilian)</th>
+      <td>
+        <code>es-ES</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish (Mexico)</th>
+      <td>
+        <code>es-MX</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Swedish</th>
+      <td>
+        <code>sv-SE</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Thai</th>
+      <td>
+        <code>th-TH</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Turkish</th>
+      <td>
+        <code>tr-TR</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+The following language code abbreviations are also supported:
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Language name
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Language tag
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Inferred language tag
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">English</th>
+      <td>
+        <code>en</code>
+      </td>
+      <td>
+        <code>en-GB</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">French</th>
+      <td>
+        <code>fr</code>
+      </td>
+      <td>
+        <code>fr-FR</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">German</th>
+      <td>
+        <code>de</code>
+      </td>
+      <td>
+        <code>de-DE</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Italian</th>
+      <td>
+        <code>it</code>
+      </td>
+      <td>
+        <code>it-IT</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Dutch</th>
+      <td>
+        <code>nl</code>
+      </td>
+      <td>
+        <code>nl-NL</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Portuguese</th>
+      <td>
+        <code>pt</code>
+      </td>
+      <td>
+        <code>pt-PT</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Spanish</th>
+      <td>
+        <code>es</code>
+      </td>
+      <td>
+        <code>es-ES</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Lane section information
+
+The following table describes the possible values of the `directions` and `follow` fields in the `lanes` section.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Directions value
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>STRAIGHT</code>
+      </th>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SLIGHT_RIGHT</code>
+      </th>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>RIGHT</code>
+      </th>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SHARP_RIGHT</code>
+      </th>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>RIGHT_U_TURN</code>
+      </th>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SLIGHT_LEFT</code>
+      </th>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>LEFT</code>
+      </th>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SHARP_LEFT</code>
+      </th>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>LEFT_U_TURN</code>
+      </th>
+    </tr>
+  </tbody>
+</table>
+
+#### Additional fields for <code>lanes</code> sections
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', minWidth: '10em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>properties</code>  
+        *array of strings*
+      </th>
+      <td>
+        <p>
+          Properties of the lane section, as a possible combination of several
+          values. This field is optional.
+        </p>
+        <p>
+          <b>Possible values: </b>
+          <ul>
+            <li>
+              <code>IS_MANEUVER</code>: whether the lane section contains a
+              maneuver point, that is, there exists a guidance instruction with
+              a <code>maneuverPoint</code> that falls into this section. The
+              section describes the lane configuration for that particular
+              instruction.
+            </li>
+          </ul>
+        </p>
+        It is possible that more values will be added to the API in the future.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Values of the <code>laneSeparators</code> field in the <code>lanes</code> section
+
+The following table describes the possible values of the `laneSeparators` field in the `lanes` section.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Lane separators value
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>UNKNOWN</code>
+      </th>
+      <td>No information.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>NO_MARKING</code>
+      </th>
+      <td>No marking.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>LONG_DASHED</code>
+      </th>
+      <td>Long dashed line.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>DOUBLE_SOLID</code>
+      </th>
+      <td>Double solid line.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SINGLE_SOLID</code>
+      </th>
+      <td>Single solid line.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SOLID_DASHED</code>
+      </th>
+      <td>
+        Solid line and dashed line in parallel as seen from left to right.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>DASHED_SOLID</code>
+      </th>
+      <td>
+        Dashed line and solid line in parallel as seen from left to right.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SHORT_DASHED</code>
+      </th>
+      <td>Short dashed line.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>SHADED_AREA_MARKING</code>
+      </th>
+      <td>Shaded area marking.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>DASHED_BLOCKS</code>
+      </th>
+      <td>Dashed blocks.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>DOUBLE_DASHED</code>
+      </th>
+      <td>Double dashed line.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>CROSSING_ALERT</code>
+      </th>
+      <td>Marking for a crossing that looks like a zigzag line.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>PHYSICAL_DIVIDER</code>
+      </th>
+      <td>Physical divider.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>PHYSICAL_DIVIDER_LESS_THAN_3M</code>
+      </th>
+      <td>Physical divider less than 3 meters.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>PHYSICAL_DIVIDER_GUARDRAIL</code>
+      </th>
+      <td>Physical divider which has a guardrail.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>CURB</code>
+      </th>
+      <td>Curb divider.</td>
+    </tr>
+  </tbody>
+</table>
+

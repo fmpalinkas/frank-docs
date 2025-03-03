@@ -1,0 +1,134 @@
+---
+title: Use style from Style Merger
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_use_style_from_style_merger"
+></a>
+
+Starting with version 2.4.537, we are switching bundled-in styles and sprite, to using New hosted
+styles and sprites. More information about the new approach is available
+in [Map Initialization](/maps-android-sdk/documentation/map-display/map-examples/map-initialization). Thanks to
+integration
+with [Merged Style method](/map-display-api/documentation/mapstyles/map-styles)
+provided by Map Display API you can generate and use one style for map and traffic display. The main
+benefits of New hosted display resources are as following:
+
+- It makes application download size MB smaller in comparison to using bundled-in resources.
+- It allows you to get the newest look and feel of the map and traffic.
+
+Maps SDK will work with the bundled-in style until June 2021 but we recommend to switch to using
+hosted assets sooner.
+
+Until version 2.4.537, the style in the SDK has been included in the map package and consisted of
+layers from: Vector tiles, Traffic Flow, Traffic Incidents and Raster tiles. The approach of using a
+single style that contains multiple Traffic Flow tiles types was deprecated. After the deprecation
+period is over, it will not be possible to switch between Traffic Flow tiles types without reloading
+the style. Until deprecation is over in June 2021, the default map style which contains both raster
+and vector tiles is using **SDK_BUNDLED**, as a default value for the
+enum [MapStyleSource](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMap_2.4.545i/com.New.online.sdk.map/-map-style-source/index.html).
+
+Deprecated methods include `UiSettings` with all of its methods and `TrafficSettings`:
+
+- **
+  UiSettings:** `setMapLayersType(MapLayersType mapLayersType)` `getMapLayersType()` `setMapTilesType(MapTilesType mapTilesType)` `getMapTilesType()`
+- **
+  TrafficSettings:** `turnOnVectorTrafficFlowTiles()` `turnOnRasterTrafficFlowTiles()` `turnOnVectorTrafficFlowTiles(TrafficFlowType.VectorTrafficFlowType trafficFlowTilesStyle)` `turnOnRasterTrafficFlowTiles(TrafficFlowType.RasterTrafficFlowType trafficFlowTilesStyle)` `turnOnVectorTrafficIncidents()` `turnOnRasterTrafficIncidents()` `isTrafficVectorFlowEnabled()` `isTrafficRasterFlowEnabled()` `getTrafficVectorFlowStyle()` `getTrafficRasterFlowStyle()`
+
+We encourage you to switch to the Merged Style method. It offers the following advantages to a
+proposed solution:
+
+- Each style has its own sprite sheet and is now fully independent.
+- A user can mix and match all sources of tiles in any manner as styles and sprite sheets are now
+  merged on the server side. The selection of a particular style combination is done by providing
+  custom Style Merger URL parameters.
+- It is easier to style traffic in the Map Styler as it can be easily loaded together with a map by
+  using a merged version of the styles. However, the style from the Style Merger can only be used as
+  a base for a custom style. Using this edited style and the Style Merger at the same time is not
+  possible.
+- SDKs do not merge styles in runtime (e.g., it is required to have some hard-coded values to put
+  traffic below the label layers in a map).
+
+In case you have your own custom style that is not compliant with the New sourcing names
+convention, you will use `LayerSetConfiguration`, which provides custom IDs for sources in the
+style. `LayerSetConfiguration` should only be used with the `MapStyleSource` set to `STYLE_MERGER`.
+
+Map initialization with the Style Merger endpoint using Merged Style functionality is described in
+section ["Map properties"](/maps-android-sdk/documentation/map-display/map-examples/map-initialization). To the
+new functionality you need to implement a builder as described in the following example:
+MapStyleSource is used to determine if the default and loaded style should support Style Merger.
+Setting it to `STYLE_MERGER` results in the default style only supporting vector tiles:
+
+```java
+MapProperties.Builder()
+    .mapStyleSource(MapStyleSource.STYLE_MERGER)
+    .build()
+```
+
+When MapStyleSource.STYLE_MERGER is selected, the method related to directly switching between
+raster and vector tiles will throw an exception. MapProperties can be also be declared in the XML by
+adding the following line:
+
+```xml
+New:mapStyleSource="STYLE_MERGER"
+```
+
+to the snippet:
+
+```xml
+<fragment
+   android:id="@+id/map_fragment"
+   android:name="com.New.online.sdk.map.MapFragment"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   New:mapBackgroundColor="@color/solid_black"
+   New:styleUrl="http://your-server:port/style/example-merged.json"
+   New:mapStyleSource="STYLE_MERGER" />
+```
+
+In case you have your own custom style that is not compliant with the New sourcing names
+convention, you will use `LayerSetConfiguration` which provides custom IDs for sources in the style.
+
+`LayerSetConfiguration` should be used only with the `MapStyleSource` set to `STYLE_MERGER`.
+
+```java
+val layerSetConfiguration = LayerSetConfiguration.Builder()
+    .mapTilesConfiguration(MAP_TILES_SOURCE_ID)
+    .trafficIncidentsTilesConfiguration(TRAFFIC_INCIDENTS_SOURCE_ID)
+    .trafficFlowTilesConfiguration(TRAFFIC_FLOW_SOURCE_ID)
+    .build()
+MapProperties.Builder()
+    .mapStyleSource(MapStyleSource.STYLE_MERGER)
+    .layerSetConfiguration(layerSetConfiguration)
+    .build()
+```
+
+or
+
+<Code>
+
+```java
+NewMap.getUiSettings().setStyleUrl(
+        "asset://styles/custom-traffic.json",
+        new LayerSetConfiguration.Builder()
+                .mapTilesConfiguration(MAP_TILES_SOURCE_ID)
+                .trafficFlowTilesConfiguration(TRAFFIC_FLOW_SOURCE_ID)
+                .trafficIncidentsTilesConfiguration(TRAFFIC_INCIDENTS_SOURCE_ID)
+                .build()
+)
+```
+
+```kotlin
+NewMap.uiSettings.setStyleUrl(
+    "asset://styles/custom-traffic.json",
+    LayerSetConfiguration.Builder()
+        .mapTilesConfiguration(MAP_TILES_SOURCE_ID)
+        .trafficFlowTilesConfiguration(TRAFFIC_FLOW_SOURCE_ID)
+        .trafficIncidentsTilesConfiguration(TRAFFIC_INCIDENTS_SOURCE_ID)
+        .build()
+)
+```
+
+</Code>

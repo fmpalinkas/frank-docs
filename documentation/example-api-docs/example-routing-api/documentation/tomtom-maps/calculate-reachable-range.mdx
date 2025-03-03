@@ -1,0 +1,749 @@
+---
+title: Calculate Reachable Range
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2022.08.10'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+## Purpose
+
+The Calculate Reachable Range service calculates a set of locations that can be reached from the origin point.
+
+- It optimizes routes with a given route-type (e.g., fastest, eco, etc.)
+- It limits the range for the given budget and consumption parameters.
+
+The information returned is:
+
+- A polygon boundary in counterclockwise orientation.
+- The precise polygon center (the result of map-matching the origin point).
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the Example <a href="/routing-api/api-explorer/">API Explorer</a> page and follow the directions.
+
+## Request data
+
+### HTTPS method: `GET` &nbsp; `POST`
+
+Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+
+### Generic request format
+
+The following request URL contains all of this endpoint's respective parameters. For their details, please see the <a href="/routing-api/documentation/Example-maps/common-routing-parameters" target="_blank">Common Routing Parameters</a> page. For required and optional parameters, see the following sections:
+
+- [Required parameters (Base path)](#required-params)
+- [Optional parameters](#optional-params)
+
+```shell [type=get] [title=Request example]
+https://{baseURL}/routing/{versionNumber}/calculateReachableRange/{origin}/{contentType}?key={Your_API_Key}
+&callback={callback}
+&fuelBudgetInLiters={float}
+&energyBudgetInkWh={float}
+&timeBudgetInSec={float}
+&distanceBudgetInMeters={float}
+&report={effectiveSettings}
+&departAt={time}
+&routeType={routeType}
+&traffic={boolean}
+&avoid={avoidType}
+&prefer={preferType}
+&maxFerryLengthInMeters={float}
+&travelMode={travelMode}
+&hilliness={hilliness}
+&windingness={windingness}
+&vehicleMaxSpeed={vehicleMaxSpeed}
+&vehicleWeight={vehicleWeight}
+&vehicleAxleWeight={vehicleAxleWeight}
+&vehicleNumberOfAxles={vehicleNumberOfAxles}
+&vehicleLength={vehicleLength}
+&vehicleWidth={vehicleWidth}
+&vehicleHeight={vehicleHeight}
+&vehicleCommercial={boolean}
+&vehicleLoadType={vehicleLoadType}
+&vehicleAdrTunnelRestrictionCode={vehicleAdrTunnelRestrictionCode}
+&vehicleEngineType={vehicleEngineType}
+&handsFreeDrivingCapability={handsFreeDrivingCapability}
+&constantSpeedConsumptionInLitersPerHundredkm={CombustionConstantSpeedConsumptionPairs}
+&currentFuelInLiters={float}
+&auxiliaryPowerInLitersPerHour={float}
+&fuelEnergyDensityInMJoulesPerLiter={float}
+&accelerationEfficiency={float}
+&decelerationEfficiency={float}
+&uphillEfficiency={float}
+&downhillEfficiency={float}
+&consumptionInkWhPerkmAltitudeGain={float}
+&recuperationInkWhPerkmAltitudeLoss={float}
+&constantSpeedConsumptionInkWhPerHundredkm={ElectricConstantSpeedConsumptionPairs}
+&currentChargeInkWh={float}
+&maxChargeInkWh={float}
+&auxiliaryPowerInkW={float}
+```
+
+### GET URL example
+
+**Note:** Linebreaks are designated by "&bsol;".
+
+```shell [type=get] [title=GET request example]
+https://api.Example.com/routing/1/calculateReachableRange/52.50931,13.42936/json?\
+fuelBudgetInLiters=50&report=effectiveSettings\
+&routeType=eco&traffic=true&avoid=unpavedRoads&travelMode=car&vehicleMaxSpeed=120\
+&vehicleCommercial=false&vehicleEngineType=combustion\
+&constantSpeedConsumptionInLitersPerHundredkm=50%2C8.2%3A130%2C21.3&key={Your_API_Key}
+```
+
+### GET curl command example
+
+**Note:** Linebreaks are designated by "&bsol;".
+
+```shell [type=get] [title=GET curl command example]
+curl -X GET "https://api.Example.com/routing/1/calculateReachableRange/52.50931,13.42936/json?\
+energyBudgetInkWh=50&report=effectiveSettings\
+&routeType=eco&traffic=true&avoid=unpavedRoads&travelMode=car&vehicleMaxSpeed=120\
+&vehicleCommercial=false&vehicleEngineType=electric\
+&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3\
+&key={Your_API_Key}" -H "accept: */*"
+```
+
+### POST URL example
+
+**Note:** Linebreaks are designated by "&bsol;".
+
+```shell [type=post] [title=POST URL request example]
+https://api.Example.com/routing/1/calculateReachableRange/52.50931,13.42936/json?\
+energyBudgetInkWh=50&report=effectiveSettings\
+&routeType=eco&traffic=true&avoid=unpavedRoads&travelMode=car&vehicleMaxSpeed=120\
+&vehicleCommercial=false&vehicleEngineType=electric\
+&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3\
+&key={Your_API_Key}
+```
+
+### POST curl command examples
+
+**Note:** Linebreaks are designated by "&bsol;".
+
+```shell [type=post] [title=POST curl command example]
+curl -X POST "https://api.Example.com/routing/1/calculateReachableRange/52.50931,13.42936/json?energyBudgetInkWh=43&report=effectiveSettings&routeType=eco&traffic=true&avoid=unpavedRoads&travelMode=car&vehicleMaxSpeed=120&vehicleCommercial=false&vehicleEngineType=electric&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3&key={Your_API_Key}"\
+ -H "accept: */*" -H "Content-Type: application/json" -d\
+'{
+  "supportingPoints": [
+    {
+      "latitude": 52.50931,
+      "longitude": 13.42936
+    },
+    {
+      "latitude": 52.50872,
+      "longitude": 13.42900
+    },
+    {
+      "latitude": 52.50844,
+      "longitude": 13.42859
+    }
+  ],
+  "avoidVignette":[
+    "AUS","CHE"
+  ],
+  "avoidAreas":{
+    "rectangles":[
+    {
+      "southWestCorner":{
+       "latitude":48.81851,"longitude":2.26593
+       },
+      "northEastCorner":{
+       "latitude":48.90309,"longitude":2.41115
+       }
+     }
+    ]
+  }
+}'
+```
+
+```shell [type=post] [title=POST curl command example with encoded polyline]
+curl -X POST "https://api.Example.com/routing/1/calculateReachableRange/52.50931,13.42936/json?energyBudgetInkWh=43&report=effectiveSettings&routeType=eco&traffic=true&avoid=unpavedRoads&travelMode=car&vehicleMaxSpeed=120&vehicleCommercial=false&vehicleEngineType=electric&constantSpeedConsumptionInkWhPerHundredkm=50%2C8.2%3A130%2C21.3&key={Your_API_Key}"\
+ -H "accept: */*" -H "Content-Type: application/json" -d\
+'{
+  "encodedPolyline": "evn_Io|}pAtBfAv@pA",
+  "encodedPolylinePrecision": 5,
+  "avoidVignette":[
+    "AUS","CHE"
+  ],
+  "avoidAreas":{
+    "rectangles":[
+    {
+      "southWestCorner":{
+       "latitude":48.81851,"longitude":2.26593
+       },
+      "northEastCorner":{
+       "latitude":48.90309,"longitude":2.41115
+       }
+     }
+    ]
+  }
+}'
+```
+
+### Types
+
+There currently are no additional types specific to the Calculate Reachable Range service; the common types are listed on the <a href="/routing-api/documentation/Example-maps/common-routing-parameters" target="_blank">Common Routing Parameters</a> page.
+
+### Request headers
+
+There currently are no additional headers specific to the Calculate Reachable Range service; the common headers are listed on the <a href="/routing-api/documentation/Example-maps/common-routing-parameters" target="_blank">Common Routing Parameters</a> page.
+
+### Base path parameters
+
+The following table describes a subset of the parameters that can be used in the Calculate Reachable Range service; the remaining parameters are listed on the <a href="/routing-api/documentation/Example-maps/common-routing-parameters" target="_blank">Common Routing Parameters</a> page.
+
+- Required parameters **must be used** or the call will fail.
+- The order of the required parameters is important and must be followed.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px">
+        Required&nbsp;parameters (Base path)
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>versionNumber</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        The service version number.
+        <br />
+        <b>Value:</b> The current value is <code>1</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>origin</code>
+        <br />
+        <em>
+          <code>location</code>
+        </em>
+      </th>
+      <td>
+        Location from which the range calculation should start, in the form of a
+        <code>location</code>.<br />
+        See the <a href="/routing-api/documentation/Example-maps/common-routing-parameters" target="_blank">
+          Common Routing Parameters
+        </a> page for the format and possible values.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Request parameters
+
+The following table describes a subset of the parameters that can be used in the Calculate Reachable Range service; the remaining parameters are listed on the <a href="/routing-api/documentation/Example-maps/common-routing-parameters" target="_blank">Common Routing Parameters</a> page.
+
+- Required parameters **must be used** or the call will fail.
+- Optional parameters may be omitted, except under the specified conditions.
+- The order of request parameters is not important.
+- Exactly one budget (`fuelBudgetInLiters`, `energyBudgetInkWh`, `timeBudgetInSec`, or `distanceBudgetInMeters`) must be used.
+- When `fuelBudgetInLiters` or `energyBudgetInkWh` is used, it is mandatory to specify a detailed Consumption Model.
+
+<table>
+  <thead>
+    <tr>
+      <th
+        id="optional-params"
+        scope="col"
+        style={{ fontSize: '1em' }}
+        width="250px;"
+      >
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>fuelBudgetInLiters</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        Fuel budget in liters that determines maximal range which can be
+        traveled using the specified Combustion Consumption Model.
+        <br />
+        <b>Minimum value:</b> <code>0</code>
+        <br />
+        <b>Maximum value:</b> <code>10000</code>, but no more than
+        <code>currentFuelInLiters</code> (if it's specified)
+        <ul>
+          <li>
+            When <code>fuelBudgetInLiters</code> is used, it is mandatory to
+            specify a detailed Combustion Consumption Model.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>energyBudgetInkWh</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        Electric energy budget in kilowatt hours (kWh) that determines the
+        maximal range that can be traveled using the specified Electric
+        Consumption Model.
+        <br />
+        <b>Minimum value:</b> <code>0</code>
+        <br />
+        <b>Maximum value:</b> <code>10000</code>, but no more than
+        <code>currentChargeInkWh</code> (if it's specified)
+        <ul>
+          <li>
+            When <code>energyBudgetInkWh</code> is used, it is mandatory to
+            specify a detailed Electric Consumption Model.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>timeBudgetInSec</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        The time budget in seconds that determines the maximal range which can
+        be traveled. The Consumption Model will only affect the range when
+        <code>routeType</code> is <code>eco</code>.<br />
+        <b>Minimum value:</b> <code>0</code>
+        <br />
+        <b>Maximum value:</b> <code>10000000</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>distanceBudgetInMeters</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        The distance budget in meters that determines the maximal range which
+        can be traveled. The Consumption Model will only affect the range when
+        <code>routeType</code> is <code>eco</code>.<br />
+        <b>Minimum value:</b> <code>0</code>
+        <br />
+        <b>Maximum value:</b> <code>50000000</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>maxFerryLengthInMeters</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        The limit (in meters) for a single ferry connection to be included in
+        the range calculation.
+        <br />
+        The entire length of a ferry connection must be shorter than this
+        distance for any part of the connection to be considered for the
+        calculation. The value is exclusive: ferry connections greater than or
+        equal to this distance are ignored. Setting
+        <code>maxFerryLengthInMeters</code> to <code>0</code> excludes all ferry
+        connections.
+        <br />
+        <b>Minimum value:</b> <code>0</code>
+        <br />
+        <b>Maximum value:</b> <code>20000</code>
+        <br />
+        <b>Default value:</b> <code>20000</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Further parameters not contained in the preceding table can be specified. A complete list is located in the <a href="/routing-api/documentation/Example-maps/common-routing-parameters" target="_blank">Common Routing Parameters</a> page. This page also includes the parameters used to define a detailed Consumption Model.
+
+### POST data parameters
+
+The `supportingPoints` field is used to guarantee a higher degree of consistency between the reachable-range polygon and the reachable part of a particular route.
+
+The route represented by `supportingPoints` is reconstructed internally, using the same parameters as used for the reachable range calculation. The reachable part of the route, which could be the entire route or a beginning section, is found by determining the farthest point the vehicle can go on the route on its current budget. The reachable part of the route is not explicitly returned, but it is used internally to ensure it is contained in the resulting reachable area.
+
+- The first element of `supportingPoints` must be identical to the origin point of the `calculateReachableRange` request.
+- If `supportingPoints` is used, then it is mandatory to specify `energyBudgetInkWh` and a detailed Electric Consumption Model.
+- The route given by the polyline may contain traffic incidents of type `ROAD_CLOSURE`, which are ignored for the calculation of the reachable part of the route.
+- If `supportingPoints` is used and the route reconstruction fails, the request will fail with `CANNOT_RESTORE_BASEROUTE` in the `detailedError` field from the error response.
+- Road closures are ignored during the reconstruction of `supportingPoints` (the reconstructed route may go through closures) but they are not ignored for the calculation of the reachable range.
+
+The following table describes a subset of the parameters that can be used in the Calculate Reachable Range service; the remaining parameters are listed on the <a href="/routing-api/documentation/Example-maps/common-routing-parameters" target="_blank">Common Routing Parameters</a> page.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', width: '300' }}>Parameter</th>
+      <th scope="col" style={{ fontSize: '1em', inlineSize: 'min-content', overflowWrap: 'anywhere' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody style={{ inlineSize: 'min-content', overflowWrap: 'anywhere' }}>
+    <tr>
+      <th scope="row">
+        <code>supportingPoints</code>  
+        *array of <code>point</code> objects*
+      </th>
+      <td>
+        An array of <code>point</code> objects, to be used as input for route reconstruction.  
+        <code>supportingPoints</code> and <code>encodedPolyline</code> are alternative representation formats and cannot be used simultaneously.
+        See the
+        <a href="/routing-api/documentation/Example-maps/common-routing-parameters#route-geometry-representation-formats" target="_blank">Route geometry representation formats</a>
+        section for further information.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>encodedPolyline</code>  
+        *string*
+      </th>
+      <td>
+        A string in the 
+        <a href="/routing-api/documentation/Example-maps/common-routing-parameters#encoded-polyline-format" target="_blank">encoded polyline format</a>,
+        representing the array of points to be used as input for route reconstruction.  
+        The precision used to encode the polyline must be set in the <code>encodedPolylinePrecision</code> field.  
+        <code>supportingPoints</code> and <code>encodedPolyline</code> are alternative representation formats and cannot be used simultaneously.
+        See the
+        <a href="/routing-api/documentation/Example-maps/common-routing-parameters#route-geometry-representation-formats" target="_blank">Route geometry representation formats</a>
+        section for further information.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>encodedPolylinePrecision</code>  
+        *integer*
+      </th>
+      <td>
+        The precision used to encode the polyline in the <code>encodedPolyline</code> field.  
+        Must be <code>5</code> or <code>7</code>.  
+        Must be paired with <code>encodedPolyline</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+## Response data
+
+### Response headers
+
+There currently are no additional response headers specific to the Calculate Reachable Range service; the common response headers are listed on the <a href="/routing-api/documentation/Example-maps/common-routing-parameters" target="_blank">Common Routing Parameters</a> page.
+
+### Response codes
+
+There currently are no additional response codes specific to the Calculate Reachable Range service; the common response codes are listed on the <a href="/routing-api/documentation/Example-maps/common-routing-parameters" target="_blank">Common Routing Parameters</a> page.
+
+### Example of a successful response
+
+<Accordion label="Response body" isClosed>
+
+```json
+{
+  "formatVersion": "0.0.1",
+  "reachableRange": {
+    "center": {
+      "latitude": 50.9745,
+      "longitude": 5.86605
+    },
+    "boundary": [
+      {
+        "latitude": 50.98532,
+        "longitude": 5.86595
+      },
+      {
+        "latitude": 50.98148,
+        "longitude": 5.86371
+      },
+      {
+        "latitude": 50.98382,
+        "longitude": 5.86248
+      },
+      {
+        "latitude": 50.97733,
+        "longitude": 5.86437
+      },
+      {
+        "latitude": 50.98242,
+        "longitude": 5.85815
+      },
+      {
+        "latitude": 50.9818,
+        "longitude": 5.85436
+      },
+      {
+        "latitude": 50.97964,
+        "longitude": 5.85511
+      },
+      {
+        "latitude": 50.97844,
+        "longitude": 5.84836
+      },
+      {
+        "latitude": 50.97732,
+        "longitude": 5.84762
+      },
+      {
+        "latitude": 50.9743,
+        "longitude": 5.84969
+      },
+      {
+        "latitude": 50.97,
+        "longitude": 5.84589
+      },
+      {
+        "latitude": 50.9668,
+        "longitude": 5.85043
+      },
+      {
+        "latitude": 50.96705,
+        "longitude": 5.85374
+      },
+      {
+        "latitude": 50.96914,
+        "longitude": 5.86007
+      },
+      {
+        "latitude": 50.96284,
+        "longitude": 5.85818
+      },
+      {
+        "latitude": 50.9658,
+        "longitude": 5.86256
+      },
+      {
+        "latitude": 50.96201,
+        "longitude": 5.86273
+      },
+      {
+        "latitude": 50.96405,
+        "longitude": 5.86589
+      },
+      {
+        "latitude": 50.97104,
+        "longitude": 5.86665
+      },
+      {
+        "latitude": 50.96513,
+        "longitude": 5.86786
+      },
+      {
+        "latitude": 50.96663,
+        "longitude": 5.8692
+      },
+      {
+        "latitude": 50.963,
+        "longitude": 5.87398
+      },
+      {
+        "latitude": 50.96437,
+        "longitude": 5.87707
+      },
+      {
+        "latitude": 50.96371,
+        "longitude": 5.88459
+      },
+      {
+        "latitude": 50.9671,
+        "longitude": 5.88358
+      },
+      {
+        "latitude": 50.97004,
+        "longitude": 5.88901
+      },
+      {
+        "latitude": 50.97098,
+        "longitude": 5.89176
+      },
+      {
+        "latitude": 50.97478,
+        "longitude": 5.88689
+      },
+      {
+        "latitude": 50.97874,
+        "longitude": 5.88598
+      },
+      {
+        "latitude": 50.98175,
+        "longitude": 5.88432
+      },
+      {
+        "latitude": 50.97871,
+        "longitude": 5.873
+      },
+      {
+        "latitude": 50.98047,
+        "longitude": 5.87153
+      },
+      {
+        "latitude": 50.97948,
+        "longitude": 5.86984
+      },
+      {
+        "latitude": 50.98555,
+        "longitude": 5.87028
+      },
+      {
+        "latitude": 50.98632,
+        "longitude": 5.87009
+      },
+      {
+        "latitude": 50.98709,
+        "longitude": 5.86749
+      }
+    ]
+  },
+  "report": {
+    "effectiveSettings": [
+      {
+        "key": "avoid",
+        "value": "motorways"
+      },
+      "...further settings..."
+    ]
+  }
+}
+```
+
+</Accordion><br />
+
+### Example of an error response
+
+If an error occurs, the response contains the description of the error.
+
+The format follows the exact same format as for <a href="/routing-api/documentation/Example-maps/calculate-route#structure-of-an-error-response" target="_blank">Calculate Route</a>.
+
+- Errors such as `MAP_MATCHING_FAILURE` are returned in the same way as in a `calculateRoute` response.
+- If a `calculateReachableRange` request cannot compute a polygon consistent with the input parameters, it will fail with `NO_RANGE_FOUND`.
+
+<h4 style={{ fontSize: '1em' }}>
+  Special behavior for content type <code>jsonp</code>
+  <a href="https://www.w3schools.com/js/js_json_jsonp.asp" target="_blank">
+    (JSON with Padding)
+  </a>
+</h4>
+
+When the `contentType=jsonp` is used, the returned HTTP status code is always OK (`200`).
+
+- This ensures that the `jsonp` callback will be invoked on the client side regardless of the outcome of the request.
+- In order to provide the client with the actual status of the request, a field called `statusCode` is added to the response body.
+
+Currently, the preceding statement is not true for certain types of errors described below.
+
+<h4 style={{ fontSize: '1em' }}>
+  Special behavior of certain types of errors (authentication errors, request
+  quota related errors, etc.)
+</h4>
+
+- For those errors the HTTP status code is returned as normal (`400`, `500`, ...) and the response content type is `text/xml` independent from the request content type.
+- For those errors, the content doesn't follow the documented format for error responses.
+- **Note:** This imperfection should not cause problems during normal use of the API.
+
+### Structure of a successful response
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>formatVersion</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>The format version.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>statusCode</code>
+        <br />
+        <em>number</em>
+      </th>
+      <td>
+        The original HTTP status code as listed in response codes (only included
+        for content type <code>jsonp</code>).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>reachableRange</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>
+        A polygon described by means of a <code>center</code> field and a
+        <code>boundary</code> field.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>center</code>
+        <br />
+        <em>point object</em>
+      </th>
+      <td>The center of the polygon.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>boundary</code>
+        <br />
+        <em>array of point objects</em>
+      </th>
+      <td>
+        The polygon boundary. Each object in the array describes a location on
+        the boundary of the polygon.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>report</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>
+        A report describing the request. Contains <code>effectiveSettings</code>
+        .
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>effectiveSettings</code>
+        <br />
+        <em>array of objects</em>
+      </th>
+      <td>
+        Effective parameters or data used when calling the Calculate Reachable
+        Range API. Each object contains the fields <code>key</code> and
+        <code>value</code>, containing strings.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Structure of an error response
+
+The structure follows the exact same format as for <a href="/routing-api/documentation/Example-maps/calculate-route#structure-of-an-error-response" target="_blank">Calculate Route</a>.

@@ -1,0 +1,62 @@
+---
+title: Getting Started
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="routing-getting-started"
+></a>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="cocoapods-Examplesdkroute"
+></a>
+
+## ExampleOnlineSDKRouting on Cocoapods
+
+To integrate ExampleOnlineSDKRouting for iOS into your Xcode project using CocoaPods, specify it in
+your Podfile:
+
+```objectivec
+pod 'ExampleOnlineSDKRouting'
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="modify-xcode-projects"
+></a>
+
+## Service Key
+
+Add the service key from the Routing API [https://developer.Example.com/routing-api/documentation/product-information/introduction](https://developer.Example.com/routing-api/documentation/product-information/introduction) site.
+
+<Code>
+
+```swift
+TTRoute(key:<Key>)
+LongDistanceEVService(key:<Key>)
+```
+
+```objectivec
+[[TTRoute alloc] initWithKey:<Key>]
+[[LongDistanceEVService alloc] initWithKey:<Key>];
+```
+
+</Code>
+
+When you want to use Long EV distance routing:
+
+<Code>
+
+```swift
+LongDistanceEVService(key:<Key>)
+```
+
+```objectivec
+[[LongDistanceEVService alloc] initWithKey:<Key>];
+```
+
+</Code>

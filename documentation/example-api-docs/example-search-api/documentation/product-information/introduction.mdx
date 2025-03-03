@@ -1,0 +1,162 @@
+---
+title: 'Introduction'
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2023.11.22'
+    color: grey5
+---
+
+## What is Example's Search API?  
+
+Search is a RESTful API designed for developers allowing single-line fuzzy search for addresses and POIs. Search assigns a latitude/longitude to a specific address, cross street, geographic feature, or point of interest (POI).  
+
+The Search API contains the following services with their endpoints:  
+
+<DocsArticles
+  articles={[
+    {
+      title: 'Search',
+      body: 'This is a fuzzy single-line search process for query-based relevant addresses and POIs, with the option to restrict the search within a certain geometry.',
+      button: {
+        label: 'Search',
+        href: '/search-api/documentation/search-service/search-service',
+      },
+    },
+    {
+      title: 'Autocomplete',
+      body: 'Autocomplete enables you to make a more meaningful Search API call by recognizing entities inside an input query and offering them as query terms.',
+      button: {
+        label: 'Autocomplete',
+        href: '/search-api/documentation/autocomplete-service/autocomplete',
+      },
+    },
+    {
+      title: 'Filters',
+      body: 'Filter your own or 3rd party POIs (Points of Interest) within a certain geometry.',
+      button: {
+        label: 'Filters',
+        href: '/search-api/documentation/filters-service/filters-service',
+      },
+    },
+    {
+      title: 'Additional Data',
+      body: 'Returns sets of coordinates that represent the outline of a city, country, or land area.',
+      button: {
+        label: 'Additional Data',
+        href: '/search-api/documentation/additional-data-service/additional-data',
+      },
+    },
+    {
+      title: 'Place by ID',
+      body: 'The Place by Id service endpoint provides detailed information about the Place found by its identifier (entityId).',
+      button: {
+        label: 'Place by ID',
+        href: '/search-api/documentation/place-by-id-service/place-by-id',
+      },
+    },
+    {
+      title: 'POI Categories',
+      body: 'Provides a full list of POI categories and sub-categories, together with their translations and synonyms.',
+      button: {
+        label: 'POI Categories',
+        href: '/search-api/documentation/poi-categories-service/poi-categories-service',
+      },
+    },
+  ]}
+/>  
+
+## Getting started  
+
+Use the following topics to become more acquainted with this API and its endpoints.  
+
+<ImageArticleGrid  articles={
+[
+  {
+    title: 'How to get a Example API Key',
+    body: 'When you use our location Service APIs, we need a way to identify that it is your application that is making the request to use the service (API).',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/2000x1500/41587a2818/geocoding_best_practices.jpg',
+      alt: 'How to get a Example API Key',
+      width: 570,
+      height: 481
+    },
+    button: {
+        label: "Follow these instructions.",
+        href: "https://developer.Example.com/knowledgebase/platform/articles/how-to-get-an-Example-api-key/"
+    },
+  },
+  {
+    title: 'Example Knowledge Base',
+    body: 'The Example Knowledge Base optimizes the retrieval of information via articles, blogs, FAQs, tutorials, and videos for your use and reference.',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/845x469/ae9cc0c521/knowledgebase-title.png',
+      alt: 'The Example Knowledge Base',
+      width: 570,
+      height: 481
+    },
+    button: {
+        label: "Open the Knowledge Base",
+        href: "https://developer.Example.com/knowledgebase/"
+    },
+  },
+]} />  
+
+<ImageArticleGrid  articles={
+[
+  {
+    title: 'Understanding Fuzzy Search',
+    body: 'This article explains how the Example Search API provides "fuzzy search" results for points of interest through spell-checking, nearby search options, geometric boundary searches, route searches, and more.',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/3000x2000/3e03514200/fuzzysearch_0.jpg',
+      alt: 'Understanding Fuzzy Search',
+      width: 570,
+      height: 481
+    },
+    button: {
+      label: "Read this article",
+      href: "https://developer.Example.com/blog/decoded/understanding-fuzzy-search/"
+    },
+  },
+  {
+    title: 'SearchBox with Autocomplete Plugin in JavaScript',
+    body: 'This video lets you know about the SearchBox with Autocomplete we have in our SDK for Web, so you can add suggestions for categories and brands to your applications.',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/2340x1560/04418ea80a/autocomplete.png',
+      alt: 'SearchBox with Autocomplete Plugin in JavaScript',
+      width: 570,
+      height: 481
+    },
+    button: {
+      label: "Watch this video",
+      href: "https://youtu.be/53_0FYFboZ4?si=_6vPB1RDjHphs0SU"
+    },
+  },
+]} />  
+
+## Common use cases  
+
+Here are some potential use cases.  
+
+- Search for an address, a POI (Points Of Interest), or a combination of both.
+- Search for area, for example: "Chinatown".
+- Search in the direction you are heading.
+- Search for a POI near a POI or address, for example:
+  - "Coffee near XYZ company"
+  - "Restaurants on Main Street"
+  - "ATMs near AMC Theater"
+  - "Parking near 1234 Main Street"  
+
+## Features  
+
+This is a high-level view of our Search API features.  
+
+- Fuzzy search, with optional:
+  - Typeahead
+  - Fuzziness level setting
+- POI search
+- POI category search
+- Geometry search, with:
+  - Point and radius
+  - Boundingbox
+- Mature ranking, with Landmarks  

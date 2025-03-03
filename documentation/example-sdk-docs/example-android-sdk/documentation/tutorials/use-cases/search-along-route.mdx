@@ -1,0 +1,1204 @@
+---
+title: Search along a route
+---
+
+## Overview
+
+This tutorial shows how to use New Maps SDK for Android to create an application that helps a
+user find points of interest along a planned route.
+
+It shows how to use:
+
+- The New Map SDK module to display a map, including markers with custom icons and balloons.
+- The New Routing SDK module to plan routes with and without waypoints.
+- The New Search SDK module to search for points of interest (POIs) and to geocode map positions.
+
+An end user can start interacting with the application by planning a route with departure and
+destination points. One long click on the map sets a departure point. A second long click sets a
+destination point and draws a route between those two points on the map.
+
+When the route is visible on the map, the user can type a POI name or category into a search field
+or click on any of the predefined POI category buttons (gas station, restaurant, ATM). The map
+displays markers for POIs that match the user's request. The user can add one of the displayed POIs
+to their planned route by clicking the marker on the map and choosing the "Add to my route" button
+inside the marker balloon that is then displayed. The route is recalculated and redrawn to include
+the selected point.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.New.com/assets/tutorials/searchalongaroute/0-example-app.png)
+
+</ContentWrapper>
+
+## Prerequisites:
+
+1. Create a new project (minimum SDK API 23 – Android 6.0 “Marshmallow”) with an Empty Activity
+   named MainActivity. Make sure that the AndroidX artifacs option is enabled.
+2. In the _build.gradle_ project file, add the New repository to the list of repositories. The
+   New Maps SDK dependencies are downloaded from there.
+   ```prettyprint
+   allprojects {
+       repositories {
+           google()
+           jcenter()
+           maven {
+               url "https://repositories.New.com/artifactory/maps-sdk-legacy-android"
+           }
+       }
+   }
+   ```
+3. In the _app/build.gradle_ file, inside the “android” section add support for the Java 1.8
+   features.
+   ```prettyprint
+   android {
+       compileOptions {
+           sourceCompatibility JavaVersion.VERSION_1_8
+           targetCompatibility JavaVersion.VERSION_1_8
+       }
+   (...)
+   ```
+4. In the _app/build.gradle_ file, add dependencies to the New Map, Search and Routing SDK
+   modules along with android support libraries.
+   ```prettyprint
+   dependencies {
+       implementation fileTree(dir: 'libs', include: ['*.jar'])
+       implementation 'androidx.appcompat:appcompat:1.1.0'
+       implementation 'androidx.core:core:1.2.0'
+       implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+       implementation 'androidx.vectordrawable:vectordrawable-animated:1.1.0'
+       implementation 'androidx.media:media:1.1.0'
+       implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+       implementation 'com.New.online:sdk-maps:2.4782'
+       implementation 'com.New.online:sdk-routing:2.4782'
+       implementation 'com.New.online:sdk-search:2.4782'
+       implementation 'com.New.online:sdk-maps-ui-extensions:2.4782'
+   }
+   ```
+5. If you don't have an API key visit
+   a [How to get a New API key](https://developer.New.com/how-to-get-New-api-key) site and
+   create one.
+6. Create a build config fields with the API keys, which will be used later in the application:
+   ```prettyprint
+   android {
+       compileSdkVersion 29
+       defaultConfig {
+           buildConfigField("String", "MAPS_API_KEY", "\YOUR_KEY\")
+           buildConfigField("String", "ROUTING_API_KEY", "\YOUR_KEY\")
+           buildConfigField("String", "SEARCH_API_KEY", "\YOUR_KEY\")
+           (...)
+   ```
+7. Create a file named _dimens.xml_ inside your _res/values_ directory. Add the dimension values of
+   you UI components to it.
+   ```xml
+   <resources>
+       <dimen name="size_none">0dp</dimen>
+   </resources>
+   ```
+
+## Map initialization
+
+To initialize a New map, add a `com.New.onlinesdk.map.MapFragment` fragment into the main
+ConstraintLayout section of the _activity_main.xml_ file.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.New.online.sdk.map.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+You can start adding event handlers to the map only after it is fully initialized. To test if the
+map is ready, the MainActivity class should implement an `OnMapReadyCallback` interface.
+
+Then implement an `OnMapLongClickListener` interface to provide a callback method for long click
+events on the map.
+
+Add a `initNewServices` method to part of the MainActivity class where Map Display API modules
+are initialized. At the same time, add a `initUIViews` method and a `setupUIViewListeners` method
+where User Interface (UI) elements are initialized.
+
+<Code>
+
+```java
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
+        NewMapCallback.OnMapLongClickListener {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main);
+        initNewServices();
+        initUIViews();
+        setupUIViewListeners();
+    }
+
+    @Override
+    public void onMapReady(@NonNull NewMap NewMap) {}
+
+    @Override
+    public void onMapLongClick(@NonNull LatLng latLng) {}
+
+    private void initNewServices() {
+        Map<ApiKeyType, String> mapKeys = new HashMap<>();
+        mapKeys.put(ApiKeyType.MAPS_API_KEY, BuildConfig.MAPS_API_KEY);
+
+        MapProperties mapProperties = new MapProperties.Builder()
+                .keys(mapKeys)
+                .build();
+        MapFragment mapFragment = MapFragment.newInstance(mapProperties);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.mapFragment, mapFragment)
+                .commit();
+        mapFragment.getAsyncMap(this);
+    }
+
+    private void initUIViews() {}
+    private void setupUIViewListeners() {}
+}
+```
+
+```kotlin
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMapLongClickListener {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        initNewServices()
+        initUIViews()
+        setupUIViewListeners()
+        disableSearchButtons()
+    }
+
+    override fun onMapReady(NewMap: NewMap) {
+    }
+
+    override fun onMapLongClick(latLng: LatLng) {
+    }
+
+    private fun initNewServices() {
+        val mapKeys = mapOf(
+                ApiKeyType.MAPS_API_KEY to BuildConfig.MAPS_API_KEY
+        )
+        val mapProperties = MapProperties.Builder()
+                .keys(mapKeys)
+                .build()
+        val mapFragment = MapFragment.newInstance(mapProperties)
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.mapFragment, mapFragment)
+                .commit()
+        mapFragment.getAsyncMap(this)
+    }
+
+    private fun initUIViews() {
+    }
+
+    private fun setupUIViewListeners() {
+    }
+```
+
+</Code>
+
+Run your application. You should see a map.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.New.com/assets/tutorials/searchalongaroute/1-displayMap.png)
+
+</ContentWrapper>
+
+The New map handles zooming, panning, rotating and double tapping gestures. In this application
+you need to add additional map interactions including location handling, long map click events,
+drawing routes and markers.
+
+Add a private field for the New map object inside the MainActivity class:
+
+<Code>
+
+```java
+private NewMap NewMap;
+```
+
+```kotlin
+private lateinit var NewMap: NewMap
+```
+
+</Code>
+
+and initialize it in the `onMapReady` callback.
+
+<Code>
+
+```java
+ @Override
+ public void onMapReady(@NonNull final NewMap NewMap) {
+     this.NewMap = NewMap;
+     this.NewMap.setMyLocationEnabled(true);
+     this.NewMap.addOnMapLongClickListener(this);
+     this.NewMap.getMarkerSettings().setMarkersClustering(true);
+ }
+```
+
+```kotlin
+override fun onMapReady(NewMap: NewMap) {
+    this.NewMap = NewMap
+    this.NewMap.let {
+        it.isMyLocationEnabled = true
+        it.addOnMapLongClickListener(this)
+        it.markerSettings.setMarkersClustering(true)
+    }
+}
+```
+
+</Code>
+
+Override the `onRequestPermissionsResult` method so that permission callbacks from activities are
+forwarded to the `NewMap` object.
+
+<Code>
+
+```java
+@Override
+public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    this.NewMap.onRequestPermissionsResult(requestCode, permissions, grantResults);
+}
+```
+
+```kotlin
+override fun onRequestPermissionsResult(requestCode: Int, permissions: Array, grantResults: IntArray) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    NewMap.onRequestPermissionsResult(requestCode, permissions, grantResults)
+}
+```
+
+</Code>
+
+After the `onMapReady` callback is executed from the Maps SDK, the `NewMap` object is ready to be
+used. Now you can register your own map event listeners.
+
+## Drawing a route on the map
+
+Drawing a route on the map requires that the following additional private fields be defined in the
+MainActivity class:
+
+- RoutingApi
+- SearchApi (here used for reverse geocoding of a map position to a valid address)
+- Calculated route
+- Departure coordinates
+- Destination coordinates
+- Waypoint coordinates
+
+<Code>
+
+```java
+private NewMap NewMap;
+private SearchApi searchApi;
+private RoutingApi routingApi;
+private Route route;
+private LatLng departurePosition;
+private LatLng destinationPosition;
+private LatLng wayPointPosition;
+private Icon departureIcon;
+private Icon destinationIcon;
+```
+
+```kotlin
+private lateinit var NewMap: NewMap
+private lateinit var searchApi: SearchApi
+private lateinit var routingApi: RoutingApi
+private var route: Route? = null
+private var departurePosition: LatLng? = null
+private var destinationPosition: LatLng? = null
+private var wayPointPosition: LatLng? = null
+private var departureIcon: Icon? = null
+private var destinationIcon: Icon? = null
+```
+
+</Code>
+
+Then initialize the New Search and Routing services by adding the following to
+the `initNewServices` method:
+
+<Code>
+
+```java
+searchApi = OnlineSearchApi.create(this, BuildConfig.SEARCH_API_KEY);
+routingApi = OnlineRoutingApi.create(this, BuildConfig.ROUTING_API_KEY);
+```
+
+```kotlin
+searchApi = OnlineSearchApi.create(this, BuildConfig.SEARCH_API_KEY)
+routingApi = OnlineRoutingApi.create(this, BuildConfig.ROUTING_API_KEY)
+```
+
+</Code>
+
+Initialize icons for departure and destination positions inside the `initUIViews` method.
+
+<Code>
+
+```java
+departureIcon = Icon.Factory.fromResources(MainActivity.this, R.drawable.ic_map_route_departure);
+destinationIcon = Icon.Factory.fromResources(MainActivity.this, R.drawable.ic_map_route_destination);
+```
+
+```kotlin
+departureIcon = Icon.Factory.fromResources(this@MainActivity, R.drawable.ic_map_route_departure)
+destinationIcon = Icon.Factory.fromResources(this@MainActivity, R.drawable.ic_map_route_destination)
+```
+
+</Code>
+
+You need a `clearMap` function, where all the markers and the route are removed from the map.
+
+<Code>
+
+```java
+private void clearMap() {
+    NewMap.clear();
+    departurePosition = null;
+    destinationPosition = null;
+    route = null;
+}
+```
+
+```kotlin
+private fun clearMap() {
+    NewMap.clear()
+    departurePosition = null
+    destinationPosition = null
+    route = null
+}
+```
+
+</Code>
+
+Update the _res/values/strings.xml_ file by adding strings:
+
+```xml
+<string name="geocode_no_results">No geocoder results. Choose different location and try again.</string>
+<string name="api_response_error">API response error: \'%1\'.</string>
+```
+
+Now you can add an implementation to the function that handles long click events on the map.
+
+<Code>
+
+```java
+@Override
+public void onMapLongClick(@NonNull LatLng latLng) {
+    if (isDeparturePositionSet() && isDestinationPositionSet()) {
+        clearMap();
+    } else {
+        handleLongClick(latLng);
+    }
+}
+
+private void handleLongClick(@NonNull LatLng latLng) {
+    searchApi.reverseGeocoding(new ReverseGeocoderSearchQueryBuilder(latLng.getLatitude(), latLng.getLongitude()).build())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new DisposableSingleObserver<ReverseGeocoderSearchResponse>() {
+                @Override
+                public void onSuccess(ReverseGeocoderSearchResponse response) {
+                    processResponse(response);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    handleApiError(e);
+                }
+
+                private void processResponse(ReverseGeocoderSearchResponse response) {
+                    if (response.hasResults()) {
+                        processFirstResult(response.getAddresses().get(0).getPosition());
+                    }
+                    else {
+                        Toast.makeText(MainActivity.this, getString(R.string.geocode_no_results), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                private void processFirstResult(LatLng geocodedPosition) {
+                    if (!isDeparturePositionSet()) {
+                        setAndDisplayDeparturePosition(geocodedPosition);
+                    } else {
+                        destinationPosition = geocodedPosition;
+                        NewMap.removeMarkers();
+                        drawRoute(departurePosition, destinationPosition);
+                    }
+                }
+
+                private void setAndDisplayDeparturePosition(LatLng geocodedPosition) {
+                    departurePosition = geocodedPosition;
+                    createMarkerIfNotPresent(departurePosition, departureIcon);
+                }
+            });
+}
+
+private boolean isDestinationPositionSet() {
+    return destinationPosition != null;
+}
+
+private boolean isDeparturePositionSet() {
+    return departurePosition != null;
+}
+
+private void handleApiError(Throwable e) {
+    Toast.makeText(MainActivity.this, getString(R.string.api_response_error, e.getLocalizedMessage()), Toast.LENGTH_LONG).show();
+}
+```
+
+```kotlin
+override fun onMapLongClick(latLng: LatLng) {
+    if (isDeparturePositionSet && isDestinationPositionSet) {
+        clearMap()
+    } else {
+        handleLongClick(latLng)
+    }
+}
+
+private fun handleLongClick(latLng: LatLng) {
+    searchApi.reverseGeocoding(ReverseGeocoderSearchQueryBuilder(latLng.latitude, latLng.longitude).build())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : DisposableSingleObserver<ReverseGeocoderSearchResponse?>() {
+                override fun onSuccess(response: ReverseGeocoderSearchResponse) {
+                    processResponse(response)
+                }
+
+                override fun onError(e: Throwable) {
+                    handleApiError(e)
+                }
+
+                private fun processResponse(response: ReverseGeocoderSearchResponse) {
+                    if (response.hasResults()) {
+                        processFirstResult(response.addresses[0].position)
+                    } else {
+                        Toast.makeText(this@MainActivity, getString(R.string.geocode_no_results), Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                private fun processFirstResult(geocodedPosition: LatLng) {
+                    if (!isDeparturePositionSet) {
+                        setAndDisplayDeparturePosition(geocodedPosition)
+                    } else {
+                        destinationPosition = geocodedPosition
+                        NewMap.removeMarkers()
+                        drawRoute(departurePosition, destinationPosition)
+                    }
+                }
+
+                private fun setAndDisplayDeparturePosition(geocodedPosition: LatLng) {
+                    departurePosition = geocodedPosition
+                    createMarkerIfNotPresent(departurePosition, departureIcon)
+                }
+            })
+}
+
+private val isDestinationPositionSet: Boolean
+    get() {
+        return destinationPosition != null
+    }
+
+private val isDeparturePositionSet: Boolean
+    get() {
+        return departurePosition != null
+    }
+
+private fun handleApiError(e: Throwable) {
+    Toast.makeText(this@MainActivity, getString(R.string.api_response_error, e.localizedMessage), Toast.LENGTH_LONG).show()
+}
+```
+
+</Code>
+
+The `handleLongClick` function calls the searchApi's `reverseGeocoding` method. This method checks
+if a road can be found in the place where a long click is registered on the map.
+
+Method reverseGeocoding returns a RxJava `Single<ReverseGeocoderSearchResponse>` object, subscribe
+on this object with `DisposableSingleObserver<ReverseGeocoderSearchResponse>`. When the Single is
+finished, it emits either a single successful value or an error. If a successful value is emitted, a
+method onSuccess is executed in the subscribing DisposableSingleObserver, otherwise an onError
+method is executed.
+
+If the reverse geocoding call is successful, the effect of the LongClick depends on context:
+
+- The first long click on the map sets the `departurePosition` object.
+- A second long click sets the `destinationPosition` object and draws a route on the map.
+- A third long click removes any destination and departure markers and the route from the map.
+
+Next add functions to send a route request to the Routing API and to draw a route from the response
+on the map.
+
+<Code>
+
+```java
+private RouteCalculationDescriptor createRouteCalculationDescriptor(RouteDescriptor routeDescriptor, LatLng[] wayPoints) {
+    return (wayPoints != null) ?
+            new RouteCalculationDescriptor.Builder()
+                    .routeDescription(routeDescriptor)
+                    .waypoints(asList(wayPoints)).build() :
+            new RouteCalculationDescriptor.Builder()
+                    .routeDescription(routeDescriptor).build();
+}
+
+private void drawRoute(LatLng start, LatLng stop) {
+    wayPointPosition = null;
+    drawRouteWithWayPoints(start, stop, null);
+}
+
+private RouteSpecification createRouteSpecification(LatLng start, LatLng stop, LatLng[] wayPoints) {
+    RouteDescriptor routeDescriptor = new RouteDescriptor.Builder()
+            .routeType(RouteType.FASTEST)
+            .build();
+    RouteCalculationDescriptor routeCalculationDescriptor = createRouteCalculationDescriptor(routeDescriptor, wayPoints);
+    return new RouteSpecification.Builder(start, stop)
+            .routeCalculationDescriptor(routeCalculationDescriptor)
+            .build();
+}
+
+private void drawRouteWithWayPoints(LatLng start, LatLng stop, LatLng[] wayPoints) {
+    RouteSpecification routeSpecification = createRouteSpecification(start, stop, wayPoints);
+    showDialogInProgress();
+    routingApi.planRoute(routeSpecification, new RouteCallback() {
+        @Override
+        public void onSuccess(@NotNull RoutePlan routePlan) {
+            displayRoutes(routePlan.getRoutes());
+            NewMap.displayRoutesOverview();
+        }
+
+        @Override
+        public void onError(@NotNull RoutingException e) {
+            handleApiError(e);
+            clearMap();
+        }
+
+        private void displayRoutes(List routes) {
+            for (FullRoute fullRoute : routes) {
+                route = NewMap.addRoute(new RouteBuilder(
+                        fullRoute.getCoordinates()).startIcon(departureIcon).endIcon(destinationIcon));
+            }
+        }
+    });
+}
+```
+
+```kotlin
+private fun createRouteCalculationDescriptor(routeDescriptor: RouteDescriptor, wayPoints: Array<LatLng>?): RouteCalculationDescriptor? {
+    return if (wayPoints != null) RouteCalculationDescriptor.Builder()
+            .routeDescription(routeDescriptor)
+            .waypoints(listOf(*wayPoints)).build()
+    else RouteCalculationDescriptor.Builder()
+            .routeDescription(routeDescriptor).build()
+}
+
+private fun drawRoute(start: LatLng?, stop: LatLng?) {
+    wayPointPosition = null
+    drawRouteWithWayPoints(start, stop, null)
+}
+
+private fun createRouteSpecification(start: LatLng, stop: LatLng, wayPoints: Array<LatLng>?): RouteSpecification? {
+    val routeDescriptor = RouteDescriptor.Builder()
+            .routeType(com.New.online.sdk.routing.route.description.RouteType.FASTEST)
+            .build()
+    val routeCalculationDescriptor = createRouteCalculationDescriptor(routeDescriptor, wayPoints)
+    return RouteSpecification.Builder(start, stop)
+            .routeCalculationDescriptor(routeCalculationDescriptor!!)
+            .build()
+}
+
+private fun drawRouteWithWayPoints(start: LatLng?, stop: LatLng?, wayPoints: Array<LatLng>?) {
+    val routeSpecification = createRouteSpecification(start!!, stop!!, wayPoints)
+    showDialogInProgress()
+
+    routingApi.planRoute(routeSpecification!!, object : RouteCallback {
+        override fun onSuccess(routePlan: RoutePlan) {
+            dismissDialogInProgress()
+            displayRoutes(routePlan.routes)
+            NewMap.displayRoutesOverview()
+        }
+
+        override fun onError(e: RoutingException) {
+            handleApiError(e)
+            clearMap()
+        }
+
+        private fun displayRoutes(routes: List<FullRoute>) {
+            for (fullRoute in routes) {
+                route = NewMap.addRoute(RouteBuilder(
+                        fullRoute.getCoordinates()).startIcon(departureIcon).endIcon(destinationIcon))
+            }
+        }
+    })
+}
+```
+
+</Code>
+
+The `createRouteCalculationDescriptor` method returns a `RouteCalculationDescriptor` object:
+
+- With additional waypoints (if the wayPoints array is not equal to null).
+- Without additional waypoints (if the wayPoints array is equal to null).
+
+The `createRouteSpecification` method is using internally the `createRouteCalculationDescriptor`
+method result and returns a `RouteSpecification` object.
+
+The `drawRouteWithWaypoints` method calls the Routing API. If the response is successful, a route is
+drawn on the map. If the API returns an error, a message is displayed on the screen.
+
+Add a `createMarkerIfNotPresent` method to display a departure position marker if the destination
+position is not set:
+
+<Code>
+
+```java
+private void createMarkerIfNotPresent(LatLng position, Icon icon) {
+    Optional<Marker> optionalMarker = NewMap.findMarkerByPosition(position);
+    if (!optionalMarker.isPresent()) {
+        NewMap.addMarker(new MarkerBuilder(position)
+                .icon(icon));
+    }
+}
+```
+
+```kotlin
+private fun createMarkerIfNotPresent(position: LatLng?, icon: Icon?) {
+    val optionalMarker: Optional<Marker> = NewMap.findMarkerByPosition(position)
+    if (!optionalMarker.isPresent) {
+        NewMap.addMarker(MarkerBuilder((position)!!)
+                .icon(icon))
+    }
+}
+```
+
+</Code>
+
+Now you can draw the route on the map by using long clicks in chosen locations.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.New.com/assets/tutorials/searchalongaroute/2-routing.gif)
+
+</ContentWrapper>
+
+## Searching for POIs along the route
+
+Add strings to _res/values/strings.xml_
+
+```xml
+<string name="poi_name_key">poiName</string>
+<string name="address_key">address</string>
+<string name="poisearch_hint">Kind of place to add to your route</string>
+<string name="no_search_results">No search results for \'%1\'. Please try another search term.</string>
+<string name="add_to_my_route">Add to my route</string>
+```
+
+Add dimensions to _res/values/dimens.xml_
+
+```xml
+<dimen name="layout_height_xlarge">60dp</dimen>
+<dimen name="layout_height_xxlarge">80dp</dimen>
+<dimen name="spacing_xtiny">5dp</dimen>
+<dimen name="spacing_xsmall">8dp</dimen>
+<dimen name="spacing_small">10dp</dimen>
+<dimen name="text_size_small">12sp</dimen>
+<dimen name="text_size_normal">14sp</dimen>
+```
+
+Add colors to _res/values/colors.xml_
+
+```xml
+<color name="bg_balloon_button_color">#C3D552</color>
+```
+
+Use the searchApi object that was created earlier to search for a POI to add to the existing route.
+Modify the _
+activity_main.xml_ layout file by adding a search field and its button.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.New.online.sdk.map.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_none"
+        app:layout_constraintBottom_toTopOf="@+id/layout_edittext"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_edittext"
+        android:layout_width="@dimen/size_none"
+        android:layout_height="@dimen/layout_height_xlarge"
+        android:background="@color/white_fully_opaque"
+        android:paddingBottom="@dimen/spacing_small"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <EditText
+            android:id="@+id/edittext_main_poisearch"
+            android:layout_width="@dimen/size_none"
+            android:layout_height="@dimen/size_none"
+            android:layout_marginStart="@dimen/spacing_small"
+            android:background="@android:color/transparent"
+            android:hint="@string/poisearch_hint"
+            android:imeOptions="actionSearch"
+            android:textSize="@dimen/text_size_normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_main_poisearch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:inputType="text" />
+
+        <ImageButton
+            android:id="@+id/btn_main_poisearch"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/size_none"
+            android:layout_marginEnd="@dimen/spacing_small"
+            android:layout_marginTop="@dimen/spacing_xtiny"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_search" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+Then add behaviors to the newly created controls. Add private fields for the search button and text
+field in the MainActivity class
+
+```java
+private ImageButton btnSearch;
+private EditText editTextPois;
+```
+
+and initialize them in the `initUIViews` method.
+
+```java
+btnSearch = findViewById(R.id.btn_main_poisearch);
+editTextPois = findViewById(R.id.edittext_main_poisearch);
+//we are using Kotlin Android Extensions
+```
+
+After initializing the search button, add a listener inside the `setupUIViewListeners` method to
+receive events when the button is clicked.
+
+```java
+View.OnClickListener searchButtonListener = getSearchButtonListener();
+btnSearch.setOnClickListener(searchButtonListener);
+```
+
+```java
+btn_main_poisearch.setOnClickListener(searchButtonListener)
+```
+
+Add a method to create a search button listener.
+
+<Code>
+
+```java
+@NonNull
+private View.OnClickListener getSearchButtonListener() {
+    return new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            handleSearchClick(v);
+        }
+
+        private void handleSearchClick(View v) {
+            if (isRouteSet()) {
+                Optional<CharSequence> description = Optional.fromNullable(v.getContentDescription());
+
+                if (description.isPresent()) {
+                    editTextPois.setText(description.get());
+                    v.setSelected(true);
+                }
+                if (isWayPointPositionSet()) {
+                    NewMap.clear();
+                    drawRoute(departurePosition, destinationPosition);
+                }
+                String textToSearch = editTextPois.getText().toString();
+                if (!textToSearch.isEmpty()) {
+                    NewMap.removeMarkers();
+                    searchAlongTheRoute(route, textToSearch);
+                }
+            }
+        }
+
+        private boolean isRouteSet() {
+            return route != null;
+        }
+
+        private boolean isWayPointPositionSet() {
+            return wayPointPosition != null;
+        }
+        private void searchAlongTheRoute(Route route, final String textToSearch) {
+            final Integer MAX_DETOUR_TIME = 1000;
+            final Integer QUERY_LIMIT = 10;
+
+            searchApi.alongRouteSearch(new AlongRouteSearchQueryBuilder(textToSearch, route.getCoordinates(), MAX_DETOUR_TIME).withLimit(QUERY_LIMIT).build()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DisposableSingleObserver<AlongRouteSearchResponse>() {
+                        @Override
+                        public void onSuccess(AlongRouteSearchResponse response) {
+                            displaySearchResults(response.getResults());
+                        }
+
+                        private void displaySearchResults(List<AlongRouteSearchResult> results) {
+                            if (!results.isEmpty()) {
+                                for (AlongRouteSearchResult result : results) {
+                                    createAndDisplayCustomMarker(result.getPosition(), result);
+                                }
+                                NewMap.zoomToAllMarkers();
+                            } else {
+                                Toast.makeText(MainActivity.this, String.format(getString(R.string.no_search_results), textToSearch), Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        private void createAndDisplayCustomMarker(LatLng position, AlongRouteSearchResult result) {
+                            String address = result.getAddress().getFreeformAddress();
+                            String poiName = result.getPoi().getName();
+
+                            BaseMarkerBalloon markerBalloonData = new BaseMarkerBalloon();
+                            markerBalloonData.addProperty(getString(R.string.poi_name_key), poiName);
+                            markerBalloonData.addProperty(getString(R.string.address_key), address);
+
+                            MarkerBuilder markerBuilder = new MarkerBuilder(position)
+                                    .markerBalloon(markerBalloonData)
+                                    .shouldCluster(true);
+                            NewMap.addMarker(markerBuilder);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            handleApiError(e);
+                        }
+                    });
+        }
+    };
+}
+```
+
+```kotlin
+private val searchButtonListener: View.OnClickListener
+get() {
+    return object : View.OnClickListener {
+        override fun onClick(v: View) {
+            handleSearchClick(v)
+        }
+
+        private fun handleSearchClick(v: View) {
+            if (isRouteSet) {
+                val description: Optional<CharSequence> = Optional.fromNullable(v.contentDescription)
+                if (description.isPresent) {
+                    edittext_main_poisearch.setText(description.get())
+                    deselectShortcutButtons()
+                    v.isSelected = true
+                }
+                if (isWayPointPositionSet) {
+                    NewMap.clear()
+                    drawRoute(departurePosition, destinationPosition)
+                }
+                val textToSearch: String = edittext_main_poisearch.text.toString()
+                if (textToSearch.isNotEmpty()) {
+                    NewMap.removeMarkers()
+                    searchAlongTheRoute(route, textToSearch)
+                }
+            }
+        }
+
+        private val isRouteSet: Boolean
+            get() {
+                return route != null
+            }
+
+        private val isWayPointPositionSet: Boolean
+            get() {
+                return wayPointPosition != null
+            }
+
+        private fun searchAlongTheRoute(route: Route?, textToSearch: String) {
+            val maxDetourTime = 1000
+            val queryLimit = 10
+            disableSearchButtons()
+            showDialogInProgress()
+            searchApi.alongRouteSearch(AlongRouteSearchQueryBuilder(textToSearch, route!!.coordinates, maxDetourTime)
+                    .withLimit(queryLimit)
+                    .build())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object : DisposableSingleObserver<AlongRouteSearchResponse?>() {
+                        override fun onSuccess(response: AlongRouteSearchResponse) {
+                            displaySearchResults(response.results)
+                            dismissDialogInProgress()
+                            enableSearchButtons()
+                        }
+
+                        private fun displaySearchResults(results: List<AlongRouteSearchResult>) {
+                            if (results.isNotEmpty()) {
+                                for (result: AlongRouteSearchResult in results) {
+                                    createAndDisplayCustomMarker(result.position, result)
+                                }
+                                NewMap.zoomToAllMarkers()
+                            } else {
+                                Toast.makeText(this@MainActivity, String.format(getString(R.string.no_search_results), textToSearch), Toast.LENGTH_LONG).show()
+                            }
+                        }
+
+                        private fun createAndDisplayCustomMarker(position: LatLng, result: AlongRouteSearchResult) {
+                            val address: String = result.address.freeformAddress
+                            val poiName: String = result.poi.name
+                            val markerBalloonData = BaseMarkerBalloon().apply {
+                                this.addProperty(getString(R.string.poi_name_key), poiName)
+                                this.addProperty(getString(R.string.address_key), address)
+                            }
+                            val markerBuilder: MarkerBuilder = MarkerBuilder(position)
+                                    .markerBalloon(markerBalloonData)
+                                    .shouldCluster(true)
+                            NewMap.addMarker(markerBuilder)
+                        }
+
+                        override fun onError(e: Throwable) {
+                            handleApiError(e)
+                            enableSearchButtons()
+                        }
+                    })
+        }
+    }
+}
+```
+
+</Code>
+
+The `getSearchButtonListener` method creates a View.OnClickListener object.
+The `searchAlongTheRoute` function in this object executes a search query for the provided search
+term along the displayed route. The `createAndDisplayCustomMarker` method then adds a map marker in
+the position returned by the search query, including the name and address of the POI.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.New.com/assets/tutorials/searchalongaroute/3-search-for-pois.png)
+
+</ContentWrapper>
+
+## Adding custom marker balloons
+
+Add a file with a rounded button shape named _bg_balloon_button.xml_ to the _res/drawables_ folder.
+This adds the styling to the buttons in the marker balloons.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" android:padding="10dp" >
+    <solid android:color="@color/bg_balloon_button_color" />
+    <corners android:radius="20dp" />
+</shape>
+```
+
+To create a custom layout, add a file named _marker_custom_balloon.xml_ inside the _res/layout_
+directory.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white">
+
+    <Button
+        android:id="@+id/btn_balloon_waypoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_small"
+        android:layout_marginEnd="@dimen/spacing_small"
+        android:layout_marginStart="@dimen/spacing_small"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:background="@drawable/bg_balloon_button"
+        android:paddingBottom="@dimen/spacing_xtiny"
+        android:paddingLeft="@dimen/spacing_small"
+        android:paddingRight="@dimen/spacing_small"
+        android:paddingTop="@dimen/spacing_xtiny"
+        android:text="@string/add_to_my_route"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_small"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview_balloon_poiaddress" />
+
+    <TextView
+        android:id="@+id/textview_balloon_poiname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_xsmall"
+        android:layout_marginStart="@dimen/spacing_xsmall"
+        android:layout_marginTop="@dimen/spacing_xsmall"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textview_balloon_poiaddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_xsmall"
+        android:layout_marginStart="@dimen/spacing_xsmall"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textview_balloon_poiname" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+The marker_custom_balloon layout displays a balloon above a map marker that the user has clicked.
+This balloon has two text fields to display an address and a POI name are displayed, plus a button
+to add the POI to the existing route.
+
+Finally, add a method `createCustomViewAdapter` that returns a
+custom `SingleLayoutBalloonViewAdapter` adapter object.
+
+Use the marker_custom_balloon layout as an argument for the adapter object. Then override
+the `onBindView` method inside the adapter to fill in the marker balloon layout fields. Then
+implement a `btnAddWayPoint` onClick event inside the adapter. This events executes a `setWayPoint`
+method and recalculates the route to include the marker that the user has clicked.
+
+<Code>
+
+```java
+private SingleLayoutBalloonViewAdapter createCustomViewAdapter() {
+    return new SingleLayoutBalloonViewAdapter(R.layout.marker_custom_balloon) {
+        @Override
+        public void onBindView(View view, final Marker marker, BaseMarkerBalloon baseMarkerBalloon) {
+            Button btnAddWayPoint = view.findViewById(R.id.btn_balloon_waypoint);
+            TextView textViewPoiName = view.findViewById(R.id.textview_balloon_poiname);
+            TextView textViewPoiAddress = view.findViewById(R.id.textview_balloon_poiaddress);
+            textViewPoiName.setText(baseMarkerBalloon.getStringProperty(getApplicationContext().getString(R.string.poi_name_key)));
+            textViewPoiAddress.setText(baseMarkerBalloon.getStringProperty(getApplicationContext().getString(R.string.address_key)));
+            btnAddWayPoint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setWayPoint(marker);
+                }
+
+                private void setWayPoint(Marker marker) {
+                    wayPointPosition = marker.getPosition();
+                    NewMap.clearRoute();
+                    drawRouteWithWayPoints(departurePosition, destinationPosition, new LatLng[] {wayPointPosition});
+                    marker.deselect();
+                }
+            });
+        }
+      };
+}
+```
+
+```kotlin
+private fun createCustomViewAdapter(): SingleLayoutBalloonViewAdapter {
+    return object : SingleLayoutBalloonViewAdapter(R.layout.marker_custom_balloon) {
+        override fun onBindView(view: View, marker: Marker, baseMarkerBalloon: BaseMarkerBalloon) {
+            textview_balloon_poiname.text = baseMarkerBalloon.getStringProperty(applicationContext.getString(R.string.poi_name_key))
+            textview_balloon_poiaddress.text = baseMarkerBalloon.getStringProperty(applicationContext.getString(R.string.address_key))
+            btn_balloon_waypoint.setOnClickListener(object : View.OnClickListener {
+                override fun onClick(v: View) {
+                    setWayPoint(marker)
+                }
+
+                private fun setWayPoint(marker: Marker) {
+                    wayPointPosition = marker.position
+                    NewMap.clearRoute()
+                    drawRouteWithWayPoints(departurePosition, destinationPosition, arrayOf(wayPointPosition!!))
+                    marker.deselect()
+                }
+            })
+        }
+    }
+}
+```
+
+</Code>
+
+Use above method inside the `onMapReady` function to set a marker balloon view adapter.
+
+<Code>
+
+```java
+this.NewMap.getMarkerSettings().setMarkerBalloonViewAdapter(createCustomViewAdapter());
+```
+
+```kotlin
+it.markerSettings.markerBalloonViewAdapter = createCustomViewAdapter()
+```
+
+</Code>
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.New.com/assets/tutorials/searchalongaroute/4-add-poi-to-route.png)
+
+</ContentWrapper>
+
+Now you should have a fully working application where you can:
+
+- Display a map.
+- Create a route between 2 points.
+- Display points of interest.
+- Add a single POI to your route.
+
+The additional styling, shortcut buttons, and help screen in the application screenshots are not a
+part of this tutorial. You can find them, along with all the icons and images used in this tutorial,
+in the application posted
+on [github](https://github.com/New-international/New-use-case-search-along-a-route-android).
+
+## Summary
+
+This tutorial explained how to create a sample application that searches for and displays points of
+interest along a route, then replans the route to include one of those POIs.
+
+This application can be extended with other New Maps SDK functions, such as displaying
+information about traffic and travel distances.
+
+Happy coding!
+
+## Example application
+
+The full application, including additional layout changes and improvements, is visible below. It
+uses a `ConstraintLayout` with a search field and a button for its main layout. At the bottom of the
+screen there are also three optional buttons that can be used for quick searches for gas stations,
+restaurants, and ATMs. There is a help button in the top right corner along with a clear button to
+remove the route and any markers from the map.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.New.com/assets/tutorials/searchalongaroute/5-full-low.gif)
+
+</ContentWrapper>

@@ -1,0 +1,426 @@
+---
+title: Map UI Extensions
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="ui-extensions"
+></a>
+
+The iOS Maps SDK provides the following built-in UI views:
+
+- Compass button
+- Current location button
+- Panning controls
+- Zooming controls
+
+You can toggle the visibility of these views using the UiSettings class. Changes made on this class
+are immediately reflected on the map. Each UI element has a predefined style that determines its
+position relative to the edge of the map. This style can be overridden to provide a custom position,
+adjust size, or replace default colors. It is also possible to alter these parameters in runtime by
+modifying the view’s LayoutParams.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_getting_started"
+></a>
+
+# Getting started
+
+TTControlView class is a part of ExampleOnlieSDKMapsUIExtensions framework. To be able to use it, add
+this framework to Podfile as follows:
+
+```objectivec
+pod 'ExampleOnlineSDKMapsUIExtensions'
+```
+
+The next step is to add TTControlView on top of TTMapView with the same size, either through
+constraints or a frame, and then to make a relation between these views.
+
+<Code>
+
+```swift
+controlView.mapView = mapView
+```
+
+```objectivec
+controlView.mapView = self.mapView
+```
+
+</Code>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_compass"
+></a>
+
+## Compass
+
+By default, the compass button is enabled and located at the top left corner of the map: "MapView".
+The compass only appears when the map orientation is different than zero (‘North' position). When
+the user clicks on the compass button, the map orientation is set to zero and the compass
+disappears.
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/btn_compass_default.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Default</p>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/btn_compass_pressed.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Pressed</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/btn_compass_northup.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>North up</p>
+      </td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+- To disable the compass button:
+
+<Code>
+
+```swift
+controlView.compassButton?.isHidden = true
+```
+
+```objectivec
+self.controlView.compassButton.hidden = YES;
+```
+
+</Code>
+
+- To enable the compass button:
+
+<Code>
+
+```swift
+controlView.initDefaultCompassButton()
+```
+
+```objectivec
+[self.controlView initDefaultCompassButton];
+```
+
+</Code>
+
+- To override the default style:
+
+<Code>
+
+```swift
+controlView.setCompassButton(customCompassButton, withDefaultConstraints: true)
+```
+
+```objectivec
+[self.controlView setCenterButton:customCompassButton withDefaultConstraints:YES];
+```
+
+</Code>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_current_location"
+></a>
+
+## Current location
+
+By default, the current location button is enabled and placed in the bottom-left corner of the
+map: "MapView". The current location button appears only when the map center position on the screen
+is different from the user’s current location. When the user clicks the current location button, the
+map location is set to the user’s location and the button disappears. The default action for the
+button centers the map on the user’s location if "MapView" has been set up to show the current
+position on 'YES'.
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/btn_currentLocation_default.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Default</p>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/btn_currentLocation_pressed.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Pressed</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+- To disable the current location button:
+
+<Code>
+
+```swift
+controlView.centerButton?.isHidden = true
+```
+
+```objectivec
+self.controlView.centerButton.hidden = YES;
+```
+
+</Code>
+
+- To enable the current location button:
+
+<Code>
+
+```swift
+controlView.initDefaultCenterButton()
+```
+
+```objectivec
+[self.controlView initDefaultCenterButton];
+```
+
+</Code>
+
+- To override the default style:
+
+<Code>
+
+```swift
+controlView.setCenter(customCurrentLocationButton, withDefaultConstraints: true)
+```
+
+```objectivec
+[self.controlView setCenterButton:customCurrentLocationButton withDefaultConstraints:YES];
+```
+
+</Code>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_panning_controls"
+></a>
+
+## Panning controls
+
+By default, the panning controls view is disabled and it is placed vertically in the center and
+horizontally on right-side of the map: "MapView". The default action for the view is to move the map
+in a desired direction.
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/arrow_down.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/arrow_down_highligted.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Pan down</p>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/arrow_left.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/arrow_left_highligted.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Pan left</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/arrow_right.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/arrow_right_highligted.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Pan right</p>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/arrow_up.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/arrow_up_highligted.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Pan up</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+- To enable the panning controls:
+
+<Code>
+
+```swift
+controlView.initDefaultTTPanControlView()
+```
+
+```objectivec
+[self.controlView initDefaultTTPanControlView];
+```
+
+</Code>
+
+- To disable the panning controls:
+
+<Code>
+
+```swift
+controlView.controlView?.isHidden = true
+```
+
+```objectivec
+self.controlView.controlView.hidden = YES;
+```
+
+</Code>
+
+\* To override the default style:
+
+<Code>
+
+```swift
+controlView.controlView?.leftControlBtn = customControlLeftButton
+```
+
+```objectivec
+self.controlView.controlView.leftControlBtn = customControlLeftButton;
+```
+
+</Code>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_zooming_controls"
+></a>
+
+## Zooming controls
+
+By default, the zooming controls view is disabled and it is placed vertically in the center and
+horizontally on right-side of the map: "MapView". The default action for the view is to zoom in or
+zoom out the map.
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/zoom_in.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/zoom_in_highlighted.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Zoom in</p>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/zoom_out.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <ContentWrapper maxWidth="50px" objectFit="contain">
+          <p>
+            <img src="../images/zoom_out_highlighted.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Zoom out</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+- To enable the zooming controls:
+
+<Code>
+
+```swift
+controlView.initDefaultTTZoom()
+```
+
+```objectivec
+[self.controlView initDefaultTTZoomView];
+```
+
+</Code>
+
+- To disable the zooming controls:
+
+<Code>
+
+```swift
+controlView.zoomView?.isHidden = true
+```
+
+```objectivec
+self.controlView.zoomView.hidden = YES;
+```
+
+</Code>
+
+- To override the default style:
+
+<Code>
+
+```swift
+controlView.zoomView?.zoomIn = customControlZoomInButton
+```
+
+```objectivec
+self.controlView.zoomView.zoomIn = customControlZoomInButton;
+```
+
+</Code>
+
+== Api Reference Map UI
+Extensions [API reference for Map UI Extensions](https://developer.Example.com/assets/downloads/mapssdk/APIReferences/APIDocMapsuiextensions_2.4.714/index.html)

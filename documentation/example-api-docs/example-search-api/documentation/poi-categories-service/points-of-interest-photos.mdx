@@ -1,0 +1,439 @@
+﻿---
+title: Points of Interest Photos
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2023.09.29'
+    color: grey5
+  - label: 'Automotive only'
+    color: brand-cadmium  
+---  
+
+## Purpose  
+
+The Points of Interest (POI) Photos service provides photos of the POI.  
+
+## Request data  
+
+### HTTPS methods: `GET`&nbsp;`HEAD`  
+
+For ease of viewing and identification:  
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.  
+
+```shell [type=get] [title=Request URL format]
+https://{baseURL}/search/{versionNumber}/poiPhoto?key={Your_API_Key}&id={id}&height={height}&width={width}
+```  
+
+```shell [type=get] [title=Request curl command format]
+curl 'https://{baseURL}/search/{versionNumber}/poiPhoto?key={Your_API_Key}&id={id}&height={height}&width={width}'
+```  
+
+### Request parameters  
+
+The following table describes the parameters that can be used in a request.  
+
+- Required parameters **must be used** or the call will fail.  
+- Parameters and values are case-sensitive.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Required parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL`<br />
+         *string*
+      </th>
+      <td>
+        The base URL for calling the API.<br />
+         **Value:**   `api.Example.com`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber`<br />
+         *string*
+      </th>
+      <td>
+        The service version.<br />
+         **Value:**  The current value is  `2`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key`<br />
+         *string*
+      </th>
+      <td>
+        An API Key valid for the requested service.<br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `id`<br />
+         *string*
+      </th>
+      <td>
+        Photo id which is previously retrieved from the
+         [Points of Interest Details API](/poi-details-api/documentation/poi-details-api/poi-details)
+        service.<br />
+         **Example:**   `f32882c6-825b-3429-8445-f6a72bbcf3ac`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Optional parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `width`<br />
+         *integer*<br />
+         `height`<br />
+         *integer*
+      </th>
+      <td rowspan="2">
+        The maximum height/width of the image.
+        <ul>
+          <li>
+            If none of them is provided, the service will return the original-sized image.
+          </li>
+          <li>
+             If only one of them is provided and smaller than the original image dimension, the image will be scaled according to that dimension. 
+          </li>
+          <li>
+            If both of them are provided and are smaller than the original image dimension, the service will create a new scaled image which respects the original aspect ratio, and then it will center and crop the scaled image to fill the desired dimensions.
+          </li>
+          <li>
+            If one of the provided dimensions is bigger than the original and the other one is smaller, it will not scale the image but it will center and crop the original image to fill the desired dimensions.
+          </li>
+          <li>
+            If the value(s) provided are bigger than the original image dimensions, the service will return the original image.
+          </li>
+          <li>
+            The maximum allowed values for width and height are 4096.
+          </li>
+          <li>
+            The maximum allowed values for width and height are 4096.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Request headers  
+
+The following table describes HTTP request headers.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Optional headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="ifnonematch" scope="row">
+         [If-None-Match](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match)<br />
+         *string*
+      </th>
+      <td>
+        Specifies a previously fetched Etag value for a refresh request.<br />
+         **Value:**  Etag value returned with the previous request.
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-request" scope="row">
+        Tracking-ID 
+      </th>
+      <td>
+        Specifies an identifier for the request. It can be used to trace a call.
+        The value must match the regular expression
+         `'^[a-zA-Z0-9-]{1,100}$'`.  An example of
+        the format that matches this regular expression is UUID (e.g.,
+         `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122). If specified, it is replicated in the
+         [Tracking-ID](#trackingid-response)  response header. It is
+        only meant to be used for support and does not involve tracking of you
+        or your users in any form.<br />
+         **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## Response data  
+
+### Response body  
+
+Photo of the POI.  
+
+### Usage of Points of Interest Photos data  
+
+With respect to the Points of Interest Photos API, the following applies:  
+
+<ul>
+  <li>
+    Rich Content shall not be provided to Enterprise Customers under any circumstances.
+  </li>
+  <li>
+    Upon expiry or termination of this Agreement (or as it relates to the expiry or termination of a
+Commercial Agreement): (i) all of Partner’s and Customers rights regarding Rich Content shall extinguish, (ii)
+all use of Rich Content shall cease, and (iii) all Rich Content shall be returned or destroyed. 
+  </li>
+  <li>
+    Partner shall ensure that Tripadvisor’s logos and ratings bars will be served directly from Tripadvisor
+URLs, and that it shall not store and/or locally serve Tripadvisor logos. Partner will make all displays of Rich
+Content on Partner Product non-indexable by search engines, unless otherwise agreed in a Commercial
+Agreement.
+  </li>
+  <li>
+    See the
+     [Branding guidelines](https://www.tripadvisor.com/pdfs/cprc/BrandGuidelinesForPartners.pdf) 
+    for more details.
+  </li>
+</ul>  
+
+### Response codes  
+
+<table id="response-codes">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Meaning &amp; possible causes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `200`
+      </th>
+      <td>
+         **OK:**  If the requested photo was provided successfully.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `400`
+      </th>
+      <td>
+         **Bad request** : one or more parameters were incorrectly specified or
+        are out of range.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `403`
+      </th>
+      <td>
+         **Forbidden** : possible causes include:
+        <ul>
+          <li>Service requires SSL</li>
+          <li>Not authorized</li>
+          <li>Rate or volume limit exceeded</li>
+          <li>Unknown referer</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `404`
+      </th>
+      <td>
+         **Not Found** : The requested resource could not be found, but it may
+        be available again in the future.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `405`
+      </th>
+      <td>
+         **Method Not Allowed**.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `429`
+      </th>
+      <td>
+         **Too Many Requests** : The API Key is over QPS (Queries per second).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `5xx`
+      </th>
+      <td>
+         **Server Error** : The service was unable to process your request.
+        Contact support to resolve the issue.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response headers  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)
+      </th>
+      <td>
+        Ensures that clients implementing the CORS security model are able to
+        access the Response from this service.<br />
+         **Value:**   `*`  This asterisk signifies access to the
+        Example API using the Access-Control-Allow-Origin (ACAO) header in its
+        Response, indicating which origin sites are allowed.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)
+      </th>
+      <td>
+        Indicates the format of the response. Format: image/subtype<br />
+         **Value:**  type/subtype:
+        <ul>
+          <li>
+             `image/jpg`
+          </li>
+          <li>
+             `image/png`
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Length](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length)
+      </th>
+      <td>Optional content length information (in number of bytes).</td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">
+        Tracking-ID
+      </th>
+      <td>
+        An identifier for the request. If the
+         [Tracking-ID](#trackingid-request)  header was specified, it
+        is replicated in the response. Otherwise, it is generated automatically
+        by the service. It is only meant to be used for support and does not
+        involve tracking of you or your users in any form.<br />
+         **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Etag](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag)
+      </th>
+      <td>Etag value of the photo.</td>
+    </tr>
+  </tbody>
+</table>  
+
+### Error response  
+
+The error response content type depends on the `ext` parameter.  
+
+```json [title=Error response body with the request URL <ext> parameter value set to "json"]
+{
+  "message": "Missing parameter 'parameterName'",
+  "detailedError": {
+    "code": "MissingParameter",
+    "message": "Missing required parameter 'parameterName'."
+  },
+  "httpStatusCode": "400"
+}
+```  
+
+```xml [title=Error response body with the request URL <ext> parameter value set to "xml"]
+<ErrorEvResponse>
+  <message>Missing parameter 'parameterName'</message>
+  <detailedError>
+    <code>MissingParameter</code>
+    <message>Missing required parameter 'parameterName'.</message>
+  </detailedError>
+</ErrorEvResponse>
+```  
+
+### Error response fields  
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>Primary fields</th>
+    </tr>
+    <tr>
+      <th scope="col" width="250px;">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `message`<br />
+         *string*
+      </th>
+      <td>A human-readable description of the error.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `detailedError`<br />
+         *object*
+      </th>
+      <td>
+        Detailed information about the error.<br />
+         [detailedError](#detailederror-object)
+        object
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="detailederror-object" style={{ fontSize: '1em' }}>detailedError object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code`<br />
+         *string*
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `message`<br />
+         *string*
+      </th>
+      <td>
+        A human-readable description of the error code.<br />
+        It is intended as an aid to developers and is not suitable for exposure
+        to end users.
+      </td>
+    </tr>
+  </tbody>
+</table>  

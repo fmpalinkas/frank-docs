@@ -1,0 +1,39 @@
+---
+title: Language parameter
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="language-selector-in-search"
+></a>
+
+Develop an international app that can be used in different languages. Enhance the search
+functionality with the language parameter so that the search returns results in a specific language.
+
+**Sample use case:** If your mobile device is set to a particular language, you will see it in your
+app as well. Use the following code snippet to try this in your app.
+
+<Code>
+
+```java
+FuzzySearchEngineDescriptor fuzzySearchEngineDescriptor = new FuzzySearchEngineDescriptor.Builder()
+        .language(lang)
+        .build()
+return new FuzzySearchSpecification.Builder(text)
+        .searchEngineDescriptor(fuzzySearchEngineDescriptor)
+        .build();
+```
+
+```kotlin
+val searchEngineDescriptor = FuzzySearchEngineDescriptor.Builder()
+    .language(languageSelector.code)
+    .build()
+
+val fuzzySearchSpecification = FuzzySearchSpecification.Builder(term)
+    .searchEngineDescriptor(searchEngineDescriptor)
+    .locationDescriptor(locationDescriptor.build())
+    .build()
+```
+
+</Code>

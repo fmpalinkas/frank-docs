@@ -1,0 +1,340 @@
+---
+title: "Internal parameters"
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.23'
+    color: grey5
+  - label: 'PUBLIC PREVIEW'
+    color: grey5
+  - label: Example New Maps
+    color: brand-cadmium
+---
+
+## Public Preview Notice  
+
+<Blockquote type="announcement" hasIcon>
+### Important notes:  
+- This Example New Maps Search API document collection is in **Public Preview**. Go to the  [Public Preview - what is it?](https://developer.Example.com/public-preview)  page to see what this means.
+- This API is powered by **Example New Maps**.
+- See the <a href="https://developer.Example.com/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
+</Blockquote>  
+
+## Purpose  
+
+This document provides a description of internal parameters and response fields.  
+  
+## Request data  
+
+### HTTPS Method: `GET`  
+
+For ease of viewing and identification:  
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Internal request parameters](#internal-request-parameters) section with the optional parameters table for their values. The generic request format is as follows.  
+
+**Important note:** Either `apiVersion` parameter or `Example-Api-Version` header needs to be present.  
+
+```shell [type=get] [title=URL request format]
+https://{baseURL}/maps/New/places/search/{query}.{ext}?key={Your_API_Key}&apiVersion={apiVersion}&paymentOptions={paymentOptions}
+```
+
+```shell [type=get] [title=URL request example]
+https://api.Example.com/maps/New/places/search/pizza.json?key={Your_API_Key}&apiVersion=1&paymentOptions=true
+```
+
+```shell [type=get] [title=curl command request example]
+curl 'https://api.Example.com/maps/New/places/search/pizza.json?key={Your_API_Key}&apiVersion=1&paymentOptions=true'
+```
+
+### Internal request parameters  
+
+The following table describes additional internal parameters that can be used in a request.  
+
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+- The order of request parameters is not important.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+    <tbody>
+      <tr>
+        <th>
+          `apiVersion`  
+          *string*
+        </th>
+        <td>
+          Service version. If the `Example-Api-Version` header is not present 
+          the `apiVersion` parameter is required.  
+          **Value:** A service version value. The current value is `1`.  
+        </td>
+    </tr>
+    <tr>
+      <th>
+        `paymentOptions`  
+        *boolean*
+      </th>
+      <td>
+        If the `paymentOptions` flag is set to `true` then
+        the [`paymentOptions`](#paymentoptions-array)
+        array will be returned if it exists.  
+        **Default value:** `false`
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `hydrogenPressure`  
+        *boolean*
+      </th>
+      <td>
+        Hydrogen Pressure represents the pressure a Petrol Station is capable of
+        delivering hydrogen at. If the `hydrogenPressure` flag is
+        set, the supported hydrogen pressure types are returned. This is only
+        relevant for fuel station POIs that provide hydrogen as one of their
+        available fuel types.  
+        **Default value:** `false`  
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Request headers  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Example-Api-Version</th>
+      <td>
+          Service version. If the `apiVersion` parameter is not present the 
+          `Example-Api-Version` header is required.  
+          **Value:** A service version value. The current value is `1`.  
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## Response data  
+
+### Response body  
+
+For illustrative purposes the following example contains fields related to internal parameters. When requesting JSON output the response has the following structure:  
+
+```json [title=Response body - JSON]
+{
+  "type":"POI",
+  "id":"g6JpZNkkYzZhMjAzYzQtMzMyMy0zZTAwLTJmYWItNTE3OTAwMTUzYjg2oWOjR0JSoXanVW5pZmllZA==",
+  "score":5.6671996117,
+  "...""chargingPark":{
+    "connectors":[
+      {
+        "connectorType":"IEC62196Type2Outlet",
+        "ratedPowerKW":22,
+        "voltageV":400,
+        "currentA":32,
+        "currentType":"AC3"
+      }
+    ],
+    "paymentOptions":[
+      {
+        "method":"Subscription",
+        "brands":[
+          {
+            "id":"MyEasyCharge"
+          }
+        ]
+      }
+    ]
+  }"..."
+}
+```
+
+### Response fields  
+
+The following table describes fields related to internal request parameters that can appear in a response. Fields are listed by the response section they belong to and the order that they appear in the response.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Primary&nbsp;fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `results`  
+        *array*
+      </th>
+      <td>
+        The result list, sorted in descending order by score.  
+        [`results`](#results-array)  array
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>results array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `chargingPark`  
+        *object*
+      </th>
+      <td>
+        A list of  `chargingPark`  objects. Present only when the
+        Points of Interest are of the Electric Vehicle Station type.  
+        [`chargingPark`](#chargingpark-object) object
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>chargingPark object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `connectors`  
+        *array*
+      </th>
+      <td>
+        A list of connectors available in the Points Of Interest 
+        of an Electric Vehicle Station type.  
+        [`connectors`](#connectors-array) array
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `paymentOptions`  
+         *array*
+      </th>
+      <td>
+        A list of `paymentOptions` available in the Points Of
+        Interest of an Electric Vehicle Station type.  
+        [`paymentOptions`](#paymentoptions-array) array
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>connectors array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `connectorType`  
+        *string*
+      </th>
+      <td>
+        The type of the connector available in Electric Vehicle Station.  
+        See the list of [Supported Connector Types](../product-information/supported-connector-types).
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `ratedPowerKW`  
+        *double*
+      </th>
+      <td>The rated power of the connector in kilowatts (kW).</td>
+    </tr>
+    <tr>
+      <th>
+        `currentA`  
+        *integer*
+      </th>
+      <td>The current value of the connector in amperes (A).</td>
+    </tr>
+    <tr>
+      <th>
+        `currentType`  
+        *string*
+      </th>
+      <td>The current type of the connector.</td>
+    </tr>
+    <tr>
+      <th>
+        `voltageV`  
+        *integer*
+      </th>
+      <td>The voltage of the connector in Volts (V).</td>
+    </tr>
+    <tr>
+      <th id="paymentoptions-array" colspan="2" style={{ fontSize: '1em' }}>paymentOptions array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `method`  
+        *string*
+      </th>
+      <td>
+        One of the possible payment methods:  
+        <ul>
+          <li>
+             **Subscription**  - available for subscribers
+          </li>
+          <li>
+             **Direct**  - direct payment at the charging station
+          </li>
+          <li>
+             **FreeCharging**  - no payment required
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `brands`  
+         *array*
+      </th>
+      <td>
+        An array of brand lists of the E-Mobility Service 
+        Provider (EMSP) or credit card (OR).
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="hydrogen-object" style={{ fontSize: '1em' }}>hydrogen object</th>
+    </tr>
+    <tr>
+      <th>
+        `pressures`  
+        *array*
+      </th>
+      <td>
+        List of supported hydrogen pressures.  
+        [`hydrogenPressures`](#hydrogenPressures-array) array
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="hydrogenPressures-array" style={{ fontSize: '1em' }}>hydrogenPressures array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th>
+        `value`  
+        *value*
+      </th>
+      <td>The value of supported hydrogen pressure.</td>
+    </tr>
+  </tbody>
+</table>  

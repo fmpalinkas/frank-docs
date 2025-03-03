@@ -1,0 +1,49 @@
+---
+title: Routing with language parameter
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="route-with-language"
+></a>
+
+Allow your user to get results in different languages to make your app international. The language
+parameter determines the language of the guidance messages. It does not affect proper nouns (the
+names of streets, plazas, etc.).
+
+**Sample use case**: You are planning a journey and you want to have the list of instructions in
+different languages. A list of the supported languages can be found at
+the [Calculate Route endpoint](/routing-api/documentation/routing/calculate-route).
+
+To request a route using the language parameter:
+
+<Code>
+
+```swift
+let query = TTRouteQueryBuilder.create(withDest: TTCoordinate.BERLIN(), andOrig: TTCoordinate.AMSTERDAM())
+    .withInstructionsType(.text)
+    .withLang(language)
+    .build()
+routePlanner.plan(with: query)
+```
+
+```objectivec
+TTRouteQuery *query = [[[[TTRouteQueryBuilder createWithDest:[TTCoordinate BERLIN] andOrig:[TTCoordinate AMSTERDAM]] withInstructionsType:TTOptionInstructionsTypeText] withLang:language] build]
+[self.routePlanner planRouteWithQuery:query];
+```
+
+</Code>
+<Code>
+
+```swift
+func route(_: TTRoute, completedWith result: TTRouteResult) {
+}
+```
+
+```objectivec
+- (void)route:(TTRoute *)route completedWithResult:(TTRouteResult *)result {
+}
+```
+
+</Code>

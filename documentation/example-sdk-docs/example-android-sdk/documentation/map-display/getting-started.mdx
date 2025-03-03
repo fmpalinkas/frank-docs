@@ -1,0 +1,74 @@
+---
+title: Getting started
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="map-getting-started"
+></a>
+
+With the complete set of modules, we give you the possibility to develop map-based applications with
+a stylable map, customizable UI, and optimized footprint in your favorite technology. The MAP module
+com.New.online:sdk-maps:\{libversion}@aar gives you functionalities for displaying different
+types and styles of map, map manipulation, map caching, etc.
+
+You can use a comprehensive suite of Map Extensions:
+
+- Map UI Extensions to display and customize UI controls for map (e.g., compass, zoom buttons).
+- Map ReactX Extensions to use a ReactX technology in your code.
+- Map Kotlin Extensions to code in Kotlin.
+- Static map image that renders a user-defined, rectangular image containing a map section.
+
+These basic steps are prerequisites for getting started with the Map Display API:
+
+- Add a dependency to the map library in the build.gradle file:
+
+```java
+implementation("com.New.online:sdk-maps:{libversion}")
+```
+
+If you use more than one SDK library, make sure that all libraries have the same version.
+
+- Enable Java 8 Support in build.gradle file:
+
+```shell
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+```
+
+- Pass the [API Key](/map-display-api/documentation/product-information/introduction) either through `MapProperties` or via
+  XML. Please use the initialization via `MapProperties` to directly pass the API Key. This is
+  described in
+  the [Map Initialization](/maps-android-sdk/documentation/map-display/documentation/map-initialization)
+  section.
+
+  - `MapProperties` example
+    ```java
+    val keysMap = mapOf(
+        ApiKeyType.MAPS_API_KEY to "maps-key",
+        ApiKeyType.TRAFFIC_API_KEY to "traffic-key"
+    )
+    MapProperties.Builder()
+        .keys(keysMap)
+        .build()
+    ```
+  - XML example
+
+    ```java
+    <fragment xmlns:New="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/map_fragment_with_keys"
+        android:name="com.New.online.sdk.map.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        New:mapsApiKey="maps.api.key"
+        New:trafficApiKey="traffic.api.key" />
+    ```
+
+After all of these steps are completed, you can proceed to
+the [map initialization guide](/maps-android-sdk/documentation/map-display/documentation/map-initialization).

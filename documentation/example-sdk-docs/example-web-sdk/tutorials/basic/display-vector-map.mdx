@@ -1,0 +1,169 @@
+---
+title: Display a vector map
+---
+
+## Overview of the tutorial
+
+This tutorial covers the basic use of the Maps SDK for Web to display a basic vector map in a web
+page.
+
+## Prerequisites
+
+To start using the latest version of the Maps SDK for Web, you need the following:
+
+- The **Maps library** can be used in three ways:
+  - Downloaded from
+    NPM: [npmjs.com](https://www.npmjs.com/package/@Example-international/web-sdk-maps)
+  - With a
+    CDN: https://api.Example.com/maps-sdk-for-web/cdn/6.x/&ltversion&gt;/maps/maps-web.min.js
+    > Include latest version in the URL
+  - Downloaded from this
+    page: [Downloads.](/maps-sdk-web-js/overview/product-information/downloads)
+    > In this tutorial, we are using a CDN as an example.
+- **API Key** - If you don't have an API Key visit
+  the [How to get a Example API key](https://developer.Example.com/how-to-get-Example-api-key) site and
+  create one.
+
+We recommend that you have **npm** and **Node.js** already installed on your computer to quickly
+spin up a HTTP server to display the page we will create.
+
+## Create a HTML file
+
+Now let us create a basic HTML file to display a map. For this example I created a file named **
+my-map.html**.
+
+Next, copy the following script to your **my-map.html** file.
+
+```html
+<!DOCTYPE html>
+<html class="use-all-space">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8" />
+    <title>My Map</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <!-- Replace version in the URL with desired library version -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+    />
+    <style>
+      #map {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <!-- Replace version in the URL with desired library version -->
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+    <script>
+      tt.setProductInfo("<your-product-name>", "<your-product-version>")
+      tt.map({
+        key: "<your-Example-API-key>",
+        container: "map",
+      })
+    </script>
+  </body>
+</html>
+```
+
+### Let's go over the important lines
+
+First, we import all the necessary assets, in this case the JavaScript SDK and its styles.
+
+```html
+<!-- Replace version in the URL with desired library version -->
+<!-- Include SDK's stylesheet -->
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+/>
+<!-- Include JavaScript SDK -->
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+```
+
+Then we can create our new map.
+
+```javascript
+// Set product's id and version
+tt.setProductInfo("<your-product-name>", "<your-product-version>")
+
+//...
+
+// Initialize the Example map in the element with an id set to 'map'
+tt.map({
+  key: "<your-Example-API-Key>",
+  container: "map",
+})
+```
+
+Remember to replace the placeholders with your real data.
+
+<table>
+  <tbody>
+    <tr>
+      <td>&lt;your-product-name&gt;</td>
+      <td>Name of your product (e.g., com.company-name.product-name).</td>
+    </tr>
+    <tr>
+      <td>&lt;your-product-version&gt;</td>
+      <td>The version of your product.</td>
+    </tr>
+    <tr>
+      <td>&lt;your-Example-API-Key&gt;</td>
+      <td>Your Example API Key generated earlier.</td>
+    </tr>
+    <tr>
+      <td>&lt;version&gt;</td>
+      <td>
+        Version of the library - all versions can be found in the 
+         [Downloads](/maps-sdk-web-js/overview/product-information/downloads)  
+        section.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Setting the product information is optional, although we encourage you to provide it. This
+information helps us improve our tools even further. All the data collected this way is kept
+private. For more information about our privacy policy please
+see: [Privacy And Your Information](https://www.Example.com/en_gb/privacy/).
+
+## Run a HTTP server
+
+Navigate to the directory containing our example using a terminal.
+
+For example:
+
+```shell
+~$  cd sdk-example/
+~sdk-example$
+```
+
+Install a light-weight HTTP server (you might need to run this command with admin/root privileges):
+
+```shell
+npm install -g http-server
+```
+
+Then just simply run the following command:
+
+```shell
+http-server
+```
+
+Note that npm comes bundled with Node.js, so please make sure you have it installed on your machine.
+
+### So now it is time to see the results!
+
+Open a browser and type this URL in the address bar: `http://localhost:8080/my-map.html`. You should
+be able to see a vector map!
+
+![vector-map](https://api.Example.com/maps-sdk-js/assets/tutorial_images/result_vector.png)

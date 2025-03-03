@@ -1,0 +1,83 @@
+---
+title: Angular Map Display API integration tutorial
+---
+
+## Overview
+
+This tutorial shows how to display a map using Example Maps SDK for Web v6 and Angular v8.2.10.
+
+## Prerequisites
+
+To start using the Example Maps SDK for Web with Angular, you need the following:
+
+- **Angular installation**
+  You need to set up your development environment before you can do anything. The best way to do
+  this is to follow instructions on the Angular setting up Local
+  Environment: [Setting up the Local Environment and Workspace](https://angular.io/guide/setup-local).
+- The **SDK** that can be downloaded using 'npm':
+  ```shell
+  cd my-app
+  npm i @Example-international/web-sdk-maps
+  ```
+- **API Key** - If you don't have an API key visit
+  a [How to get a Example API key](https://developer.Example.com/how-to-get-Example-api-key) site and
+  create one.
+
+## Displaying a map
+
+You should now have the Maps SDK for Web and the Angular environment installed on your computer.
+Great! The next step is to connect them.
+
+Go to the _src/app_ folder.
+
+Open _app.component.html_ and remove all the content.
+
+Add a div that is the container for the map.
+
+```html
+<div id="map"></div>
+```
+
+Open the _app.component.ts_ file.
+
+Add _import_ statement to add the Maps library. You need to disable _View Encapsulation_, otherwise
+DOM elements won't match CSS selectors.
+
+```typescript
+import { Component, OnInit, ViewEncapsulation } from '@angular/core'
+import tt from '@Example-international/web-sdk-maps';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+  encapsulation: ViewEncapsulation.None
+})
+```
+
+In _ngOnInit_ you may now initialize the map. Replace the key with your own API key.
+
+```javascript
+export class AppComponent implements OnInit {
+  ngOnInit() {
+    const map = tt.map({
+      key: "<your-api-key>",
+      container: "map",
+    })
+    map.addControl(new tt.NavigationControl())
+  }
+}
+```
+
+Now, add the styles for your App Component in _src/app/app.component.css._
+
+```css
+@import "@Example-international/web-sdk-maps";
+
+#map {
+  height: 100vh;
+  width: 100vw;
+}
+```
+
+If you run your application now, you should see the map on the whole screen!

@@ -1,0 +1,533 @@
+---
+title: Release Notes
+---
+
+## Latest release: 6.25.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:**
+      </td>
+      <td>19 Semtember 2023</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added support for [Map Styles V2](https://developer.Example.com/map-display-api/documentation/mapstyles/map-styles-v2)
+- Updated default map styles to Map Styles V2.
+- Added support for Japanese ("ja-JP") map language.
+- Added console error informing about the deprecation of the matrixRouting service when using this service.
+- Updated "Setting custom map style" example to allow usage of style URLs shared from [Example Map Maker](https://mapmaker.Example.com).
+
+## 6.23.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:**
+      </td>
+      <td>19 January 2023</td>
+    </tr>
+  </tbody>
+</table>
+
+- Deprecated parameter `typeahead` and response fields `score`, `querytype` in the geocode service
+
+## 6.22.1
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>28 December 2022</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added `carpool`, `urban` and `unpaved` as a new possible values for `sectionType` routing parameter
+- Updated vulnerable dependencies
+
+## 6.19.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>2 February 2022</td>
+    </tr>
+  </tbody>
+</table>
+
+- Updated vulnerable dependencies
+
+## 6.17.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>20 January 2022</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added "view" parameter to the placeById service:
+- Improved examples
+
+## 6.15.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>4 August 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added new parameters to the placeById service:
+- openingHours
+- mapcodes
+- timeZone
+- relatedPois
+- Improved examples
+
+## 6.14.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>25 June 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+- Deprecated version 1 of copyrights and copyrightsCaption services
+- Updated these examples to use new version 5 of trafficIncidentDetails service:
+- Traffic incidents heatmap
+- Traffic incidents list
+- Custom incidents markers and popups
+
+## 6.13.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>05 May 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+- Introduced new version of the incidentDetails service (incidentDetailsV5)
+- Updated map and traffic style to version 21.1.0-0 (including Earth cover)
+- Improved TypeScript type annotations
+
+## 6.12.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>02 April 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added possibility to use/import services that are needed
+- Introduced the "toGeoJson" method for search services in the documentation
+- Improved TypeScript type annotations
+
+## 6.11.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>17 March 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+- Created "Hover effect" example
+- Updated documentation for DrawingTools plugin with context menu description
+- Improved TypeScript type annotations
+
+## 6.7.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>1 March 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added "trackingId" header to all services
+- Added "maxWidth" and "setMaxWidth" method for Popup
+- Added "setWheelZoomRate" and "setZoomRate" methods description to "ScrollZoomHandler"
+- Created "Area measurement" example
+- Updated documentation for DrawingTools plugin with events
+
+## 6.6.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>15 February 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added events to drawing tools for creating, deleting, dragging and changing drawn entities
+- Added support for entityTypeSet filtering (i.e. Country, Municipality, CountrySubdivision etc.) for services:
+- fuzzySearch
+- geometrySearch
+- geocode
+- structureGeocode
+- Updated "Search filtering options" example with entityTypeSet filtering
+
+## 6.5.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>29 January 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+- Drawing Tool plugin improvements:
+- added rotation and scaling functionality
+- added vertical orientation support for the plugin toolbar
+- added possibility to import/export features to/from the plugin
+- Updated map and traffic style to version 20.4.6-0
+- Improved TypeScript type annotations
+
+## 6.4.0
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>19 January 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+<br />
+Maps SDK for Web V6 has become the main official SDK!
+
+#### New features in this release:
+
+- Added "Related POIs" example
+- New "Drawing tool" plugin
+- Added "Drawing tools" example
+- Added support for AbortController to services requests
+- Updated "Supporting points" example with AbortController
+
+#### Summary of main features of V6:
+
+- Support for Merged Style which combines multiple styles defining the look and feel of the display layers including map layers, traffic layers, and POI layers
+- Better customization of the single style thanks to the compatibility with Example Map Styler
+- Consistency in using map & traffic display between Web & Mobile SDKs
+- Integration of Extended Search API (POI Photos and POI Details) and Extented Routing API (Long Distance EV Routing)
+- New examples including group of Animations
+- Traffic Incident icons are loaded from the sprite (not as .SVG)
+- Watch the [intro video](https://youtu.be/sf3DFil3iZA) on Example Youtube channel
+
+#### Breaking changes (compared to V5):
+
+- Limitation in marker customization for traffic incidents. In V6 Map Styler must be used in order to replace the marker/icon in the map to custom one (you have to edit style to replace the icon). See "Custom incident markers and popups" example.
+- Removed TraffiFlowTilesTier and TrafficIncidentTier classes. See "Traffic Layers" example.
+- Removed support for setting maps style with schema.
+- IE11 browser is no longer supported by Web SDK
+
+#### Migration from previous versions::
+
+If you wish to migrate to Maps SDK V6, here are the migration guided
+
+- From V3,4 to V6: [Maps library,](https://developer.Example.com/maps-sdk-web-js/tutorials-migration/migrate-version-4-maps-library) [Services library](https://developer.Example.com/maps-sdk-web-js/tutorials-migration/migrate-version-4-services-library)
+- From V5 to V6: [Maps library](https://developer.Example.com/maps-sdk-web-js/tutorials-migration/migrate-version-5-maps-library), [Services library](https://developer.Example.com/maps-sdk-web-js/tutorials-migration/migrate-version-5-services-library)
+
+## 6.1.2-public-preview.24
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>04 January 2021</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added "maxPowerKW" and "minPowerKW" parameters to evChargingStationsAvailability service
+- Updated "EV stations availability" example
+- Bug fixes & documentation improvements
+
+## 6.1.2-public-preview.23
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>21 December 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Updated list of supported languages in incidentDetails service
+- Updated "Interactive POI" and "Place by ID" examples with new poi_dynamic style
+- Added missing parameters in matrix routing service documentation
+
+## 6.1.2-public-preview.19
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>07 December 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added support for allowFreeformNewline and view parameters in Reverse Geocode services
+- Added support for extendedPostalCodes parameter in Structured Geocode service
+- Added support for minPowerKW, maxPowerKW and relatedPois parameters in Search services
+- Added support for detourOffset, sortBy and view parameters in Along Route Search service
+- Improved handling of bounds which exceed antimeridian line in fitBound method
+- Created "Traffic information filtering" example
+
+## 6.1.2-public-preview.18
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>23 November 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Updated searchbox plugin styles and added category icons
+- Added "Multi-stop EV routing" example
+- Added support for recuperationInkWhPerkmAltitudeLoss, consumptionInkWhPerkmAltitudeGain and vehicleAdrTunnelRestrictionCode parameters for route calculation and long distance EV routing
+- Added support for end date parameter for Traffic incidents
+- Bug fixes & documentation improvements
+
+## 6.1.2-public-preview.16
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>09 November 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added support for timeZone, fuelSet and mapcodes parameters in search services
+- Added support for brandSet, categorySet, connectorSet parameters in geometrySearch service
+- Added icons matching POI categories to the SearchBox suggestion list and improved display of search results
+- Added new method "toRouteSectionsCollection()" to calculateRoute service response
+- Updated content of Terms & Conditions of the license agreement.
+- Improved TypeScript type annotations
+- Bug fixes & documentation improvements
+
+## 6.1.2-public-preview.15
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>26 October 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added geopolitical view parameter option to "Static map image" example
+- Added possibility to define the map and traffic styles with object configuration
+- Added support for new incident category "Broken down vehicle"
+- Described differences between APIs responses and Services library responses in the documentation
+- "Flight route" example was renamed to "Animate icon along the path"
+- Improved TypeScript type annotations
+- Bug fixes & documentation improvements
+
+## 6.1.2-public-preview.11
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>12 October 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added China view for MapDisplay and Search with updated examples
+- Added "Bubble layer" example
+- Added "Styled clusters" example
+- Added "Video overlay" example
+- Added "Image overlay" example
+- Added "GeoJSON layer under labels" example
+- Added "Styled road lines" example
+- Added "Flight route" example
+- Added "Animated layer" example
+- Added "Animation of camera around a point" example
+- Updated map and traffic style to version 20.4.5-5
+- Improved TypeScript type annotations
+- Bug & documentation fixes
+
+## 6.1.2-public-preview.9
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>28 September 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Improved TypeScript type annotations
+- Bug & documentation fixes
+
+## 6.1.2-public-preview.8
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>14 September 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Improved TypeScript type annotations
+- Added information about CSS stylesheets to documentation for plugins
+- Bug & documentation fixes
+
+## 6.1.2-public-preview.6
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>31 August 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added TypeScript annotations for plugins
+- Added TypeScript tutorial and usage information
+- Added "Interactive POI layer" example
+- Added place "Place by ID search" example
+- Removed declared IE 11 support
+- Bug & documentation fixes
+
+## 6.1.2-public-preview.5
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>18 August 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Added TypeScript annotations for libraries
+- Added support for PlaceById service
+- Added support for POI layer
+- Bug & documentation fixes
+
+## 6.1.2-public-preview.4
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>31 July 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+- Recreated "Batch Routing" example
+- Created "POI Details and Photos" example
+- Bug & documentation fixes
+
+## 6.1.2-public-preview.3
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+         **Release date:** 
+      </td>
+      <td>23 Jul 2020</td>
+    </tr>
+  </tbody>
+</table>
+
+This is the initial public release. Major enhancements from v6 vs v5:
+
+- Support for Merged Style which combines multiple styles defining the look and feel of the display layers including map layers, traffic layers, and POI layers
+- Better customization of the single style thanks to the compatibility with [Example Map Styler](https://developer.Example.com/maps-api/map-styler)
+- Consistency in using map & traffic display between Web & Mobile SDKs
+- POI Details and POI Photos service integration
+-

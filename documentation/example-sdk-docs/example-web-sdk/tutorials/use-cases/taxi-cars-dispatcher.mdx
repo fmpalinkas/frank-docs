@@ -1,0 +1,725 @@
+---
+title: Taxi cars dispatcher
+---
+
+## Intro
+
+This tutorial shows you how to create a web application for a taxi company using **version 6** of
+the Example Maps SDK for Web.
+
+It's not easy to identify which taxi can get the fastest to the customer by just looking at the map.
+Using
+the [Calculate Route service](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.calculateRoute)
+you can obtain the travel time of each individual taxi to a particular point, in this case, a
+passenger. In this application you will use this service so that the dispatcher will pick the taxi
+that reaches the customer the fastest way.
+
+In this tutorial you will create a map with markers pointing at taxis and passenger's locations. The
+application calculates each route and chooses the fastest one.
+
+## Prerequisites:
+
+To start using the Example Maps SDK for Web, you need an API Key. If you don't have it, please visit
+a [How to get a Example API key](https://developer.Example.com/how-to-get-Example-api-key) site and
+create one.
+
+## Map initialization
+
+To display a Example map use the following code. You can just copy and paste it to your favorite code
+editor.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Taxi cars dispatcher</title>
+    <meta charset="UTF-8" />
+    <!-- Replace version in the URL with desired library version -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+    />
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/services/services-web.min.js"></script>
+    <style>
+      body {
+        margin: 0
+      }
+      #map {
+        height: 100vh;
+        width: 100vw;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <script>
+      const apiKey = "<your-api-key>"
+      const map = tt.map({
+        key: apiKey,
+        container: "map",
+        center: [4.876935, 52.360306],
+        zoom: 13,
+      })
+    </script>
+  </body>
+</html>
+```
+
+Note that the container parameter of `tt.map` constructor requires the same value as the id of a
+HTML &lt;div> element _where the map will be embedded_. Replace \<your-api-key&gt; placeholder with
+your API Key.
+
+You can find the custom markers used for this tutorial
+on [GitHub](https://github.com/Example-international/Example-use-case-taxi-dispatcher-web/tree/master-sdk-v6/img).
+
+## Passenger
+
+### Add a passenger marker to the map.
+
+To add the passenger marker into the map:
+
+- First: You need to add variables to the JavaScript section: `passengerInitCoordinates`
+  , `passengerMarker`, and a `createPassengerMarker(markerCoordinates, popup)` function.
+- Second: The `passengerInitCoordinates` variable needs to be declared _before_ the map
+  initialization.
+
+```javascript
+const passengerInitCoordinates = [4.876935, 52.360306]
+let passengerMarker
+
+function createPassengerMarker(markerCoordinates, popup) {
+  const passengerMarkerElement = document.createElement("div")
+  passengerMarkerElement.innerHTML =
+    "<img src='img/man-waving-arm_32.png' style='width: 30px; height: 30px';>"
+  return new tt.Marker({ element: passengerMarkerElement })
+    .setLngLat(markerCoordinates)
+    .setPopup(popup)
+    .addTo(map)
+}
+```
+
+To center the map on the passenger, replace the map definition like the one in the following
+example:
+
+```javascript
+const map = tt.map({
+  key: apiKey,
+  container: "map",
+  center: passengerInitCoordinates,
+  zoom: 13,
+})
+```
+
+Ensure that the placeholder has been replaced by your API Key.
+
+The following code puts the passenger marker on the map and opens a popup.
+
+```javascript
+passengerMarker = createPassengerMarker(
+  passengerInitCoordinates,
+  new tt.Popup({ offset: 35 }).setHTML(
+    "Click anywhere on the map to change passenger location."
+  )
+)
+
+passengerMarker.togglePopup()
+```
+
+### Change the passenger marker position.
+
+Now you can add a feature that allows users to click on the map to move a passenger. To do so, add
+an event listener on map click.
+
+- In the handler function, call the `reverseGeocode` method with a position parameter from the
+  event’s property `geoResponse`.
+- In the `then` method define a callback that executes a `drawPassengerMarkerOnMap` function.
+
+Add a conditional statement in the `drawPassengerMarkerOnMap` function: if the Reverse Geocoding
+Response contains an address, then a marker with the previous position is removed and a new one is
+created at the indicated location.
+
+```javascript
+function drawPassengerMarkerOnMap(geoResponse) {
+  if (
+    geoResponse &&
+    geoResponse.addresses &&
+    geoResponse.addresses[0].address.freeformAddress
+  ) {
+    passengerMarker.remove()
+    passengerMarker = createPassengerMarker(
+      geoResponse.addresses[0].position,
+      new tt.Popup({ offset: 35 }).setHTML(
+        geoResponse.addresses[0].address.freeformAddress
+      )
+    )
+    passengerMarker.togglePopup()
+  }
+}
+```
+
+Now you can add an event that draws the passenger marker each time you click on the map area.
+
+```javascript
+map.on("click", function (event) {
+  const position = event.lngLat
+  tt.services
+    .reverseGeocode({
+      key: apiKey,
+      position: position,
+    })
+    .then(function (results) {
+      drawPassengerMarkerOnMap(results)
+    })
+})
+```
+
+## Taxi cabs
+
+Add the taxi markers definition, where the coordinates for taxi cabs are fixed for simplicity.
+
+```javascript
+let taxiConfig
+function setDefaultTaxiConfig() {
+  taxiConfig = [
+    createTaxi("CAR #1", "#006967", [4.902642, 52.373627], "img/cab1.png"),
+    createTaxi("CAR #2", "#EC619F", [4.927198, 52.365927], "img/cab2.png"),
+    createTaxi("CAR #3", "#002C5E", [4.893488, 52.347878], "img/cab3.png"),
+    createTaxi("CAR #4", "#F9B023", [4.858433, 52.349447], "img/cab4.png"),
+  ]
+}
+
+function createTaxi(
+  name,
+  color,
+  coordinates,
+  iconFilePath,
+  iconWidth = 55,
+  iconHeight = 55
+) {
+  return {
+    name: name,
+    color: color,
+    icon:
+      "<img src=" +
+      iconFilePath +
+      " style='width: " +
+      iconWidth +
+      "px; height: " +
+      iconHeight +
+      "px;'>",
+    coordinates: coordinates,
+  }
+}
+```
+
+Add the taxi cabs into the map and an initialization of the `setDefaultTaxiConfig` function.
+
+```javascript
+setDefaultTaxiConfig()
+
+taxiConfig.forEach(function (taxi) {
+  const carMarkerElement = document.createElement("div")
+  carMarkerElement.innerHTML = taxi.icon
+  new tt.Marker({ element: carMarkerElement, offset: [0, 27] })
+    .setLngLat(taxi.coordinates)
+    .addTo(map)
+})
+```
+
+<img
+  src="https://developer.Example.com/assets/Example-guides/taxi-dispatcher/photos/taxi-dispatcher-v5-taxi-cabs.png"
+  width="850"
+  height="500"
+  alt="taxi-dispatcher"
+/>
+
+## Submit button
+
+To add the Submit button, the map &lt;div&gt; tag needs to be updated with the following code:
+
+```html
+<div id="map"></div>
+<div id="labels-container">
+  <label>Find the taxi that will arrive fastest</label>
+  <div id="route-labels"></div>
+  <input type="button" id="submit-button" value="Submit" />
+</div>
+```
+
+To see the button on the map, you need to add CSS styles.
+
+```css
+#submit-button {
+  background: #df1b12;
+  padding: 10px;
+  margin-top: 10px;
+  width: 100%;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.15s ease-in-out;
+  text-transform: uppercase;
+  border: none;
+  outline: none;
+}
+
+#submit-button:hover {
+  cursor: pointer;
+  background: #b1110e;
+}
+
+#labels-container {
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 400px;
+  padding: 10px;
+  margin: 10px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.45) 2px 2px 2px 0px;
+}
+
+#labels-container label {
+  line-height: 2;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+#labels-container #route-labels div {
+  border-left: 6px solid;
+  padding-left: 5px;
+  margin-top: 3px;
+}
+
+#route-labels div:hover {
+  cursor: pointer;
+  box-shadow: 0px 2px #888888;
+}
+```
+
+<img
+  src="https://developer.Example.com/assets/Example-guides/taxi-dispatcher/photos/taxi-dispatcher-v5-submit-button.png"
+  width="850"
+  height="500"
+  alt="submit button"
+/>
+
+## Clear routes
+
+To clear routes we need to first declare a variable.
+
+```javascript
+let routes = []
+```
+
+The `clear` function:
+
+- Removes routes from the map.
+- Clears the `routes` array.
+- Calls `setDefaultTaxiConfig`.
+
+```javascript
+function clear() {
+  routes.forEach(function (child) {
+    map.removeLayer(child[0])
+    map.removeLayer(child[1])
+    map.removeSource(child[0])
+    map.removeSource(child[1])
+  })
+  routes = []
+  setDefaultTaxiConfig()
+  passengerMarker.togglePopup()
+}
+```
+
+Next, the `clear` function can be embedded into `submitButtonHandler`.
+
+```javascript
+function submitButtonHandler() {
+  clear()
+}
+```
+
+Don’t forget to assign the `submitButtonHandler` listener to the button in the HTML document.
+
+```javascript
+document
+  .getElementById("submit-button")
+  .addEventListener("click", submitButtonHandler)
+```
+
+Now you can go to the next chapter where the `clear` function can be used.
+
+## Draw routes
+
+The variables: `routeWeight` and `routeBackgroundWeight` need to be initialized as in the following
+example.
+
+```javascript
+const routeWeight = 9
+const routeBackgroundWeight = 12
+```
+
+For convenience, let's also create a `taxiPassengerBatchCoordinates` array and
+a `updateTaxiBatchLocations(passengerCoordinates)` function which will be helpful with preparing
+data for
+a [Batch Routing](/routing-api/documentation/batch-routing/batch-routing-service)
+call later.
+
+```javascript
+let taxiPassengerBatchCoordinates = []
+
+function updateTaxiBatchLocations(passengerCoordinates) {
+  taxiPassengerBatchCoordinates = []
+  taxiConfig.forEach((taxi) => {
+    taxiPassengerBatchCoordinates.push(
+      taxi.coordinates + ":" + passengerCoordinates
+    )
+  })
+}
+```
+
+Call the `updateTaxiBatchLocations(passengerCoordinates)` function right after
+the `setDefaultTaxiConfig();`.
+
+```javascript
+setDefaultTaxiConfig()
+updateTaxiBatchLocations(passengerInitCoordinates)
+```
+
+The `drawAllRoutes` function uses the `calculateRoute` method to get JSON objects with that route’s
+geometry coordinates for each four taxi locations inside the `taxiPassengerBatchCoordinates` array
+and a current passenger location.
+
+- The JSON is used to create GeoJSON route layers by calling a `buildStyle` function.
+- Created layers are then added to the map.
+
+```javascript
+let bestRouteIndex
+
+function drawAllRoutes() {
+  tt.services
+    .calculateRoute({
+      batchMode: "sync",
+      key: apiKey,
+      batchItems: [
+        { locations: taxiPassengerBatchCoordinates[0] },
+        { locations: taxiPassengerBatchCoordinates[1] },
+        { locations: taxiPassengerBatchCoordinates[2] },
+        { locations: taxiPassengerBatchCoordinates[3] },
+      ],
+    })
+    .then(function (results) {
+      results.batchItems.forEach(function (singleRoute, index) {
+        const routeGeoJson = singleRoute.toGeoJson()
+        const route = []
+        const route_background_layer_id = "route_background_" + index
+        const route_layer_id = "route_" + index
+
+        map
+          .addLayer(
+            buildStyle(
+              route_background_layer_id,
+              routeGeoJson,
+              "black",
+              routeBackgroundWeight
+            )
+          )
+          .addLayer(
+            buildStyle(
+              route_layer_id,
+              routeGeoJson,
+              taxiConfig[index].color,
+              routeWeight
+            )
+          )
+
+        route[0] = route_background_layer_id
+        route[1] = route_layer_id
+        routes[index] = route
+
+        if (index === bestRouteIndex) {
+          const bounds = new tt.LngLatBounds()
+          routeGeoJson.features[0].geometry.coordinates.forEach(function (
+            point
+          ) {
+            bounds.extend(tt.LngLat.convert(point))
+          })
+          map.fitBounds(bounds, { padding: 150 })
+        }
+
+        map.on("mouseenter", route_layer_id, function () {
+          map.moveLayer(route_background_layer_id)
+          map.moveLayer(route_layer_id)
+        })
+
+        map.on("mouseleave", route_layer_id, function () {
+          bringBestRouteToFront()
+        })
+      })
+      bringBestRouteToFront()
+    })
+}
+
+function bringBestRouteToFront() {
+  map.moveLayer(routes[bestRouteIndex][0])
+  map.moveLayer(routes[bestRouteIndex][1])
+}
+
+function buildStyle(id, data, color, width) {
+  return {
+    id: id,
+    type: "line",
+    source: {
+      type: "geojson",
+      data: data,
+    },
+    paint: {
+      "line-color": color,
+      "line-width": width,
+    },
+    layout: {
+      "line-cap": "round",
+      "line-join": "round",
+    },
+  }
+}
+```
+
+The route layer is drawn twice to create an outline:
+
+1. `route[0]` (`route_background_layer_id`) in black, with a _thick_ stroke.
+2. `route[1]` (`route_layer_id`) using the color from config and a _normal_ stroke.
+
+Add a `processMatrixResponse` function. It extracts 3 elements from each Response and uses them to
+populate 3 separate arrays:
+
+- travel times
+- route lengths
+- traffic delays
+
+```javascript
+function processMatrixResponse(result) {
+  const travelTimeInSecondsArray = []
+  const lengthInMetersArray = []
+  const trafficDelayInSecondsArray = []
+  result.matrix.forEach(function (child) {
+    travelTimeInSecondsArray.push(
+      child[0].response.routeSummary.travelTimeInSeconds
+    )
+    lengthInMetersArray.push(child[0].response.routeSummary.lengthInMeters)
+    trafficDelayInSecondsArray.push(
+      child[0].response.routeSummary.trafficDelayInSeconds
+    )
+  })
+  drawAllRoutes()
+}
+```
+
+Next, add the functions: `convertToPoint`, `buildDestinationsParameter`, and `buildOriginsParameter`.
+
+```javascript
+function convertToPoint(lat, long) {
+  return {
+    point: {
+      latitude: lat,
+      longitude: long,
+    },
+  }
+}
+
+function buildOriginsParameter() {
+  const origins = []
+  taxiConfig.forEach(function (taxi) {
+    origins.push(convertToPoint(taxi.coordinates[1], taxi.coordinates[0]))
+  })
+  return origins
+}
+
+function buildDestinationsParameter() {
+  return [
+    convertToPoint(
+      passengerMarker.getLngLat().lat,
+      passengerMarker.getLngLat().lng
+    ),
+  ]
+}
+```
+
+The `callMatrix` function uses a `matrixRouting` method to create a Request for
+the [Matrix Routing API](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.matrixRouting).
+
+- The `go` method then calls the API _asynchronously_, to allow for service processing time.
+- Use the `then` function to define a callback that processes the Response, including `travelTime`
+  in seconds and `distance` in meters.
+
+To deal with the volume of route plans that may be required, this implementation uses
+the [Routing API](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.calculateRoute).
+
+- In a simple implementation with one passenger and four taxis, the service would calculate a small
+  matrix of 4 x 1 routes.
+- But in a real life application, there may be many passengers requesting a taxi at the same time
+  and many available taxis.
+- A scenario with 3 passengers and 20 taxis creates a matrix of 20 x 3 = 60 routes.
+
+For more information on the API,
+see [Matrix Routing](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.matrixRouting).
+
+```javascript
+function callMatrix() {
+  const origins = buildOriginsParameter()
+  const destinations = buildDestinationsParameter()
+  tt.services
+    .matrixRouting({
+      key: apiKey,
+      origins: origins,
+      destinations: destinations,
+      traffic: true,
+    })
+    .then(processMatrixResponse)
+}
+```
+
+Finally, you can add the `callMatrix` function call and update `submitButtonHandler`.
+
+```javascript
+function submitButtonHandler() {
+  clear()
+  callMatrix()
+}
+```
+
+## And the winner is …
+
+Create a modal to inform the user which route is the fastest one.
+
+- The modal appears when all calculations are done.
+- Put a &lt;div> with a modal id in the &lt;body&gt; tag, following the map &lt;div&gt; tag.
+
+```html
+<div id="modal">
+  <div id="modal-content"></div>
+</div>
+```
+
+Add the CSS for the modal to your style section:
+
+```css
+#modal {
+  display: none;
+  position: fixed;
+  z-index: 1100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#modal-content {
+  background-color: lightgray;
+  color: #555;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  text-align: center;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 20%;
+}
+```
+
+Next, add the necessary variables.
+
+```javascript
+const modal = document.getElementById("modal")
+const modalContent = document.getElementById("modal-content")
+const fastestRouteColor = "#65A7A9"
+```
+
+To display and remove the modal from the screen, add the following code:
+
+```javascript
+modal.addEventListener("click", function () {
+  modal.style.display = "none"
+})
+
+function displayModal() {
+  modalContent.innerText = "Dispatch car number " + String(bestRouteIndex + 1)
+  modal.style.display = "block"
+}
+```
+
+The user can click anywhere to hide the modal.
+
+Now is a time to choose the winner in a `modifyFastestRouteColor` function.
+
+- If it is the fastest route, it is displayed **above all other routes**.
+- The function copies the array `travelTimeInSecondsArray` to a new `sortedTab` array and sorts it.
+
+Because the default comparison function is alphabetic (meaning that '11' is less than '2'), the
+function uses a custom comparison function.
+
+- The following one takes two values (such as 7 and 9) and subtracts one from the other.
+- If the result is negative (-2), the function sorts 7 as lower than 9.
+
+```javascript
+function modifyFastestRouteColor(travelTimeInSecondsArray) {
+  const sortedTab = travelTimeInSecondsArray.slice()
+  sortedTab.sort(function (a, b) {
+    return a - b
+  })
+  bestRouteIndex = travelTimeInSecondsArray.indexOf(sortedTab[0])
+  taxiConfig[bestRouteIndex].color = fastestRouteColor
+}
+```
+
+What's left is updating the `processMatrixResponse`, as shown in the following code:
+
+```javascript
+function processMatrixResponse(result) {
+  const travelTimeInSecondsArray = []
+  const lengthInMetersArray = []
+  const trafficDelayInSecondsArray = []
+  result.matrix.forEach(function (child) {
+    travelTimeInSecondsArray.push(
+      child[0].response.routeSummary.travelTimeInSeconds
+    )
+    lengthInMetersArray.push(child[0].response.routeSummary.lengthInMeters)
+    trafficDelayInSecondsArray.push(
+      child[0].response.routeSummary.trafficDelayInSeconds
+    )
+  })
+  modifyFastestRouteColor(travelTimeInSecondsArray)
+  drawAllRoutes()
+  displayModal()
+}
+```
+
+<img
+  src="https://developer.Example.com/assets/Example-guides/taxi-dispatcher/photos/taxi-dispatcher-v5-modal.png"
+  width="850"
+  height="500"
+  alt="taxi dispatcher v5 modal"
+/>
+
+## Summary
+
+This tutorial has demonstrated:
+
+1. How to do
+   a [Matrix Routing API query](https://github.com/Example-international/Example-use-case-taxi-dispatcher-web/blob/master-sdk-v6/Example-js-matrix.html#L340).
+2. How
+   to [draw a route on the map](https://github.com/Example-international/Example-use-case-taxi-dispatcher-web/blob/master-sdk-v6/Example-js-matrix.html#L263).
+3. How to work with a route
+   by [setting event listeners](https://github.com/Example-international/Example-use-case-taxi-dispatcher-web/blob/master-sdk-v6/Example-js-matrix.html#L278)
+   , [setting a style](https://github.com/Example-international/Example-use-case-taxi-dispatcher-web/blob/master-sdk-v6/Example-js-matrix.html#L291)
+   ,
+   and [bringing the route to the front or back](https://github.com/Example-international/Example-use-case-taxi-dispatcher-web/blob/master-sdk-v6/Example-js-matrix.html#L190).
+
+All the source code of that application can be found
+on [GitHub](https://github.com/Example-international/Example-use-case-taxi-dispatcher-web/tree/master-sdk-v6).

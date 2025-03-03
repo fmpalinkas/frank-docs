@@ -1,0 +1,376 @@
+---
+title: Turf.js integration
+---
+
+## Purpose
+
+This tutorial shows you how to integrate Example Maps SDK for Web with [Turf.js](http://turfjs.org/)
+and use some of its features. [Turf.js](http://turfjs.org/). is an open source library for
+geospatial analysis. With this tutorial you can:
+
+- Learn how to display a well-defined and limited area (in our example: Amsterdam) on the map.
+- Learn how to calculate polygon’s area in square kilometers with Turf.js.
+- Find out how to check if some points are located within or outside of the area (polygon) with
+  Turf.js.
+
+## Prerequisites
+
+To start using the Example Maps SDK for Web, you need the following:
+
+- **API Key** - If you don't have an API key visit
+  a [How to get a Example API key](/how-to-get-Example-api-key) site and
+  create one.
+- **Coordinates**
+  How to find your company location coordinates?<br/>
+  The simplest way for obtaining these coordinates is to go
+  to [api_explorer](/search-api/api-explorer). First, click
+  on **Fuzzy Search** and then on a **Try it out** button. Let's assume your company address is: '
+  100 Century Center Ct 210, San Jose, CA 95112, USA'. You have to place it in a **query** field and
+  clear other pre-populated fields, then scroll down and press the **Execute** button. Please take
+  into account that you should not use special HTML characters (like '$','?',&','#') in address. In
+  the response you can find section and there you can see that the very first item from the list of
+  items matched your query. Look at the property below address fields. There you can see the data
+  you need:
+  ```html
+  <position>
+    <lat>37.36729</lat>
+    <lon>-121.91595</lon>
+  </position>
+  ```
+- **Turf.js**
+  Add Turf.js to your project<br/>
+  You can follow the Turf.js [Getting started](http://turfjs.org/getting-started) instructions.
+  There are a few different ways to add the library to your project. In this tutorial, Turf.js is
+  loaded via a script tag.
+  - Add the following script tag to the
+    ```html
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+    ```
+
+## Displaying the map
+
+To display a map, use the following HTML5 code:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Example Web SDK plus TURF</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+    />
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/services/services-web.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
+```
+
+Create file _app.js_ with following code:
+
+```javascript
+var apiKey = "YOUR_API_KEY"
+var map = tt.map({
+  key: apiKey,
+  container: "map",
+  center: [4.899431, 52.379189],
+  zoom: 10,
+})
+```
+
+All javascript code should be added to this file.
+
+Create _style.css_ file with following code:
+
+```css
+body {
+  margin: 0
+}
+#map {
+  height: 100vh;
+  width: 100vw;
+}
+```
+
+## Displaying a polygon on the map
+
+Let's assume you offer your service only in the city area, in this example in Amsterdam. The
+application displays city area and its borders.
+
+To display city boundaries, you need to retrieve a polygon
+from _[Additional Data Service](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.additionalData)_
+. Before that you need to get `geometry.id` of that city by querying `Fuzzy Search` endpoint.
+
+To implement this, perform the following steps:
+
+You can find more information about the `fuzzySearch` method and indexes values
+at: [Fuzzy Search](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.fuzzySearch).
+
+```javascript
+var SEARCH_QUERY = "Amsterdam"
+
+function findGeometry() {
+  tt.services
+    .fuzzySearch({
+      key: apiKey,
+      query: SEARCH_QUERY,
+    })
+    .then(getAdditionalData)
+}
+```
+
+Here is the code which executes `findGeometry` function:
+
+```javascript
+function getAdditionalData(fuzzySearchResults) {
+  var geometryId = fuzzySearchResults.results[0].dataSources.geometry.id
+  tt.services
+    .additionalData({
+      key: apiKey,
+      geometries: [geometryId],
+      geometriesZoom: 12,
+    })
+    .then(processAdditionalDataResponse)
+}
+```
+
+```javascript
+map.on("load", findGeometry())
+```
+
+1. Create a function called `findGeometry` and declare a `SEARCH_QUERY` variable.
+2. Use the `tt.services.fuzzySearch` method to get the `geometry.id`. <br/>
+   To limit indexes utilized for the search to `Geographies`, set the `idxSet` parameter to `Geo`.
+3. Create the `getAdditionalData` function. Inside call the `additionalData` method and obtain
+   requested geometries. Pass them for further processing to another function
+   called `processAditionalDataResponse`.
+   ```javascript
+   function getAdditionalData(fuzzySearchResults) {
+     var geometryId = fuzzySearchResults.results[0].dataSources.geometry.id
+     tt.services
+       .additionalData({
+         key: apiKey,
+         geometries: [geometryId],
+         geometriesZoom: 12,
+       })
+       .then(processAdditionalDataResponse)
+   }
+   ```
+4. To display a polygon on the map, create a new [GeoJSON](http://geojson.org) layer using
+   previously obtained `geometryData` and add it to the map. See the following code:
+   ```javascript
+   function buildLayer(id, data) {
+     return {
+       id: id,
+       type: "fill",
+       source: {
+         type: "geojson",
+         data: {
+           type: "Feature",
+           geometry: {
+             type: "Polygon",
+             coordinates: data,
+           },
+         },
+       },
+       layout: {},
+       paint: {
+         "fill-color": "#2FAAFF",
+         "fill-opacity": 0.8,
+         "fill-outline-color": "black",
+       },
+     }
+   }
+   function displayPolygonOnTheMap(additionalDataResult) {
+     var geometryData =
+       additionalDataResult.geometryData.features[0].geometry.coordinates[0]
+     map.addLayer(buildLayer("fill_shape_id", geometryData))
+     return geometryData
+   }
+   ```
+5. Create the `processAditionalDataResponse` function and execute `displayPolygonOnTheMap` function
+   inside.
+   ```javascript
+   function processAdditionalDataResponse(additionalDataResponse) {
+     if (
+       additionalDataResponse.additionalData &&
+       additionalDataResponse.additionalData.length
+     ) {
+       var geometryData = displayPolygonOnTheMap(
+         additionalDataResponse.additionalData[0]
+       )
+     }
+   }
+   ```
+
+## Calculate and display the polygon area with Turf.js
+
+To calculate the area of your polygon, use the Turf.js [area](http://turfjs.org/docs#area) method.
+
+1. Create the function called `calculateTurfArea`.
+   - Pass `geometryData` as an argument, as previously defined in the `getGeometry` function.
+   - According to Turf.js, this method returns the area of the polygon in **square meters**.
+   - Convert it to **square kilometers** to make it more readable. See the following code:
+   ```javascript
+   function calculateTurfArea(geometryData) {
+     var turfPolygon = turf.polygon(geometryData)
+     var areaInMeters = turf.area(turfPolygon)
+     var areaInKilometers = turf.round(
+       turf.convertArea(areaInMeters, "meters", "kilometers"),
+       2
+     )
+   }
+   ```
+2. To display the polygon area information, create a `polygon-info-box` HTML element inside
+   the `div` with 'id' `map`.
+   ```html
+   <div id="polygon-info-box">
+     <label>Area of the polygon:</label>
+     <div>
+       <span id="area-info"> - </span><span>km<sup>2</sup></span>
+     </div>
+   </div>
+   ```
+3. In the `calculateTurfArea` function created before, set the content of `areaInfo` element
+   to `areaInKilometers` value by using an innerText property.
+   ```javascript
+   function calculateTurfArea(geometryData) {
+     var turfPolygon = turf.polygon(geometryData)
+     var areaInMeters = turf.area(turfPolygon)
+     var areaInKilometers = turf.round(
+       turf.convertArea(areaInMeters, "meters", "kilometers"),
+       2
+     )
+     var areaInfo = document.getElementById("area-info")
+     areaInfo.innerText = areaInKilometers
+   }
+   ```
+4. Add styling to your `polygon-info-box` element in _style.css_ file:
+   ```css
+   #polygon-info-box {
+     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+     position: fixed;
+     top: 10px;
+     right: 10px;
+     padding: 10px;
+     margin: 10px;
+     z-index: 1100;
+     background-color: white;
+     box-shadow: rgba(0, 0, 0, 0.45) 2px 2px 2px 0px;
+   }
+   #polygon-info-box label {
+     font-size: 1.3em;
+     font-weight: bold;
+     line-height: 2;
+   }
+   #polygon-info-box span {
+     font-size: 1.2em;
+   }
+   #polygon-info-box {
+     text-align: right;
+   }
+   ```
+5. Add the `calculateTurfArea` function execution inside of the `processAdditionalDataResponse`
+   function:
+   ```javascript
+   function processAdditionalDataResponse(additionalDataResponse) {
+     if (
+       additionalDataResponse.additionalData &&
+       additionalDataResponse.additionalData.length
+     ) {
+       var geometryData = displayPolygonOnTheMap(
+         additionalDataResponse.additionalData[0]
+       )
+       calculateTurfArea(geometryData)
+     }
+   }
+   ```
+
+## Finding points located within a polygon using Turf.js
+
+1. Define the `markerCoordinates` array with points, some of them from the inside and some from the
+   outside of the polygon:
+   ```javascript
+   var markerCoordinates = [
+     [4.899431, 52.379189],
+     [4.8255823, 52.3734312],
+     [4.7483138, 52.4022803],
+     [4.797049, 52.435065],
+     [4.885911, 52.320235],
+   ]
+   ```
+2. Now, create a `drawPointsInsideAndOutsideOfPolygon` function and use
+   a [pointsWithinPolygon](http://turfjs.org/docs#pointsWithinPolygon) method from the turf library:
+   ```javascript
+   function drawPointsInsideAndOutsideOfPolygon(geometryData) {
+     var customInsidePolygonMarkerIcon = "img/inside_marker.png"
+     var customOutsideMarkerIcon = "img/outside_marker.png"
+     var turfPolygon = turf.polygon(geometryData)
+     var points = turf.points(markerCoordinates)
+     var pointsWithinPolygon = turf.pointsWithinPolygon(points, turfPolygon)
+     markerCoordinates.forEach(function (markerCoordinate) {
+       const markerElement = document.createElement("div")
+       markerElement.innerHTML = createMarkerElementInnerHTML(
+         customOutsideMarkerIcon
+       )
+       pointsWithinPolygon.features.forEach(function (pointWithinPolygon) {
+         if (
+           markerCoordinate[0] === pointWithinPolygon.geometry.coordinates[0] &&
+           markerCoordinate[1] === pointWithinPolygon.geometry.coordinates[1]
+         ) {
+           markerElement.innerHTML = createMarkerElementInnerHTML(
+             customInsidePolygonMarkerIcon
+           )
+         }
+       })
+       var marker = new tt.Marker({ element: markerElement }).setLngLat(
+         markerCoordinate
+       )
+       marker.addTo(map)
+     })
+   }
+   ```
+3. Execute the `drawPointsInsideAndOutsideOfPolygon` function inside of
+   the `processAdditionalDataResponse` function:
+   ```javascript
+   function processAdditionalDataResponse(additionalDataResponse) {
+     if (
+       additionalDataResponse.additionalData &&
+       additionalDataResponse.additionalData.length
+     ) {
+       var geometryData = displayPolygonOnTheMap(
+         additionalDataResponse.additionalData[0]
+       )
+       calculateTurfArea(geometryData)
+       drawPointsInsideAndOutsideOfPolygon(geometryData)
+     }
+   }
+   ```
+
+See the result!
+
+<img
+  src="https://developer.Example.com/assets/images/tutorials/turfjs/turfjs_sdk_v5.png"
+  width="848"
+  height="600"
+/>
+
+## Summary
+
+From this tutorial you learned:
+
+- How to show a polygon on a map.
+- How to calculate and show its area using Turf.js.
+- How to show points located within and outside of a polygon using Turf.js.
+
+You can find source code
+here: [GitHub](https://github.com/Example-international/Example-use-case-turf-integration/tree/master-sdk-v6).

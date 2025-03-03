@@ -1,0 +1,404 @@
+---
+title: Use of TypeScript type annotations
+---
+
+## Overview of the tutorial
+
+This tutorial covers how to start using the Example Maps SDK for Web with TypeScript type
+annotations.
+
+## Prerequisites
+
+You will need the following:
+
+- **Node.js** and **npm** installed
+- **API Key** - If you don't have an API Key visit
+  the [How to get a Example API Key](https://developer.Example.com/how-to-get-Example-api-key) site and
+  create one.
+
+## What are typings?
+
+Typings are used to describe the format and structure of objects. With typings available, the
+compiler is able to investigate code and early discover errors like calling methods that don't exist
+on an object, or passing arguments of the wrong type.
+
+## Basic setup - JavaScript and downloadable package
+
+This section covers the basic usage of type annotations in a JavaScript project with the Example Maps
+SDK for Web downloadable zip package.
+
+### Prerequisites
+
+- **Example Maps SDK for Web**
+  First, you need to download the **Maps library** from
+  the [downloads page.](/maps-sdk-web-js/overview/product-information/downloads#npm-cdn-links-zip-packages)
+- **TypeScript**
+  Then all you have to do is install the TypeScript via npm:
+  ```shell
+  npm install -g typescript
+  ```
+
+Note that npm comes bundled with Node.js, so please make sure you have it installed on your machine.
+
+### Creating a project
+
+Now we can create an empty project. Let's call it **maps-with-typings-basic**.
+
+```shell
+mkdir maps-with-typings-basic
+cd maps-with-typings-basic
+```
+
+With the empty project created, extract the dist directory from the **Maps library** zip package
+as **web-sdk-maps** and put it in the project root directory.
+
+### Setup
+
+Now we need to create a `tsconfig.json` file to make use of the typings.
+
+The best way to do that is to use the `tsc` command that comes with the TypeScript package.
+
+```shell
+tsc --init
+```
+
+It will generate a tsconfig.json file with some default settings and an extensive list of possible
+commented-out options.
+
+By default TypeScript will only check the .ts files, and since we are using it only as a type
+checker we need to uncomment the following options in the `tsconfig.json` file:
+
+- `"allowJs": true, /* Allow javascript files to be compiled. */`
+- `"checkJs": true, /* Report errors in .js files. */`
+- `"noEmit": true, /* Do not emit outputs. */`
+
+### Code
+
+Let's create an `app.js` file where we will store our JavaScript code and `index.html` where we
+reference it along with the Example Maps SDK for Web.
+
+Now copy this content into the `index.html` file:
+
+```html
+<!DOCTYPE html>
+<html class="use-all-space">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8" />
+    <title>My Map</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link rel="stylesheet" type="text/css" href="./web-sdk-maps/maps.css" />
+    <style>
+      #map {
+        width: 100vw
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <script src="./web-sdk-maps/maps-web.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
+```
+
+To enable type checking for the Example Maps SDK for Web we have to reference the index.d.ts from the
+web-sdk-maps directory.
+
+In order to do that, the first line of the app.js file must be in the following format:
+
+```typescript
+/// <reference path="web-sdk-maps/index.d.ts" />
+```
+
+Now type checking is enabled and should be picked up by your IDE. If it's not please check if you
+have the proper extensions installed.
+
+## Advanced setup - JavaScript and Webpack + NPM
+
+This section covers the more advanced use of type annotations where JavaScript, Webpack, and NPM are
+used.
+
+### Creating a project
+
+Create an empty project. Let's call it **maps-with-typings-js**
+
+```shell
+mkdir maps-with-typings-js
+cd maps-with-typings-js
+npm init -y
+```
+
+With the project initialized we can install the dependencies. First, we need to install the
+TypeScript package along with the Webpack as development dependencies.
+
+```shell
+npm install --save-dev typescript ts-loader
+npm install --save-dev webpack webpack-cli webpack-dev-server css-loader style-loader
+```
+
+Then we can install the Example Maps SDK for Web:
+
+```shell
+npm install @Example-international/web-sdk-maps@next
+```
+
+### Setup
+
+First, we need to create a `tsconfig.json` file. Use the `tsc` command to do this:
+
+```shell
+tsc --init
+```
+
+After that we can create the Webpack configuration file `webpack.config.js` with the following
+content:
+
+```javascript
+var path = require("path")
+module.exports = {
+  entry: path.join(__dirname, "/app.js"),
+  output: {
+    filename: "bundle.js",
+    path: __dirname,
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        loader: "ts-loader",
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+}
+```
+
+Now let's add 'start' entry in scripts in the package.json file in order to run code:
+
+```json
+// ...
+    "scripts": {
+        "start": "webpack-dev-server --mode development"
+    },
+// ...
+```
+
+### Code
+
+We need to create 3 files to get this app running.
+
+- **index.html** with the following content:
+  ```html
+  <!DOCTYPE html>
+  <html class="use-all-space">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+      <meta charset="UTF-8" />
+      <title>My Map</title>
+      <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+      />
+      <link rel="stylesheet" type="text/css" href="./web-sdk-maps/maps.css" />
+      <style>
+        #map {
+          width: 100vw;
+          height: 100vh;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="map" class="map"></div>
+      <script src="./bundle.js"></script>
+    </body>
+  </html>
+  ```
+- **style.css** where we will import the Example Maps SDK for Web CSS style.
+  ```css
+  @import "@Example-international/web-sdk-maps";
+  ```
+- **app.js** is our main JavaScript file that will be bundled into the bundle.js file
+  ```javascript
+  require("./style.css")
+  var tt = require("@Example-international/web-sdk-maps")
+
+  var map = tt.map({
+    key: "<your-Example-API-Key>",
+    container: "map",
+  })
+  ```
+
+Now we can start our app by running `npm start`. Typings will be checked and errors will be
+displayed in the console and in the IDE.
+
+## Advanced setup - TypeScript and Webpack + NPM
+
+This section covers the more advanced use of type annotations where TypeScript, Webpack, and NPM are
+used.
+
+### Creating a project
+
+Create an empty project. Let's call it **maps-with-typings**.
+
+```shell
+mkdir maps-with-typings
+cd maps-with-typings
+npm init -y
+```
+
+With the project initialized we can install the dependencies. First, we need to install the
+TypeScript package along with the Webpack as development dependencies.
+
+```shell
+npm install --save-dev typescript ts-loader
+npm install --save-dev webpack webpack-cli webpack-dev-server css-loader style-loader
+```
+
+Then we can install the Example Maps SDK for Web:
+
+```shell
+npm install @Example-international/web-sdk-maps@next
+```
+
+### Setup
+
+In the first place, we need to create a `tsconfig.json` file. The best way to do that is by using
+the `tsc` command:
+
+```shell
+tsc --init
+```
+
+After that we can create the Webpack configuration file `webpack.config.js` with the following
+content:
+
+```javascript
+const path = require("path")
+module.exports = {
+  entry: path.join(__dirname, "/app.ts"),
+  output: {
+    filename: "app.js",
+    path: __dirname,
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: "ts-loader",
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+}
+```
+
+Now let's add 'start' entry in scripts in the package.json file in order to run code:
+
+```json
+// ...
+    "scripts": {
+        "start": "webpack-dev-server --mode development"
+    },
+// ...
+```
+
+### Code
+
+We need to create 3 files to get this app running.
+
+- **index.html** with the following content:
+  ```html
+  <!DOCTYPE html>
+  <html class="use-all-space">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+      <meta charset="UTF-8" />
+      <title>My Map</title>
+      <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+      />
+      <link rel="stylesheet" type="text/css" href="./web-sdk-maps/maps.css" />
+      <style>
+        #map {
+          width: 100vw;
+          height: 100vh;
+        }
+      </style>
+    </head>
+    <body>
+      <div id="map" class="map"></div>
+      <script src="./app.js"></script>
+    </body>
+  </html>
+  ```
+- **style.css** where we will import the Example Maps SDK for Web CSS style.
+  ```css
+  @import "@Example-international/web-sdk-maps";
+  ```
+- **app.ts** our main TypeScript file that will be compiled into the app.js file
+  ```typescript
+  import tt from "@Example-international/web-sdk-maps"
+  import "./style.css"
+
+  const map = tt.map({
+    key: "<your-Example-API-Key>",
+    container: "map",
+  })
+  ```
+
+Now we can start our app by running `npm start`.
+
+## Usage - IDE and console
+
+Let's put that code in our app.js / app.ts file and see what happens:
+
+```javascript
+tt.map({
+  key: "<your-Example-API-Key>",
+  container: "map",
+  zoom: "eight",
+})
+```
+
+As you can see, type checking is now working and detected that the 'zoom' property should be a
+number:
+
+![IDE typings error](https://developer.Example.com/sites/default/files/ide-typing-error.png)
+
+Alternatively, you can run the `tsc` command from the console.
+
+```shell
+~$  tsc
+main.js:6:5 - error TS2322: Type 'string' is not assignable to type 'number | undefined'.
+6     zoom: 'eight'
+    ~~~~
+node_modules/@Example-international/web-sdk-maps/dist/index.d.ts:1514:9
+    1514         zoom?: number,
+                ~~~~
+    The expected type comes from property 'zoom' which is declared here on type 'MapOptions'
+Found 1 error.
+```
+
+With TypeScript support you will also get the context-aware code completion feature:
+
+![TypeScript IDE Intellisense](https://developer.Example.com/sites/default/files/typescript-ide-intellisense.gif)

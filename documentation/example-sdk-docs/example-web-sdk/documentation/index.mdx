@@ -1,0 +1,35 @@
+---
+title: Documentation
+hideMenu: true
+hideSubmenu: true
+---
+
+<IFrame
+  id="jssdk-iframe"
+  title="Documentation V6"
+  scrolling="no"
+  src="https://api.Example.com/maps-sdk-for-web/6.x/6.25.0/documentation/dist/index.html"
+  frameBorder="0"
+  isAutoHeight
+  iFrameResizeOptions={{
+    checkOrigin: false,
+    inPageLinks: true,
+    messageCallback: function (event) {
+      const iframe = event.iframe
+      const msg = event.message
+      switch (msg.type) {
+        case 'classLoaded':
+          window.location.hash = msg.className
+          break
+        case 'ready':
+          if (window.location.hash) {
+            iframe.iFrameResizer.sendMessage({
+              type: 'loadClass',
+              className: window.location.hash.replace('#', ''),
+            })
+          }
+          break
+      }
+    },
+  }}
+/>

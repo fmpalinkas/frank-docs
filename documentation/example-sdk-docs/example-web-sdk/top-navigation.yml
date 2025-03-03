@@ -1,0 +1,11 @@
+menuTopTitle: Maps SDK for Web V6
+menu:
+  - items:
+      - fileId: /overview/product-information/introduction
+        title: Overview
+      - fileId: /documentation
+        title: Documentation
+      - fileId: /functional-examples
+        title: Examples
+      - fileId: /tutorials/basic/display-vector-map
+        title: Tutorials

@@ -1,0 +1,275 @@
+---
+title: Migrate from version 4 - the Services library
+---
+
+## Overview of the tutorial
+
+This tutorial covers basic use cases to help you switch our services. For example, switching the
+Routing API or Search API services from version 4 of the Maps SDK for Web to our new version. We
+will use code examples to explain the main differences between the SDKs. In the new SDK, **
+services** are not part of the map library. We now provide a separate library to only include
+services.
+
+You can check how to migrate map displaying
+here: [Migrate from version 4 - the Maps library](/maps-sdk-web-v6/tutorials-migration/migrate-version-4-maps-library)
+
+## Prerequisites
+
+To start using the latest version of Example Maps SDK for Web you need the following:
+
+- The **Services library** <br/>
+  The Maps SDK for Web can be used in three ways:
+  - Downloaded from NPM: https://www.npmjs.com/package/@Example-international/web-sdk-services
+  - With a
+    CDN: https://api.Example.com/maps-sdk-for-web/cdn/6.x/&ltversion&gt;/services/services-web.min.js
+    - NOTE: include the latest version in the URL.
+  - Downloaded from here: [Downloads.](/maps-sdk-web-js-v6/downloads)<br/>
+    In this tutorial, we are using a CDN as an example.
+- **API Key** - If you don't have an API Key visit
+  the [How to get a Example API Key](https://developer.Example.com/how-to-get-Example-api-key) site and
+  create one.
+- Add the following to the &lt;head&gt; element of your HTML document:
+  ```html
+  <!-- Replace version in the URL with desired library version -->
+  <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/services/services-web.min.js"></script>
+  ```
+  Maps and services use the same namespace and will automatically attach themselves to the **tt**
+  object. Services will be accessible using **tt.services**.
+
+## Displaying a route/directions
+
+Here we have the code to display a route from point A to point B on the map.
+
+### Version 4 of the Maps SDK for Web
+
+```javascript
+Example
+  .routing()
+  .key("<your-api-key>")
+  .locations("37.7683909618184,-122.51089453697205:37.769167,-122.478468")
+  .go()
+  .then(function (routeJson) {
+    var route = Example.L.geoJson(routeJson, {
+      style: { color: "#00d7ff", opacity: 0.6, weight: 6 },
+    }).addTo(map)
+    map.fitBounds(route.getBounds(), { padding: [5, 5] })
+  })
+```
+
+### Latest version of the Maps SDK for Web
+
+```javascript
+tt.services
+  .calculateRoute({
+    key: "<your-api-key>",
+    locations: "-122.510601,37.768014:-122.478468,37.769167",
+  })
+  .then(function (response) {
+    var geojson = response.toGeoJson()
+    map.addLayer({
+      id: "route",
+      type: "line",
+      source: {
+        type: "geojson",
+        data: geojson,
+      },
+      paint: {
+        "line-color": "#00d7ff",
+        "line-width": 8,
+      },
+    })
+    var bounds = new tt.LngLatBounds()
+    geojson.features[0].geometry.coordinates.forEach(function (point) {
+      bounds.extend(tt.LngLat.convert(point))
+    })
+    map.fitBounds(bounds, { padding: 20 })
+  })
+```
+
+## Performing a fuzzy search
+
+### Version 4 of the Maps SDK for Web
+
+```javascript
+Example
+  .fuzzySearch()
+  .key("<your-api-key>")
+  .query("pizza")
+  .go()
+  .then(function (result) {
+    console.log(result)
+  })
+```
+
+### Latest version of the Maps SDK for Web
+
+```javascript
+tt.services
+  .fuzzySearch({
+    key: "<your-api-key>",
+    query: "pizza",
+  })
+  .then(function (result) {
+    console.log(result)
+  })
+```
+
+## Differences in APIs
+
+Here is an overview of some of the most important updates within our top-level namespace.
+
+### Common factory functions renamed
+
+Some of the common functions changed. Here are some examples:
+
+<table>
+  <thead>
+    <tr>
+      <th>Version 4</th>
+      <th>Current version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Example.key(key, [value])</td>
+      <td>
+        You need to pass the API Key directly to the service.
+        ```javascript
+           `tt.services.fuzzySearch({key: API-KEY, ...});` 
+        ```
+      </td>
+    </tr>
+    <tr>
+      <td>Example.localeService()</td>
+      <td>
+        You need to pass the language directly to the service. For the map, you
+        can also change the language after initialization by doing:
+        ```javascript
+           `map.setLanguage('en');` 
+        ```
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+The following table lists the services from the version 4 of the SDK and their equivalents in the
+latest one.
+
+<table>
+  <thead>
+    <tr>
+      <th>Version 4</th>
+      <th>Current version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Example.additionalData()</td>
+      <td>tt.services.additionalData()</td>
+    </tr>
+    <tr>
+      <td>Example.alongRouteSearch()</td>
+      <td>tt.services.alongRouteSearch()</td>
+    </tr>
+    <tr>
+      <td>
+         **No equivalent** 
+      </td>
+      <td>
+         **tt.services.autocomplete()** 
+      </td>
+    </tr>
+    <tr>
+      <td>Example.reachableRange()</td>
+      <td>tt.services.calculateReachableRange()</td>
+    </tr>
+    <tr>
+      <td>Example.routing()</td>
+      <td>tt.services.calculateRoute()</td>
+    </tr>
+    <tr>
+      <td>Example.categorySearch()</td>
+      <td>tt.services.categorySearch()</td>
+    </tr>
+    <tr>
+      <td>Example.copyright()</td>
+      <td>tt.services.copyrights()</td>
+    </tr>
+    <tr>
+      <td>Example.copyrightCaption()</td>
+      <td>tt.services.copyrightsCaption()</td>
+    </tr>
+    <tr>
+      <td>Example.crossStreetLookup()</td>
+      <td>tt.services.crossStreetLookup()</td>
+    </tr>
+    <tr>
+      <td>
+         **No equivalent** 
+      </td>
+      <td>
+         **tt.services.evChargingStationsAvailability()** 
+      </td>
+    </tr>
+    <tr>
+      <td>Example.fuzzySearch()</td>
+      <td>tt.services.fuzzySearch()</td>
+    </tr>
+    <tr>
+      <td>Example.geocode()</td>
+      <td>tt.services.geocode()</td>
+    </tr>
+    <tr>
+      <td>Example.geometrySearch()</td>
+      <td>tt.services.geometrySearch()</td>
+    </tr>
+    <tr>
+      <td>
+         **No equivalent** 
+      </td>
+      <td>
+         **tt.services.incidentViewport()** 
+      </td>
+    </tr>
+    <tr>
+      <td>Example.matrixRouting()</td>
+      <td>tt.services.matrixRouting()</td>
+    </tr>
+    <tr>
+      <td>Example.nearbySearch()</td>
+      <td>tt.services.nearbySearch()</td>
+    </tr>
+    <tr>
+      <td>
+         **No equivalent** 
+      </td>
+      <td>
+         **tt.services.poiCategories()** 
+      </td>
+    </tr>
+    <tr>
+      <td>Example.poiSearch()</td>
+      <td>tt.services.poiSearch()</td>
+    </tr>
+    <tr>
+      <td>Example.reverseGeocode()</td>
+      <td>tt.services.reverseGeocode()</td>
+    </tr>
+    <tr>
+      <td>Example.staticMapImage()</td>
+      <td>tt.services.staticImage()</td>
+    </tr>
+    <tr>
+      <td>Example.structuredGeocode()</td>
+      <td>tt.services.structuredGeocode()</td>
+    </tr>
+    <tr>
+      <td>Example.traffic()</td>
+      <td>tt.services.incidentDetails()</td>
+    </tr>
+    <tr>
+      <td>Example.trafficFlowSegmentData()</td>
+      <td>tt.services.trafficFlowSegmentData()</td>
+    </tr>
+  </tbody>
+</table>

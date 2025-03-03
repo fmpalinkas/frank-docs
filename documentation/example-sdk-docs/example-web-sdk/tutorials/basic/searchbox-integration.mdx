@@ -1,0 +1,428 @@
+---
+title: SearchBox integration
+---
+
+## Overview of the tutorial
+
+This tutorial shows the basic use of the SearchBox plugin to display it in a web page.
+
+## Prerequisites
+
+To start using the latest version of the SearchBox plugin, you need the following:
+
+- The **SearchBox plugin** can be used in three ways.
+  - [NPM](https://www.npmjs.com/package/@Example-international/web-sdk-plugin-searchbox)
+  - With a
+    CDN: https://api.Example.com/maps-sdk-for-web/cdn/plugins/SearchBox/&ltversion&gt;/SearchBox-web.js
+    > Include the latest version in the URL.
+  - Download it from this
+    page: [Downloads](/maps-sdk-web-js/overview/product-information/downloads).
+    > In this tutorial we are using a CDN as an example.
+- **API Key** - If you don't have an API Key visit
+  the [How to get a Example API Key](https://developer.Example.com/how-to-get-Example-api-key) site and
+  create one.
+
+We recommend that you have **npm** and **Node.js** already installed on your computer to quickly
+spin up a HTTP server to display the page we will create.
+
+There are two ways to include the SearchBox into your page.
+
+- Using the SearchBox as an independent element.
+- Using the SearchBox as a control in the map.
+
+## Using the SearchBox as an independent element
+
+Now, let's create a basic HTML file to display the SearchBox plugin. For this example we created a
+file named index.html.
+
+Next, copy the following script to your **index.html** file.
+
+```html
+<!DOCTYPE html>
+<html class="use-all-space">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>SearchBox</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.Example.com/maps-sdk-for-web/cdn/plugins/SearchBox/3.1.3-public-preview.0/SearchBox.css"
+    />
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/6.1.2-public-preview.15/services/services-web.min.js"></script>
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/plugins/SearchBox/3.1.3-public-preview.0/SearchBox-web.js"></script>
+  </head>
+  <body>
+    <script>
+      var options = {
+        searchOptions: {
+          key: "<your-Example-API-key>",
+          language: "en-GB",
+          limit: 5,
+        },
+        autocompleteOptions: {
+          key: "<your-Example-API-key>",
+          language: "en-GB",
+        },
+      }
+      var ttSearchBox = new tt.plugins.SearchBox(tt.services, options)
+      var searchBoxHTML = ttSearchBox.getSearchBoxHTML()
+      document.body.append(searchBoxHTML)
+    </script>
+  </body>
+</html>
+```
+
+## Let's go over the important lines
+
+First, we import all the necessary assets. In this case there are SearchBox styles, the plugin, and
+the Services library.
+
+```html
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://api.Example.com/maps-sdk-for-web/cdn/plugins/SearchBox/3.1.3-public-preview.0/SearchBox.css"
+/>
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/plugins/SearchBox/3.1.3-public-preview.0/SearchBox-web.js"></script>
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/6.1.2-public-preview.15/services/services-web.min.js"></script>
+```
+
+- SearchBox styles - these provide the styles for SearchBox.
+- SearchBox plugin - this provides the search box and its functionality to your page.
+- Services library - This provides the necessary tools to integrate Example services with your
+  application.
+
+Then we define the basic options configuration. See the following code example.
+
+```javascript
+var options = {
+  searchOptions: {
+    key: "<your-Example-API-key>",
+    language: "en-GB",
+    limit: 5,
+  },
+  autocompleteOptions: {
+    key: "<your-Example-API-key>",
+    language: "en-GB",
+  },
+}
+```
+
+- searchOptions - this is for the Fuzzy Search service. For a full list of options please refer to
+  the [Fuzzy Search service documentation.](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.fuzzySearch)
+- autocompleteOptions - this is for the Autocomplete service. For a full list of options please
+  refer to
+  the [Autocomplete service documentation.](https://developer.Example.com/maps-sdk-web-js/documentation#Services.services.autocomplete) <br/>
+  If you pass this option, the results list will be extended by the results returned by the
+  Autocomplete service. They are used as filters for the fuzzy search.
+
+Remember to replace the placeholders with your real data.
+
+<table>
+  <tbody>
+    <tr>
+      <td>your-Example-API-Key</td>
+      <td>Your Example API Key generated earlier.</td>
+    </tr>
+  </tbody>
+</table>
+
+For more details on how to use the configuration options, please refer to
+the [documentation.](https://developer.Example.com/maps-sdk-web-js/documentation#ttPlugins.SearchBox)
+
+Then, we can create our new SearchBox instance
+
+```javascript
+var ttSearchBox = new tt.plugins.SearchBox(tt.services, options)
+```
+
+and append it to our application. In our example it's the body of the document.
+
+```javascript
+var searchBoxHTML = ttSearchBox.getSearchBoxHTML()
+document.body.appendChild(searchBoxHTML)
+```
+
+## Using the SearchBox as a control in the map
+
+The workflow of adding the SearchBox as a control is almost the same. You need to include a Map in
+your page and add there created instance of SearchBox with subscribed event handlers.
+
+To check how to add the Map, please refer to
+the [Display a vector map](https://developer.Example.com/maps-sdk-web-js-public-preview/tutorials-basic/display-vector-map)
+tutorial.
+
+```javascript
+var map = tt.map({
+  key: "<your-Example-API-Key>",
+  container: "map",
+  center: [15.4, 53.0],
+  zoom: 3,
+})
+var ttSearchBox = new tt.plugins.SearchBox(tt.services, options)
+var searchMarkersManager = new SearchMarkersManager(map)
+ttSearchBox.on("Example.searchbox.resultsfound", handleResultsFound)
+ttSearchBox.on("Example.searchbox.resultselected", handleResultSelection)
+ttSearchBox.on("Example.searchbox.resultfocused", handleResultSelection)
+ttSearchBox.on("Example.searchbox.resultscleared", handleResultClearing)
+map.addControl(ttSearchBox, "top-left")
+```
+
+[SearchBox options](#using-the-searchbox-as-a-control-in-the-map) was described above.
+
+Remember to replace the placeholders with your real data.
+
+<table>
+  <tbody>
+    <tr>
+      <td>your-Example-API-Key</td>
+      <td>Your Example API Key generated earlier.</td>
+    </tr>
+  </tbody>
+</table>
+
+For more map configuration options please refer to the
+Map [documentation.](https://developer.Example.com/maps-sdk-web-js/documentation#Maps.Map)
+
+Then we define event handlers.
+
+```javascript
+function handleResultsFound(event) {
+  var results = event.data.results.fuzzySearch.results
+
+  if (results.length === 0) {
+    searchMarkersManager.clear()
+  }
+  searchMarkersManager.draw(results)
+  fitToViewport(results)
+}
+
+function handleResultSelection(event) {
+  var result = event.data.result
+  if (result.type === "category" || result.type === "brand") {
+    return
+  }
+  searchMarkersManager.draw([result])
+  fitToViewport(result)
+}
+
+function fitToViewport(markerData) {
+  if (!markerData || (markerData instanceof Array && !markerData.length)) {
+    return
+  }
+  var bounds = new tt.LngLatBounds()
+  if (markerData instanceof Array) {
+    markerData.forEach(function (marker) {
+      bounds.extend(getBounds(marker))
+    })
+  } else {
+    bounds.extend(getBounds(markerData))
+  }
+  map.fitBounds(bounds, { padding: 100, linear: true })
+}
+
+function getBounds(data) {
+  var btmRight
+  var topLeft
+  if (data.viewport) {
+    btmRight = [
+      data.viewport.btmRightPoint.lng,
+      data.viewport.btmRightPoint.lat,
+    ]
+    topLeft = [data.viewport.topLeftPoint.lng, data.viewport.topLeftPoint.lat]
+  }
+  return [btmRight, topLeft]
+}
+
+function handleResultClearing() {
+  searchMarkersManager.clear()
+}
+```
+
+- **handleResultsFound** - executes when the search results are found. The event handler clears
+  previously founded results and draws new. After that, it will try to fit drawn results on a
+  vewport by executing **fitToViewport** method.
+- **handleResultSelection** - executes in two cases:
+  - results were found and a user presses arrow up/down;
+  - results were found and a user chooses one by clicking on it;
+- **handleResultClearing** - executes when a user clicks on **"X"** button of the SearchBox. As a
+  result, all founded results will be cleared from the map.
+
+After all these predefined steps we can create **SearchMarkersManager**, which will be responsible
+for manipulation with a marker.
+
+In our example it has **draw** and **clear** methods
+
+```javascript
+function SearchMarkersManager(map, options) {
+  this.map = map
+  this._options = options || {}
+  this._poiList = undefined
+  this.markers = {}
+}
+
+SearchMarkersManager.prototype.draw = function (poiList) {
+  this._poiList = poiList
+  this.clear()
+  this._poiList.forEach(function (poi) {
+    var markerId = poi.id
+    var poiOpts = {
+      name: poi.poi ? poi.poi.name : undefined,
+      address: poi.address ? poi.address.freeformAddress : "",
+      distance: poi.dist,
+      classification: poi.poi ? poi.poi.classifications[0].code : undefined,
+      position: poi.position,
+      entryPoints: poi.entryPoints,
+    }
+    var marker = new SearchMarker(poiOpts, this._options)
+    marker.addTo(this.map)
+    this.markers[markerId] = marker
+  }, this)
+}
+
+SearchMarkersManager.prototype.clear = function () {
+  for (var markerId in this.markers) {
+    var marker = this.markers[markerId]
+    marker.remove()
+  }
+  this.markers = {}
+  this._lastClickedMarker = null
+}
+```
+
+and **SearchMarker**, which will be responsible for appearance of the marker and providing
+possibility **add/remove** it from the map
+
+```javascript
+function SearchMarker(poiData, options) {
+  this.poiData = poiData
+  this.options = options || {}
+  this.marker = new tt.Marker({
+    element: this.createMarker(),
+    anchor: "bottom",
+  })
+  var lon = this.poiData.position.lng || this.poiData.position.lon
+  this.marker.setLngLat([lon, this.poiData.position.lat])
+}
+
+SearchMarker.prototype.addTo = function (map) {
+  this.marker.addTo(map)
+  this._map = map
+  return this
+}
+
+SearchMarker.prototype.createMarker = function () {
+  var elem = document.createElement("div")
+  elem.className = "tt-icon-marker-black tt-search-marker"
+  if (this.options.markerClassName) {
+    elem.className += " " + this.options.markerClassName
+  }
+  var innerElem = document.createElement("div")
+  innerElem.setAttribute(
+    "style",
+    "background: white; width: 10px; height: 10px; border-radius: 50%; border: 3px solid black;"
+  )
+
+  elem.appendChild(innerElem)
+  return elem
+}
+
+SearchMarker.prototype.remove = function () {
+  this.marker.remove()
+  this._map = null
+}
+```
+
+For more advanced example of using the described code above please refer to the code tab
+of [Search with autocomplete](https://developer.Example.com/maps-sdk-web-js/functional-examples#examples,code,search-with-autocomplete.html)
+example.
+
+## Handling events
+
+The SearchBox emits 7 different events:
+
+- **Example.searchbox.inputrestored** - fired when the input is restored. This happens when the user
+  uses the arrows to navigate through the suggestions list and navigates back to the input.
+- **Example.searchbox.loadingstarted** - fired when a request in the background is started.
+- **Example.searchbox.loadingfinished** - fired when a request in the background is finished.
+- **Example.searchbox.resultfocused** - fired when the result is focused.
+- **Example.searchbox.resultscleared** - fired when the search results are cleared.
+- **Example.searchbox.resultselected** - fired when the user selects an element on the results list.
+- **Example.searchbox.resultsfound** - fired when the search results are found.
+
+If you want to subscribe for an event, use the following example code:
+
+```javascript
+ttSearchBox.on("Example.searchbox.resultsfound", function (data) {
+  console.log(data)
+})
+```
+
+## Option updating
+
+If you have initialized the SearchBox and you want to change it's options later, you can do the
+following:
+
+```javascript
+ttSearchBox.updateOptions({
+  minNumberOfCharacters: 5,
+  showSearchButton: false,
+  labels: {
+    placeholder: "Query e.g. Example",
+  },
+})
+```
+
+The query method triggers the search with updated options. This is necessary if you want to update
+results for the user with new options.
+
+```javascript
+ttSearchBox.query()
+```
+
+For more details on how to use the configuration options, please refer to
+the [documentation.](https://developer.Example.com/maps-sdk-web-js/documentation#ttPlugins.SearchBox)
+
+## Run a HTTP server
+
+Using a terminal, navigate to the directory containing our example.
+
+For example:
+
+```shell
+~$  cd searchbox-example/
+~searchbox-example$
+```
+
+Install a lightweight HTTP server (you might need to run this command with admin/root privileges).
+
+```shell
+npm install -g http-server
+```
+
+Then just simply run the following command.
+
+```shell
+http-server
+```
+
+Note that npm comes bundled with Node.js, so please make sure you have it installed on your machine.
+
+### So now it is time to see the results!
+
+Open a browser and type this URL in the address bar: _http://localhost:8080/index.html_. You should
+be able to see the SearchBox!
+
+![vector-map](https://api.Example.com/maps-sdk-for-web/cdn/static/searchbox_tutorial.png)
+
+## Summary
+
+From this tutorial you learned:
+
+- How to prepare a basic HTML page to use the SearchBox.
+- How to show the SearchBox on your map.

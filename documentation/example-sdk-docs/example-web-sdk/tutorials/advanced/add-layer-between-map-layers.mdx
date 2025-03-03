@@ -1,0 +1,338 @@
+---
+title: Add a layer between map layers
+---
+
+## Overview of the tutorial
+
+This tutorial shows how to insert a layer behind traffic flow information.
+
+## Prerequisites
+
+To start using the latest version of the Maps SDK for Web, you need the following:
+
+- The **Maps library** can be used in three ways:
+  - Downloaded from NPM: https://www.npmjs.com/package/@Example-international/web-sdk-maps.
+  - With a
+    CDN: https://api.Example.com/maps-sdk-for-web/cdn/6.x/&ltversion&gt;/maps/maps-web.min.js -
+    NOTE: Include the latest version in the URL.
+  - Downloaded from here: [Downloads.](/maps-sdk-web-js/overview/product-information/downloads) <br/>
+    In this tutorial we are using a CDN as an example.
+- **API Key** - If you don't have an API Key visit
+  the [How to get a Example API Key](/how-to-get-Example-api-key) site and
+  create one.
+
+We recommend that you have **npm** and **Node.js** already installed on your computer to quickly
+spin up a HTTP server to display the page we will create.
+
+## Create a HTML file
+
+Now let us create a basic HTML file to display a map with traffic flow information. For this example
+I created a file named **index.html**.
+
+Next, copy the following script to your **index.html** file.
+
+```html
+<!DOCTYPE html>
+<html class="use-all-space">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8" />
+    <title>Demo app</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+    />
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+    <style>
+      #map {
+        width: 800px;
+        height: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <script>
+      var map = tt.map({
+        key: "<YOUR-API-KEY>",
+        container: "map",
+        center: [-0.12634, 51.50276],
+        zoom: 10,
+      })
+
+      map.on("load", function () {
+        map.showTrafficFlow()
+      })
+    </script>
+  </body>
+</html>
+```
+
+### Let's go over the important lines
+
+First, we import all the necessary assets, in this case the JavaScript SDK and its styles.
+
+```html
+<!-- Include SDK's stylesheet -->
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+/>
+<!-- Include JavaScript SDK -->
+<script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+```
+
+Then, we can create our new map.
+
+```javascript
+//...
+//Initializes Example map with an id set to 'map' and default style, zoom and center position
+var map = tt.map({
+  key: "<YOUR-API-KEY>",
+  container: "map",
+  center: [-0.12634, 51.50276],
+  zoom: 10,
+})
+//...
+```
+
+Next, we enable traffic flow information.
+
+```javascript
+//...
+//We need to wait till the map is initialized
+map.on("load", function () {
+  //Now we enable traffic flow
+  map.showTrafficFlow()
+})
+//...
+```
+
+Remember to replace the placeholder with your real data.
+
+<table>
+  <tbody>
+    <tr>
+      <td>YOUR-API-KEY</td>
+      <td>Your Example Map API Key generated earlier.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Run a HTTP server
+
+Navigate to the directory containing our example using a terminal.
+
+For example:
+
+```shell
+cd sdk-example/
+~sdk-example$
+```
+
+Install a light-weight HTTP server (you might need to run this command with admin/root privileges):
+
+```shell
+npm install -g http-server
+```
+
+Then just simply run the following command:
+
+```shell
+http-server
+```
+
+Note that npm comes bundled with Node.js, so please make sure you have it installed on your machine.
+
+### So now it is time to see the results!
+
+Open a browser and type this URL in the address bar: _http://localhost:8080/index.html_. You should
+be able to see a map with traffic flow!
+
+![vector-map](https://api.Example.com/maps-sdk-js/assets/tutorial_images/adding-layer/page.png)
+
+## Add a custom GeoJSON layer
+
+This adds a custom layer to a style we use in the _'map.addLayer'_ method. For example:
+
+```javascript
+//...
+map.on("load", function () {
+  //...
+  map.addLayer({
+    id: "overlay",
+    type: "fill",
+    source: {
+      type: "geojson",
+      data: {
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [-0.2046175878910219, 51.52327158962092],
+              [-0.05355557617221507, 51.53523241868879],
+              [-0.13045987304786877, 51.46299250930767],
+            ],
+          ],
+        },
+      },
+    },
+    layout: {},
+    paint: {
+      "fill-color": "#db356c",
+      "fill-opacity": 0.5,
+      "fill-outline-color": "black",
+    },
+  })
+})
+//...
+```
+
+If you do it like this you will notice that a triangle is drawn on top of the map.
+
+![triangle on top](https://api.Example.com/maps-sdk-js/assets/tutorial_images/adding-layer/triangleOnTop.png)
+
+However, we only achieved a partial victory since we want to have this layer to be drawn under
+traffic flow information. How to do it? Thankfully, the "map.addLayer" method takes another
+parameter called "beforeLayerId" which should point to a layer's id under which we want to draw our
+custom layer. How can we find information about the layer and its id under which we want to put our
+custom layer? Let's start from inspecting the map's current style. You do it by invoking:
+
+```javascript
+map.getStyle()
+```
+
+This method provides your style as a JSON object. You may notice it contains multiple layers. Those
+layers define what will be rendered and how it will be rendered on your map. Their order matters:
+Rendering starts from the first layer on the list and ends on the last one which means that layers
+at the beginning might be covered by those at the end. That's why it is important to find a proper
+position for our layer. You could do it by browsing the layers provided by the object returned from
+the _"map.getStyle"_ method.
+
+In the returned array, you need to find the first traffic flow layer and its id. This is the id we
+have been looking for.
+
+![vector-map](https://api.Example.com/maps-sdk-for-web/cdn/static/first_layer.png)
+
+Now we can render our layer on the map in the proper place.
+
+```javascript
+//...
+map.on("load", function () {
+  //...
+  map.addLayer(
+    {
+      id: "overlay",
+      type: "fill",
+      source: {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [-0.2046175878910219, 51.52327158962092],
+                [-0.05355557617221507, 51.53523241868879],
+                [-0.13045987304786877, 51.46299250930767],
+              ],
+            ],
+          },
+        },
+      },
+      layout: {},
+      paint: {
+        "fill-color": "#db356c",
+        "fill-opacity": 0.5,
+        "fill-outline-color": "black",
+      },
+    },
+    "Traffic flow Outline Parking road"
+  )
+})
+//...
+```
+
+Here is the result:
+
+![vector-map](https://api.Example.com/maps-sdk-js/assets/tutorial_images/adding-layer/triangleBelow.png)
+
+And here is the full source code:
+
+```html
+<!DOCTYPE html>
+<html class="use-all-space">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8" />
+    <title>Demo app</title>
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps.css"
+    />
+    <script src="https://api.Example.com/maps-sdk-for-web/cdn/6.x/<version>/maps/maps-web.min.js"></script>
+    <style>
+      #map {
+        width: 800px;
+        height: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <script>
+      var map = tt.map({
+        key: "<YOUR-API-KEY>",
+        container: "map",
+        center: [-0.12634, 51.50276],
+        zoom: 10,
+      })
+
+      map.on("load", function () {
+        map.showTrafficFlow()
+        map.addLayer(
+          {
+            id: "overlay",
+            type: "fill",
+            source: {
+              type: "geojson",
+              data: {
+                type: "Feature",
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [
+                    [
+                      [-0.2046175878910219, 51.52327158962092],
+                      [-0.05355557617221507, 51.53523241868879],
+                      [-0.13045987304786877, 51.46299250930767],
+                    ],
+                  ],
+                },
+              },
+            },
+            layout: {},
+            paint: {
+              "fill-color": "#db356c",
+              "fill-opacity": 0.5,
+              "fill-outline-color": "black",
+            },
+          },
+          "Traffic flow Outline Parking road"
+        )
+      })
+    </script>
+  </body>
+</html>
+```

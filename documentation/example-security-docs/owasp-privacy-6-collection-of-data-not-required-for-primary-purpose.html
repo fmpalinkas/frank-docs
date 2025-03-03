@@ -1,0 +1,256 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Web Security and Privacy Reference: Countermeasure 6. Collection of Data Not Required for the Primary Purpose</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes">
+  <meta http-equiv="content-type" charset="UTF-8">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans" as="font" type="font/ttf" media="screen and print" crossorigin>
+  <link rel="preload" href="bin/images/masthead.png" as="image">
+  <link rel="preload" href="bin/images/footer.png" as="image">
+  <link rel="preload" href="bin/tipuesearch/img/search.png" as="image">
+  <link href="bin/styles/screen.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="bin/styles/print.css" media="print" rel="stylesheet" type="text/css">
+  <link href="bin/styles/prism.css" rel="stylesheet" type="text/css">
+  <link href="bin/tipuesearch/tipuesearch.css" rel="stylesheet">
+  <meta name="author" content="Frank M. Palinkas, Senior Technical Writer">
+</head>
+<body class="owasp-privacy-6-collection-of-data-not-required-for-primary-purpose">
+
+  <div class="wrapper">
+
+    <ul id="sidenav"></ul>
+
+    <div id="content">
+
+      <div id="innermast"></div>
+
+      <details class="audio" tabindex="0">
+        <summary class="return">Listen to this page: <img class="audio-icon" src="bin/images/audio.png" alt="audio icon" /></summary>
+        <div data-title="Click &#9654; to listen, &#10074;&#10074; to pause/stop.">
+          <audio controls="controls" tabindex="0">
+            <source src="bin/voice/6-collection-of-data.mp3" type="audio/mpeg" />
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+        </div>
+      </details>
+
+      <h2 id="headline" tabindex="0">OWASP Top 10 Privacy Risk Countermeasures</h2>
+
+      <p class="less">OWASP is the acronym for the <a href="https://www.owasp.org/index.php/Main_Page" target="_blank">Open Web Application Security Project <img src="bin/images/link.png" class="exlink" alt="- This is an external link." /></a>.</p>
+
+      <h3 class="brown3" tabindex="0">6. Collection of Data Not Required for the Primary Purpose</h3>
+
+      <section class="api">
+
+        <dl>
+          <dt tabindex="0">Risk Description</dt>
+          <dd>
+            <p>
+              Collecting descriptive, demographic or any
+              other user-related
+              data that are not needed
+              for the purposes of the system.
+            </p>
+            <ul>
+              <li>
+                <p>
+                  Also applies to data for which the user did not provide consent.
+                </p>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">How to check?</dt>
+          <dd>
+            <ol>
+              <li>
+                <p>
+                  List personal data collected by the
+                  application.
+                </p>
+              </li>
+              <li><p>Request description of purpose.</p></li>
+              <li>
+                <p>
+                  Check if collected data is required to fulfill
+                  the purpose.
+                </p>
+              </li>
+              <li>
+                <p>
+                  If data is collected that is not required for
+                  the primary purpose(s), check if consent to
+                  collect and process this data was given
+                  and is documented.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Are individuals notified and asked if
+                  purpose or processing is changed?
+                </p>
+              </li>
+              <li>
+                <p>
+                  Are regular compliance checks regarding
+                  the collection of personal data and user
+                  consent in place?
+                </p>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Countermeasures</dt>
+          <dd>
+            <ol>
+              <li>
+                <p>
+                  Define the purpose of the collection of
+                  personal data.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Only collect personal data required to fulfill
+                  the purpose.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Default is to collect as little data as
+                  possible unless the user chooses
+                  otherwise (data reduction / minimization).
+                </p>
+              </li>
+              <li>
+                <p>
+                  Provide the data subject the option to
+                  provide additional data voluntarily to
+                  improve the service (e.g. product
+                  recommendation, personalized
+                  advertisement) with possibility to optout.
+                </p>
+              </li>
+              <li>
+                <p>
+                  The purpose for collection of personal data
+                  collected is specified no later than at the
+                  time of data collection.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Conditioned collection: Collect personal
+                  data only if they are really required for an
+                  used feature.
+                </p>
+              </li>
+            </ol>
+          </dd>
+
+          <dt tabindex="0">Examples</dt>
+          <dd>
+            <p><b>Positive:</b></p>
+            <ul>
+              <li>
+                <p>
+                  A webshop collects Email addresses to
+                  send an order confirmation to the buyer.
+                </p>
+                <ul>
+                  <li>
+                    <p>
+                      This email address is not used to send news about products (another purpose)
+                      unless the user actively chooses this
+                      option (opt-in).
+                    </p>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <p><b>Negative:</b></p>
+            <ul>
+              <li>
+                <p>
+                  Amazon provides personalized
+                  advertisement to its users.
+                </p>
+                <ul>
+                  <li>
+                    <p>
+                      This can be
+                      disabled, but the default setting is on.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      From
+                      a privacy point of view it should be
+                      disabled by default and the user should
+                      opt-in to receive personalized product
+                      recommendations.
+                    </p>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </dd>
+
+          <dt tabindex="0">References</dt>
+          <dd>
+            <ul>
+              <li>
+                <p>
+                  <a href="https://www.huntonprivacyblog.com/2013/04/09/article-29-working-party-clarifies-purpose-limitation-principle-opines-on-big-and-open-data/" target="_blank">
+                    Article 29: Working Party Opinion on Purpose Limitation <img src="bin/images/link.png" class="exlink" alt="- This is an external link." />
+                  </a>
+                </p>
+              </li>
+              <li>
+                Privacy Design Strategies:
+                <ul>
+                  <li>
+                    <p>
+                      <a href="https://www.theinternetofthings.eu/m-colesky-jh-hoepman-and-c-hillen-critical-analysis-privacy-design-strategies" target="_blank">
+                        M. Colesky, J.H.
+                        Hoepman, and C. Hillen.
+                        A Critical Analysis of Privacy Design
+                        Strategies . In 2016 International
+                        Workshop on Privacy Engineering –
+                        IWPE'16 , San Jose, CA, USA, May 26
+                        2016. <img src="bin/images/link.png" class="exlink" alt="- This is an external link." />
+                      </a>
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      <a href="https://hal.inria.fr/hal-01370395/document" target="_blank">
+                        J.H.
+                        Hoepman. Privacy Design
+                        Strategies . In IFIP TC11 29th Int. Conf.
+                        on Information Security (IFIP SEC 2014) ,
+                        pages 446459,
+                        June 24
+                        2014. (PDF) <img src="bin/images/link.png" class="exlink" alt="- This is an external link." />
+                      </a>
+                    </p>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </dd>
+        </dl>
+      </section>
+
+      <p class="top"><a href="#top" class="return">&#9650; Top</a></p>
+
+      <div id="footer" class="footer"></div>
+    </div>
+  </div>
+
+  <script src="bin/scripts/global.js"></script>
+  <script src="bin/scripts/prism.js"></script>
+</body>
+</html>

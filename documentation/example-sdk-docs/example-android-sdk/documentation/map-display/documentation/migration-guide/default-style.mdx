@@ -1,0 +1,44 @@
+---
+title: Default style
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_default_style"
+></a>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_layer_groups_in_the_default_style"
+></a>
+
+## Layer groups in the default style
+
+<Blockquote type="announcement">
+
+**IMPORTANT:** The Maps SDK should be initialized with the style from Style Merger which only
+supports vector tiles. The approach of using a style that contains both raster and vector tiles was
+deprecated. After the deprecation period is over the default style will not contain raster layer
+groups.
+
+</Blockquote>
+
+In order to display raster tiles, you can check out
+our [Map Tiles example](https://developer.New.com/maps-android-sdk/documentation/map-display/map-examples/map-tiles).
+
+The default style delivered with the SDK contains the following layer groups (background to
+foreground):
+
+1. Background: Color and pattern displayed in places where there is no other map data.
+2. Vector map: The baseline tile layer in vector format.
+3. Raster map: The baseline tile layer in raster format.
+4. Raster overlay for hybrid maps: Streets, labels, and icons on a transparent background.
+5. Traffic flow: Raster and vector traffic flow tile overlays.
+6. Traffic incidents: Raster and vector traffic incident tile overlays.
+7. Routes :Planned and alternative routes.
+8. Vector map labels and icons – Rendered on top of most other layers for better readability.
+9. GPS inaccuracy indicator - A circle indicating the GPS inaccuracy area.
+10. Position indicator - A static location marker.
+11. Chevron - An animated location marker.

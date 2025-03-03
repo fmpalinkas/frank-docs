@@ -1,0 +1,102 @@
+---
+title: Matrix routing
+---
+
+Allow your users to send multiple synchronous routing requests with Matrix Routing components. You
+can calculate a matrix of route summaries for a set of routes defined with origin and destination
+locations to easily compare them.
+
+Matrix Routing SDK components use
+the [Online Matrix Routing API](/routing-api/documentation/matrix-routing/synchronous-matrix)
+so you can find all details about it in the service documentation.
+
+The set of origins and the set of destinations can be thought of as the column and row headers of a
+table, and each cell in the table contains the costs of routing from the origin to the destination
+for that cell. There are generally three types of use cases for Matrix Routing:
+
+- 1-to-many = from one origin (e.g., your current location) to many destinations (e.g., POIs)
+- many-to-many = from many origins (e.g., taxis) to many destinations (e.g., passengers)
+- many-to-1 = from many origins (e.g., ambulances) to one destination (e.g., patient)
+
+Try out the following use cases in your app.
+
+**Sample use case:** (One to many) I know a few restaurants and I would like to know which one I can
+get to the fastest.
+
+    1 origin – Amsterdam, 5 restaurants in Amsterdam. The shortest ETA is the active route.
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/Matrix_routingOne_to_Many.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>One to Many</p>
+      </td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+**Sample use case:** (Many to many) There are a few taxis and a few passengers to pick up. You want
+to compare ETAs for each pair of passengers-taxis to choose the most optimal combination.
+
+    2 origins (taxies) and 2 destinations (passengers). Render all routes for all taxies. The active routes are the ones with the shortest ETA for each pair.
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/Matrix_routingMany_to_Many.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Many to Many</p>
+      </td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+Use the following code sample to implement a similar use case.
+
+To request a matrix route plan, create a `MatrixRoutingSpecification`:
+
+```java
+MatrixRoutesSpecification matrixRoutesSpecification = new MatrixRoutesSpecification.Builder(origins, destinations).build()
+```
+
+and pass it to the Routing API:
+
+```java
+routePlannerApi.planRoutes(specification, matrixRoutesCallback);
+```
+
+The result can be observed with a listener or synchronous call:
+
+```java
+/**
+ * The listener for response of the query sent to Matrix Routing online service.
+ */
+interface MatrixRoutingResultListener {
+    /**
+     * Triggered when the response from the matrix routing online service will be available.
+     *
+     * @param response - The information returned is a container for all route results.
+     */
+    fun onMatrixResult(response: MatrixRoutingResponse?)
+
+    /**
+     * Triggered when the online request for matrix routing failed.
+     *
+     * @param exception the exception returned when the request to service fails.
+     */
+    fun onMatrixError(exception: ServiceException?)
+}
+```
+
+You can obtain a detailed summary of every route in the matrix (e.g., ETA, delay, distances).

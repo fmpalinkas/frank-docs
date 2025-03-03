@@ -1,0 +1,115 @@
+group: New-api
+isPrivate: false
+description: The Example Maps Platform is a RESTful API collection designed for developers to.
+productName: Example Maps Platform
+menuTitle: Documentation
+isMenuOpened: false
+menu:
+  - title: Product Information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+      - fileId: /product-information/release-notes
+        title: Release notes
+      - fileId: /product-information/market-coverage
+        title: Market Coverage
+  - title: Batch Search API
+    items:
+      - fileId: /batch-search-api/batch-search-service
+        title: Batch Search service
+      - fileId: /batch-search-api/endpoint-1
+        title: Endpoint 1
+      - fileId: /batch-search-api/endpoint-2
+        title: Endpoint 2
+  - title: Geocoding API
+    items:
+      - fileId: /geocoding-api/geocoding-service
+        title: Geocoding API service
+      - fileId: /geocoding-api/endpoint-1
+        title: Endpoint 1
+      - fileId: /geocoding-api/endpoint-2
+        title: Endpoint 2
+  - title: Geofencing API 
+    items:  
+      - fileId: /geofencing-api/geofencing-service
+        title: Geofencing API service
+      - fileId: /geofencing-api/endpoint-1
+        title: Endpoint 1
+      - fileId: /geofencing-api/endpoint-2
+        title: Endpoint 2
+  - title: Location History API
+    items:
+      - fileId: /location-history-api/location-history-service
+        title: Location History API service
+      - fileId: /location-history-api/endpoint-1
+        title: Endpoint 1
+      - fileId: /location-history-api/endpoint-2
+        title: Endpoint 2
+  - title: Map Display API
+    items: 
+      - fileId: /map-display-api/map-display-service
+        title: Map Display API service
+      - fileId: /map-display-api/endpoint-1
+        title: Endpoint 1
+      - fileId: /map-display-api/endpoint-2
+        title: Endpoint 2
+  - title: Notifications API 
+    items:
+      - fileId: /notifications-api/notifications-service
+        title: Notifications API service
+      - fileId: /notifications-api/endpoint-1
+        title: Endpoint 1
+      - fileId: /notifications-api/endpoint-2
+        title: Endpoint 2
+  - title: Reverse Geocoding API
+    items:
+      - fileId: /reverse-geocoding-api/reverse-geocoding-service
+        title: Reverse Geocoding API service
+      - fileId: /reverse-geocoding-api/endpoint-1
+        title: Endpoint 1
+      - fileId: /reverse-geocoding-api/endpoint-2
+        title: Endpoint 2
+  - title: Routing API
+    items:
+      - fileId: /routing-api/routing-service
+        title: Routing API service
+      - fileId: /routing-api/endpoint-1
+        title: Endpoint 1
+      - fileId: /routing-api/endpoint-2
+        title: Endpoint 2
+  - title: Search API
+    items:
+      - fileId: /search-api/search-service
+        title: Search API service
+      - fileId: /search-api/endpoint-1
+        title: Endpoint 1
+      - fileId: /search-api/endpoint-2
+        title: Endpoint 2
+  - title: Traffic API
+    items:
+      - title: Product Information
+        items:
+          - fileId: /traffic-api/product-information/introduction
+            title: Introduction
+          - fileId: /traffic-api/product-information/market-coverage
+            title: Market Coverage
+          - fileId: /traffic-api/product-information/release-notes
+            title: Release Notes 
+      - title: Traffic Incidents
+        items:
+          - fileId: /traffic-api/traffic-incidents/traffic-incidents-service
+            title: Traffic Incidents service
+          - fileId: /traffic-api/traffic-incidents/traffic-model-id
+            title: Traffic Model ID 
+          - fileId: /traffic-api/traffic-incidents/incident-details
+            title: Incident Details
+      - title: Traffic Flow
+        items: 
+          - fileId: /traffic-api/traffic-flow/traffic-flow-service
+            title: Traffic Flow service
+          - fileId: /traffic-api/traffic-flow/vector-flow-tiles
+            title: Vector Flow Tiles 
+      - title: Vector Tile Structure
+        items: 
+          - fileId: /traffic-api/vector-tile-structure/vector-tile-structure
+            title: Vector Tile Structure

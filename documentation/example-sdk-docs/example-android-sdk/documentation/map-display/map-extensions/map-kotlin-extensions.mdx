@@ -1,0 +1,130 @@
+---
+title: Map Kotlin Extensions
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="kotlin-extensions"
+></a>
+
+Additional classes that make development with Kotlin more pleasant and idiomatic. This module does
+not add any new features to the existing NewMap API.
+
+To use this library, add the following dependency to the build.gradle file:
+
+```java
+api("com.New.online:sdk-maps-ktx-extensions:{libversion}")
+```
+
+To apply an operation on the NewMap:
+
+```java
+inline fun MapFragment.applyOnNewMap(noinline block: NewMap.() -> Unit) {
+    getAsyncMap(block)
+}
+```
+
+To take advantage of coroutines:
+
+```java
+suspend inline fun MapFragment.getNewMap(): NewMap = suspendCoroutine { cont ->
+    val callback = OnMapReadyCallback { NewMap -> cont.resume(NewMap) }
+    getAsyncMap(callback)
+}
+```
+
+**API Reference**
+
+[JavaDocMapKtxExtensions_2.4.807](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapKtxExtensions_2.4.807/index.html) ([JavaDocMapKtxExtensions_2.4.807.zip](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapKtxExtensions_2.4.807.zip))
+
+<table>
+  <thead>
+    <tr>
+      <th>Older versions</th>
+      <th>Changes between current version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <p>
+           [MapKtxExtensions_2.4.797](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapKtxExtensions_2.4.797/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapKtxExtensions_2.4.782](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapKtxExtensions_2.4.782/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapKtxExtensions_2.4.771](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapKtxExtensions_2.4.771/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapKtxExtensions_2.4.738](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapKtxExtensions_2.4.738/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapKtxExtensions_2.4.725](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapKtxExtensions_2.4.725/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapKtxExtensions_2.4.712](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapKtxExtensions_2.4.712/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapKtxExtensions_2.4.692](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapKtxExtensions_2.4.692/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapKtxExtensions_2.4.674](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapKtxExtensions_2.4.674/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+  </tbody>
+</table>

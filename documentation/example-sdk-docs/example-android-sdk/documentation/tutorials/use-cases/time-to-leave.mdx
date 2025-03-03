@@ -1,0 +1,787 @@
+---
+title: Time to leave
+---
+
+## Purpose
+
+This article shows how to use the New Maps SDK for Android to create an application that
+calculates the time to leave previous to reaching the destination point at the desired time.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.New.com/assets/tutorials/timetoleave/timetoleave-first-screen.jpg)
+
+</ContentWrapper>
+
+## Getting Started
+
+A user can plan their route to reach the destination by using the following:
+
+- Departure and destination locations.
+- Travel mode.
+- The time they want to reach the destination.
+- Optionally preparation time before the departure.
+
+Next:
+
+1. The route is calculated and displayed on a map.
+2. The time to leave timer starts to count down.
+3. The route is recalculated each minute to check for any traffic delays.
+4. In case of any changes in traffic, the countdown timer gets updated and the user is notified.
+
+This article does not cover the whole of the application's code description, only the code sections
+where the New SDK is used.
+
+You can find and clone the working application on
+our [GitHub](https://github.com/New-international/New-use-case-time-to-leave-android). Have
+fun with modifying it and testing our APIs! If you want to follow a step-by-step application
+creation from scratch, check out the “Search Along the Route” tutorial.
+
+The following sections describe the usage of:
+
+- The New LocationSource API to get the user's current location
+- The New Search SDK module to search for addresses and geocode map positions
+- The New Map SDK module to display a map
+- The New Routing SDK module to plan routes
+
+## Prerequisites:
+
+1. Clone a GitHub repository, with the source code of the TimeToLeave application:
+   ```shell
+   git clone https://github.com/New-international/New-use-case-time-to-leave-android.git
+   ```
+2. If you don't have an API key visit
+   a [How to get a New API key](https://developer.New.com/how-to-get-New-api-key) site and
+   create one.
+3. Create a build config fields with the API keys, which will be used later in the application:
+   ```prettyprint
+   android {
+       compileSdkVersion 29
+       defaultConfig {
+           buildConfigField("String", "MAPS_API_KEY", "\YOUR_KEY\")
+           buildConfigField("String", "ROUTING_API_KEY", "\YOUR_KEY\")
+           buildConfigField("String", "SEARCH_API_KEY", "\YOUR_KEY\")
+           (...)
+   ```
+
+## Current location
+
+To get the users device location, a LocationSource class is used. This class uses
+LocationUpdateListener interface to notify about new location updates.
+
+<Code>
+
+```java
+import com.New.online.sdk.location.FusedLocationSource
+import com.New.online.sdk.location.LocationSource;
+import com.New.online.sdk.location.LocationUpdateListener;
+//(...)
+public class MainActivity extends AppCompatActivity implements LocationUpdateListener {
+    private LocationSource locationSource;
+    //(...)
+}
+```
+
+```kotlin
+import com.New.online.sdk.location.FusedLocationSource
+import com.New.online.sdk.location.LocationSource
+import com.New.online.sdk.location.LocationUpdateListener
+//(...)
+class MainActivity : AppCompatActivity(), LocationUpdateListener {
+    private lateinit var locationSource: LocationSource
+    //(...)
+}
+```
+
+</Code>
+
+The application needs to have proper permissions granted which is handled
+by `onRequestPermissionsResult` callback, so that location callbacks can be retrieved successfully.
+A `PermissionChecker` class is used to check whether the application has already assigned proper
+permissions. If not, then a `requestPermissions` function is called so that the user sees a
+permission request dialog. If location permissions have been granted inside
+an `onRequestPermissionsResult` function, a `locationSource.activate()` method is invoked. As a
+result, the application receives a GPS location in an `onLocationChanged` callback function.
+
+<Code>
+
+```java
+private void initLocationSource() {
+    PermissionChecker permissionChecker = AndroidPermissionChecker.createLocationChecker(this);
+    if(permissionChecker.ifNotAllPermissionGranted()) {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
+    }
+    locationSource = new FusedLocationSource(this, LocationRequest.create());
+    locationSource.addLocationUpdateListener(this);
+}
+
+@Override
+public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    if (requestCode == PERMISSION_REQUEST_LOCATION) {
+        if (grantResults.length >= 2 &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            locationSource.activate();
+        } else {
+            Toast.makeText(this, R.string.location_permissions_denied, Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+@Override
+public void onLocationChanged(Location location) {
+    if (latLngCurrentPosition == null) {
+        latLngCurrentPosition = new LatLng(location);
+        locationSource.deactivate();
+    }
+}
+```
+
+```kotlin
+private fun initLocationSource() {
+    val permissionChecker = AndroidPermissionChecker.createLocationChecker(this)
+    if (permissionChecker.ifNotAllPermissionGranted()) {
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_REQUEST_LOCATION)
+    }
+    locationSource = FusedLocationSource(this, LocationRequest.create())
+    locationSource.addLocationUpdateListener(this)
+}
+
+override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    if (requestCode == PERMISSION_REQUEST_LOCATION) {
+        if (grantResults.size >= 2 &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            locationSource.activate()
+        } else {
+            Toast.makeText(this, R.string.location_permissions_denied, Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
+override fun onLocationChanged(location: Location) {
+    if (latLngCurrentPosition == null) {
+        latLngCurrentPosition = LatLng(location)
+        locationSource.deactivate()
+    }
+}
+```
+
+</Code>
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.New.com/assets/tutorials/timetoleave/timetoleave-mylocation-demo.gif)
+
+</ContentWrapper>
+
+## Address & POI search / Typeahead search
+
+To feed departure and destination autocomplete text fields with the list of suggested positions,
+Results from the Search API query are used.
+
+1. First, a `searchAPI` object is defined and initialized:
+
+   <Code>
+
+   ```java
+   private SearchApi searchApi;
+   //(...)
+   searchApi = OnlineSearchApi.create(this, BuildConfig.SEARCH_API_KEY);
+   ```
+
+   ```kotlin
+   private lateinit var searchApi: SearchApi
+   //(...)
+   searchApi = OnlineSearchApi.create(this, BuildConfig.SEARCH_API_KEY)
+   ```
+
+   </Code>
+
+2. Then, a searchAddress function handles points of interest (POI) & address search. It takes two
+   parameters:
+
+   1. A search word which is used inside a query.
+   2. An `AutoCompleteTextView` object which is used to match whether an `afterTextChanged` event has
+      been called from the departure text field instead of the destination field.
+
+   <Code>
+
+   ```java
+   private void searchAddress(final String searchWord, final AutoCompleteTextView autoCompleteTextView) {
+       searchApi.search(new FuzzySearchQueryBuilder(searchWord)
+               .withLanguage(Locale.getDefault().toLanguageTag())
+               .withTypeAhead(true)
+               .withMinFuzzyLevel(SEARCH_FUZZY_LVL_MIN).build())
+               .subscribeOn(Schedulers.io())
+               .observeOn(AndroidSchedulers.mainThread())
+               .subscribe(new DisposableSingleObserver<FuzzySearchResponse>() {
+                   @Override
+                   public void onSuccess(FuzzySearchResponse fuzzySearchResponse) {
+                       if (!fuzzySearchResponse.getResults().isEmpty()) {
+                           searchAutocompleteList.clear();
+                           searchResultsMap.clear();
+                           if (autoCompleteTextView == atvDepartureLocation && latLngCurrentPosition != null) {
+                               String currentLocationTitle = getString(R.string.main_current_position);
+                               searchAutocompleteList.add(currentLocationTitle);
+                               searchResultsMap.put(currentLocationTitle, latLngCurrentPosition);
+                           }
+                           for (FuzzySearchResult result : fuzzySearchResponse.getResults()) {
+                               String addressString = result.getAddress().getFreeformAddress();
+                               searchAutocompleteList.add(addressString);
+                               searchResultsMap.put(addressString, result.getPosition());
+                           }
+                           searchAdapter.clear();
+                           searchAdapter.addAll(searchAutocompleteList);
+                           searchAdapter.getFilter().filter("");
+                       }
+                   }
+
+                   @Override
+                   public void onError(Throwable e) {
+                       Toast.makeText(MainActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                   }
+               });
+   }
+   ```
+
+   ```kotlin
+   private fun searchAddress(searchWord: String, autoCompleteTextView: AutoCompleteTextView) {
+       searchApi.search(FuzzySearchQueryBuilder(searchWord)
+               .withLanguage(Locale.getDefault().toLanguageTag())
+               .withTypeAhead(true)
+               .withMinFuzzyLevel(SEARCH_FUZZY_LVL_MIN).build())
+               .subscribeOn(Schedulers.io())
+               .observeOn(AndroidSchedulers.mainThread())
+               .subscribe(object : DisposableSingleObserver<FuzzySearchResponse>() {
+                   override fun onSuccess(fuzzySearchResponse: FuzzySearchResponse) {
+                       if (!fuzzySearchResponse.results.isEmpty()) {
+                           searchAutocompleteList.clear()
+                           searchResultsMap.clear()
+                           if (autoCompleteTextView === atv_main_departure_location && latLngCurrentPosition != null) {
+                               val currentLocationTitle = getString(R.string.main_current_position)
+                               searchAutocompleteList.add(currentLocationTitle)
+                               searchResultsMap[currentLocationTitle] = latLngCurrentPosition!!
+                           }
+                           for (result in fuzzySearchResponse.results) {
+                               val addressString = result.address.freeformAddress
+                               searchAutocompleteList.add(addressString)
+                               searchResultsMap[addressString] = result.position
+                           }
+                           searchAdapter.apply {
+                               this.clear()
+                               this.addAll(searchAutocompleteList)
+                               this.filter.filter("")
+                           }
+                       }
+                   }
+
+                   override fun onError(e: Throwable) {
+                       Toast.makeText(this@MainActivity, e.localizedMessage, Toast.LENGTH_SHORT).show()
+                   }
+               })
+   }
+   ```
+
+   </Code>
+
+3. Inside the `searchAddress` function, a `searchApi.search(...)` method is called.
+4. It takes a `FuzzySearchQuery` object as a parameter where you can provide necessary information
+   like search results language, category, position etc.
+5. `FuzzySearchQueryBuilder` is used to build the `FuzzySearchQuery` object.
+6. The following list of options can set the search query:
+   - `withLanguage(Locale.getDefault().toLanguageTag())` - to return the results in default
+     language on the mobile device.
+   - `withTypeAhead(true))` - to treat the searchWord query as a partial input and search service
+     enters a predictive mode.
+   - `withMinFuzzyLevel(2))` - to set the fuzziness level to use normal n-gram spell checking. Feel
+     free to experiment with other fuzziness levels.
+7. The `search` method from the `searchApi` object, returns a `FuzzySearchResponse` observable
+   object.
+   - When search operation is finished, it emits either a successful value or an error.
+   - If a successful value is emitted, a method named onSuccess is executed in the
+     subscribing `DisposableSingleObserver`, otherwise an `onError` method is executed.
+   - The same `searchAddress` function is used in the destination text field control.
+   - If there are any results in the `FuzzySearchResponse` object and the current location is
+     known, then it is added to the departure autocomplete list of suggestions as a first option.
+   - Then this list is filled with addresses from the `FuzzySearchResponse` object.
+8. When the departure position is set, the user can choose destination position, arrival time,
+   preparation time and a travel mode. All these parameters are gathered and passed to
+   a `CountDownActivity.prepareIntent` method.
+
+   <Code>
+
+   ```java
+   Intent intent = CountdownActivity.prepareIntent(
+       MainActivity.this,
+       latLngDeparture,
+       latLngDestination,
+       travelModeSelected,
+       arrivalTimeInMillis,
+       preparationTimeSelected);
+   startActivity(intent);
+   ```
+
+   ```kotlin
+   val intent = CountdownActivity.prepareIntent(
+       this@MainActivity,
+       latLngDeparture,
+       latLngDestination,
+       travelModeSelected,
+       arrivalTimeInMillis,
+       preparationTimeSelected)
+   startActivity(intent)
+   ```
+
+   </Code>
+
+## New Map display module
+
+A CountDown activity uses map and routing modules from the New Maps SDK. It implements
+an `OnMapReadyCallback` interface, so that an `onMapReady` method is called after the New map is
+ready to be used.
+
+<Code>
+
+```java
+public class CountdownActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private NewMap NewMap;
+    private RoutingApi routingApi;
+    //(...)
+
+    @Override
+    public void onMapReady(@NonNull NewMap NewMap) {
+        this.NewMap = NewMap;
+        this.NewMap.setMyLocationEnabled(true);
+        this.NewMap.clear();
+        showDialog(dialogInProgress);
+        requestRoute(departure, destination, travelMode, arriveAt);
+    }
+```
+
+```kotlin
+class CountdownActivity : AppCompatActivity(), OnMapReadyCallback {
+    private lateinit var NewMap: NewMap
+    private lateinit var routingApi: RoutingApi
+    //(...)
+
+    override fun onMapReady(NewMap: NewMap) {
+      this.NewMap = NewMap
+      NewMap.apply {
+          this.isMyLocationEnabled = true
+          this.clear()
+      }
+      showDialog(dialogInProgress)
+      requestRoute(departure, destination, travelMode, arriveAt)
+    }
+```
+
+</Code>
+
+```xml
+<fragment
+android:id="@+id/mapFragment"
+android:name="com.New.online.sdk.map.MapFragment"
+android:layout_width="@dimen/size_none"
+android:layout_height="@dimen/size_none"
+android:layout_marginTop="@dimen/size_none"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@id/layout_countdown_timer"/>
+```
+
+After the `startActivity` method is called inside a `CountDownActivity.onCreate(...)` method, New
+services and all other settings gathered from previous activity are initialized.
+
+<Code>
+
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_countdown);
+
+    initNewServices();
+    initToolbarSettings();
+    Bundle settings = getIntent().getBundleExtra(BUNDLE_SETTINGS);
+    initActivitySettings(settings);
+}
+
+private void initNewServices() {
+    routingApi = OnlineRoutingApi.create(this, BuildConfig.ROUTING_API_KEY);
+    Map<ApiKeyType, String> mapKeys = new HashMap<>();
+    mapKeys.put(ApiKeyType.MAPS_API_KEY, BuildConfig.MAPS_API_KEY);
+
+    MapProperties mapProperties = new MapProperties.Builder()
+        .keys(mapKeys)
+        .build();
+    MapFragment mapFragment = MapFragment.newInstance(mapProperties);
+    getSupportFragmentManager()
+        .beginTransaction()
+        .replace(R.id.mapFragment, mapFragment)
+        .commit();
+    mapFragment.getAsyncMap(this);
+}
+```
+
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_countdown)
+
+    initNewServices()
+    initToolbarSettings()
+    initActivitySettings(intent.getBundleExtra(BUNDLE_SETTINGS))
+}
+
+private fun initNewServices() {
+    routingApi = OnlineRoutingApi.create(applicationContext, BuildConfig.ROUTING_API_KEY)
+    val mapKeys = mapOf(ApiKeyType.MAPS_API_KEY to BuildConfig.MAPS_API_KEY)
+    val mapProperties = MapProperties.Builder().keys(mapKeys).build()
+    val mapFragment = MapFragment.newInstance(mapProperties)
+    supportFragmentManager
+        .beginTransaction()
+        .replace(R.id.mapFragment, mapFragment)
+        .commit()
+    mapFragment.getAsyncMap(this)
+}
+```
+
+</Code>
+
+When the map is ready to be used, New SDK automatically invokes an `onMapReady` callback method
+where:
+
+- The `NewMap` private field is initialized.
+- An 'in progress' dialog is displayed.
+- A `requestRoute` method is called.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.New.com/assets/tutorials/timetoleave/timetoleave-first-usage.gif)
+
+</ContentWrapper>
+
+## New Routing module
+
+The CountDown activity uses New Routing APIs to perform routing requests and operations like
+drawing a route on the map or displaying start and end route icons.
+
+1. First, a private `RoutingApi` class member is declared and initialized inside
+   an `initNewServices` function which is shown in several previous paragraphs.
+   The `requestRoute` method takes four parameters:
+
+   - `LatLng` departure position,
+   - `LatLng` destination position,
+   - `TravelMode` which describes which type of transport user choosed,
+   - A `date` which determines expected arrival time.
+
+   <Code>
+
+   ```java
+   private static final int ONE_MINUTE_IN_MILLIS = 60000;
+   private static final int ROUTE_RECALCULATION_DELAY = ONE_MINUTE_IN_MILLIS;
+
+   private void requestRoute(final LatLng departure, final LatLng destination, TravelMode byWhat, Date arriveAt) {
+       if (!isInPauseMode) {
+           //(...)
+       }
+       else {
+           timerHandler.removeCallbacks(requestRouteRunnable);
+           timerHandler.postDelayed(requestRouteRunnable, ROUTE_RECALCULATION_DELAY);
+       }
+   }
+   ```
+
+   ```kotlin
+   private const val ONE_MINUTE_IN_MILLIS = 60000
+   private const val ROUTE_RECALCULATION_DELAY = ONE_MINUTE_IN_MILLIS
+
+   private fun requestRoute(departure: LatLng?, destination: LatLng?, byWhat: TravelMode?, arriveAt: Date?) {
+       if (!isInPauseMode) {
+           //(...)
+       } else {
+           timerHandler.removeCallbacks(requestRouteRunnable)
+           timerHandler.postDelayed(requestRouteRunnable, ROUTE_RECALCULATION_DELAY.toLong())
+       }
+   }
+   ```
+
+   </Code>
+
+   - If the application is in the pause mode, a `requestRouteRunnable` object is posted in
+     a `timerHandler` with a one-minute delay.
+   - The `RequestRouteRunnable` and `TimerHandler` objects are defined as a private members of
+     the `CountDownActivity` class:
+
+     <Code>
+
+     ```java
+     private final Handler timerHandler = new Handler();
+
+     private final Runnable requestRouteRunnable = new Runnable() {
+         @Override
+         public void run() {
+             requestRoute(departure, destination, travelMode, arriveAt);
+         }
+     };
+     ```
+
+     ```kotlin
+     private val timerHandler = Handler()
+
+     private val requestRouteRunnable = Runnable { requestRoute(departure, destination, travelMode, arriveAt) }
+     ```
+
+     </Code>
+*  If the application is not in the pause mode, the `RouteSpecification` object needs to be
+  prepared in order to plan a route.
+  <Code>
+
+     ```java
+     if (!isInPauseMode) {
+         RouteDescriptor routeDescriptor = new RouteDescriptor.Builder()
+                 .routeType(RouteType.FASTEST)
+                 .considerTraffic(true)
+                 .travelMode(byWhat)
+                 .build();
+
+         RouteCalculationDescriptor routeCalculationDescriptor = new RouteCalculationDescriptor.Builder()
+                 .routeDescription(routeDescriptor)
+                 .arriveAt(arriveAt)
+                 .build();
+
+         RouteSpecification routeSpecification = new RouteSpecification.Builder(departure, destination)
+                 .routeCalculationDescriptor(routeCalculationDescriptor)
+                 .build();
+                 //(...)
+     ```
+
+     ```kotlin
+     if (!isInPauseMode) {
+         val routeDescriptor = RouteDescriptor.Builder()
+                 .routeType(com.New.online.sdk.routing.route.description.RouteType.FASTEST)
+                 .considerTraffic(true)
+                 .travelMode(byWhat!!)
+                 .build()
+
+         val routeCalculationDescriptor = RouteCalculationDescriptor.Builder()
+                 .routeDescription(routeDescriptor)
+                 .arriveAt(arriveAt!!)
+                 .build()
+
+         val routeSpecification = RouteSpecification.Builder(departure!!, destination!!)
+                 .routeCalculationDescriptor(routeCalculationDescriptor)
+                 .build()
+                 //(...)
+     ```
+
+       </Code>
+
+2. The `RouteDescriptor` and `RouteCalculationDescriptor` are used to construct
+   the `RouteSpecification` object:
+   - `routeType` - to allow the users to select one type of route from: fastest, shortest, thrilling
+     or eco.
+   - `considerTraffic` - when enabled, current traffic information is used during the route planning, when disabled - only historical traffic data.
+   - `travelMode` – you can choose one of the following: car, pedestrian, bicycle, truck, other params are listed [here](/maps-android-sdk/online-route-planner-examples).
+   - `arriveAt` - a date and time of arrival at the destination point. It’s an important method
+     inside the application because it changes a departure date which later is used to calculate time
+     left before the departure.
+3. When the `RouteSpecification` object is created, it is passed as a parameter to a `planRoute`
+   function from the `routingApi` object. This function takes as an argument a `RouteCallback`
+   object. In case of an error, an `onError` method is called, inside this method the current
+   activity is finished. As a result, the application returns to the previous screen.
+
+   <Code>
+
+   ```java
+   @Override
+   public void onError(Throwable e) {
+       hideDialog(dialogInProgress);
+       Toast.makeText(CountdownActivity.this, getString(R.string.toast_error_message_cannot_find_route), Toast.LENGTH_LONG).show();
+       CountdownActivity.this.finish();
+   }
+   ```
+
+   ```kotlin
+   override fun onError(e: Throwable) {
+       hideDialog(dialogInProgress)
+       Toast.makeText(this@CountdownActivity, getString(R.string.toast_error_message_cannot_find_route), Toast.LENGTH_LONG).show()
+       this@CountdownActivity.finish()
+   }
+   ```
+
+   </Code>
+
+4. When the `planRoute` function is finished, an `onSuccess(@NotNull RoutePlan routePlan)` function
+   is called and proper actions can be executed.
+
+   <Code>
+
+   ```java
+   routingApi.planRoute(routeSpecification, new RouteCallback() {
+       @Override
+       public void onSuccess(@NotNull RoutePlan routePlan) {
+           hideDialog(dialogInProgress);
+
+           if (!routePlan.getRoutes().isEmpty()) {
+               FullRoute fullRoute = routePlan.getRoutes().get(0);
+               int currentTravelTime = fullRoute.getSummary().getTravelTimeInSeconds();
+               if (previousTravelTime != currentTravelTime) {
+                   int travelDifference = previousTravelTime - currentTravelTime;
+                   if (previousTravelTime != 0) {
+                       showWarningSnackbar(prepareWarningMessage(travelDifference));
+                   }
+                   previousTravelTime = currentTravelTime;
+                   displayRouteOnMap(fullRoute.getCoordinates());
+                   String departureTimeString = fullRoute.getSummary().getDepartureTime();
+                   setupCountDownTimer(new DateFormatter().formatWithTimeZone(departureTimeString).toDate());
+               } else {
+                   infoSnackbar.show();
+               }
+           }
+           timerHandler.removeCallbacks(requestRouteRunnable);
+           timerHandler.postDelayed(requestRouteRunnable, ROUTE_RECALCULATION_DELAY);
+       }
+   ```
+
+   ```kotlin
+   routingApi.planRoute(routeSpecification, object : RouteCallback {
+       override fun onSuccess(routePlan: RoutePlan) {
+           hideDialog(dialogInProgress)
+           if (routePlan.routes.isNotEmpty()) {
+               val fullRoute = routePlan.routes.first()
+               val currentTravelTime = fullRoute.summary.travelTimeInSeconds
+               if (previousTravelTime != currentTravelTime) {
+                   val travelDifference = previousTravelTime - currentTravelTime
+                   if (previousTravelTime != 0) {
+                       showWarningSnackbar(prepareWarningMessage(travelDifference))
+                   }
+                   previousTravelTime = currentTravelTime
+                   displayRouteOnMap(fullRoute.getCoordinates())
+                   val departureTimeString = fullRoute.summary.departureTime
+                   setupCountDownTimer(DateFormatter().formatWithTimeZone(departureTimeString).toDate())
+               } else {
+                   infoSnackbar.show()
+
+               }
+           }
+           timerHandler.removeCallbacks(requestRouteRunnable)
+           timerHandler.postDelayed(requestRouteRunnable, ROUTE_RECALCULATION_DELAY.toLong())
+       }
+   ```
+
+   </Code>
+
+5. The most important task in previous code example is to get a current travel time and compare it
+   to the previous one.
+   - If travel times are the same, a Snackbar notification is shown to the user informing him, that
+     there are no changes in the route time since the last check.
+   - Otherwise a travel time difference is calculated and stored in a `travelDifference` variable.
+   - Then, a snackbar notification is shown to the user with the calculated travel time difference.
+6. Next, the current travel time is stored in a `previousTravelTime` variable.
+
+   - The route is displayed on the map.
+   - A `setupCountDownTimer` function is called
+
+   <Code>
+
+   ```java
+   private void setupCountDownTimer(Date departure) {
+       if (isCountdownTimerSet()) {
+           countDownTimer.cancel();
+       }
+       Date now = Calendar.getInstance().getTime();
+       final int preparationTimeMillis = preparationTime * ONE_MINUTE_IN_MILLIS;
+       long timeToLeave = departure.getTime() - now.getTime();
+       countDownTimer = new CountDownTimer(timeToLeave, ONE_SECOND_IN_MILLIS) {
+           public void onTick(long millisUntilFinished) {
+               updateCountdownTimerTextViews(millisUntilFinished);
+               if (!isPreparationMode && millisUntilFinished <= preparationTimeMillis) {
+                   isPreparationMode = true;
+                   setCountdownTimerColor(COUNTDOWN_MODE_PREPARATION);
+                   if (!isInPauseMode) {
+                       showPreparationInfoDialog();
+                   }
+               }
+           }
+
+           public void onFinish() {
+               timerHandler.removeCallbacks(requestRouteRunnable);
+               setCountdownTimerColor(COUNTDOWN_MODE_FINISHED);
+               if (!isInPauseMode) {
+                   createDialogWithCustomButtons();
+               }
+           }
+       }.start();
+       textViewTravelTime.setText(getString(R.string.travel_time_text, formatTimeFromSecondsDisplayWithoutSeconds(previousTravelTime)));
+   }
+   ```
+
+   ```kotlin
+   private fun setupCountDownTimer(departure: Date) {
+       countDownTimer?.cancel()
+
+       val now = Calendar.getInstance().time
+       val preparationTimeMillis = preparationTime * ONE_MINUTE_IN_MILLIS
+       val timeToLeave = departure.time - now.time
+       countDownTimer = object : CountDownTimer(timeToLeave, ONE_SECOND_IN_MILLIS.toLong()) {
+           override fun onTick(millisUntilFinished: Long) {
+               updateCountdownTimerTextViews(millisUntilFinished)
+               if (!isPreparationMode && millisUntilFinished <= preparationTimeMillis) {
+                   isPreparationMode = true
+                   setCountdownTimerColor(COUNTDOWN_MODE_PREPARATION)
+                   if (!isInPauseMode) {
+                       showPreparationInfoDialog()
+                   }
+               }
+           }
+
+           override fun onFinish() {
+               timerHandler.removeCallbacks(requestRouteRunnable)
+               setCountdownTimerColor(COUNTDOWN_MODE_FINISHED)
+               if (!isInPauseMode) {
+                   createDialogWithCustomButtons()
+               }
+           }
+       }.start()
+       text_countdown_travel_time.text = getString(R.string.travel_time_text, formatTimeFromSecondsDisplayWithoutSeconds(previousTravelTime.toLong()))
+   }
+   ```
+
+   </Code>
+
+7. The `setupCountDownTimer` function takes the departure date as a parameter. It checks if there is
+   already a countdown timer service already running in the background, and if there is, it cancels
+   it. Next, a current date is stored in a `currentDate` variable and the preparation time taken
+   from the first activity is stored in a `preparationTimeMillis` variable. A time difference
+   between the departure time and the current time is stored in a `timeToLeave` variable. It is
+   later passed to a `CountDownTimer` constructor.
+8. The `CountDownTimer` class implements two callbacks:
+   - The first callback is called `onTick(long millisUntilFinished)`.
+   - It updates time info and checks whether the application is in a preparation mode.
+   - If this is the case, the color of the timer text views changes, and a preparation dialog is
+     displayed to the user.
+   - `onFinish()` is called by the timer when counting down is completed.
+     - In this function, `requestRouteRunnable` callback is removed from timerHandler’s queue by
+       calling `removeCallbacks` method.
+     - The color of a timer text views is updated again, and final alert dialog window is displayed
+       to the user with nicely designed message that there is a time to leave!
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.New.com/assets/tutorials/timetoleave/timetoleave-countdown-end.gif)
+
+</ContentWrapper>
+
+Happy coding!
+
+## Summary
+
+This tutorial describes the New SDK and APIs used to build a Time To Leave application. Source
+code can be downloaded
+from [Github.](https://github.com/New-international/New-use-case-time-to-leave-android)

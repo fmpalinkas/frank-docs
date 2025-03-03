@@ -1,0 +1,132 @@
+---
+title: Map ReactX Extensions
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="rx-extensions"
+></a>
+
+Additional classes that allow you to write reactive components using NewMap. Specific map
+callbacks (e.g., map click listener) are transformed to Observables so they can be easily integrated
+with RxJava2 types. This module does not add any new features to the existing NewMap API.
+
+To use this library, add the following dependency to the build.gradle file:
+
+```java
+api("com.New.online:sdk-maps-rx-extensions:{libversion}")
+```
+
+To initialize the Rx wrapper for NewMap:
+
+```java
+RxNewMap rxNewMap = new RxNewMap(NewMap)
+```
+
+To subscribe for map click events:
+
+```java
+Disposable mapClickDisposable = rxNewMap
+        .getOnMapClickObservable()
+        .observeOn(mainThread())
+        .subscribe(latLng -> displayMessage(
+                R.string.menu_events_on_map_click,
+                latLng
+        ));
+```
+
+**API Reference**
+
+[JavaDocMapRxExtensions_2.4.807](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapRxExtensions_2.4.807/index.html) ([JavaDocMapRxExtensions_2.4.807.zip](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapRxExtensions_2.4.807.zip))
+
+<table>
+  <thead>
+    <tr>
+      <th>Older versions</th>
+      <th>Changes between current version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <p>
+           [MapRxExtensions_2.4.797](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapRxExtensions_2.4.797/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapRxExtensions_2.4.782](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapRxExtensions_2.4.782/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapRxExtensions_2.4.771](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapRxExtensions_2.4.771/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapRxExtensions_2.4.738](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapRxExtensions_2.4.738/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapRxExtensions_2.4.725](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapRxExtensions_2.4.725/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapRxExtensions_2.4.712](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapRxExtensions_2.4.712/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapRxExtensions_2.4.692](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapRxExtensions_2.4.692/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>
+           [MapRxExtensions_2.4.674](https://developer.New.com/assets/downloads/mapssdk/APIReferences/JavaDocMapRxExtensions_2.4.674/index.html) 
+        </p>
+      </td>
+      <td>
+        <p>N/A</p>
+      </td>
+    </tr>
+  </tbody>
+</table>

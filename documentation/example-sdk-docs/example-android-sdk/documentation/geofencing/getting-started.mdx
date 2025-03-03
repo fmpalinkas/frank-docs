@@ -1,0 +1,205 @@
+---
+title: Getting started
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_getting_started"
+></a>
+
+**IMPORTANT:** The New Geofencing API and Geofencing module in the Maps SDK for Android are
+currently in Public Preview. To find out what our Public Preview is and to revisit our Terms and
+Conditions, see the [Public Preview Page.](https://developer.New.com/public-preview) Under Public
+Preview, specific terms and conditions apply which are
+described [here in section 4 of the Terms and Conditions](https://developer.New.com/terms-and-conditions#public-preview-section)
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_modify_build_gradle_appbuild_gradle"
+></a>
+
+## Modify build.gradle (app/build.gradle)
+
+Apply the following lines to your module’s dependency section in the build.gradle file, for example:
+app/build.gradle:
+
+```java
+implementation("com.New.online:sdk-geofencing:{libversion}")
+```
+
+If you use more than one SDK library, make sure that all libraries have the same version.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_modify_androidmanifest_xml"
+></a>
+
+## Modify AndroidManifest.xml
+
+**IMPORTANT:** This approach is now deprecated. Please
+follow [Key initialization via constructor](#key-initialization-via-constructor) to directly pass
+the API Key.
+
+Edit the AndroidManifest.xml file and add the service key inside the &ltapplication&gt; tag. This
+is taken from the [Geofencing API](/geofencing-api/documentation/product-information/introduction)) site.
+
+```xml
+<meta-data
+            android:name="GeofencingApi.Key"
+            android:value="your-New-key" />
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="Geofencing-key-initialization"
+></a>
+
+## Key initialization via constructor
+
+The following constructor should be used to pass the API Key to a Geofencing instance.
+
+```java
+val geofencingApi = GeofencingApi(context, apiKey)
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_enable_java_8_support_in_the_build_gradle_file"
+></a>
+
+## Enable Java 8 Support in the build.gradle file
+
+```shell
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_logging"
+></a>
+
+# Logging
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_New_sdk_log_level"
+></a>
+
+## New SDK Log level
+
+In New we are constantly working on the quality of our products. That is why it is very important
+to have logs as detailed as possible for our support team to provide accurate help or bugfixes. The
+Maps SDK for Android has an advanced mechanism to gather and send logs to our support team. To
+enable logging and specify a log level please add the following code to your app:
+
+Example:
+
+```java
+@Override
+public void onCreate() {
+    super.onCreate();
+    LogUtils.enableLogs(Log.VERBOSE);
+```
+
+- `android.util.Log.VERBOSE` will print all logs from New SDK.
+- `android.util.Log.DEBUG` will print debug logs from New SDK.
+
+Note: Logs from the SDK libraries are disabled by default.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_collecting_logs"
+></a>
+
+## Collecting logs
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_New_log"
+></a>
+
+### New log
+
+Logs from an application can be collected into a file on the SD card.
+
+```java
+LogUtils.collectLogsToFile(logsFilePath);
+```
+
+A special permission should be added into your `AndroidManifest.xml` file to save logs on the SD
+card. For example:
+
+```xml
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+```
+
+When the sdk-maps module is used, the problem with supporting runtime permissions is handled by the
+SDK with the following method:
+
+<Code>
+
+```java
+@Override
+public void onMapReady(@NonNull NewMap NewMap) {
+    NewMap.collectLogsToFile(SampleApp.LOG_FILE_PATH);
+}
+```
+
+```kotlin
+override fun onMapReady(NewMap: NewMap) {
+    NewMap.collectLogsToFile(SampleApp.LOG_FILE_PATH)
+}
+```
+
+</Code>
+
+Important: Since Android API level 23, it is required to ask the user for runtime permission to
+write into the SD card.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_register_crash_observer"
+></a>
+
+### Register crash observer
+
+Using the crash observer makes it possible to automate the process of preparing an email message
+with attached logs which were already collected and stored on the SD card. To do so, please register
+a crash handler with the following code. Crash observer doesn’t break your already-used handlers (
+like Crashlitics).
+
+```shell
+LogUtils.registerCrashObserver(getApplicationContext(), Uri.parse("file://" + LOGCAT_PATH), CRASH_OBSERVER_EMAIL);
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_bug_report"
+></a>
+
+### Bug report
+
+To enable an advanced logging mechanism which collects detailed data from logcat like: threads,
+services, and phone states, please use the following code:
+
+```shell
+adb bugreport issue01
+```
+
+This produces an `issue01.zip` file.

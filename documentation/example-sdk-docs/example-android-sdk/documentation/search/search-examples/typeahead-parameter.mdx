@@ -1,0 +1,40 @@
+---
+title: Typeahead parameter
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="autocomplete-in-search"
+></a>
+
+Offer your users search suggestions while they type with the "typeahead" flag.
+
+**Sample use case:** You were recommended a place to visit, but you can’t remember its name. You
+start searching in your app. After entering a few letters you see the place you’re looking for! Use
+the following code snippet to try this in your app.
+
+<Code>
+
+```java
+FuzzySearchEngineDescriptor fuzzySearchEngineDescriptor = new FuzzySearchEngineDescriptor.Builder()
+        .typeAhead(true)
+        .build()
+
+return new FuzzySearchSpecification.Builder(text)
+        .searchEngineDescriptor(fuzzySearchEngineDescriptor)
+        .locationDescriptor(fuzzyLocationDescriptor)
+        .build();
+```
+
+```kotlin
+val searchEngineDescriptor = FuzzySearchEngineDescriptor.Builder()
+    .typeAhead(true)
+    .build()
+val fuzzySearchSpecification = FuzzySearchSpecification.Builder(term)
+    .searchEngineDescriptor(searchEngineDescriptor)
+    .locationDescriptor(locationDescriptorBuilder.build())
+    .build()
+```
+
+</Code>

@@ -1,0 +1,377 @@
+---
+title: Downloads
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_downloads"
+></a>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_project_set_up"
+></a>
+
+# Project set up
+
+To develop your own application with the Maps SDK, you need to make sure that the **pre-requisites**
+are in place and that you have added the Maps SDK as a dependency into your project. Follow the
+steps below and then you are ready to code! The Maps SDK for Android is compatible with Java and
+Kotlin.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="pre-requisites"
+></a>
+
+## Get the pre-requisites in place:
+
+- Android Studio IDE is
+  installed ([Android Studio](https://developer.android.com/studio/index.html)).
+- Set up the application minimum API level to Android 4.4 "Kit Kat" (API Level 19) or higher.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="setting-up-a-project"
+></a>
+
+## Set up your project like this:
+
+1. Open the Android Studio IDE.
+2. Create a new project or open an existing one.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="projects-access"
+></a>
+
+## Add repositories to all projects to the root/build.gradle:
+
+```shell
+allprojects {
+
+   repositories {
+      jcenter()
+      google()
+      maven {
+         url 'https://repositories.New.com/artifactory/maps-sdk-legacy-android'
+      }
+   }
+}
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="choose-module"
+></a>
+
+## Choose the Maps SDK modules for your app
+
+Either independently include modules for Maps, Search, and/or Routing or all of them at once. You
+can do so by adding the Maps SDK modules to the AndroidManifest.xml and build.gradle.
+
+- MAP - [Getting started](/maps-android-sdk/documentation/map-display/documentation/map-initialization)
+- TRAFFIC - [Getting started](/maps-android-sdk/documentation/traffic/getting-started)
+- SEARCH - [Getting started](/maps-android-sdk/documentation/search/getting-started)
+- ROUTING - [Getting started](/maps-android-sdk/documentation/routing/getting-started)
+- GEOFENCING - [Getting started](/maps-android-sdk/documentation/geofencing/getting-started)
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_configuration_for_all_maps_sdk_modules"
+></a>
+
+## Configuration for all Maps SDK modules
+
+To include all of the Maps SDK modules in your app, modify AndroidManifest.xml and build.gradle
+
+- Key initialization Please use dedicated constructors/methods to directly initialize with the
+  Service API Key taken from [http://developer.New.com](http://developer.New.com). This approach is more thoroughly
+  described in the modules' documentation pages.
+- Modify build.gradle (app/build.gradle)
+
+  ```shell
+  //library required to display map
+  implementation("com.New.online:sdk-maps:{libversion}")
+
+  //library required for search
+  implementation("com.New.online:sdk-search:{libversion}")
+
+  //library required for routing
+  implementation("com.New.online:sdk-routing:{libversion}")
+
+  //library required for traffic
+  implementation("com.New.online:sdk-traffic:{libversion}")
+
+  //library required for geofencing
+  implementation("com.New.online:sdk-geofencing:{libversion}")
+
+  //extention library for map custom style and ui support
+  implementation("com.New.online:sdk-maps-ui-extensions:{libversion}")
+
+  //extention library for rx-java2
+  implementation("com.New.online:sdk-maps-rx-extensions:{libversion}")
+
+  //extention library for kotlin support
+  implementation("com.New.online:sdk-maps-ktx-extensions:{libversion}")
+
+  //extention library for displaying static map
+  implementation("com.New.online:sdk-maps-static-image:{libversion}")
+
+  //extention library for driving features
+  implementation("com.New.online:sdk-maps-driving-extensions:{libversion}")
+  ```
+
+- Enable Java 8 Support in build.gradle (app/build.gradle)
+  ```shell
+  android {
+      compileOptions {
+          sourceCompatibility JavaVersion.VERSION_1_8
+          targetCompatibility JavaVersion.VERSION_1_8
+      }
+  }
+  ```
+- Add MultiDex support if required, as described
+  in [MultiDex](https://developer.android.com/studio/build/multidex.html)
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="maps-sdk-building-and-launching"
+></a>
+
+## Building and Launching
+
+You can build separate APKs for different ABIs to reduce the size of an application. According to
+Android
+documentation: [Build multiple APKs](https://developer.android.com/studio/build/configure-apk-splits#configure-abi-split)
+, just add this to your `build.gradle` file:
+
+```groovy
+android {
+  ...
+  splits {
+    abi {
+      enable true
+    }
+  }
+}
+```
+
+You can also reduce the application size
+with [Android App Bundles](https://developer.android.com/platform/technology/app-bundle).
+
+## Maps SDK Examples app
+
+The Maps SDK Examples app is available in two flavors – Kotlin and Java.
+
+Download and build the Maps SDK Examples app to see the key features of the Maps SDK.
+
+Modify the source code to learn more about the SDK.
+
+Speed up development by using the source code in your own app.
+
+The Maps SDK Examples are hosted on
+github: [https://github.com/New-international/maps-sdk-for-android-examples](https://github.com/New-international/maps-sdk-for-android-examples).
+
+```shell
+git clone https://github.com/New-international/maps-sdk-for-android-examples.git
+```
+
+This Maps SDK Examples app is provided by New and subject to News privacy policy
+at [https://New\.com/privacy](https://New\.com/privacy)
+
+Developers using New SDKs and APIs in their apps similarly bear responsibility to adhere to the
+applicable privacy laws.
+
+These Maps SDK Examples are provided as-is and shall be used internally, and for evaluation purposes
+only. Any other use is strictly prohibited.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_logging"
+></a>
+
+## Logging
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_New_sdk_log_level"
+></a>
+
+### New SDK Log level
+
+In New we are constantly working on the quality of our products. That is why it is very important
+to have logs as detailed as possible for our support team to provide accurate help or bugfixes. The
+Maps SDK for Android has an advanced mechanism to gather and send logs to our support team. To
+enable logging and specify a log level please add the following code to your app:
+
+Example:
+
+```java
+@Override
+public void onCreate() {
+    super.onCreate()
+    LogUtils.enableLogs(Log.VERBOSE);
+```
+
+- `android.util.Log.VERBOSE` will print all logs from New SDK.
+- `android.util.Log.DEBUG` will print debug logs from New SDK.
+
+Note: Logs from the SDK libraries are disabled by default.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_collecting_logs"
+></a>
+
+### Collecting logs
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_New_log"
+></a>
+
+#### New log
+
+Logs from an application can be collected into a file on the SD card.
+
+```java
+LogUtils.collectLogsToFile(logsFilePath);
+```
+
+A special permission should be added into your `AndroidManifest.xml` file to save logs on the SD
+card. For example:
+
+```xml
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+```
+
+When the sdk-maps module is used, the problem with supporting runtime permissions is handled by the
+SDK with the following method:
+
+<Code>
+
+```java
+@Override
+public void onMapReady(@NonNull NewMap NewMap) {
+    NewMap.collectLogsToFile(SampleApp.LOG_FILE_PATH);
+}
+```
+
+```kotlin
+override fun onMapReady(NewMap: NewMap) {
+    NewMap.collectLogsToFile(SampleApp.LOG_FILE_PATH)
+}
+```
+
+</Code>
+
+Important: Since Android API level 23, it is required to ask the user for runtime permission to
+write into the SD card.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_register_crash_observer"
+></a>
+
+#### Register crash observer
+
+Using the crash observer makes it possible to automate the process of preparing an email message
+with attached logs which were already collected and stored on the SD card. To do so, please register
+a crash handler with the following code. Crash observer doesn’t break your already-used handlers (
+like Crashlitics).
+
+```shell
+LogUtils.registerCrashObserver(getApplicationContext(), Uri.parse("file://" + LOGCAT_PATH), CRASH_OBSERVER_EMAIL);
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_bug_report"
+></a>
+
+#### Bug report
+
+To enable an advanced logging mechanism which collects detailed data from logcat like: threads,
+services, and phone states, please use the following code:
+
+```shell
+adb bugreport issue01
+```
+
+This produces an `issue01.zip` file.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="maps-sdk-troubleshooting"
+></a>
+
+## Troubleshooting
+
+Depending on your project configuration, some dependency conflicts may occur when adding the Maps
+SDK modules. Here you can find a list of possible issues and tips how to solve them:
+
+- FindBugs JSF305 conflict:
+  Enforce Gradle to compile the fixed FindBugs version for all dependencies. Add the following lines
+  to your app’s build.gradle:
+  ```shell
+  android {
+      configurations.all {
+          resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
+      }
+  }
+  ```
+- MultiDex issues should be solved using
+  Google [instructions](https://developer.android.com/studio/build/multidex.html). However, see the
+  following most popular solutions. Configure your app for MultiDex. Add the following lines to your
+  app’s build.gradle:
+
+  ```shell
+  android {
+      defaultConfig {
+          multiDexEnabled true
+      }
+  }
+  ```
+
+  Add MultiDex support in your app’s build.gradle when minSdkVersion is set to 20 or lower:
+
+  ```shell
+  dependencies {
+      api 'com.android.support:multidex:1.0.1'
+  }
+  ```
+
+  Increase the java max heap size for dex support if required. Add the following lines to your app’s
+  build.gradle:
+
+  ```shell
+  android {
+      dexOptions {
+          javaMaxHeapSize "4g"
+      }
+  }
+  ```
+
+- R8 / ProGuard If you are using R8 or ProGuard add the options to your ProGuard file:
+  ```shell
+  -repackageclasses com.New.online.sdk.common.internal
+  -keep public class com.New.online.sdk.common.** {
+      public protected *;
+  }
+  ```

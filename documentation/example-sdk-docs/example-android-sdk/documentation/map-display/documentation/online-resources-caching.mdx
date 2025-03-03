@@ -1,0 +1,32 @@
+---
+title: Online resources caching
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_online_resources_caching"
+></a>
+
+To display the map some external resources are needed by the map renderer: map style and map tiles.
+
+The map style itself (a .json file describing map layers display properties and rendering order) and
+assets needed by the style are bundled with the SDK library. Style assets include sprites (sets of
+icons) displayed on the map and fonts.
+
+When the map viewer is focused at a particular spot, map tiles provided by the remote online server
+are needed to display the map. When a part of the map is displayed for the first time, the needed
+tiles are downloaded from the server.
+
+Resources downloaded from the server are stored (cached) in an offline database for further use. The
+server communicates maximum tile resource lifetime by means of a "Cache-Control" HTTP header.
+
+Expiration time is stored in the offline database together with the tile resource. If a tile resides
+in the cache it can be displayed even if an internet connection is not available.
+
+When the object in the cache expires, the server is asked again about the object. If a newer version
+of the object is available, it is downloaded and the cache contents are refreshed. If the old
+resource is still valid, its lifetime is prolonged.
+
+Cache size is limited to 50MB of disk space. When the limit is reached, the least recently used tile
+resources are discarded.

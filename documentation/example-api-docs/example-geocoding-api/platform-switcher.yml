@@ -1,0 +1,7 @@
+platformSwitcherItems:
+  - title: Example Maps
+    fallbackUrl: /geocoding-api/documentation/product-information/introduction
+    platformRootDirectory: /geocoding-api/documentation/
+  - title: Example New Maps
+    fallbackUrl: /geocoding-api/documentation/Example-new-maps/product-information/introduction
+    platformRootDirectory:  /geocoding-api/documentation/Example-new-maps/

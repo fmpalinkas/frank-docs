@@ -1,0 +1,108 @@
+---
+title: Documentation
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_documentation"
+></a>
+
+**IMPORTANT:** The Example Geofencing API and Geofencing module in the Maps SDK for iOS are currently
+in Public Preview. To find out what our Public Preview is and to revisit our Terms and Conditions,
+see this [Public Preview Page](https://developer.Example.com/public-preview)
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_initialization"
+></a>
+
+## Initialization
+
+In order to use Geofencing you will need the appropriate Geofencing API Key. For more information on
+obtaining and configuring Example API Keys and their configuration, go to the "Getting started" page.
+
+Create a Geofencing API object in the following manner:
+
+<Code>
+
+```swift
+service = TTGeofencingReportService(key: Key.Geofencing)
+```
+
+```objectivec
+_service = [[TTGeofencingReportService alloc] initWithKey:Key.Geofencing]
+```
+
+</Code>
+
+The Geofencing API provides you with the ability to define virtual barriers on real geographic
+locations. With geofenced object location you can determine if that object is located within or
+outside of predefined virtual barriers on real geographic locations.
+
+The Geofencing API offers a number of services including the Configuration service, Report service,
+Projects service, Fences service, Objects service, Transitions service, and Archive service. Details
+are available in
+the [Geofencing API](https://developer.Example.com/geofencing-api/geofencing-documentation).
+Currently, the Maps SDK only offers the Report service.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_report_service"
+></a>
+
+## Report service
+
+The Report service allows you to generate a location report which determines if an object is within
+fences. The Response of this service contains a summary and:
+
+- A list of fences that the object/point is inside of.
+- A list of fences within a specified radius that the object is not inside of.
+
+If no fences match the Request parameters, then the list returned in the Response can be empty. The
+outside fences list can only be empty if there are no more fences left in the project.
+
+To use a Report service you need to have at least one project defined within a configuration.
+
+For your mobile app you can use a standard listener approach or Reactive approach when preparing the
+Report service Request.
+
+The first approach involves using the reportWithQuery method, taking the TTGeofencingReportQuery as
+a parameter.
+
+To obtain a report for an object you will need to create a query in the following manner:
+
+<Code>
+
+```swift
+let reportQuery = TTGeofencingReportQueryBuilder(location: TTLocation(coordinate: coordinate))
+    .withProject(projectId)
+    .withRange(range).build()
+```
+
+```objectivec
+TTGeofencingReportQuery *reportQuery = [[[[[TTGeofencingReportQueryBuilder alloc] initWithLocation:[[TTLocation alloc] initWithCoordinate:coorinate]] withProject:projectId] withRange:_range] build];
+```
+
+</Code>
+
+Now you can perform a Report service Request by calling:
+
+<Code>
+
+```swift
+service?.report(with: reportQuery) { report, _ in
+    self.responseGeofencing(report: report)
+}
+```
+
+```objectivec
+[_service reportWithQuery:reportQuery
+         completionHandle:^(TTGeofencingReport *_Nullable report, TTResponseError *_Nullable error) {
+           [weakSelf responseGeofencing:report];
+         }];
+```
+
+</Code>

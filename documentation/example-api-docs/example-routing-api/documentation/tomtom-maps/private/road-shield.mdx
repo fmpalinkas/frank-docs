@@ -1,0 +1,1358 @@
+---
+title: Road Shield
+titleTags:
+  - label: "Service version: 0.1 draft"
+    color: grey5
+  - label: "Last edit: 2023.10.31"
+    color: grey5
+---
+
+## Deprecation notice
+
+<Blockquote type="announcement" hasIcon>
+    **October 31, 2023**<br />
+    **This service is deprecated.**
+</Blockquote>
+
+## Purpose
+
+The Map Display API Road Shield service provides road shields assets, with the possibility to download a single road shield and its metadata required to properly display it on the map.
+
+- **Metadata method:** This retrieves _a list of json objects, where each object specifies the single road shields version_.
+- **Single shield method:** This retrieves _a single road shield's data_.
+- **Batch method:** This retrieves _a batch of road shields data_.
+
+## Request data
+
+## Metadata method
+
+### HTTPS method: `GET`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following <a href="#request-parameters-metadata-method">Request parameters</a> section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=URL request format]
+https://{baseURL}/map/{versionNumber}/roadshield/metadata.json?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>URL request example</h4>
+
+```shell [type=get] [title=URL request example]
+https://api.Example.com/map/1/roadshield/metadata.json?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command example</h4>
+
+```shell [type=get] [title=curl command request example]
+curl 'https://api.Example.com/map/1/roadshield/metadata.json?key={Your_API_Key}'
+```
+
+### Request parameters (Metadata method)
+
+- Required parameters **must be used** or the call will fail.
+- Parameters and values are case sensitive.
+- Optional parameters may be used.
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>baseURL</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The base URL for calling Example services.
+        <br />
+        <b>Value:</b> <code>api.Example.com</code>
+        <br />
+        <b>Other values:</b> <code>[a|b|c|d].api.Example.com</code>
+        <br />
+        See the
+        <a href="#host-name-cycling" target="_blank">Host Name Cycling section</a>
+        for details on aliases.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>versionNumber</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+        <b>Value:</b> The current version is <code>1</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>key</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        An API Key valid for the requested service.
+        <br />
+        <b>Value:</b> Your valid <code>API Key</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Single shield method
+
+### HTTPS method: `GET`
+
+Please see the following <a href="#request-parameters-single-shield-method">Request parameters</a> section with the required and optional parameters tables for these values. The generic URL format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL request format</h4>
+
+```shell [type=get] [title=URL request format]
+https://{baseURL}/map/{versionNumber}/roadshield/{assetVersion}/{assetName}.{format}?key={Your_API_Key}&dpi={dpi}&mode={mode}&fallback={fallback}&text={text}&textLength={textLength}
+```
+
+<h4 style={{ fontSize: '1em' }}>URL request examples</h4>
+
+```shell [type=get] [title=URL request examples]
+https://api.Example.com/map/1/roadshield/1.0.0/2415.json?key={Your_API_Key}&text=S8&dpi=hdpi&mode=night
+
+https://api.Example.com/map/1/roadshield/1.0.0/2415.json?key={Your_API_Key}&textLength=2&dpi=hdpi&mode=night
+
+https://api.Example.com/map/1/roadshield/1.0.0/2415.png?key={Your_API_Key}&text=S8&dpi=xhdpi&mode=day&fallback=true
+
+https://api.Example.com/map/1/roadshield/1.0.0/2415.png?key={Your_API_Key}&textLength=2&dpi=xhdpi&mode=day&fallback=true
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command request examples</h4>
+
+```shell [type=get] [title=Request curl command request examples]
+curl 'https://api.Example.com/map/1/roadshield/1.0.0/2415.png?key={Your_API_Key}&text=S8&dpi=xhdpi&mode=day'
+
+curl 'https://api.Example.com/map/1/roadshield/1.0.0/2415.png?key={Your_API_Key}&textLength=2&dpi=xhdpi&mode=day'
+```
+
+### Request parameters (Single shield method)
+
+The following table describes the parameters that can be used in a request.
+
+- Required parameters **must be used** or the call will fail.
+- Parameters and values are case sensitive.
+- Optional parameters may be used.
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+
+**Important:** The `text` parameter and the `textLength` parameter are **mutually exclusive**.
+
+- Either of these parameters are required in a request, but not both.
+- If you use both of these parameters in the same request, the call will fail with a `400` error.
+- See the [Mutually exclusive parameters](#mutually) section in the following table for more information.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>baseURL</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        Base URL for calling Example services
+        <br />
+        <b>Value:</b> <code>api.Example.com</code>
+        <br />
+        <b>Other values:</b> <code>[a|b|c|d].api.Example.com</code>
+        <br />
+        See the
+        <a href="#host-name-cycling" target="_blank">Host Name Cycling section</a>
+        for details on aliases.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>versionNumber</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+        <b>Value:</b> The current version is <code>1</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>assetVersion</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The road shields version.
+        <br />
+        Available versions can be listed using a metadata request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>assetName</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The name of asset to be requested.
+        <br />
+        <b>Value:</b> Shield ID from Example data or the shield reference name
+        for compatibility with NDS based products in the following format:
+        &#60;country&#62;-&#60;class&#62;&#91;-&#60;sub class&#62;&#93;
+        <br />
+        <b>Examples:</b>
+        <ul>
+          <li>
+            <code>2415</code>
+          </li>
+          <li>
+            <code>bel-european</code>
+          </li>
+          <li>
+            <code>can-ab-bicentennial-highway</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>format</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The format of the resource to be requested.
+        <br />
+        <b>Values:</b>
+        <ul>
+          <li>
+            <code>png</code>
+          </li>
+          <li>
+            <code>json</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>key</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        Authorization key for access to the API.
+        <br />
+        <b>Value:</b> Your valid <code>API Key</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Mutually&nbsp;exclusive&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>text</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The text to be placed on a requested shield. A shield of proper width
+        will be used based on the length of the provided text.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>textLength</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        This parameter allows the service to return a shield without text, with
+        a proper width to accommodate the text of a given length.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>dpi</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The dpi of a requested shield. Either Android-compatible buckets (mdpi,
+        hdpi, ...) or an iOS compatible bucket (@1x, @2x, ...). If not provided,
+        the value <code>mdpi</code> will be used.
+        <br />
+        <b>Values:</b>
+        <ul>
+          <li>
+            <code>mdpi</code>
+          </li>
+          <li>
+            <code>hdpi</code>
+          </li>
+          <li>
+            <code>xhdpi</code>
+          </li>
+          <li>
+            <code>xxhdpi</code>
+          </li>
+          <li>
+            <code>@1x</code>
+          </li>
+          <li>
+            <code>@2x</code>
+          </li>
+          <li>
+            <code>@3x</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>mode</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The mode of the asset. If not provided, the value <code>day</code> will
+        be used.
+        <br />
+        <b>Values:</b>
+        <ul>
+          <li>
+            <code>day</code>
+          </li>
+          <li>
+            <code>night</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>fallback</code>
+        <br />
+        <em>boolean</em>
+      </th>
+      <td>
+        If set to true and the requested resource does not exist, the fallback
+        resource will be returned.
+        <br />
+        If not provided, the value <code>true</code> will be used.
+        <br />
+        <b>Values:</b>
+        <ul>
+          <li>
+            <code>true</code>
+          </li>
+          <li>
+            <code>false</code>
+          </li>
+        </ul>
+        <br />
+        See <a href="#fallback-value">fallback value</a> for more information.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Batch method
+
+### HTTPS method: `GET`
+
+Please see the following <a href="#request-parameters-batch-method">Request parameters</a> section with the required and optional parameters tables for these values. The generic URL format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL request format</h4>
+
+```shell [type=get] [title=URL request example]
+https://{baseURL}/map/{versionNumber}/roadshield/{assetVersion}/sprite.{format}?key={Your_API_Key}&dpi={dpi}&mode={mode}
+```
+
+<h4 style={{ fontSize: '1em' }}>URL request examples</h4>
+
+```shell [type=get] [title=URL request examples]
+https://api.Example.com/map/1/roadshield/1.0.0/sprite.png?key={Your_API_Key}&dpi=xxhdpi
+
+https://api.Example.com/map/1/roadshield/1.0.0/sprite.png?key={Your_API_Key}&mode=night
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command request example</h4>
+
+```shell [type=get] [title=curl command request example]
+curl 'https://api.Example.com/map/1/roadshield/1.0.0/sprite.png?key={Your_API_Key}&dpi=@1x&mode=day'
+```
+
+### Request parameters (Batch method)
+
+The following table describes the parameters that can be used in a request.
+
+- Required parameters **must be used** or the call will fail.
+- Parameters and values are case sensitive.
+- Optional parameters may be used.
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>baseURL</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        Base URL for calling Example services.
+        <br />
+        <b>Value:</b> <code>api.Example.com</code>
+        <br />
+        <b>Other values:</b> <code>[a|b|c|d].api.Example.com</code>
+        <br />
+        See the
+        <a href="#host-name-cycling" target="_blank">Host Name Cycling section</a>
+        for details on aliases.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>versionNumber</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+        <b>Value:</b> The current version is <code>1</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>assetVersion</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        Road shields version.
+        <br />
+        Available versions can be listed using the metadata request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>format</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The format of the resource to be requested.
+        <br />
+        <b>Values:</b>
+        <ul>
+          <li>
+            <code>png</code>
+          </li>
+          <li>
+            <code>json</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>key</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        Authorization key for access to the API.
+        <br />
+        <b>Value:</b> Your valid <code>API Key</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>dpi</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The dpi of a requested shield. Either Android-compatible buckets (mdpi,
+        hdpi, ...) or an iOS compatible bucket (@1x, @2x, ...). If not provided,
+        the value <code>mdpi</code> will be used.
+        <br />
+        <b>Values:</b>
+        <ul>
+          <li>
+            <code>mdpi</code>
+          </li>
+          <li>
+            <code>hdpi</code>
+          </li>
+          <li>
+            <code>xhdpi</code>
+          </li>
+          <li>
+            <code>xxhdpi</code>
+          </li>
+          <li>
+            <code>@1x</code>
+          </li>
+          <li>
+            <code>@2x</code>
+          </li>
+          <li>
+            <code>@3x</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>mode</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        <b>The modes:</b>
+        <ul>
+          <li>
+            <code>day</code>
+          </li>
+          <li>
+            <code>night</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Host Name Cycling
+
+Most web browsers have a default limitation on the number of active connections that can be allowed to each host.
+
+- This means if map tiles are being loaded via the **api.Example.com** host name, they will be loaded one at a time.
+- A trick that can be used to get around this limitation is to cycle through the hosts we have created as aliases.
+- These host names are:
+  - `a.api.Example.com`
+  - `b.api.Example.com`
+  - `c.api.Example.com`
+  - `d.api.Example.com`
+- By cycling through these four different host names, the web browser will be tricked into retrieving four map tiles at a time rather than just one.
+- This will significantly speed up the performance of map rendering.
+
+For instance, if four map road shields are being requested, you would request the first one as:
+
+```shell [type=get] [title=URL request example using a.api.Example.com]
+https://a.api.Example.com/map/1/roadshield/(further parameters)
+```
+
+The second would be:
+
+```shell [type=get] [title=URL request example using b.api.Example.com]
+https://b.api.Example.com/map/1/roadshield/(further parameters)
+```
+
+The third would be:
+
+```shell [type=get] [title=URL request example using c.api.Example.com]
+https://c.api.Example.com/map/1/roadshield/(further parameters)
+```
+
+The fourth would be:
+
+```shell [type=get] [title=URL request example using d.api.Example.com]
+https://d.api.Example.com/map/1/roadshield/(further parameters)
+```
+
+When more than four road shields are being requested, start back again at **a.api.Example.com**.
+
+## Request headers
+
+The following table lists HTTP request headers of particular interest to clients of the Map Display API Road Shield endpoint.
+
+**Note:** There are no required headers in this endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-None-Match" target="=_blank">If-None-Match</a>
+      </th>
+      <td>
+        Contains an identifier for a specific version of resource. The server
+        will send back the requested resource, with a 200 HTTP status code, only
+        if it doesn't have an ETag matching the given one.
+        <br />
+        <b>Value:</b> <code>&lt;string&gt;</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tracking-ID</th>
+      <td>
+        Specifies an identifier for the request. It can be used to trace a call.
+        <ul>
+          <li>
+            The value must match the regular expression
+            <code>'^[a-zA-Z0-9-]&#123;1,100&#125;$'</code>.
+          </li>
+          <li>
+            An example of the format that matches this regular expression is a
+            UUID (e.g., <code>9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1</code>). For
+            details check
+            <a href="https://tools.ietf.org/html/rfc4122" target="_blank">RFC 4122</a>.
+          </li>
+          <li>
+            If specified, it is replicated in the Tracking-ID response header.
+          </li>
+        </ul>
+        <br />
+        <b>Value:</b> <code>&lt;string&gt;</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+### Metadata method
+
+The response to a successful call is a list of json objects, where each object specifies the single road shields version.
+
+The response has the following schema:
+
+```json [title=JSON response schema]
+{
+  "type": "object",
+  "properties": {
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "string" },
+          "modes": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "dpis": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["version", "modes", "dpis"]
+      }
+    }
+  }
+}
+```
+
+```json [title=JSON response body]
+{
+  "versions": [
+    {
+      "version": "1.0.0",
+      "modes": ["day", "night"],
+      "dpis": ["mdpi", "hdpi", "xhdpi", "xxhdpi", "@1x", "@2x", "@3x"]
+    },
+    {
+      "version": "1.1.0",
+      "modes": ["day", "night"],
+      "dpis": ["mdpi", "hdpi", "xhdpi", "xxhdpi", "@1x", "@2x", "@3x"]
+    }
+  ]
+}
+```
+
+### Single shield method
+
+The response to a successful call differs based on the format of the request parameter.
+
+<h4 style={{ fontSize: '1em' }}>
+  PNG response for a request with the <code>text</code> parameter
+</h4>
+
+<img
+  src="https://developer.Example.com/assets/images/roadshield/shield_text.png"
+  width="112"
+  height="112"
+  alt="PNG response for a request with the text parameter"
+/>
+
+<h4 style={{ fontSize: '1em' }}>
+  PNG response for a request with the <code>textLength</code> parameter
+</h4>
+
+<img
+  src="https://developer.Example.com/assets/images/roadshield/shield_no_text.png"
+  width="112"
+  height="112"
+  alt="PNG response for a request with the text parameter"
+/>
+
+The response to the PNG request is a single icon.
+
+<h4 style={{ fontSize: '1em' }}>JSON response</h4>
+
+The response is a single JSON object, which is the metadata for the PNG asset with the same name.
+
+The response has the following schema:
+
+```json [title=Response schema - JSON]
+{
+  "type" : "object",
+  "properties" : {
+    "text-length" : {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "text-box" : {
+      "properties" : {
+        "x" : {"type" : "integer"},
+        "y" : {"type" : "integer"},
+        "width" : {"type" : "integer"},
+        "height" : {"type" : "integer"}
+      }
+    },
+    "text-color" :  { "type" : "string" }
+    "font-size" :  { "type" : "integer" }
+  },
+  "required" : ["text-length"]
+}
+```
+
+The fields in the preceding mentioned schema have following meaning:
+
+- `text-length`: The array containing all possible values of text length for which the PNG asset is suitable.
+- `text-box`: Information about the position at which the text should be placed. See <a href="#text-offsetting">text offsetting</a> for detailed information.
+- `text-color`: The color which should be used for rendering the text on a PNG asset. The color is in hexadecimal format, e.g., `#FFAA33`.
+- `font-size`: The font size which should be used for rendering the text on a PNG asset. The size is provided in points.
+
+```json [title=Response example - JSON]
+{
+  "text-length": [2],
+  "text-box": {
+    "x": 8,
+    "y": 12,
+    "width": 20,
+    "height": 28
+  },
+  "text-color": "#FFFFFF",
+  "font-size": 11
+}
+```
+
+### Batch method
+
+The response to a successful call differs based on the format of the request parameter.
+
+<h4 style={{ fontSize: '1em' }}>PNG response</h4>
+
+The response to the PNG request is a sprite with all available icons packed together. The sprite provides icons with a 1 pixel transparent border, to make it available to extract each road shield as the axis to an aligned rectangle.
+
+<img
+  src="https://developer.Example.com/assets/images/roadshield/shields_atlas.png"
+  alt="Shields atlas"
+  width="312"
+  height="312"
+/>
+
+<h4 style={{ fontSize: '1em' }}>JSON response</h4>
+
+The response to the JSON request is a list of JSON objects, where each object specifies the connection between the name of a road shield asset and its place in the sprite.
+
+The response has the following schema:
+
+```json [title=Response schema - JSON]
+{
+  "type" : "object",
+  "properties" : {
+    "assets" : {
+      "type" : "array",
+      "items" : {
+        "type": "object",
+        "properties" : {
+          "names" : {
+            "type" : "array",
+            "items": { "type": "string" }
+          },
+          "variants": {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "width" : {
+                  "type" : "integer",
+                  "minimum" : 1
+                },
+                "height" : {
+                  "type" : "integer",
+                  "minimum" : 1
+                },
+                "text-length" : {
+                  "type": "array",
+                  "items": {"type": "integer"}
+                },
+                "x" : {
+                  "type" : "integer",
+                  "minimum" : 0
+                },
+                "y" : {
+                  "type" : "integer",
+                  "minimum" : 0
+                },
+                "text-box" : {
+                  "x" : {"type" : "integer" },
+                  "y" : { "type" : "integer" },
+                  "width" : { "type" : "integer" },
+                  "height" : { "type" : "integer" }
+                },
+                "text-color" : { "type" : "string" }
+                "font-size" : { "type" : "integer" }
+              },
+              "required" : ["width", "height", "text-length", "x", "y"]
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+The fields in the preceding mentioned schema have following meaning:
+
+- `assets`: The array containing all information about the shields present in the sprite.
+- `names`: Shield asset names that match to a selected shield icon.
+- `width`: The width of the PNG asset connected with this metadata.
+- `height`: The height of the PNG asset connected with this metadata.
+- `text-length`: The array containing all possible values of text length suitable for a PNG asset.
+- `x`: The x coordinate of the top-left corner of the PNG asset in the sprite, where the origin of the coordinate system is at the top-left of the sprite.
+- `y`: The y coordinate of the top-right corner of the PNG asset in the sprite, where the origin of the coordinate system is at the top-left of the sprite.
+- `text-box`: Information about the position where text should be placed. See <a href="#text-offsetting">text offsetting</a> for detailed information.
+- `text-color`: The color which should be used for rendering text on a PNG asset. The color is in hexadecimal format, e.g., `#FFAA33`.
+- `font-size`: The font size which should be used for rendering the text on a PNG asset. The size is provided in points.
+
+<h4 style={{ fontSize: '1em' }}>JSON response</h4>
+
+<Accordion label="Response body - JSON" isClosed>
+
+```json
+{
+  "assets": [
+    {
+      "names": ["360"],
+      "variants": [
+        {
+          "width": 40,
+          "height": 56,
+          "text-length": [2],
+          "x": 1078,
+          "y": 316,
+          "text-box": {
+            "x": 3,
+            "y": 10,
+            "width": 34,
+            "height": 36
+          },
+          "text-color": "#FFFFFF",
+          "font-size": 11
+        },
+        {
+          "width": 56,
+          "height": 56,
+          "text-length": [3],
+          "x": 698,
+          "y": 156,
+          "text-box": {
+            "x": 4,
+            "y": 10,
+            "width": 48,
+            "height": 36
+          },
+          "text-color": "#FFFFFF",
+          "font-size": 11
+        },
+        {
+          "width": 60,
+          "height": 56,
+          "text-length": [4],
+          "x": 634,
+          "y": 230,
+          "text-box": {
+            "x": 10,
+            "y": 8,
+            "width": 40,
+            "height": 40
+          },
+          "text-color": "#FFFFFF",
+          "font-size": 11
+        }
+      ]
+    },
+    {
+      "names": ["4000", "bel-european"],
+      "variants": [
+        {
+          "width": 46,
+          "height": 36,
+          "text-length": [2],
+          "x": 1122,
+          "y": 700,
+          "text-box": {
+            "x": 3,
+            "y": 4,
+            "width": 20,
+            "height": 18
+          },
+          "text-color": "#000000",
+          "font-size": 10
+        },
+        {
+          "width": 56,
+          "height": 36,
+          "text-length": [3],
+          "x": 528,
+          "y": 958,
+          "text-box": {
+            "x": 3,
+            "y": 4,
+            "width": 22,
+            "height": 20
+          },
+          "text-color": "#000000",
+          "font-size": 10
+        },
+        {
+          "width": 68,
+          "height": 36,
+          "text-length": [2],
+          "x": 472,
+          "y": 870,
+          "text-box": {
+            "x": 6,
+            "y": 4,
+            "width": 25,
+            "height": 20
+          },
+          "text-color": "#000000",
+          "font-size": 10
+        },
+        {
+          "width": 80,
+          "height": 36,
+          "text-length": [4],
+          "x": 332,
+          "y": 774,
+          "text-box": {
+            "x": 6,
+            "y": 4,
+            "width": 31,
+            "height": 22
+          },
+          "text-color": "#000000",
+          "font-size": 10
+        },
+        {
+          "width": 92,
+          "height": 36,
+          "text-length": [5],
+          "x": 196,
+          "y": 368,
+          "text-box": {
+            "x": 8,
+            "y": 7,
+            "width": 52,
+            "height": 22
+          },
+          "text-color": "#000000",
+          "font-size": 10
+        }
+      ]
+    }
+  ]
+}
+```
+
+</Accordion><br />
+
+### Error response
+
+The Map Display API Road Shield service for an invalid request returns a response body in XML or JSON format. The XML format is returned by default. To have an error response returned in JSON format, `application/json` has to be specified in the **Accept** HTTP request header.
+
+<h4 style={{ fontSize: '1em' }}>Error response field structure</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>detailedError</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>Main object of the error response.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>code</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>message</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>A human-readable description of the error code.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json [title=Error response example - JSON format]
+{
+  "detailedError": {
+    "code": "BAD_REQUEST",
+    "message": "Unsupported asset format requested."
+  }
+}
+```
+
+```xml [title=Error response example - XML format]
+<errorResponse description="Unsupported asset format requested." errorCode="400" version="1.0.54-mascoma">
+  <detailedError>
+    <code>BAD_REQUEST</code>
+    <message>Unsupported asset format requested.</message>
+  </detailedError>
+</errorResponse>
+```
+
+### Response codes
+
+<table>
+  <thead>
+    <tr>
+      <th
+        scope="col"
+        style={{ fontSize: '1em', textAlign: 'center' }}
+        width="250px;"
+      >
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Meaning &amp; possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>200</code>
+      </th>
+      <td>
+        <b>OK</b>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>304</code>
+      </th>
+      <td>
+        <b>Not Modified</b>: The road shield or batch has not been modified.
+        This code is returned when the <code>If-None-Match</code> request header
+        is used and its value matches the ETag of the requested road shield or
+        batch.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>400</code>
+      </th>
+      <td>
+        <b>Bad request</b>: Received by the interface, but there is an exception
+        while processing it. Possible causes include:
+        <ul>
+          <li>One or more of the required parameters are missing.</li>
+          <li>An unsupported or unrecognized parameter value.</li>
+        </ul>
+        This code is returned if the parameters of the request were malformed. A
+        detailed exception explanation is returned in the response in the "form
+        of service exception" report.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>403</code>
+      </th>
+      <td>
+        <b>Forbidden</b>:
+        <ul>
+          <li>The supplied API Key is not valid for this request.</li>
+          <li>
+            The requested view is not available in the country from where the
+            request was sent.
+          </li>
+        </ul>
+        <b>Too Many Requests</b>:
+        <ul>
+          <li>
+            Too many requests were sent in a given amount of time for the
+            supplied API Key.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>404</code>
+      </th>
+      <td>
+        <b>Not found</b>: The requested road shield could not be found.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>429</code>
+      </th>
+      <td>
+        <b>Too Many Requests</b>: Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>500</code>
+      </th>
+      <td>
+        <b>Internal Server Error</b>: There is a problem with the Road Shield
+        API service.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>503</code>
+      </th>
+      <td>
+        <b>Service currently unavailable</b>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Response headers
+
+The following table lists HTTP response headers of particular interest to clients of the Map Display API Road Shield endpoint.
+
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <a href="https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin"
+          target="_blank" >Access-Control-Allow-Origin</a>
+      </th>
+      <td>
+        The Road Shield API allows cross-origin resource sharing (CORS).
+        <br />
+        <b>Value: </b> <code> * </code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control"
+          target="_blank" >Cache-Control</a>
+      </th>
+      <td>
+        Contains directives for a caching mechanism.
+        <br />
+        <b>Value:</b> <code>max-age=&lt;decimal number&gt;</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length"
+          target="_blank" >Content-Length</a>
+      </th>
+      <td>
+        Contains information about the size of the Response body.
+        <br />
+        <b>Value:</b> <code>&lt;decimal number&gt;</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type"
+          target="_blank" >Content-Type</a>
+      </th>
+      <td>
+        Indicates the media type of the resource returned.
+        <br />
+        <b>Values:</b>
+        <ul>
+          <li>
+            <code>image/png</code>
+          </li>
+          <li>
+            <code>application/json</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag"
+          target="_blank" >ETag</a>
+      </th>
+      <td>
+        Contains an identifier for a specific version of resource.
+        <br />
+        <b>Value:</b> <code>W/"2fdbd61f30456"</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tracking-ID</th>
+      <td>
+        An identifier for the request. If the Tracking-ID header was specified
+        in the request, it is replicated in the response. Otherwise, it is
+        generated automatically by the service. For details check
+        <a href="https://tools.ietf.org/html/rfc4122" target="_blank">RFC 4122</a>.
+        <br />
+        <b>Value:</b> <code>&lt;string&gt;</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Appendices
+
+### Fallback value
+
+If the value of a road shield id is not present in the data, then a white road shield with a black outline and black text will be returned.
+
+<img
+  src="https://developer.Example.com/assets/images/roadshield/fallback_shields.png"
+  alt="fallback_shields"
+  width="412"
+  height="152"
+/>
+
+### Text offsetting
+
+For every road shield, a text-box field will contain information about text placement:
+
+`x`: Offset from the left edge of the road shield.
+`y`: Offset from the top edge of the road shield.
+`width`: The text box width.
+`height`: Text box height.

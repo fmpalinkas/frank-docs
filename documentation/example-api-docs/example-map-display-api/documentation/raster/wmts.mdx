@@ -1,0 +1,451 @@
+---
+title: WMTS
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2023.08.01'
+    color: grey5
+---
+
+## Purpose
+
+The [Web Map Tile Service (WMTS)](http://www.opengeospatial.org/standards/wmts) is the Open Geospatial Consortium (OGC)&#39;s standard for delivering rectangular map tiles via RESTful web services. It consists of two key service calls: **GetCapabilities** and **GetTile**.
+
+### GetCapabilities
+
+The "GetCapabilities" call documented here implements the 1.0.0 version of the WMTS standard. It returns an XML structure containing metadata on both the company hosting the service (in this case, Example) and the various layers that the service offers. That metadata is sufficient to allow calling systems to construct calls to Example&#39;s  [Map Display API Raster Tile endpoint](/map-display-api/documentation/raster/tile)  that retrieves individual raster map tiles for a given geographic extent, zoom level, and layer type.
+
+### GetTile
+
+Because the Example WMTS services follow the OGC WMTS specification, it is then easy to use these services via third party tools such as Esri&#39;s ArcGIS Online. While less flexible than the WMS API, WMTS "GetTile" calls are tailored for speed. They retrieve single map tiles and do not aggregate tiles in order to deliver a single composited map image.
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/map-display-api/api-explorer/)  page and follow the directions.
+
+## Request data
+
+### HTTPS method: `GET`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL format</h4>
+
+```shell [type=get] [title=Request URL]
+https://{baseURL}/map/{versionNumber}/wmts/apiKey={Your_API_Key}/{wmtsVersion}/WMTSCapabilities.xml
+```
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>
+
+```shell [type=get] [title=Request example]
+https://api.Example.com/map/1/wmts/apiKey={Your_API_Key}/1.0.0/WMTSCapabilities.xml
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command format</h4>
+
+```shell [type=get] [title=Request curl command]
+curl 'https://api.Example.com/map/1/wmts/apiKey={Your_API_Key}/1.0.0/WMTSCapabilities.xml'
+```
+
+### Request parameters
+
+The following table describes all the parameters that can be used in a request.
+
+- Required parameters **must be used** or the call will fail.
+- Optional parameters may be used.
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+
+**Note:** There are no optional parameters in this endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `baseURL` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The base URL for calling Example services.
+        <br />
+         **Value:**   `api.Example.com` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The version of the service to call.
+        <br />
+         **Value:**  The current version is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `apiKey` 
+        <br />
+         *string* 
+      </th>
+      <td>
+        The authorization key for access to the API.
+        <br />
+         **Value:**  Your valid API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `wmtsVersion` 
+        <br />
+         *float* 
+      </th>
+      <td>
+        The version of the WMTS service.
+        <br />
+         **Value:**   `1.0.0` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Request headers
+
+The following data table lists HTTP request headers of particular interest to clients of the Maps WMTS API endpoint. **Note:** There are no required headers in this endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="trackingid-request" scope="row">
+        Tracking-Id
+      </th>
+      <td>
+        Specifies an identifier for the request. It can be used to trace a call.
+        The value must match the regular expression
+         `'^[a-zA-Z0-9-]{1,100}$'`. An example of the format
+        that matches this regular expression is a UUID (e.g.,
+        9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1). For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122). If specified, it is replicated in the
+         [Tracking-Id](#trackingid-response)  response header.
+        <br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+A  [full schema (XSD)](http://schemas.opengis.net/wmts/1.0/)  for the response is available from **openGIS**. The following XML code block is a partial example of a successful response. For the meanings and use of the different elements, please refer to the schema.
+
+### Response body (XML)
+
+<Accordion label="XML response body" isClosed>
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http&#058;//www.opengis.net/wmts/1.0" xmlns&#058;ows="http&#058;//www.opengis.net/ows/1.1" xmlns&#058;xlink="http&#058;//www.w3.org/1999/xlink" xmlns&#058;xsi="http&#058;//www.w3.org/2001/XMLSchema-instance" xmlns&#058;gml="http&#058;//www.opengis.net/gml" xsi&#058;schemaLocation="http&#058;//www.opengis.net/wmts/1.0 http&#058;//schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd"version="1.0.0">
+  <ows&#058;ServiceIdentification>
+    <ows&#058;Title>Example Web Map Tile Service</ows&#058;Title>
+    <ows&#058;ServiceType>OGC WMTS</ows&#058;ServiceType>
+    <ows&#058;ServiceTypeVersion>1.0.0</ows&#058;ServiceTypeVersion>
+    <ows&#058;Fees>none</ows&#058;Fees>
+    <ows&#058;AccessConstraints>none</ows&#058;AccessConstraints>
+  </ows&#058;ServiceIdentification>
+
+  <ows&#058;ServiceProvider>
+    <ows&#058;ProviderName>Example International B.V.</ows&#058;ProviderName>
+    <ows&#058;ProviderSite xlink&#058;href="https&#058;//www.Example.com"/>
+    <ows&#058;ServiceContact>
+      (...contact information for support of the service...)
+    </ows&#058;ServiceContact>
+  </ows&#058;ServiceProvider>
+
+  <ows&#058;OperationsMetadata>
+    <ows&#058;Operation name="GetCapabilities">
+      (...metadata on the GetCapabilities call)
+    </ows&#058;Operation>
+    <ows&#058;Operation name="GetTile">
+      (...metadata on the GetTile call)
+    </ows&#058;Operation>
+  </ows&#058;OperationsMetadata>
+
+  <Contents>
+    <!-- Basic Map -->
+    <Layer>
+      <ows&#058;Title>Example Map &mdash; Standard</ows&#058;Title>
+      <ows&#058;WGS84BoundingBox crs="urn&#058;ogc&#058;def&#058;crs&#058;OGC&#058;2:84">
+        <ows&#058;LowerCorner>-180 -85</ows&#058;LowerCorner>
+        <ows&#058;UpperCorner>180 85</ows&#058;UpperCorner>
+      </ows&#058;WGS84BoundingBox>
+      <ows&#058;Identifier>ttms</ows&#058;Identifier>
+      <Style isDefault="true">
+        <ows&#058;Identifier>map/1/tile/basic/main</ows&#058;Identifier>
+      </Style>
+      <Format>image/png</Format>
+      <TileMatrixSetLink>
+        <TileMatrixSet>google900913</TileMatrixSet>
+      </TileMatrixSetLink>
+      <ResourceURL format="image/png" template="https&#058;//a.api.Example.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
+      <ResourceURL format="image/png" template="https&#058;//b.api.Example.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
+      <ResourceURL format="image/png" template="https&#058;//c.api.Example.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
+      <ResourceURL format="image/png" template="https&#058;//d.api.Example.com/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png?key=apiKey" resourceType="tile"/>
+    </Layer>
+    <Layer>
+      (...metadata on additional layers...)
+      <Layer>
+
+        <TileMatrixSet>
+          <ows&#058;Identifier>google900913</ows&#058;Identifier>
+          <ows&#058;BoundingBox crs="urn&#058;ogc&#058;def&#058;crs&#058;EPSG&#058;6.18:3:3857">
+            <ows&#058;LowerCorner>20037508.3428 -20037508.3428</ows&#058;LowerCorner>
+            <ows&#058;UpperCorner>-20037508.3428 20037508.3428</ows&#058;UpperCorner>
+          </ows&#058;BoundingBox>
+          <ows&#058;SupportedCRS>urn&#058;ogc&#058;def&#058;crs&#058;EPSG&#058;6.18&#058;3&#058;3857</ows&#058;SupportedCRS>
+          <WellKnownScaleSet>urn&#058;ogc&#058;def&#058;wkss&#058;OGC&#058;1.0&#058;vGoogleMapsCompatible</WellKnownScaleSet>
+          <TileMatrix>
+            <ows&#058;Identifier>0</ows&#058;Identifier>
+            <ScaleDenominator>559082264.029</ScaleDenominator>
+            <TopLeftCorner>-20037508.3428 20037508.3428</TopLeftCorner>
+            <TileWidth>256</TileWidth>
+            <TileHeight>256</TileHeight>
+            <MatrixWidth>1</MatrixWidth>
+            <MatrixHeight>1</MatrixHeight>
+          </TileMatrix>
+          (...metadata on further matrixes...)
+        </TileMatrixSet>
+      </Contents>
+
+  <ServiceMetadataURL xlink:href="https&#058;//api.Example.com/map/1/wmts/apiKey/1.0.0/GetCapabilities.xml"/>
+</Capabilities>
+```
+
+</Accordion><br />
+
+### Error response
+
+The Map Display API WMTS service for an invalid request returns a response body in plain text or JSON format. The plain text format is returned by default. To have an error response returned in JSON format, `application/json` has to be specified in the **Accept** HTTP request header.
+
+<h4 style={{ fontSize: '1em' }}>Plain text format</h4>
+
+```shell
+Malformed syntax
+```
+
+<h4 style={{ fontSize: '1em' }}>Error response field structure</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `detailedError` 
+        <br />
+         *object* 
+      </th>
+      <td>Main object of the error response.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `code` 
+        <br />
+         *string* 
+      </th>
+      <td>One of a server-defined set of error codes.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `message` 
+        <br />
+         *string* 
+      </th>
+      <td>A human-readable description of the error code.</td>
+    </tr>
+  </tbody>
+</table>
+
+```json [title=Error response format - JSON]
+{
+  "detailedError": {
+    "code": "BAD_REQUEST",
+    "message": "Malformed syntax"
+  }
+}
+```
+
+### Response codes
+
+<table>
+  <thead>
+    <tr>
+      <th
+        scope="col"
+        style={{ fontSize: '1em', textAlign: 'center' }}
+        width="250px;"
+      >
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Meaning &amp; possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `200` 
+      </th>
+      <td>
+         **OK** 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `400` 
+      </th>
+      <td>
+         **Bad request** : Probably malformed syntax.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `403` 
+      </th>
+      <td>
+         **Unauthorized** : The supplied API Key is not valid for this request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `429` 
+      </th>
+      <td>
+         **Too Many Requests** : Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+         `500` 
+      </th>
+      <td>
+         **Internal Server Error** : There is a problem with the Example WMTS
+        service.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Response headers
+
+The following table lists HTTP response headers of particular interest to clients of the Maps WMTS API endpoint.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en/docs/HTTP/Access_control_CORS#Access-Control-Allow-Origin) 
+      </th>
+      <td>
+        The Maps WMTS API allows cross-origin resource sharing (CORS).
+        <br />
+         **Value:**   `*` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) 
+      </th>
+      <td>
+        Contains directives for a caching mechanism.
+        <br />
+         **Values:**   `public` ,
+         `max-age=<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Length](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length) 
+      </th>
+      <td>
+        Contains information about the size of the Response body.
+        <br />
+         **Value:**   `<decimal number>` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) 
+      </th>
+      <td>
+        Indicates the media type of the resource returned.
+        <br />
+         **Values:**   `text/xml; charset=utf-8` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Date](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date) 
+      </th>
+      <td>
+        Contains the date and time at which the message was originated.
+        <br />
+         **Value:**   `<http-date>` 
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">
+        Tracking-Id
+      </th>
+      <td>
+        An identifier for the request. If the
+         [Tracking-Id](#trackingid-request)  header was specified in
+        the request, it is replicated in the response. Otherwise, it is
+        generated automatically by the service. For details check
+         [RFC 4122](https://tools.ietf.org/html/rfc4122).<br />
+         **Value:**   `<string>` 
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,56 @@
+---
+title: Progress along the route
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="Progress-along-the-route"
+></a>
+
+Allow your users to visually distinguish the part of the route that has already been traveled. When
+a new location is set, the specified route style layer is drawn up to the desired location.
+
+**Sample use case:** You want to show your user the part of the route that has already been
+traveled.
+
+Use the following code snippet to create your route progress style:
+
+```swift
+let style = TTMapRouteStyleLayerBuilder().withColor(UIColor(red: 255 / 255, green: 153 / 255, blue: 0, alpha: 1.0)).build()
+```
+
+Use the following code snippet to activate showing the route progress layer on top of a route:
+
+```swift
+routeManager.activateProgress(alongTheRoute: route, withStyling: style)
+```
+
+Use the following code snippet to update the already traveled part of the route:
+
+```swift
+self.routeManager.updateProgress(alongTheRoute: self.mapRoute, with: location)
+```
+
+Screen shots presenting how progress along the route works:
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/ProgressAlongTheRoute1.png" alt="image" />
+          </p>
+        </ContentWrapper>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/ProgressAlongTheRoute2.png" alt="image" />
+          </p>
+        </ContentWrapper>
+      </td>
+    </tr>
+  </tbody>
+</table>

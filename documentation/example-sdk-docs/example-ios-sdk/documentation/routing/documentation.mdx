@@ -1,0 +1,92 @@
+---
+title: Documentation
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_documentation"
+></a>
+
+This component integrates the Routing API service described
+on [https://developer.Example.com/routing-api/documentation/routing/calculate-route](https://developer.Example.com/routing-api/documentation/routing/calculate-route). The
+service calculates a route between an origin and a destination, passing through waypoints if they
+are specified.
+
+The Routing API is one of our most advanced APIs, enabling the user to calculate a perfect path from
+point A to point B.
+
+- TTRouteQueryBuilder is used to construct a Request to the Routing API service for planning a
+  route.
+- You can set an origin and a destination if you want to route from the current location, then
+  simply pass it to the from() method of the TTRouteQueryBuilder.
+- You can set a list of via points to lead the way though them.
+- You can provide locations as points, or as approximate points (circles).
+
+Import the TTRouteResponseDelegate. Before releasing a Routing object for which you have set a
+delegate, remember to set that object’s delegate property to nil.
+
+<Code>
+
+```swift
+class RouteViewController: UIViewController, TTRouteResponseDelegate {}
+```
+
+```objectivec
+@interface RouteViewController () < TTRouteResponseDelegate>
+```
+
+</Code>
+
+Add your implementation of the protocol method completedWithResult:
+
+<Code>
+
+```swift
+func route(_: TTRoute, completedWith result: TTRouteResult) {
+}
+```
+
+```objectivec
+- (void)route:(TTRoute *)route completedWithResult:(TTRouteResult *)result {
+}
+```
+
+</Code>
+
+Add your implementation of the protocol method completedWithResponseError:
+
+<Code>
+
+```swift
+func route(_: TTRoute, completedWith responseError: TTResponseError) {
+}
+```
+
+```objectivec
+- (void)route:(TTRoute *)route completedWithResponseError:(TTResponseError *)responseError {
+}
+```
+
+</Code>
+
+Add a delegate on viewDidLoad:
+
+<Code>
+
+```swift
+override func viewDidLoad() {
+    super.viewDidLoad()
+    routePlanner.delegate = self
+}
+```
+
+```objectivec
+- (void)viewDidLoad {
+    [super viewDidLoad]
+    self.routePlanner = [[TTRoute alloc] initWithKey:Key.Routing];
+    self.routePlanner.delegate = self;
+}
+```
+
+</Code>

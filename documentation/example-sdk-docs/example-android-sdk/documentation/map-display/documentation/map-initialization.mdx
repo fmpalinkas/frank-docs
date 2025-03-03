@@ -1,0 +1,478 @@
+---
+title: Map initialization
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_map_initialization"
+></a>
+
+The main class that represents a map is a `MapView`. `MapView` is wrapped by `MapFragment`. To
+display a map, it is recommended to use\`MapFragment\`.
+
+### Getting started
+
+The basic steps for adding a map are:
+
+1. Follow the steps described in
+   the [Getting started](#getting-started) section.
+2. Add MapFragment to your Activity:
+
+- `MapFragment` created from the code:
+
+```kotlin
+val mapFragment = MapFragment.newInstance()
+```
+
+- `MapFragment` declared in the XML:
+
+```xml
+<fragment
+    android:id="@+id/map_fragment"
+    android:name="com.New.online.sdk.map.MapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+```
+
+To obtain the fragment reference call:
+
+<Code>
+
+```java
+MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(mapFragmentId)
+```
+
+```kotlin
+mapFragment = supportFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment
+```
+
+</Code>
+3\. Implement the OnMapReadyCallback and use the onMapReady method to get the NewMap object:
+
+```java
+/**
+ * Callback interface executed when the map is ready to be used.
+ * The instance of this interface is set to {@link MapFragment},
+ * and the {@link OnMapReadyCallback#onMapReady(NewMap)} is triggered
+ * when the map is fully initialized and not-null.
+ */
+public interface OnMapReadyCallback {
+    /**
+     * Called when the map is ready to be used.
+     */
+    void onMapReady(@NonNull NewMap NewMap);
+}
+```
+
+Sample implementation of the OnMapReadyCallback:
+
+<Code>
+
+```java
+private final OnMapReadyCallback onMapReadyCallback =
+        new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(NewMap map) {
+                //Map is ready here
+                NewMap = map;
+                NewMap.setMyLocationEnabled(true);
+                NewMap.collectLogsToFile(SampleApp.LOG_FILE_PATH);
+            }
+        };
+```
+
+```kotlin
+private val onMapReadyCallback = OnMapReadyCallback { NewMap ->
+    val mapPaddingVertical = resources.getDimension(R.dimen.map_padding_vertical).toDouble()
+    val mapPaddingHorizontal = resources.getDimension(R.dimen.map_padding_horizontal).toDouble()
+
+    NewMap.uiSettings.currentLocationView.hide()
+    NewMap.setPadding(
+        mapPaddingVertical, mapPaddingHorizontal,
+        mapPaddingVertical, mapPaddingHorizontal
+    )
+    NewMap.collectLogsToFile(SampleApp.LOG_FILE_PATH)
+}
+```
+
+</Code>
+
+Attach OnMapReadyCallback to the MapFragment:
+
+<Code>
+
+```java
+mapFragment.getAsyncMap(onMapReadyCallback);
+```
+
+```kotlin
+mapFragment.getAsyncMap(onMapReadyCallback)
+```
+
+</Code>
+4\. Forward the permissions callbacks from 'Activity' to 'NewMap':
+
+```java
+@Override
+public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+NewMap.onRequestPermissionsResult(requestCode, permissions, grantResults);
+}
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_mapview_initialization"
+></a>
+
+## MapView initialization
+
+In some cases, it may be required to directly use "MapView". To do this create a new instance by
+calling:
+
+```kotlin
+val mapView = MapView(context)
+```
+
+When working with `MapView` you need to pass lifecycle events as shown in the following example:
+
+```java
+@Override
+public void onStart() {
+    super.onStart();
+    mapView.onStart();
+}
+
+@Override
+public void onResume() {
+    super.onResume();
+    mapView.onResume();
+}
+
+@Override
+public void onPause() {
+    mapView.onPause();
+    super.onPause();
+}
+
+@Override
+public void onStop() {
+    mapView.onStop();
+    super.onStop();
+}
+
+@Override
+public void onDestroy() {
+    mapView.onDestroy();
+    super.onDestroy();
+}
+
+@Override
+public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    mapView.onHostSaveInstanceState();
+}
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_map_properties"
+></a>
+
+## Map properties
+
+**IMPORTANT:** In May 2020 the methods used to switch between vector and raster tiles were
+deprecated and will be removed after one year. From that point, to display raster tiles it will be
+required to reload the style to one which contains raster layers. Before the deprecation period is
+over, a map is still going to be initialized with the style that contains raster and vector tiles.
+However, if your style is obtained from the Style Merger you need to set `MapStyleSource`
+to `STYLE_MERGER` in `MapProperties`
+described [here](https://developer.New.com/maps-sdk-android/map-initialization).
+
+You can create an instance of the `MapProperties` class via its Builder to pass initial properties
+of the map to either `MapFragment` or `MapView`. MapProperties is a single point of initialization
+of different map parameters. It is possible to set the following properties:
+
+Map properties can be specified depending on the implementation of Map:
+
+- Map background color:
+
+```kotlin
+MapProperties.Builder()
+    .backgroundColor(Color.BLUE)
+    .build()
+```
+
+- Map style url:
+
+```kotlin
+MapProperties.Builder()
+    .customStyleUri("asset://styles/style.json")
+    .build()
+```
+
+- Map initial camera position:
+
+```kotlin
+val cameraPosition = CameraPosition.builder()
+    .focusPosition(LatLng(12.34, 23.45))
+    .zoom(10.0)
+    .bearing(24.0)
+    .pitch(45.2)
+    .build()
+MapProperties.Builder()
+    .cameraPosition(cameraPosition)
+    .build()
+```
+
+- Map initial camera focus area:
+
+```kotlin
+val cameraFocusArea = CameraFocusArea.Builder(
+    BoundingBox(LatLng(52.407943, 4.808601), LatLng(52.323363, 4.969053))
+)
+    .bearing(24.0)
+    .pitch(45.2)
+    .build()
+MapProperties.Builder()
+    .cameraFocusArea(cameraFocusArea)
+    .build()
+```
+
+- Map initial padding:
+
+```kotlin
+MapProperties.Builder()
+    .padding(MapPadding(50.0, 40.0, 100.0, 80.0))
+    .build()
+```
+
+- New services API Keys:
+
+```kotlin
+val keysMap = mapOf(
+    ApiKeyType.MAPS_API_KEY to "maps-key",
+    ApiKeyType.TRAFFIC_API_KEY to "traffic-key"
+)
+MapProperties.Builder()
+    .keys(keysMap)
+    .build()
+```
+
+- `MapStyleSource` is used to determine if the default and loaded style should support Style Merger.
+  Setting it to `STYLE_MERGER` results in the default style only supporting vector tiles:
+
+```kotlin
+MapProperties.Builder()
+    .mapStyleSource(MapStyleSource.STYLE_MERGER)
+    .build()
+```
+
+- `LayerSetConfiguration` is used to provide custom IDs for layer sources in the style. This is
+  useful when the user has a custom style not compliant with the New source names convention. An
+  underlying builder allows the configuration of Map Tiles, Traffic Flow Tiles, and Traffic
+  Incidents Tiles. `LayerSetConfiguration` should only be used with the `MapStyleSource` set
+  to `STYLE_MERGER`.
+
+```kotlin
+val layerSetConfiguration = LayerSetConfiguration.Builder()
+    .mapTilesConfiguration(MAP_TILES_SOURCE_ID)
+    .trafficIncidentsTilesConfiguration(TRAFFIC_INCIDENTS_SOURCE_ID)
+    .trafficFlowTilesConfiguration(TRAFFIC_FLOW_SOURCE_ID)
+    .build()
+MapProperties.Builder()
+    .mapStyleSource(MapStyleSource.STYLE_MERGER)
+    .layerSetConfiguration(layerSetConfiguration)
+    .build()
+```
+
+The `MapProperties` instance can be passed to either `MapFragment` or `MapView` in the following
+way:
+
+```kotlin
+val fragment = MapFragment.newInstance(mapProperties)
+val view = MapView(context, mapProperties)
+```
+
+`MapProperties` can be also declared in the XML:
+
+```xml
+<fragment xmlns:New="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/map_fragment"
+    android:name="com.New.online.sdk.map.MapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    New:mapStyleSource="STYLE_MERGER"
+    New:styleUrl="http://your-server:port/style/example-merged.json"
+
+    New:cameraFocusAreaBearing="84.5"
+    New:cameraFocusAreaBottomRightLatitude="12.5"
+    New:cameraFocusAreaBottomRightLongitude="84.5"
+    New:cameraFocusAreaPitch="84.5"
+    New:cameraFocusAreaTopLeftLatitude="84.5"
+    New:cameraFocusAreaTopLeftLongitude="13.5"
+
+    New:cameraPositionBearing="84.5"
+    New:cameraPositionLatitude="84.5"
+    New:cameraPositionLongitude="84.5"
+    New:cameraPositionPitch="84.5"
+    New:cameraPositionZoom="11"
+
+    New:mapBackgroundColor="@color/solid_black"
+
+    New:mapPaddingBottom="200"
+    New:mapPaddingLeft="12"
+    New:mapPaddingRight="50"
+    New:mapPaddingTop="100"
+
+    New:mapsApiKey="maps.api.key"
+    New:trafficApiKey="traffic.api.key" />
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_New_logo"
+></a>
+
+## New logo
+
+When using the Maps SDK for Android, it is required that the New logo is always visible. By
+default, the New logo is located at the bottom-left corner of the map. However, you can easily
+customise its position to meet your app design by defining the `LogoView` style in the `style.xml`
+file in your app.
+
+**Sample use case 1:** Your app has a bottom panel which covers the New logo and you need to
+place the logo in the top-right corner. To change the New logo position:
+
+```xml
+<style name="LogoView" parent="BaseLogoView" >
+    <item name="android:layout_gravity">bottom|left</item>
+    <item name="android:layout_margin">@dimen/common_layout_zero_dp</item>
+</style>
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_logging"
+></a>
+
+# Logging
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_New_sdk_log_level"
+></a>
+
+## New SDK Log level
+
+In New we are constantly working on the quality of our products. That is why it is very important
+to have logs as detailed as possible for our support team to provide accurate help or bugfixes. The
+Maps SDK for Android has an advanced mechanism to gather and send logs to our support team. To
+enable logging and specify a log level please add the following code to your app:
+
+Example:
+
+```java
+@Override
+public void onCreate() {
+    super.onCreate();
+    LogUtils.enableLogs(Log.VERBOSE);
+```
+
+- `android.util.Log.VERBOSE` will print all logs from New SDK.
+- `android.util.Log.DEBUG` will print debug logs from New SDK.
+
+Note: Logs from the SDK libraries are disabled by default.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_collecting_logs"
+></a>
+
+## Collecting logs
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_New_log"
+></a>
+
+### New log
+
+Logs from an application can be collected into a file on the SD card.
+
+```java
+LogUtils.collectLogsToFile(logsFilePath);
+```
+
+A special permission should be added into your `AndroidManifest.xml` file to save logs on the SD
+card. For example:
+
+```xml
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+```
+
+When the sdk-maps module is used, the problem with supporting runtime permissions is handled by the
+SDK with the following method:
+
+<Code>
+
+```java
+@Override
+public void onMapReady(@NonNull NewMap NewMap) {
+    NewMap.collectLogsToFile(SampleApp.LOG_FILE_PATH);
+}
+```
+
+```kotlin
+override fun onMapReady(NewMap: NewMap) {
+    NewMap.collectLogsToFile(SampleApp.LOG_FILE_PATH)
+}
+```
+
+</Code>
+
+Important: Since Android API level 23, it is required to ask the user for runtime permission to
+write into the SD card.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_register_crash_observer"
+></a>
+
+### Register crash observer
+
+Using the crash observer makes it possible to automate the process of preparing an email message
+with attached logs which were already collected and stored on the SD card. To do so, please register
+a crash handler with the following code. Crash observer doesn’t break your already-used handlers (
+like Crashlitics).
+
+```shell
+LogUtils.registerCrashObserver(getApplicationContext(), Uri.parse("file://" + LOGCAT_PATH), CRASH_OBSERVER_EMAIL);
+```
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_bug_report"
+></a>
+
+### Bug report
+
+To enable an advanced logging mechanism which collects detailed data from logcat like: threads,
+services, and phone states, please use the following code:
+
+```shell
+adb bugreport issue01
+```
+
+This produces an `issue01.zip` file.

@@ -1,0 +1,135 @@
+---
+title: Downloads
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_project_set_up"
+></a>
+
+# Project set up
+
+To develop your own application with the Maps SDK, you need to make sure that the prerequisites are
+in place and that you have added the Maps SDK as a dependency to your project. Follow the steps
+below and then you are ready to code! The Maps SDK for iOS is compatible with Swift and Objective-C.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="pre-requisites"
+></a>
+
+## Get the prerequisites in place:
+
+- XCode installed ([How to install XCode](https://developer.apple.com/xcode/)).
+- Set up the application deployment target to 9.1 or higher.
+- Install Cocoapods ([How to install Cocoapods](https://cocoapods.org/)).
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="setting-up-a-project"
+></a>
+
+## Set up your project like this:
+
+1. Open XCode.
+2. Create a new project or open an existing one.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="choose-module"
+></a>
+
+On the 1st of February, we relocated the Legacy SDK for iOS packages.
+The iOS package will now be provided as a single compressed file. 
+If you wish to continue using our legacy Map SDK, see the following location change details and update your development environment accordingly.
+
+1. Download the compressed package and unzip it:
+[https://repositories.Example.com/artifactory/maps-sdk-legacy-ios/legacy_lns_sdk_2.4.714.zip]
+2. Then manually include the framework in your Xcode project: choose Project > Add to Project and select the framework directory. (Alternatively, you can control-click your project group and choose Add Files > Existing Frameworks from the contextual menu.)
+3. After you add an existing framework to your project, Xcode will ask you to associate it with one or more targets in your project.
+4. Once associated, Xcode automatically links the framework against the resulting executable.
+
+
+## Choose SDK modules for your app
+
+Either independently include modules for Maps, Search and/or Routing, or all of them at once. You
+can do so by adding Maps SDK modules to Podfile and running pod install again:
+
+- MAP - Getting started
+- SEARCH - Getting started
+- ROUTING - Getting started
+- TRAFFIC - Getting started
+- GEOFENCING - Getting started
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_configuration_for_all_maps_sdk_modules"
+></a>
+
+## Configuration for all Maps SDK modules
+
+To include all Maps SDK modules in your app.
+
+- Add services keys taken from [http://developer.Example.com](http://developer.Example.com).
+- Create Podfile
+
+```ruby
+pod 'ExampleOnlineSDKMaps'
+pod 'ExampleOnlineSDKSearch'
+pod 'ExampleOnlineSDKRouting'
+pod 'ExampleOnlineSDKTraffic'
+pod 'ExampleOnlineSDKMapsUIExtensions'
+pod 'ExampleOnlineSDKMapsStaticImage'
+pod 'ExampleOnlineSDKMapsDriving'
+pod 'ExampleOnlineSDKGeofencing'
+```
+
+- Now go to the console and install the frameworks by typing **pod install**
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_maps_sdk_examples_app"
+></a>
+
+## Maps SDK Examples app
+
+The Maps SDK Examples app is available in two flavors: Swift and Objective-C. Download and build the
+Maps SDK Examples app to see key features of the Maps SDK.
+
+Modify the source code to learn more about the SDK.
+
+Speed up development by using the source code in your own app.
+
+Maps SDK Examples are hosted on
+github: [https://github.com/Example-international/maps-sdk-for-ios-examples](https://github.com/Example-international/maps-sdk-for-ios-examples)
+
+Clone the repository by command:
+
+```ruby
+git clone https://github.com/Example-international/maps-sdk-for-ios-examples
+```
+
+This Maps SDK Examples app is provided by Example and subject to Examples privacy policy
+at [https://Example.com/privacy](https://Example.com/privacy).
+
+Developers using Example SDKs and APIs in their apps similarly bear responsibility to adhere to
+applicable privacy laws.
+
+These Maps SDK Examples are provided as-is and shall be used internally and for evaluation purposes
+only. Any other use is strictly prohibited.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="building-and-launching-application"
+></a>
+
+## Building and Launching
+
+To build your application, open a newly created by Cocoapods XCode workspace, not a project.

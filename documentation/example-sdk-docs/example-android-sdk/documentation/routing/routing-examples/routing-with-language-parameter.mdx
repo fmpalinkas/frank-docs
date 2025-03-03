@@ -1,0 +1,39 @@
+---
+title: Routing with language parameter
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="Route-Language-Parameter"
+></a>
+
+Allow your user to get results in different languages to make your app international. The language
+parameter determines the language of the guidance messages. It does not affect proper nouns (the
+names of streets, plazas, etc.)
+
+**Sample use case:** You are planning a journey and you want to have the list of instructions in
+different languages.
+
+To request a route using the language parameter:
+
+```java
+RouteDescriptor routeDescriptor = new RouteDescriptor.Builder()
+        .considerTraffic(false)
+        .build()
+
+RouteCalculationDescriptor routeCalculationDescriptor = new RouteCalculationDescriptor.Builder()
+        .routeDescription(routeDescriptor)
+        .maxAlternatives(0)
+        .reportType(ReportType.NONE)
+        .instructionType(InstructionsType.TEXT)
+        .language(language)
+        .build();
+
+RouteSpecification routeSpecification = new RouteSpecification.Builder(
+        routeConfig.getOrigin(),
+        routeConfig.getDestination()
+)
+        .routeCalculationDescriptor(routeCalculationDescriptor)
+        .build();
+```

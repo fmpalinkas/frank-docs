@@ -1,0 +1,477 @@
+---
+title: POI Categories
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2022.12.13'
+    color: grey5
+---
+
+## Purpose
+
+The POI Categories service endpoint provides a full list of POI categories and subcategories together with their translations and synonyms.
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/search-api/api-explorer/)  page and follow the directions.
+
+## Request data
+
+### HTTPS Method: `GET`
+
+For ease of viewing and identification:
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+```shell [type=get] [title=URL request format]
+https://{baseURL}/search/{versionNumber}/poiCategories.{ext}?key={Your_API_Key}&language={one_of_the_supported_languages}
+```
+
+```shell [type=get] [title=URL request example]
+https://api.Example.com/search/2/poiCategories.json?key={Your_API_Key}
+```
+
+```shell [type=get] [title=curl command request example]
+curl 'https://api.Example.com/search/2/poiCategories.json?key={Your_API_Key}'
+```
+
+### Request parameters
+
+The following table describes the parameters that can be used in a request.
+
+- Required parameters **must** be used or the call will fail.
+- Optional parameters _may_ be used.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Required&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+         `baseURL`<br />
+         *string*
+      </th>
+      <td>
+        Base URL for calling the API.<br />
+         **Values:**
+        <ul>
+          <li>
+             `api.Example.com`
+          </li>
+          <li>
+             `kr-api.Example.com`  (see the
+             [Region-specific content](/search-api/documentation/product-information/region-specific-content)
+            page)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `versionNumber`<br />
+         *string*
+      </th>
+      <td>
+        Service version.<br />
+         **Value:**  The current value is  `2`.
+      </td>
+    </tr>
+    <tr></tr>
+    <tr>
+      <th scope="row">
+         `poiCategories`<br />
+         *string*
+      </th>
+      <td>
+        Endpoint name.<br />
+         **Value:**   `poiCategories`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `ext`<br />
+         *string*
+      </th>
+      <td>
+        A valid response format.<br />
+         **Values:**   `json` ,  `jsonp` ,  `js` ,
+        or  `xml`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `key`<br />
+         *string*
+      </th>
+      <td>
+        An API Key valid for the requested service.<br />
+         **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Optional parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `language`<br />
+         *string*
+      </th>
+      <td>
+        Language in which the category tree should be returned. When a category
+        in a requested language is not available, the default language is used
+        (English).<br />
+         **Value:**  One of the Example IETF
+         [Supported Language Tags](/search-api/documentation/product-information/supported-languages)
+        except  `NGT`  and  `NGT-Latn`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Request headers
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Optional header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding)
+      </th>
+      <td>
+        Enables response compression.<br />
+         **Value:**   `gzip`
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+### Response body
+
+For illustrative purposes the example below is neatly indented and includes all possible response fields. Actual responses are more compact and the fields present will vary based on the result type and the data available. See the following [Response fields](#response-fields) section for more information. When requesting JSON output format in the request URL `ext` parameter, the response has the following structure.
+
+```json
+{
+  "poiCategories": [
+    {
+      "id": 7320,
+      "name": "Sports Center",
+      "childCategoryIds": [
+        7320002,
+        7320003,
+        7320004,
+        7320006,
+        7320005
+      ],
+      "synonyms": [
+        "Fitness Center",
+        "Fitness Centre",
+        "Fitness Club",
+        "Gym",
+        "Gymnasium",
+        "Health Club",
+        "Indoor Sports",
+        "Indoors Sports",
+        "Sports Centre",
+        "Wellness Club"
+      ]
+    },
+    {
+      "id": 7374,
+      "name": "Stadium",
+      "childCategoryIds": [
+        7374002,
+        7374009,
+        7374012,
+        7374003,
+        7374010,
+        7374005,
+        7374008,
+        7374011,
+        7374006,
+        7374014,
+        7374013,
+        7374007,
+        7374004
+      ],
+      "synonyms": [
+        "Arena",
+        "Gymnasium",
+        "Indoor Arena",
+        "Sports Field",
+        "Sports Ground",
+        "Sports Stadium",
+        "Sportsfield",
+        "Sportsground",
+        "Velodrome"
+      ]
+    },
+    . . .
+  ]
+}
+```
+
+When requesting XML output format in the request URL `ext` parameter, the response has the following structure.
+
+```xml
+<?xml version='1.0' encoding='UTF-8'?>
+<response>
+ <poiCategories>
+   <poiCategory>
+    <id>7320</id>
+    <name>Sports Center</name>
+    <childCategoryIds>
+     <childCategoryId>7320002</childCategoryId>
+     <childCategoryId>7320003</childCategoryId>
+     <childCategoryId>7320005</childCategoryId>
+    </childCategoryIds>
+    <synonyms>
+     <synonym>Gym</synonym>
+     <synonym>Health Club</synonym>
+     <synonym>Indoors Sports</synonym>
+     <synonym>Sports Centre</synonym>
+     <synonym>Wellness Club</synonym>
+    </synonyms>
+   </poiCategory>
+   <poiCategory>
+    <id>7374</id>
+    <name>Stadium</name>
+    <childCategoryIds>
+     <childCategoryId>7374002</childCategoryId>
+     <childCategoryId>7374009</childCategoryId>
+     <childCategoryId>7374012</childCategoryId>
+     <childCategoryId>7374003</childCategoryId>
+     <childCategoryId>7374010</childCategoryId>
+     <childCategoryId>7374005</childCategoryId>
+     <childCategoryId>7374008</childCategoryId>
+     <childCategoryId>7374011</childCategoryId>
+     <childCategoryId>7374006</childCategoryId>
+     <childCategoryId>7374014</childCategoryId>
+     <childCategoryId>7374013</childCategoryId>
+     <childCategoryId>7374007</childCategoryId>
+     <childCategoryId>7374004</childCategoryId>
+    </childCategoryIds>
+    <synonyms>
+     <synonym>Arena</synonym>
+     <synonym>Gymnasium</synonym>
+     <synonym>Indoor Arena</synonym>
+     <synonym>Sports Field</synonym>
+     <synonym>Sports Ground</synonym>
+     <synonym>Sports Stadium</synonym>
+     <synonym>Sportsfield</synonym>
+     <synonym>Sportsground</synonym>
+     <synonym>Velodrome</synonym>
+    </synonyms>
+   </poiCategory>
+    ...
+ </poiCategories>
+</response>
+```
+
+### Response fields
+
+The following table describes all of the fields that can appear in a response. Fields are listed by the response section they belong to and in the order that they appear in the response.
+
+<table>
+  <tbody>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>poiCategories array</th>
+    </tr>
+    <tr>
+      <th scope="col" width="250px;">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </tbody>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `poiCategory`<br />
+         *object*
+      </th>
+      <td>Category Tree result list.</td>
+    </tr>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>poiCategory object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+         `id`<br />
+         *long*
+      </th>
+      <td>Unique ID for the category.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `name`<br />
+         *string*
+      </th>
+      <td>Name of the category.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `childCategoryIds`<br />
+         *array*
+      </th>
+      <td>List of subcategories ids.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `synonyms`<br />
+         *array*
+      </th>
+      <td>List of alternative names of the category.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Response codes
+
+The following table contains response codes signifying successful and failed requests to an API server.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Meaning &amp; possible causes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `200`
+      </th>
+      <td>
+         **OK** : The search successfully returned a result.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `400`
+      </th>
+      <td>
+         **Bad Request** : One or more parameters were incorrectly specified.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `403`
+      </th>
+      <td>
+         **Forbidden** : Possible causes include,
+        <ul>
+          <li>Service requires SSL</li>
+          <li>Not authorized</li>
+          <li>Rate or volume limit exceeded</li>
+          <li>Unknown referer</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `405`
+      </th>
+      <td>
+         **Method Not Allowed** : The HTTP request method  `GET`  is
+        not supported for this request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `404/596`
+      </th>
+      <td>
+         **Not Found** : The HTTP request method  `GET`  or path is
+        incorrect.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `429`
+      </th>
+      <td>
+         **Too Many Requests** : The API Key is over QPS (Queries per second).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         `5xx`
+      </th>
+      <td>
+         **Server Error** : The service was unable to process your request.
+        Contact support to resolve the issue.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Response headers
+
+The following table contains response headers sent back from an API server.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Header</th>
+      <th scope="col" tyle="font-size:1em;">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         [Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)
+      </th>
+      <td>
+        Ensures that clients implementing the CORS security model are able to
+        access the response from this service.<br />
+         **Value:**  An asterisk  `*`  that signifies access to the
+        Example API using the Access-Control-Allow-Origin (ACAO) header in its
+        response indicating which origin sites are allowed.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)
+      </th>
+      <td>
+        Indicates the format of the response, as chosen by the client.<br />
+         **Format:**   `type/subtype; charset=utf-8`<br />
+         **Value:**   `type/subtype`  is one of:
+         `application/json` ,  `application/javascript` , or
+         `application/xml`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+         [Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)
+      </th>
+      <td>
+        If requested by the client, the Search service applies gzip compression
+        to the responses with the Accept-Encoding header.<br />
+         **Value:**   `gzip`
+      </td>
+    </tr>
+  </tbody>
+</table>  

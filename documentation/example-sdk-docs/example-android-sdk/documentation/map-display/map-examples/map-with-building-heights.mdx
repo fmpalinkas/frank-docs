@@ -1,0 +1,96 @@
+---
+title: Map with building heights
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="map-buildings-height-footprints"
+></a>
+
+Allow your users to see a map either in 2.5D with building heights enabled, or in 2D with building
+footprints.
+
+**Sample use case:** Your application provides the possibility to display sophisticated
+visualization of the map with building heights (2.5D map), as well as displaying the map with
+building footprints (2D map).
+
+The building heights data are available in Vector Map Tiles. The default New map styles enable
+the display of building heights by default, but this can be disabled by switching off layers in the
+style.
+
+Have a look at the detailed documentation for more related information
+at [Vector Map Tiles](/map-display-api/documentation/vector/tile)
+and [Map Style](/map-display-api/documentation/mapstyles/map-styles)
+
+In order to disable the display of the building heights you need to switch off corresponding layers
+in the style. That means that the following layers would need to be switched off in the default
+New style: "Subway Station 3D", "Place of worship 3D", "Railway Station 3D", "Government
+Administration Office 3D", "Other building 3D", "School building 3D", "Other town block 3D", "
+Factory building 3D", "Hospital building 3D", "Hotel building 3D", and "Cultural Facility 3D. This
+will work in runtime.
+
+```java
+val LAYERS_IN_3D_REGEX = listOf(
+    "Subway Station 3D",
+    "Place of worship 3D",
+    "Railway Station 3D",
+    "Government Administration Office 3D",
+    "Other building 3D",
+    "School building 3D",
+    "Other town block 3D",
+    "Factory building 3D",
+    "Hospital building 3D",
+    "Hotel building 3D",
+    "Cultural Facility 3D")
+    .joinToString(separator = "|")
+```
+
+Use the following code snippets in your app to display building footprints (i.e., switch building
+heights off):
+
+```java
+val layers = NewMap.styleSettings.findLayersById(LAYERS_IN_3D_REGEX)
+layers.forEach { layer ->
+    layer.visibility = Visibility.NONE
+}
+```
+
+Use the following code snippets in your app to display building heights (i.e., switch building
+heights back on):
+
+```java
+val layers = NewMap.styleSettings.findLayersById(LAYERS_IN_3D_REGEX)
+layers.forEach {
+    it.visibility = Visibility.VISIBLE
+}
+```
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img
+              src="../images/Map_with_building_heights_Heights.jpg"
+              alt="image"
+            />
+          </p>
+        </ContentWrapper>
+        <p>Switching the heights on</p>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img
+              src="../images/Map_with_building_heights_Footprints.jpg"
+              alt="image"
+            />
+          </p>
+        </ContentWrapper>
+        <p>Switching the heights off</p>
+      </td>
+    </tr>
+  </tbody>
+</table>

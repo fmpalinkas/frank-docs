@@ -1,0 +1,30 @@
+---
+title: Traffic flow tiles
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_traffic_flow_tiles"
+></a>
+
+<Blockquote type="announcement">
+
+**IMPORTANT:** The Maps SDK should be initialized with the style from Style Merger which only
+supports vector tiles and one type of the flow overlay. The approach of using a single style that
+contains multiple Traffic Flow tiles types was deprecated. After the deprecation period is over, it
+will not be possible to switch between Traffic Flow tiles types without reloading the style.
+
+</Blockquote>
+
+The Maps Display API provides support for the traffic flow overlay which can be displayed for both
+raster and vector tiles. The Style obtained from the Style Merger endpoint contains only one type of
+the Traffic Flow. To display other types of Traffic Flow it is required to reload the style to one
+which contains another Traffic Flow type.
+
+The complete list of supported Traffic Flow types is listed below:
+
+1. `absolute`: Free-flow speed.
+2. `relative` (default): Speed relative to free-flow.
+3. `relative-delay`: Speed relative to free-flow, but only when different.
+4. `reduced-sensitivity`: Speed relative to free-flow, but with wider speed ranges.

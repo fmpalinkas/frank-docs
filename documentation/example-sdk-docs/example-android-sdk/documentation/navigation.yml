@@ -1,0 +1,251 @@
+group: maps-sdk-for-android
+isPrivate: false
+productName: Maps SDK for Android
+description: Maps SDK for Android is a convenient Software Development Kit that helps you developers make the most out of the New Maps APIs in your mobile application, without the complexity of bare REST API calls.
+notification: <b>THIS SDK IS <a href="https://developer.New.com/deprecation-policy/overview">DEPRECATED.</a></b>We rolled out a new and better SDK for you. <Button label="CHECK IT OUT" href="https://developer.New.com/android/maps/documentation/overview/introduction"/>
+notificationColor: yellow
+menuTitle: Documentation
+isMenuOpened: false
+menu:
+  - title: Product information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+      - fileId: /product-information/downloads
+        title: Downloads
+      - fileId: /product-information/release-notes
+        title: Release Notes
+  - title: Tutorials
+    items:
+      - title: Use Cases
+        items:
+          - fileId: /tutorials/use-cases/search-along-route
+            title: Search along a route
+          - fileId: /tutorials/use-cases/time-to-leave
+            title: Time to leave
+      - fileId: /tutorials/migrate-from-google-maps-to-New
+        title: Migrate from Google Maps to New
+  - title: Map Display
+    items:
+      - fileId: /map-display/introduction
+        title: Introduction
+      - fileId: /map-display/getting-started
+        title: Getting started
+      - title: Documentation
+        items:
+          - fileId: /map-display/documentation/map-initialization
+            title: Map initialization
+          - fileId: /map-display/documentation/online-resources-caching
+            title: Online resources caching
+          - fileId: /map-display/documentation/map-layers
+            title: Map Layers
+          - fileId: /map-display/documentation/custom-style
+            title: Custom style
+          - title: Migration guide
+            items:
+              - fileId: /map-display/documentation/migration-guide/use-style-from-style-merger
+                title: Use style from Style Merger
+              - fileId: /map-display/documentation/migration-guide/traffic-flow-tiles
+                title: Traffic flow tiles
+              - fileId: /map-display/documentation/migration-guide/traffic-incident-tiles
+                title: Traffic incident tiles
+              - fileId: /map-display/documentation/migration-guide/default-style
+                title: Default style
+      - title: Map Examples
+        items:
+          - fileId: /map-display/map-examples/map-tiles
+            title: Map tiles
+          - fileId: /map-display/map-examples/traffic-layers
+            title: Traffic layers
+          - fileId: /map-display/map-examples/my-location-layer
+            title: My location layer
+          - fileId: /map-display/map-examples/map-language
+            title: Map language
+          - fileId: /map-display/map-examples/geopolitical-view
+            title: Geopolitical view
+          - fileId: /map-display/map-examples/custom-styles
+            title: Custom styles
+          - fileId: /map-display/map-examples/multiple-maps
+            title: Multiple maps
+          - fileId: /map-display/map-examples/map-with-building-heights
+            title: Map with building heights
+          - fileId: /map-display/map-examples/map-centering
+            title: Map centering
+          - fileId: /map-display/map-examples/map-initialization
+            title: Map initialization
+          - fileId: /map-display/map-examples/map-perspective
+            title: Map perspective
+          - fileId: /map-display/map-examples/map-events
+            title: Map events
+          - fileId: /map-display/map-examples/map-snapshot-image
+            title: Map snapshot image
+          - fileId: /map-display/map-examples/map-ui-extensions
+            title: Map UI Extensions
+          - fileId: /map-display/map-examples/map-layers-visibility
+            title: Map layers visibility
+          - fileId: /map-display/map-examples/poi-layers-visibility
+            title: POI layers visibility
+          - fileId: /map-display/map-examples/dynamic-map-sources
+            title: Dynamic map sources
+          - fileId: /map-display/map-examples/dynamic-layer-ordering
+            title: Dynamic Layer Ordering
+          - fileId: /map-display/map-examples/interactive-map-layers
+            title: Interactive map layers
+          - fileId: /map-display/map-examples/map-layer-filtering
+            title: Map layer filtering
+          - fileId: /map-display/map-examples/image-clustering
+            title: Image clustering
+          - fileId: /map-display/map-examples/custom-gps-indicator
+            title: Custom Gps Indicator
+          - fileId: /map-display/map-examples/markers
+            title: Markers
+          - fileId: /map-display/map-examples/markers-clustering
+            title: Markers clustering
+          - fileId: /map-display/map-examples/balloons
+            title: Balloons
+          - fileId: /map-display/map-examples/custom-map-banner
+            title: Custom map banner
+          - fileId: /map-display/map-examples/shapes
+            title: Shapes
+          - fileId: /map-display/map-examples/route-display
+            title: Route display
+          - fileId: /map-display/map-examples/clear-map
+            title: Clear map
+          - fileId: /map-display/map-examples/traffic-along-the-route
+            title: Traffic along the route
+      - title: Map Driving Extensions
+        items:
+          - fileId: /map-display/map-driving-extensions/map-and-route-matching
+            title: Map and route matching
+          - fileId: /map-display/map-driving-extensions/follow-the-chevron
+            title: Follow the chevron
+          - fileId: /map-display/map-driving-extensions/zooming-the-route
+            title: Zooming the route
+          - fileId: /map-display/map-driving-extensions/progress-along-the-route
+            title: Progress along the route
+          - fileId: /map-display/map-driving-extensions/api-reference
+            title: API Reference
+      - title: Map Extensions
+        items:
+          - fileId: /map-display/map-extensions/map-ui-extensions
+            title: Map UI Extensions
+          - fileId: /map-display/map-extensions/map-reactx-extensions
+            title: Map ReactX Extensions
+          - fileId: /map-display/map-extensions/map-kotlin-extensions
+            title: Map Kotlin Extensions
+          - fileId: /map-display/map-extensions/static-map-image
+            title: Static Map Image
+          - fileId: /map-display/map-extensions/map-styles-extensions
+            title: Map Styles Extensions
+      - fileId: /map-display/api-reference
+        title: API Reference
+  - title: Traffic
+    items:
+      - fileId: /traffic/getting-started
+        title: Getting started
+      - fileId: /traffic/documentation
+        title: Documentation
+      - title: Traffic examples
+        items:
+          - fileId: /traffic/traffic-examples/traffic-incident-list
+            title: Traffic incident list
+      - fileId: /traffic/api-reference
+        title: API Reference
+  - title: Search
+    items:
+      - fileId: /search/getting-started
+        title: Getting started
+      - fileId: /search/documentation
+        title: Documentation
+      - title: Search examples
+        items:
+          - fileId: /search/search-examples/address-poi-search
+            title: Address & POI search
+          - fileId: /search/search-examples/poi-category-tree
+            title: POI Category tree
+          - fileId: /search/search-examples/category-search
+            title: Category search
+          - fileId: /search/search-examples/language-parameter
+            title: Language parameter
+          - fileId: /search/search-examples/typeahead-parameter
+            title: Typeahead parameter
+          - fileId: /search/search-examples/autocomplete
+            title: Autocomplete
+          - fileId: /search/search-examples/fuzziness-parameter
+            title: Fuzziness parameter
+          - fileId: /search/search-examples/reverse-geocoding
+            title: Reverse geocoding
+          - fileId: /search/search-examples/polygons-for-reverse-geocoding
+            title: Polygons for reverse geocoding
+          - fileId: /search/search-examples/cancel-search
+            title: Cancel search
+          - fileId: /search/search-examples/search-along-the-route
+            title: Search along the route
+          - fileId: /search/search-examples/geometry-search
+            title: Geometry search
+          - fileId: /search/search-examples/entry-points
+            title: Entry points
+          - fileId: /search/search-examples/opening-hours
+            title: Opening hours
+          - fileId: /search/search-examples/additional-data
+            title: Additional data
+          - fileId: /search/search-examples/batch-search
+            title: Batch search
+          - fileId: /search/search-examples/ev-charging-stations
+            title: EV Charging Stations
+      - fileId: /search/api-reference
+        title: API Reference
+  - title: Routing
+    items:
+      - fileId: /routing/getting-started
+        title: Getting started
+      - fileId: /routing/documentation
+        title: Documentation
+      - title: Routing examples
+        items:
+          - fileId: /routing/routing-examples/travel-modes
+            title: Travel modes
+          - fileId: /routing/routing-examples/route-types
+            title: Route types
+          - fileId: /routing/routing-examples/route-avoids
+            title: Route avoids
+          - fileId: /routing/routing-examples/routing-with-waypoints
+            title: Routing with waypoints
+          - fileId: /routing/routing-examples/routing-with-departure-arrival-time
+            title: Routing with departure/arrival time
+          - fileId: /routing/routing-examples/routing-with-alternative-routes
+            title: Routing with alternative routes
+          - fileId: /routing/routing-examples/routing-with-language-parameter
+            title: Routing with language parameter
+          - fileId: /routing/routing-examples/maneuver-list
+            title: Maneuver list
+          - fileId: /routing/routing-examples/consumption-model
+            title: Consumption model
+          - fileId: /routing/routing-examples/supporting-points
+            title: Supporting points
+          - fileId: /routing/routing-examples/reachable-range
+            title: Reachable range
+          - fileId: /routing/routing-examples/batch-routing
+            title: Batch routing
+          - fileId: /routing/routing-examples/matrix-routing
+            title: Matrix routing
+          - fileId: /routing/routing-examples/long-distance-ev-routing
+            title: Long Distance EV Routing
+      - title: Routing extensions
+        items:
+          - fileId: /routing/routing-extensions/routing-reactive-extensions
+            title: Routing Reactive Extensions
+      - fileId: /routing/api-reference
+        title: API Reference
+  - title: Geofencing
+    items:
+      - fileId: /geofencing/getting-started
+        title: Getting started
+      - fileId: /geofencing/documentation
+        title: Documentation
+      - title: Geofencing examples
+        items:
+          - fileId: /geofencing/geofencing-examples/report-service
+            title: Report service
+      - fileId: /geofencing/api-reference
+        title: API Reference

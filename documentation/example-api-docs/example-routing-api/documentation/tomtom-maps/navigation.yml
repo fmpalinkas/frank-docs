@@ -1,0 +1,141 @@
+group: routing-api-and-extended-routing-api
+isPrivate: false
+description: Routing is a suite of web services designed for developers to use our latest, scalable, online Routing engine.
+productName: Routing API
+menuTitle: Documentation
+isMenuOpened: false
+menu:
+  - title: Product Information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+      - fileId: /product-information/release-notes
+        title: Release Notes
+      - fileId: /product-information/faq
+        title: FAQs
+      - fileId: /product-information/market-coverage
+        title: Market Coverage
+      - fileId: /product-information/language-support
+        title: Supported Languages
+      - url: https://developer.Example.com/region-specific-content
+        title: Region-specific content
+  - title: Routing API
+    items:
+      - fileId: /routing-service
+        title: Routing service
+      - fileId: /calculate-route
+        title: Calculate Route
+        suffix: get/post
+      - fileId: /guidance-instructions
+        title: Guidance Instructions
+      - fileId: /road-shields-notes
+        title: Road Shields Notes
+      - fileId: /local-alternatives
+        title: Local Alternatives
+        isPrivate: true
+        subgroups: [ private-preview ]
+        suffix: post
+      - fileId: /calculate-reachable-range
+        title: Calculate Reachable Range
+        suffix: get/post
+      - fileId: /common-routing-parameters
+        title: Common Routing Parameters
+      - fileId: /batch-routing/batch-routing-service
+        title: Batch Routing service
+      - fileId: /batch-routing/synchronous-batch
+        title: Synchronous Batch
+        suffix: post
+      - fileId: /batch-routing/asynchronous-batch-submission
+        title: Asynchronous Batch Submission
+        suffix: post
+      - fileId: /batch-routing/asynchronous-batch-download
+        title: Asynchronous Batch Download
+        suffix: get
+      - fileId: /matrix-routing/matrix-routing-service
+        title: Matrix Routing service (deprecated)
+        isPrivate: true
+        subgroups: [ matrix-routing-v1 ]
+      - fileId: /matrix-routing/synchronous-matrix
+        title: Synchronous Matrix
+        suffix: post
+        isPrivate: true
+        subgroups: [ matrix-routing-v1 ]
+      - fileId: /matrix-routing/asynchronous-matrix-submission
+        title: Asynchronous Matrix Submission
+        suffix: post
+        isPrivate: true
+        subgroups: [ matrix-routing-v1 ]
+      - fileId: /matrix-routing/asynchronous-matrix-download
+        title: Asynchronous Matrix Download
+        suffix: get
+        isPrivate: true
+        subgroups: [ matrix-routing-v1 ]
+  - title: Matrix Routing v2 API
+    items:
+      - fileId: /matrix-routing-v2/matrix-routing-v2-service
+        title: Introduction
+      - fileId: /matrix-routing-v2/release-notes
+        title: Release Notes
+      - fileId: /matrix-routing-v2/discounted-transaction-billing
+        title: Discounted Transaction Billing
+      - fileId: /matrix-routing-v2/migration-guide
+        title: Migration Guide
+      - fileId: /matrix-routing-v2/multi-customer
+        title: Multi-Customer
+      - fileId: /matrix-routing-v2/synchronous-matrix
+        title: Synchronous Matrix
+        suffix: post
+      - fileId: /matrix-routing-v2/asynchronous-matrix-submission
+        title: Asynchronous Matrix Submission
+        suffix: post
+      - fileId: /matrix-routing-v2/asynchronous-matrix-status
+        title: Asynchronous Matrix Status
+        suffix: get
+      - fileId: /matrix-routing-v2/asynchronous-matrix-download
+        title: Asynchronous Matrix Download
+        suffix: get
+      - fileId: /matrix-routing-v2/asynchronous-matrix-delete
+        title: Asynchronous Matrix Delete
+        isPrivate: true
+        subgroups: [ matrix-v2-internal ]
+        suffix: delete
+  - title: Private APIs
+    items:
+      - fileId: /private/release-notes
+        title: Release Notes
+        isPrivate: true
+      - fileId: /private/routing-with-extended-guidance
+        title: Routing with Extended Guidance
+        isPrivate: true
+        subgroups: [ turn-by-turn-customers ]
+        suffix: get/post
+      - fileId: /private/routing-with-extended-guidance-v2
+        title: Routing with Extended Guidance v2
+        isPrivate: true
+        subgroups: [ private-preview ]
+        suffix: get/post
+      - fileId: /private/calculate-reachable-range-with-shape-detailed
+        title: Calculate Reachable Range with Shape Detailed
+        isPrivate: true
+        subgroups: [ reachable-range-shape-detailed-customer ]
+        suffix: get
+      - fileId: /private/calculate-multiple-routes
+        title: Calculate Multiple Routes
+        isPrivate: true
+        subgroups: [ multi-stop-route-customer ]
+        suffix: post
+      - fileId: /private/road-shield
+        title: Road shield
+        isPrivate: true
+        subgroups: [ turn-by-turn-customers ]
+        suffix: get
+      - fileId: /private/calculate-reachable-range-with-shape-detailed-hcp3
+        title: Calculate Reachable Range with Shape Detailed (HCP3)
+        isPrivate: true
+        subgroups: [ hcp3-group ]
+        suffix: get
+      - fileId: /private/ldevr-charging-stations-view
+        title: EV POI Platform integration into the Long Distance EV Routing service
+        isPrivate: true
+        subgroups: [ internal-private-preview ]
+        suffix: post

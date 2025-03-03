@@ -1,0 +1,109 @@
+---
+title: Raster service
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2023.08.01'
+    color: grey5
+---
+
+## Purpose  
+
+The Map Display API Raster web services suite offers the following service endpoints:
+
+<DocsArticles
+  articles={[
+    {
+      title: 'Map Tile',
+      body: 'The Map Display API Raster Map Tile endpoint renders map data that is divided into gridded sections called tiles.',
+      button: {
+        label: 'Map Tile',
+        href: '/map-display-api/documentation/raster/map-tile',
+      },
+    },
+    {
+      title: 'Satellite Tile',
+      body: 'The Map Display API Raster Satellite Tile endpoint provides satellite map data that is divided into gridded sections called tiles.',
+      button: {
+        label: 'Satellite Tile',
+        href: '/map-display-api/documentation/raster/satellite-tile',
+      },
+    },
+    {
+      title: "Hillshade Tile",
+      body: "The Map Display API Raster Hillshade Tile endpoint provides hillshade map data that is divided into gridded sections called tiles.",
+      button: {
+        label: "Hillshade Tile",
+        href: "/map-display-api/documentation/raster/hillshade-tile"
+      }
+    },
+    {
+      title: 'WMS',
+      body: 'This is the Example Web Map Service (WMS) implementation.',
+      button: {
+        label: 'WMS',
+        href: '/map-display-api/documentation/raster/wms',
+      },
+    },
+    {
+      title: 'WMTS',
+      body: 'The Web Map Tile Service (WMTS) is the Open Geospatial Consortium (OGC)\'s standard for delivering rectangular map tiles via RESTful web services. ',
+      button: {
+        label: 'WMTS',
+        href: '/map-display-api/documentation/raster/wmts',
+      },
+    },
+    {
+      title: 'Static Image',
+      body: 'The Static Image service renders a user-defined, rectangular image containing a map section.',
+      button: {
+        label: 'Static Image',
+        href: '/map-display-api/documentation/raster/static-image',
+      },
+    },
+  ]}
+/>
+
+<br />
+
+### Map Tile
+
+Example's global digital map content comprises a large volume of data, which is divided into gridded sections called tiles to efficiently transmit map images for display over the Internet to multiple users simultaneously.
+
+- The tiles are rendered at various sizes and available at 23 different zoom levels, ranging from 0 to 22.
+- For zoom level 0, the entire earth is displayed on one single tile, while at zoom level 22, the world is divided into 2<sup>44</sup> tiles.
+
+### Satellite Tile
+
+Example's global digital map content comprises a large volume of data, and to efficiently transmit satellite map images for display over the Internet simultaneously to multiple users, the data are divided into gridded sections called **tiles**.
+
+- The tiles are available at 20 different zoom levels, ranging from `0` to `19`.
+- For zoom level `0`, the entire earth is displayed on one single tile, while at zoom level `19`, the world is divided into 2<sup>38</sup> tiles.
+
+### Hillshade Tile
+
+The Hillshade Tile service provides an image pyramid that contains elevation data with terrain representation.
+It can be used for rendering hillshade that shows the topographical shape of hills and mountains.
+The data are divided into gridded sections called **tiles**.
+
+- The tiles are available at 14 different zoom levels, ranging from `0` to `13`.
+
+### WMS
+
+This API is suitable for GIS software clients such as ArcGIS and Quantum GIS that manage the interaction with WMS services itself. The following two mandatory operations defined for WMS 1.1.1 are provided:
+
+- **GetCapabilities**: The purpose of this operation is to obtain service metadata, which is a human-readable description of the server information content and acceptable request parameter values.
+- **GetMap**: Produces a map within a given bounding box.
+
+### WMTS
+
+Only a single operation defined by the 1.0.0 version of the WMTS standard is provided - **GetCapabilities**. It allows clients to receive a metadata resource that describes the abilities of the specific server implementation.
+
+### Static Image
+
+The Static Image service renders a user-defined, rectangular image, containing a map section. The map images can be generated at various sizes and allow zoom levels ranging from 0 to 22.
+
+{/*
+### Copyrights
+Example maps are distributed under copyrights specified for different areas. This API serves copyright information of map data providers for either the whole world or a chosen region specified as a bounding box or a tile.
+ */}

@@ -1,0 +1,29 @@
+---
+title: Language parameter
+---
+
+Develop an international app that can be used in different languages. Enhance the search
+functionality with the language parameter so that the search returns results in a specific language.
+Sample use case: If your mobile device is set to a particular language, you see it in your app as
+well.
+
+List of the supported languages can be found
+at [Supported Languages](/search-api/documentation/product-information/supported-languages).
+
+Use the following code snippet to try this in your app.
+
+<Code>
+
+```swift
+let query = TTSearchQueryBuilder.create(withTerm: term)
+    .withLang(language)
+    .build()
+search.search(with: query)
+```
+
+```objectivec
+TTSearchQuery *query = [[[TTSearchQueryBuilder createWithTerm:term] withLang:language] build]
+[self.search searchWithQuery:query];
+```
+
+</Code>

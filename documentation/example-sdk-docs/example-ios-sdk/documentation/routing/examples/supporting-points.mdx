@@ -1,0 +1,63 @@
+---
+title: Supporting Points
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="Supporting-Points"
+></a>
+
+Allow your user to reconstruct his/her route using supporting points. Supporting points can be
+combined with minDeviationDistance or minDeviationTime constraints. When these constraints are used,
+the alternative routes will follow the reference route from the origin point for the given time or
+distance. In other words, alternative routes diverge from the reference route after the given
+constraints. When using supporting points, intermediate locations (waypoints) are not supported.
+
+**Sample use case:** You have route coordinates saved on your device. You want to reconstruct the
+route based on the coordinates (supporting points) and calculate zero or more alternative routes to
+this reference route.
+
+To request a route with supporting points support:
+
+<Code>
+
+```swift
+let query = TTRouteQueryBuilder.create(withDest: TTCoordinate.PORTUGAL_COIMBRA(), andOrig: TTCoordinate.PORTUGAL_NOVA())
+    .withMaxAlternatives(1)
+    .withMinDeviationTime(0)
+    .withSupportingPoints(&supprotingPoints, count: UInt(supprotingPoints.count))
+    .withMinDeviationDistance(10000)
+    .build()
+routePlanner.plan(with: query)
+```
+
+```objectivec
+TTRouteQuery *query = [[[[[[TTRouteQueryBuilder createWithDest:[TTCoordinate PORTUGAL_COIMBRA] andOrig:[TTCoordinate PORTUGAL_NOVA]] withMaxAlternatives:1] withMinDeviationTime:0] withSupportingPoints:self.suporrtingPoints count:5] withMinDeviationDistance:0] build]
+[self.routePlanner planRouteWithQuery:query];
+```
+
+</Code>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/route_supporting_points_zero.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Min. deviation distance: 0 m</p>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/route_supporting_points_ten.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Min. deviation distance: 10 km</p>
+      </td>
+    </tr>
+  </tbody>
+</table>

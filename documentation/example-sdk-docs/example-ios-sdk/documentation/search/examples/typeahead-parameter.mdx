@@ -1,0 +1,25 @@
+---
+title: Typeahead parameter
+---
+
+Offer your users search suggestions while they type with the "typeahead" flag. Sample use case: You
+were recommended a place to visit, but you can’t remember its name. You start searching in your app.
+After a few letters you see the place you’re looking for!
+
+Use the following code snippet to try this in your app.
+
+<Code>
+
+```swift
+let query = TTSearchQueryBuilder.create(withTerm: term)
+    .withTypeAhead(true)
+    .build()
+search.search(with: query)
+```
+
+```objectivec
+TTSearchQuery *query = [[[TTSearchQueryBuilder createWithTerm:term] withTypeAhead:YES] build]
+[self.search searchWithQuery:query];
+```
+
+</Code>

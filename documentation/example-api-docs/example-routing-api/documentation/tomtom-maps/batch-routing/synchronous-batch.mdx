@@ -1,0 +1,1397 @@
+---
+description: The Synchronous Batch endpoint allows you to submit a new batch for synchronous processing.
+title: Synchronous Batch
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2022.10.01'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+## Purpose
+
+The Synchronous Batch endpoint allows you to submit a new batch for synchronous processing. It responds with a batch processing result, or an HTTP  `408`  request timeout error if the processing time exceeds 60 seconds.
+
+## Request data
+
+### HTTP Method: `POST`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL request format</h4>
+
+```shell [type=post] [title=URL request format]
+https://{baseURL}/routing/{versionNumber}/batch/sync/json?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>URL request example</h4>
+
+```shell [type=post] [title=URL request example]
+https://api.Example.com/routing/1/batch/sync/json?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl request example</h4>
+
+```shell [type=post] [title=curl request example]
+curl -XPOST 'https://api.Example.com/routing/1/batch/sync/json?key={Your_API_Key}'
+```
+
+### Request headers
+
+The following table describes HTTP headers of particular interest to Batch Routing service clients.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)</th>
+      <td>
+        Specifies the MIME type of the body of the request. It may be: `application/json`.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">[Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding)</th>
+      <td>
+        Should contain a list of encodings acceptable by the client. Used to
+        demand a compressed response.<br />
+        **Value:**   `gzip`
+      </td>
+    </tr>
+    <tr>
+      <th id="request-headers-tracking-id" scope="row">Tracking-ID</th>
+      <td>
+        Specifies an identifier for the request.
+        <ul>
+          <li>It can be used to trace a call.</li>
+          <li>
+            The value must match the regular expression `'^[a-zA-Z0-9-]{1,100}$'`.
+          </li>
+          <li>
+            An example of format that matches this regular expression is UUID: (e.g.,  `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1` ). For details check [RFC 4122](https://tools.ietf.org/html/rfc4122).
+          </li>
+          <li>
+            If specified, it is replicated in the [Tracking-ID](#response-headers-tracking-id)  response header.
+          </li>
+          <li>
+            It is only meant to be used for support and does not involve tracking of you or your users in any form.
+          </li>
+        </ul>  
+         **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Request parameters  
+
+The following data table describes the request parameters.  
+
+- Required parameters **must be used** or the call will fail.  
+- Optional parameters may be used.  
+- A parameter&#39;s data type is beneath its name.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `baseURL`<br />
+        *string*
+      </th>
+      <td>
+        Base URL for calling the API.<br />
+         **Values:**
+        <ul>
+          <li>
+            `api.Example.com`: The default global API endpoint.
+          </li>
+          <li>
+            `kr-api.Example.com`: The region-specific endpoint for
+            South Korea. See the [region-specific content documentation](https://developer.Example.com/region-specific-content)
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `versionNumber`<br />
+        *string*
+      </th>
+      <td>
+        Service version.<br />
+        **Value:**  The current value is  `1`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `key`<br />
+        *string*
+      </th>
+      <td>
+        An API Key valid for the requested service.<br />
+        **Value:**  Your valid  `API Key`.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Supported Routing API suite endpoints  
+
+A list of  [Routing API](/routing-api/documentation/Example-maps/product-information/introduction)  suite endpoints supported by the Batch Routing service can be found below. For details regarding particular API usage, consult the following respective API documentation pages:
+
+-  [Calculate Route](/routing-api/documentation/routing/calculate-route)
+-  [Calculate Reachable Range](/routing-api/documentation/Example-maps/calculate-reachable-range)
+
+### POST request body
+
+The `POST` body of a batch request should contain a set of items which will be used to execute requests to [supported endpoints](#supported-routing-api-suite-endpoints) of the  [Routing API](/routing-api/documentation/Example-maps/product-information/introduction)  suite.
+
+Each batch request can contain items corresponding to multiple [supported endpoints](#supported-routing-api-suite-endpoints) of the  [Routing API](/routing-api/documentation/Example-maps/product-information/introduction)  suite. For each endpoint, the same body structure applies and specific parameters of each endpoint are expected to go into  `query`  elements.
+
+```json [type=post] [title=JSON request body example]
+{
+  "batchItems": [
+    {"query": "..."},
+    ...
+    {
+      "query": "...",
+      "post": {...}
+    }
+  ]
+}
+```
+
+### POST request body fields  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Field</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `batchItems`<br />
+        *array*
+      </th>
+      <td>
+        A set of batch items.<br />
+        **Value:**  The maximum number of batch items for an Synchronous API is  `100`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `query`<br />
+        *string*
+      </th>
+      <td>
+        A string used to build a request to one of the [supported endpoints](#supported-routing-api-suite-endpoints)
+        of the [Routing API](/routing-api/documentation/Example-maps/product-information/introduction)
+        suite.
+        <ul>
+          <li>
+            It is a partial URL without protocol, base URL, service version, or
+            API Key parts.
+          </li>
+          <li>
+            The output format (last path element) must be  `json`.
+          </li>
+          <li>
+            The query string values must be properly escaped (e.g., a "
+            character should be escaped with a \ (backslash)). More information
+            is available in [RFC 7159](https://tools.ietf.org/html/rfc7159#section-7).
+          </li>
+          <li>
+            Please note that the  `callback`  parameter is
+             **not supported**  by Batch Routing. For detailed descriptions,
+            refer to the documentation of [Calculate Route](/routing-api/documentation/Example-maps/calculate-route)
+            and [Calculate Reachable Range](/routing-api/documentation/Example-maps/calculate-reachable-range) services.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row"><Tag color="grey10" label="post" /></th>
+      <td>
+        Contains data that is passed to the [Calculate Route](/routing-api/documentation/Example-maps/calculate-route) or [Calculate Reachable Range](/routing-api/documentation/Example-maps/calculate-reachable-range)
+        services using the HTTP  `POST`  method.
+        <ul>
+          <li>
+            The  `POST`  data format must match the
+            `Content-Type`  header of a submitted Batch request, i.e.,
+            it should be in JSON format when the Content-Type is set to
+            `application/json`.
+          </li>
+          <li>
+            Please refer to the  **POST Data parameters**  section of [Calculate Route](/routing-api/documentation/Example-maps/calculate-route)
+            and [Calculate Reachable Range](/routing-api/documentation/Example-maps/calculate-reachable-range) services documentation for detailed descriptions and examples of
+            content for this field.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### POST request body examples  
+
+```shell [type=post] [title=Mixed endpoints example]
+{
+  "batchItems": [
+    {
+      "query": "/calculateRoute/52.36006039665441,4.851064682006836:52.36187528311709,4.850560426712036/json?travelMode=car&amp;routeType=fastest&amp;traffic=true&amp;departAt=now&amp;maxAlternatives=0"
+    },
+    {
+      "query": "/calculateRoute/52.36241907934766,4.850034713745116:52.36173769505809,4.852169752120972/json?travelMode=teleport&amp;routeType=fastest&amp;traffic=true&amp;departAt=now"
+    },
+    {
+      "query": "/calculateRoute/52.23292,21.06179:43.29379,17.01963/json",
+      "post": {
+        "avoidVignette": [
+          "AUS",
+          "CHE"
+        ]
+      }
+    },
+    {
+      "query": "/calculateReachableRange/52.36187528311709,4.850560426712036/json?fuelBudgetInLiters=20&constantSpeedConsumptionInLitersPerHundredkm=50,6",
+      "post": {
+        "avoidVignette": [
+          "NLD"
+        ]
+      }
+    },
+    {
+      "query": "/calculateReachableRange/52.36173769505809,4.852169752120972/json?timeBudgetInSec=1800"
+    }
+  ]
+}
+```
+
+```shell [type=post] [title=Calculate Route example]
+{
+  "batchItems": [
+    {
+      "query": "/calculateRoute/52.36006039665441,4.851064682006836:52.36187528311709,4.850560426712036/json?travelMode=car&routeType=fastest&traffic=true&departAt=now&maxAlternatives=0"
+    },
+    {
+      "query": "/calculateRoute/52.36241907934766,4.850034713745116:52.36173769505809,4.852169752120972/json?travelMode=teleport&routeType=fastest&traffic=true&departAt=now"
+    },
+    {
+      "query": "/calculateRoute/52.23292,21.06179:43.29379,17.01963/json",
+      "post": {
+        "avoidVignette": [
+          "AUS",
+          "CHE"
+        ]
+      }
+    }
+  ]
+}
+```
+
+```shell [type=post] [title=Calculate Reachable Range example]
+{
+  "batchItems": [
+    {
+      "query": "/calculateReachableRange/52.36187528311709,4.850560426712036/json?fuelBudgetInLiters=20&constantSpeedConsumptionInLitersPerHundredkm=50,6",
+      "post": {
+        "avoidVignette": [
+          "NLD"
+        ]
+      }
+    },
+    {
+      "query": "/calculateReachableRange/52.36173769505809,4.852169752120972/json?timeBudgetInSec=1800"
+    }
+  ]
+}
+```
+
+## Response data  
+
+### HTTP Status codes  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', textAlign: 'center' }}>Code</th>
+      <th scope="col" style={{ fontSize: '1em' }}> Meaning &amp; possible causes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`200`</th>
+      <td>
+        **OK**: The batch job has completed. Results are streamed to the client.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`400`</th>
+      <td>
+         **Bad Request**:
+        <ul>
+          <li>Missing required parameters.</li>
+          <li>Exceeded maximum number of batch items.</li>
+          <li>Or, parameters did not pass validation.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`403`</th>
+      <td>
+         **Forbidden**:
+        <ul>
+          <li>
+            The API Key is missing, inactive, invalid, not entitled to use Batch
+            Routing API over QPS (Queries per second) or over QPD (Queries per
+            day).
+          </li>
+          <li>Can also occur when using HTTP instead of HTTPS.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`404`</th>
+      <td>
+         **Not Found**: The requested resource could not be found, but it may
+        be available again in the future.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`405`</th>
+      <td>
+         **Method Not Allowed**: The client used an HTTP method other than `POST`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`408`</th>
+      <td>
+        **Request timeout**: The request sent to the server took longer than it was prepared to wait.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`414`</th>
+      <td>
+         **Requested URI is too long**: Indicates that the URI requested by
+        the client is longer than the server is willing to interpret.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`429`</th>
+      <td>
+         **Too Many Requests**: The API Key is over QPS (Queries per second).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`500`</th>
+      <td>
+         **An error occurred while processing the request.**  Please try again
+        later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`502`</th>
+      <td>
+         **Internal network connectivity issue.**  Please try again later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`503`</th>
+      <td>
+         **Service currently unavailable.**  Please try again later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`504`</th>
+      <td>
+         **Internal network connectivity issue or a request that has taken too
+          long to complete.**
+        Please try again later.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`596`</th>
+      <td>
+         **Service not found.**  Request contains an incorrect FQDN and/or
+        path.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response headers  
+
+The following table describes HTTP response headers of particular interest to Batch service clients.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">[Access-Control-Expose-Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Access-Control-Expose-Headers)</th>
+      <td>
+        A comma-separated list of HTTP header names that browsers are allowed to access.<br />
+        **Value:**   `Content-Length`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Access-Control-Allow-Origin](https://fetch.spec.whatwg.org/#http-access-control-allow-origin)</th>
+      <td>
+        A header instructing browsers to allow customer websites to contact the
+        Batch Routing service.<br />
+        **Value:**   `*`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)</th>
+      <td>
+        The Batch Routing service applies gzip compression to the responses if
+        it is requested by the client with the [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) header.<br />
+        **Value:**   `gzip`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)</th>
+      <td>
+        The format of the response as chosen by the client (see the `contentType`  request parameter).<br />
+        **Values:** `application/json;charset=utf-8`
+      </td>
+    </tr>
+    <tr>
+      <th id="location1" scope="row">[Location](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Location)</th>
+      <td>
+        Indicates the location where the batch results can be downloaded.<br />
+        **Value:**   `URI`
+      </td>
+    </tr>
+    <tr>
+      <th id="response-headers-tracking-id" scope="row">Tracking-ID</th>
+      <td>
+        An identifier for the request.
+        <ul>
+          <li>
+            If the  [Tracking-ID](#request-headers-tracking-id)  header
+            was specified, it is replicated in the response.
+          </li>
+          <li>Otherwise, it is generated automatically by the service.</li>
+          <li>
+            It is only meant to be used for support and does not involve
+            tracking of you or your users in any form.
+          </li>
+        </ul>  
+        **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Successful response structure
+
+Each Batch response consists of one or more elements which correspond sequentially with the elements in the request.
+Each element contains a successful response from the invoked  [Routing API suite](/routing-api/documentation/Example-maps/product-information/introduction) endpoint or a status code indicating why the batch item failed.
+
+```json [title=JSON Response body example]
+{
+  "formatVersion": "0.0.1",
+  "batchItems": [
+    {
+      "statusCode": ...,
+      "response": {...}
+    },
+    ...,
+    {
+      "statusCode": ...,
+      "response": {...}
+    }
+  ],
+  "summary": {
+    "successfulRequests": ...,
+    "totalRequests": ...
+  }
+}
+```
+
+### Successful response fields  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Field</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">`batchItems`</th>
+      <td>A set of batch items processing results.</td>
+    </tr>
+    <tr>
+      <th scope="row">`statusCode`</th>
+      <td>
+        Status code of a response from the underlying [Routing API suite](/routing-api/documentation/Example-maps/product-information/introduction)
+        endpoint for given batch item.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">`response`</th>
+      <td>
+        Content of the response from the underlying [Routing API suite](/routing-api/documentation/Example-maps/product-information/introduction)
+        endpoint for a given batch item query.
+        <ul>
+          <li>
+            The full response content will be included both in case of success
+            and failure.
+          </li>
+          <li>
+            If the underlying service&#39;s response content type does not match
+            requested content type, then the response will be wrapped to fit the
+            requested content type.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">`summary`</th>
+      <td>Summary of the batch request.</td>
+    </tr>
+    <tr>
+      <th scope="row">`successfulRequests`</th>
+      <td>Number of successful batch item requests.</td>
+    </tr>
+    <tr>
+      <th scope="row">`totalRequests`</th>
+      <td>Total number of items in a batch request.</td>
+    </tr>
+  </tbody>
+</table>  
+
+### Successful response example  
+
+To improve the readability of the example, the copyright and privacy sections inside a batch item response are skipped.  
+
+<Accordion label="JSON response example" isClosed>
+
+```json
+{
+  "formatVersion": "0.0.1",
+  "batchItems": [
+    {
+      "statusCode": 200,
+      "response": {
+        "formatVersion": "0.0.12",
+        "copyright": "...",
+        "privacy": "...",
+        "routes": [
+          {
+            "summary": {
+              "lengthInMeters": 223,
+              "travelTimeInSeconds": 66,
+              "trafficDelayInSeconds": 0,
+              "departureTime": "2016-04-22T13:43:25+02:00",
+              "arrivalTime": "2016-04-22T13:44:31+02:00"
+            },
+            "legs": [
+              {
+                "summary": {
+                  "lengthInMeters": 223,
+                  "travelTimeInSeconds": 66,
+                  "trafficDelayInSeconds": 0,
+                  "departureTime": "2016-04-22T13:43:25+02:00",
+                  "arrivalTime": "2016-04-22T13:44:31+02:00"
+                },
+                "points": [
+                  {
+                    "latitude": 52.36006,
+                    "longitude": 4.85109
+                  },
+                  {
+                    "latitude": 52.36084,
+                    "longitude": 4.85106
+                  },
+                  {
+                    "latitude": 52.36176,
+                    "longitude": 4.85104
+                  },
+                  {
+                    "latitude": 52.36176,
+                    "longitude": 4.85056
+                  }
+                ]
+              }
+            ],
+            "sections": [
+              {
+                "startPointIndex": 0,
+                "endPointIndex": 3,
+                "travelMode": "car"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "statusCode": 400,
+      "response": {
+        "formatVersion": "0.0.12",
+        "copyright": "...",
+        "privacy": "...",
+        "error": {
+          "description": "Invalid travel mode value: [teleport]"
+        }
+      }
+    },
+    {
+      "statusCode": 200,
+      "response": {
+        "formatVersion": "0.0.1",
+        "copyright": "...",
+        "privacy": "...",
+        "reachableRange": {
+          "center": {
+            "latitude": 52.36176,
+            "longitude": 4.85056
+          },
+          "boundary": [
+            {
+              "latitude": 52.78716,
+              "longitude": 4.81318
+            },
+            {
+              "latitude": 52.78983,
+              "longitude": 4.79019
+            },
+            {
+              "latitude": 52.78346,
+              "longitude": 4.70485
+            },
+            {
+              "latitude": 52.77541,
+              "longitude": 4.67377
+            },
+            {
+              "latitude": 52.73947,
+              "longitude": 4.6453
+            },
+            {
+              "latitude": 52.61481,
+              "longitude": 4.64891
+            },
+            {
+              "latitude": 52.61362,
+              "longitude": 4.64887
+            },
+            {
+              "latitude": 52.53855,
+              "longitude": 4.65841
+            },
+            {
+              "latitude": 52.49834,
+              "longitude": 4.64125
+            },
+            {
+              "latitude": 52.47165,
+              "longitude": 4.60932
+            },
+            {
+              "latitude": 52.46203,
+              "longitude": 4.58628
+            },
+            {
+              "latitude": 52.44705,
+              "longitude": 4.59327
+            },
+            {
+              "latitude": 52.37132,
+              "longitude": 4.52544
+            },
+            {
+              "latitude": 52.32164,
+              "longitude": 4.57722
+            },
+            {
+              "latitude": 52.26437,
+              "longitude": 4.45996
+            },
+            {
+              "latitude": 52.11393,
+              "longitude": 4.28383
+            },
+            {
+              "latitude": 50.98539,
+              "longitude": 2.23052
+            },
+            {
+              "latitude": 50.98863,
+              "longitude": 2.35777
+            },
+            {
+              "latitude": 50.43132,
+              "longitude": 2.84907
+            },
+            {
+              "latitude": 50.33847,
+              "longitude": 2.92668
+            },
+            {
+              "latitude": 50.22934,
+              "longitude": 3.27133
+            },
+            {
+              "latitude": 50.45216,
+              "longitude": 3.76045
+            },
+            {
+              "latitude": 50.48706,
+              "longitude": 4.08585
+            },
+            {
+              "latitude": 49.98206,
+              "longitude": 4.51402
+            },
+            {
+              "latitude": 50.49117,
+              "longitude": 4.6182
+            },
+            {
+              "latitude": 50.09545,
+              "longitude": 5.13195
+            },
+            {
+              "latitude": 49.91044,
+              "longitude": 5.29447
+            },
+            {
+              "latitude": 50.02166,
+              "longitude": 5.69731
+            },
+            {
+              "latitude": 50.07049,
+              "longitude": 5.73492
+            },
+            {
+              "latitude": 50.21669,
+              "longitude": 6.23432
+            },
+            {
+              "latitude": 50.11697,
+              "longitude": 6.43576
+            },
+            {
+              "latitude": 50.46513,
+              "longitude": 6.7001
+            },
+            {
+              "latitude": 50.37483,
+              "longitude": 7.41121
+            },
+            {
+              "latitude": 50.52358,
+              "longitude": 7.67539
+            },
+            {
+              "latitude": 50.87047,
+              "longitude": 7.96531
+            },
+            {
+              "latitude": 51.02269,
+              "longitude": 7.82893
+            },
+            {
+              "latitude": 51.54443,
+              "longitude": 8.1081
+            },
+            {
+              "latitude": 52.2334,
+              "longitude": 9.25347
+            },
+            {
+              "latitude": 52.86505,
+              "longitude": 8.23947
+            },
+            {
+              "latitude": 52.95622,
+              "longitude": 8.56608
+            },
+            {
+              "latitude": 53.18553,
+              "longitude": 8.10646
+            },
+            {
+              "latitude": 53.32431,
+              "longitude": 6.87906
+            },
+            {
+              "latitude": 53.24864,
+              "longitude": 6.46143
+            },
+            {
+              "latitude": 53.21977,
+              "longitude": 5.98597
+            },
+            {
+              "latitude": 53.20076,
+              "longitude": 5.64319
+            },
+            {
+              "latitude": 53.18381,
+              "longitude": 5.45848
+            },
+            {
+              "latitude": 53.03505,
+              "longitude": 5.23428
+            },
+            {
+              "latitude": 52.95193,
+              "longitude": 5.0762
+            },
+            {
+              "latitude": 52.7731,
+              "longitude": 4.956
+            },
+            {
+              "latitude": 52.73059,
+              "longitude": 4.89175
+            }
+          ]
+        }
+      }
+    },
+    {
+      "statusCode": 200,
+      "response": {
+        "formatVersion": "0.0.1",
+        "copyright": "...",
+        "privacy": "...",
+        "reachableRange": {
+          "center": {
+            "latitude": 52.36178,
+            "longitude": 4.85216
+          },
+          "boundary": [
+            {
+              "latitude": 52.55238,
+              "longitude": 4.831
+            },
+            {
+              "latitude": 52.58944,
+              "longitude": 4.81481
+            },
+            {
+              "latitude": 52.61593,
+              "longitude": 4.75696
+            },
+            {
+              "latitude": 52.61869,
+              "longitude": 4.73182
+            },
+            {
+              "latitude": 52.60065,
+              "longitude": 4.72924
+            },
+            {
+              "latitude": 52.5704,
+              "longitude": 4.69259
+            },
+            {
+              "latitude": 52.56248,
+              "longitude": 4.66803
+            },
+            {
+              "latitude": 52.51754,
+              "longitude": 4.65152
+            },
+            {
+              "latitude": 52.51005,
+              "longitude": 4.65357
+            },
+            {
+              "latitude": 52.47165,
+              "longitude": 4.60932
+            },
+            {
+              "latitude": 52.46203,
+              "longitude": 4.58628
+            },
+            {
+              "latitude": 52.44705,
+              "longitude": 4.59327
+            },
+            {
+              "latitude": 52.40392,
+              "longitude": 4.54964
+            },
+            {
+              "latitude": 52.34494,
+              "longitude": 4.58513
+            },
+            {
+              "latitude": 52.27725,
+              "longitude": 4.51188
+            },
+            {
+              "latitude": 52.17925,
+              "longitude": 4.40661
+            },
+            {
+              "latitude": 52.13387,
+              "longitude": 4.40049
+            },
+            {
+              "latitude": 52.08084,
+              "longitude": 4.4085
+            },
+            {
+              "latitude": 52.12844,
+              "longitude": 4.54478
+            },
+            {
+              "latitude": 52.14113,
+              "longitude": 4.6569
+            },
+            {
+              "latitude": 52.13626,
+              "longitude": 4.69284
+            },
+            {
+              "latitude": 52.18881,
+              "longitude": 4.76185
+            },
+            {
+              "latitude": 52.24121,
+              "longitude": 4.81595
+            },
+            {
+              "latitude": 52.25268,
+              "longitude": 4.8248
+            },
+            {
+              "latitude": 52.2258,
+              "longitude": 4.85207
+            },
+            {
+              "latitude": 52.22231,
+              "longitude": 4.86311
+            },
+            {
+              "latitude": 52.11528,
+              "longitude": 4.91272
+            },
+            {
+              "latitude": 52.10203,
+              "longitude": 4.91813
+            },
+            {
+              "latitude": 52.15657,
+              "longitude": 4.9549
+            },
+            {
+              "latitude": 52.07171,
+              "longitude": 5.03885
+            },
+            {
+              "latitude": 52.03868,
+              "longitude": 5.06395
+            },
+            {
+              "latitude": 52.06083,
+              "longitude": 5.09541
+            },
+            {
+              "latitude": 52.12659,
+              "longitude": 5.1081
+            },
+            {
+              "latitude": 52.23269,
+              "longitude": 5.04984
+            },
+            {
+              "latitude": 52.17824,
+              "longitude": 5.18006
+            },
+            {
+              "latitude": 52.20553,
+              "longitude": 5.27285
+            },
+            {
+              "latitude": 52.21432,
+              "longitude": 5.33036
+            },
+            {
+              "latitude": 52.35769,
+              "longitude": 5.3551
+            },
+            {
+              "latitude": 52.4155,
+              "longitude": 5.38742
+            },
+            {
+              "latitude": 52.37996,
+              "longitude": 4.97327
+            },
+            {
+              "latitude": 52.39278,
+              "longitude": 4.96466
+            },
+            {
+              "latitude": 52.45905,
+              "longitude": 5.03088
+            },
+            {
+              "latitude": 52.49351,
+              "longitude": 5.03124
+            },
+            {
+              "latitude": 52.54294,
+              "longitude": 5.02473
+            },
+            {
+              "latitude": 52.65356,
+              "longitude": 5.07229
+            },
+            {
+              "latitude": 52.67399,
+              "longitude": 5.06906
+            },
+            {
+              "latitude": 52.7202,
+              "longitude": 5.02538
+            },
+            {
+              "latitude": 52.63563,
+              "longitude": 4.9565
+            },
+            {
+              "latitude": 52.54702,
+              "longitude": 4.87765
+            },
+            {
+              "latitude": 52.54899,
+              "longitude": 4.86904
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "summary": {
+    "successfulRequests": 3,
+    "totalRequests": 4
+  }
+}
+```
+
+</Accordion><br />  
+
+### Error response  
+
+```json [title=JSON error response example]
+{
+  "formatVersion": "0.0.1",
+  "error": {
+    "description": "Validation of batch item 1 failed. Batch response format (JSON) does not match content type of batch item query."
+  },
+  "detailedError": {
+    "code": "BadRequest",
+    "message": "Bad Request",
+    "details": {
+      "code": "MalformedBody",
+      "message": "Validation of batch item 1 failed. Batch response format (JSON) does not match content type of batch item query",
+      "target": "postBody"
+    }
+  }
+}
+```
+
+### Error response fields  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Primary&nbsp;fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `formatVersion`<br />
+        *string*
+      </th>
+      <td>Version of the batch error response format.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `error`<br />
+        *object*
+      </th>
+      <td>
+        Simplified information about the error.<br />
+        [`error`](#fieldError) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `detailedError`<br />
+        *object*
+      </th>
+      <td>
+        Detailed information about the error.<br />
+        [`detailedError`](#fieldDetailedError) object
+      </td>
+    </tr>
+    <tr>
+      <th id="fieldError" colspan="2" style={{ fontSize: '1em' }}>error object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `description`<br />
+        *string*
+      </th>
+      <td>
+        A human-readable description of the error. It is intended as an aid to
+        developers and is not suitable for exposure to end users.
+      </td>
+    </tr>
+    <tr>
+      <th id="fieldDetailedError" colspan="2" style={{ fontSize: '1em' }}>detailedError object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`<br />
+        *string*
+      </th>
+      <td>
+        One of the defined  [error codes](#error-code-hierarchy).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `message`<br />
+        *string*
+      </th>
+      <td>
+        A human-readable description of the error code. It is intended as an aid
+        to developers and is not suitable for exposure to end users.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `target`<br />
+        *string*
+      </th>
+      <td>
+        Optional.<br />
+        Target of the particular error.<br />
+        **Values:**
+        <ul>
+          <li>The name of the request parameter.</li>
+          <li>`postBody`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `details`<br />
+        *array*
+      </th>
+      <td>
+        Optional.<br />
+        An array of root causes (more detailed errors) that led to this error.<br />
+        [`detailedError`](#fieldDetailedError) array
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `innerError`<br />
+        *object*
+      </th>
+      <td>
+        Optional. A higher level of details about this error.<br />
+        [`innerError`](#fieldInnerError) object
+      </td>
+    </tr>
+    <tr>
+      <th id="fieldInnerError" colspan="2" style={{ fontSize: '1em' }}>innerError object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`<br />
+        *string*
+      </th>
+      <td>
+        One of the defined  [error codes](#error-code-hierarchy).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `message`<br />
+        *string*
+      </th>
+      <td>
+        Optional. A human-readable representation of the error code. It is intended
+        as an aid to developers and is not suitable for exposure to end users.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `innerError`<br />
+        *object*
+      </th>
+      <td>
+        Optional.<br />
+        A higher level of details about this error.<br />
+        [`innerError`](#fieldInnerError) object
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Error code hierarchy  
+
+List of predefined, hierarchical, human-readable error codes.  
+
+- Top level codes relate to HTTP error codes.
+- They may be refined by error codes in `details`
+  or `innerError`.
+- Further levels of refinement are possible by nesting `innerError` inside `innerError`.
+
+In the future, the list may be extended with additional codes. The application must be ready for the occurrence of an unknown error code (e.g., by stopping error processing at the last understood level of detail).  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Error code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>`BadArgument`</th>
+      <td>
+        <p>
+          One of the request parameters was missing or did not pass validation.
+          The  `target`  field contains the name of the related
+          parameter.
+        </p>
+        <p>Possible inner errors:</p>
+        <ul>
+          <li>
+            `MissingRequiredParameter`
+          </li>
+          <li>
+            `InvalidParameterValue`
+          </li>
+          <li>
+            `IllegalParameter`
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>`BadRequest`</th>
+      <td>
+        <p>
+          Top level code for requests which resulted in an HTTP `400 Bad Request`.
+        </p>
+        <p>Possible root causes:</p>
+        <ul>
+          <li>
+            `BadArgument`
+          </li>
+          <li>
+            `MalformedBody`
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>`BatchRequestTimeout`</th>
+      <td>
+        Top level code for requests which resulted in a HTTP `408 Request Timeout`. Calculating batch takes too long to complete using sync mode. Please recalculate using async mode.
+      </td>
+    </tr>
+    <tr>
+      <th>`IllegalParameter`</th>
+      <td>Unsupported request parameter was specified.</td>
+    </tr>
+    <tr>
+      <th>`InvalidParameterValue`</th>
+      <td>The value of one of the parameters is invalid.</td>
+    </tr>
+    <tr>
+      <th>`InternalServerError`</th>
+      <td>
+        Top level code for requests which resulted in an HTTP 
+        `500 Internal Server Error`. The service cannot handle the 
+        request right now, an unexpected condition was encountered.
+      </td>
+    </tr>
+    <tr>
+      <th>`MalformedBody`</th>
+      <td>
+        `POST` body has an unexpected format.
+      </td>
+    </tr>
+    <tr>
+      <th>`MissingRequiredParameter`</th>
+      <td>One of the required parameters was not provided.</td>
+    </tr>
+    <tr>
+      <th>`NotFound`</th>
+      <td>
+        Top level code for requests which resulted in a HTTP `404 Not Found`  caused by providing an incorrect request
+        path.
+      </td>
+    </tr>
+    <tr>
+      <th>`ServiceUnavailable`</th>
+      <td>
+        Top level code for requests which resulted in an HTTP `503 Service Unavailable`. The service cannot handle the request right now, this is certainly a temporary state.
+      </td>
+    </tr>
+  </tbody>
+</table>  

@@ -1,0 +1,48 @@
+---
+title: Traffic incident tiles
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_traffic_incident_tiles"
+></a>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_maintaining_the_currency_of_traffic_incident_tiles"
+></a>
+
+## Maintaining the currency of traffic incident tiles
+
+**IMPORTANT:** The Maps SDK should be initialized with the style from Style Merger which only
+supports vector tiles. The approach of using a single style that contains both Raster and Vector
+tiles was deprecated. After the deprecation period is over, it will not be possible to switch
+between Raster and Vector Traffic Incidents without reloading the style.
+
+Traffic incident data provided as map tiles by
+the [Vector Incident Tiles](/traffic-api/documentation/traffic-incidents/vector-incident-tiles)
+and [Raster Incident Tiles](/documentation/traffic-api/documentation/traffic-incidents/raster-incident-tiles)
+services is updated periodically to reflect the current state of traffic as closely as possible. It
+might happen that the traffic data changes between two requests to the service. In this situation,
+always requesting the most recent data may lead to inconsistencies in the visual representation of
+traffic. Adjacent tiles may show traffic in different states.
+
+The traffic incident tile services provide a way to synchronize tiles between Requests. If the ID of
+a traffic model is supplied in a Request’s URL, the traffic model specified by that ID is used to
+fulfill the Request.
+The [Traffic Incident Viewport](/traffic-api/documentation/traffic-incidents/incident-viewport)
+service provides the ID of the most recent traffic model shared between all tiles within the
+provided viewport. The Maps SDK automatically synchronizes traffic incident tiles displayed on the
+map and maintains their currency by periodically requesting a traffic model ID for the current
+viewport.
+
+<Blockquote type="announcement" hasIcon>
+
+The Maps SDK requests a current traffic model ID from the Traffic Incident Viewport service every 30
+seconds as long as the visibility of at least one traffic incident layer is set to `true`. If the
+new ID and the current one are different, new traffic incident tiles are requested from the
+respective service. All regular charges apply.
+
+</Blockquote>

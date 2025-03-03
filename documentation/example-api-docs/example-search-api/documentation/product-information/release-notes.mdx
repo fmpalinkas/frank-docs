@@ -1,0 +1,146 @@
+---
+title: Search API Release Notes
+hideSubmenu: false
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2023.03.03'
+    color: grey5
+---
+
+## Overview
+
+This Example Release Notes page records the release date with changes and bug fixes associated with a product release. The release dates are in descending order starting with the most recent update. Map data is released once a week.
+
+### Release date: 2023.06.27
+
+**Changes:**
+
+- All Search service endpoints
+  - Fuel stations now have a `vehicleTypes` response field, which contains the supported vehicle types.
+- [Place by ID](/search-api/documentation/place-by-id-service/place-by-id)
+  - Fuel stations now have a `vehicleTypes` response field, which contains the supported vehicle types.
+
+### Release date: 2023.04.19
+
+**Changes:**
+
+- [Fuzzy Search](/search-api/documentation/search-service/fuzzy-search)
+  - Geo biasing parameter had been introduced, which allows to specify search geobias (location preference) in
+  different shapes
+- [Points of Interest Search](/search-api/documentation/search-service/points-of-interest-search)
+  - Geo biasing parameter had been introduced, which allows to specify search geobias (location preference) in
+  different shapes
+- [Category Search](/search-api/documentation/search-service/category-search)
+  - Geo biasing parameter had been introduced, which allows to specify search geobias (location preference) in
+   different shapes
+
+
+### Release date: 2023.03.15
+
+**Changes:**  
+
+- [Along Route Search](/search-api/documentation/search-service/along-route-search)
+  - A [Primary use cases](/search-api/documentation/search-service/along-route-search/#primary-use-cases) documentation section is now provided. It covers the two basic modes that you can utilize the service for.
+
+### Release date: 2023.02.06
+
+**Changes:**  
+
+- All Search service endpoints 
+  - Fuel stations now have a `fuelTypes` response field, which contains the available fuel types.
+- [Place by ID](/search-api/documentation/place-by-id-service/place-by-id)
+  - Fuel stations now have a `fuelTypes` response field, which contains the available fuel types.
+
+### Release date: 2022.12.01
+
+**Changes:**  
+
+- [Fuzzy Search](/search-api/documentation/search-service/fuzzy-search)  
+  - The `summary` contains an array `queryIntent`. 
+  - We detect 4 different query intents: coordinate, nearby, bookmark queries, and what3words addresses.
+
+### Release date: 2022.09.06
+
+**Changes:**  
+
+- [Geometry Search](/search-api/documentation/search-service/geometry-search)  
+  - Geometry Search now supports `lat` and `lon` parameters. 
+  - When these are provided, results are biased to this position, the response contains the `geoBias` field, and every result has a `dist` field.
+
+### Release date: 2022.07.18
+
+**Changes:**  
+
+- Removed Low Bandwidth Search: End of support.
+
+### Release date: 2022.05.09
+
+**Changes:**   
+
+- All Search API endpoints
+  - [Region-specific content](/search-api/documentation/product-information/region-specific-content) is added for South Korea. 
+  - As part of the changes the [Supported Language](/search-api/documentation/product-information/supported-languages) reference list was updated to include Korean Latin and Hangul scripts.
+
+### Release date: 2021.03.05
+
+**Changes:**    
+
+- [Fuzzy Search](/search-api/documentation/search-service/fuzzy-search)
+  - Response object for geographies of type `PostalCodeArea` in the USA has a new field `postalName`, which represents the name for a postal code that is related to a single administrative area, city, town, or other populated place.
+  - The field `freeFormAddress` of `PostalCodeArea` in the USA will contain `postalName`.
+- [Geometry Search](/search-api/documentation/search-service/geometry-search) 
+  - Response object for geographies of type `PostalCodeArea` in the USA have a new field  `postalName`. 
+  - This represents the name for a postal code that is related to a single administrative area, city, town, or other populated place.
+  - The field `freeFormAddress` of `PostalCodeArea` in the USA will contain `postalName`.
+
+### Release date: 2021.02.16
+
+**Changes:**  
+
+- [Fuzzy Search](/search-api/documentation/search-service/fuzzy-search)
+  - Response `address` object has a new `countrySubdivisionCode` field in line with ISO 3166-2.
+- [Geometry Search](/search-api/documentation/search-service/geometry-search)
+  - Response `address` object has a new ` countrySubdivisionCode` field in line with ISO 3166-2.
+
+### Release date: 2021.01.20  
+
+**Changes:**   
+
+- [Autocomplete](/search-api/documentation/autocomplete-service/autocomplete)
+  - Results with low relevance are removed from the response.
+
+### Release date: 2021.01.07
+
+**Changes:**  
+
+- All Search service endpoints
+  - In USA, the `LocalName` is aligned with postal city/town names.
+- [Place by ID](/search-api/documentation/place-by-id-service/place-by-id)
+  - In USA, the  `LocalName`  is aligned with postal city/town names.
+
+### Release date: 2020.12.08
+
+**Changes:**  
+
+- [Fuzzy Search](/search-api/documentation/search-service/fuzzy-search)
+  - New  `entityTypeSet`  parameter that can be used to restrict the result to a specific entity type.
+- [Geometry Search](/search-api/documentation/search-service/geometry-search)
+  - New  `entityTypeSet`  parameter that can be used to restrict the result to a specific entity type. 
+- [Autocomplete](/search-api/documentation/autocomplete-service/autocomplete)
+  - Brands and categories are boosted according to popularity.
+
+### Release date: 2020.09.10
+
+**Changes:**  
+
+- [Fuzzy Search](/search-api/documentation/search-service/fuzzy-search)
+  - Add  `StreetName`  and  `HouseNumber`  information to data about EV charging stations.
+- [Points of Interest Search](/search-api/documentation/search-service/points-of-interest-search)
+  - Add  `StreetName`  and  `HouseNumber`  information to data about EV charging stations.
+- [Category Search](/search-api/documentation/search-service/category-search)
+  - Add  `StreetName`  and  `HouseNumber`  information to data about EV charging stations.
+- [Nearby Search](/search-api/documentation/search-service/nearby-search)
+  - Add  `StreetName`  and  `HouseNumber`  information to data about EV charging stations.  
+- [Along Route Search](/search-api/documentation/search-service/along-route-search)
+  - Add  `StreetName`  and  `HouseNumber`  information to data about EV charging stations.  

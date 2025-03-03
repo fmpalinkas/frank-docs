@@ -1,0 +1,3381 @@
+---
+title: Tile Content
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.11'
+    color: grey5
+  - label: Example New Maps
+    color: brand-cadmium
+---
+
+<Blockquote type="announcement" hasIcon>
+### Important notes:
+- This Example New API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example New Maps.**
+- See the <a href="/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
+</Blockquote>
+
+## Example Vector Format  
+
+The Example New Maps Vector Tiles Content document contains map features (points, lines, road shapes, water polygons, building footprints, etc.) that can be used to visualize map data. The data is divided into multiple protobuf layers. Besides the layers, the protobuf tags are also used to further describe the geographic features.  
+
+![Vector tile property dependencies](https://developer.Example.com/assets/images/ProtobufSchemaPNGBig.png)
+
+<h4 style={{ fontSize: '1em' }}>Legend</h4>  
+
+<dl>
+  <dt>
+    `Tile` 
+  </dt>
+  <dd>
+    Represents a vector tile as a whole entity. It consists of at least one `TileLayer`. If the tile does not contain any relevant data, it contains one layer named `empty`.
+  </dd>
+  <br />
+  <dt>
+    `TileLayer` 
+  </dt>
+  <dd>
+    Part of a `Tile`, representing one of the layers that can be
+    rendered later. One layer consists of e.g., all Parks, Roads, Built-up
+    areas, or Points of interest.
+    <br />
+    Each `TileLayer` contains geometries of the same type. A geometry
+    in the vector tile can be one of three types: `POINT`,
+    `LINESTRING`, or `POLYGON`. Every
+    `TileLayer` contains the following fields:
+    <ul>
+      <li>
+        `name` 
+      </li>
+      <li>
+        `version` 
+      </li>
+      <li>
+        `extent` 
+      </li>
+    </ul>
+    <br />
+    It may also contain the following fields:
+    <ul>
+      <li>
+        `keys` is an array of unique `strings`.
+      </li>
+      <li>
+        `values`  is an array of unique `TileValues`.
+      </li>
+      <li>
+        `features`  is an array of unique `TileFeatures`.
+      </li>
+    </ul>
+    <br />
+    Arrays of `keys` and `values` contain the mapping for
+    tags of `TileFeature.` 
+  </dd>
+  <br />
+  <dt>
+    `TileFeature` 
+  </dt>
+  <dd>
+    Member of an array of  `features`  stored in a
+     `TileLayer` , containing a geometry representation that can be
+    rendered.
+    <br />
+    It always contains the following fields:
+    <ul>
+      <li>
+         `type`  is a type of geometry. It can be  `POINT` ,
+         `LINESTRING` , or  `POLYGON`.
+      </li>
+      <li>
+         `geometry`  is an array of encoded geometry that can be used
+        for rendering. See the
+         [Decoding tile geometry](#decoding-tile-geometry)  section for
+        details.
+      </li>
+    </ul>
+    <br />
+    It may also contain the following fields:
+    <ul>
+      <li>
+         `tags`  is an array containing properties of feature.
+        <ul>
+          <li>
+            They are a  `TileFeature's`  detailed description which can
+            be used for styling and later rendering the geometry.
+          </li>
+          <li>They are encoded into an array of integers.</li>
+          <li>
+            In order to decode them, the arrays of  `keys`  and
+             `values`  from a corresponding  `TileLayer`  must
+            be used.
+          </li>
+          <li>
+            See the
+             [Decoding feature tile tags](#decoding-feature-tags) 
+            section for details.
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </dd>
+  <br />
+  <dt>
+     `TileValue` 
+  </dt>
+  <dd>
+    Encoded representation of a string, integer, floating point, or boolean
+    value.
+    <ul>
+      <li>
+        It is stored in a  `values`  array, in a  `TileLayer`.
+      </li>
+      <li>
+        It is used for decoding  `tags`  of a  `TileFeature` 
+        (together with the members of a  `keys`  array).
+      </li>
+      <li>
+        See the  [Decoding feature tile tags](#decoding-feature-tags) 
+        section for details.
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+## Example Vector Schema
+
+### Schema data
+
+Formally, the structure of a vector tile is described by the  [protocol buffer schema](https://developers.google.com/protocol-buffers/docs/overview). It allows the generation of C++, Java, Python, Go, Ruby, Objective-C, and C# code based on the proto file.
+
+```cpp
+package vector_tile
+
+option optimize_for = LITE_RUNTIME;
+
+message Tile {
+
+  enum GeomType {
+    UNKNOWN = 0;
+    POINT = 1;
+    LINESTRING = 2;
+    POLYGON = 3;
+  }
+
+  message Value {
+    optional string string_value = 1;
+    optional float float_value = 2;
+    optional double double_value = 3;
+    optional int64 int_value = 4;
+    optional uint64 uint_value = 5;
+    optional sint64 sint_value = 6;
+    optional bool bool_value = 7;
+    extensions 8 to max;
+  }
+
+  message Feature {
+    optional uint64 id = 1 [ default = 0 ];
+    repeated uint32 tags = 2 [ packed = true ];
+    optional GeomType type = 3 [ default = UNKNOWN ];
+    repeated uint32 geometry = 4 [ packed = true ];
+    optional bytes raster = 5;
+  }
+
+  message Layer {
+    required uint32 version = 15 [ default = 1 ];
+    required string name = 1;
+    repeated Feature features = 2;
+    repeated string keys = 3;
+    repeated Value values = 4;
+    optional uint32 extent = 5 [ default = 4096 ];
+
+    extensions 16 to max;
+  }
+
+  repeated Layer layers = 3;
+
+  extensions 16 to 8191;
+}
+```
+
+### Decoding tile geometry
+
+Vector Tile geometry uses the following coordinate system:
+
+- Coordinates are always integers.
+- The `(0,0)` point is located in the upper-left corner of the tile.
+- The X axis has values increasing towards the right of the tile.
+- The Y axis has values increasing towards the bottom of the tile.
+- The tile may have margin, which is a buffer around the tile in the shape of a square frame. The size of the margin is by default equal to 10&#37; of the width/length of the tile.
+- The extent is equal to  `4096` , so the value range for X and Y coordinates is from  `0`  to  `4095`  for visible points.
+- If the tile has a margin, the coordinates values range is extended by its size in both directions. This may cause coordinate values for points in the left or upper margin to be negative.
+
+Vector Tile geometry is encoded as an array of 32 bit unsigned integers in the `geometry` array field of the `TileFeature`.
+
+Encoded format has the following structure:
+
+```shell
+[command_and_count][x0][y0]..[xn][yn][command_and_count][x0][y0]..
+```
+
+- `command_and_count` contains encoded values of  `command`  and `count`.
+-  `[x0][y0]..[xn][yn]`  are  `(x,y)`  coordinate pairs.
+
+### Command
+
+The value of `command` is decoded as follows:
+
+```shell
+command = command_and_count & 0x7
+```
+
+Commands are to be executed relative to previous path coordinates or the point `(0,0)` if it is the first command.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Command&nbsp;type</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Value</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Coordinates</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">`MoveTo`</th>
+      <td style={{ textAlign: 'center' }}>
+        `1` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+        `x,y` 
+      </td>
+      <td>
+        It defines the  `(x,y)`  coordinate.
+        <ul>
+          <li>
+            In the case of a  `POINT`  type geometry, the coordinate is
+            a new point.
+          </li>
+          <li>
+            In the case of a  `LINESTRING`  or  `POLYGON` 
+            type geometry, the coordinate is the start of a new shape.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">`LineTo`</th>
+      <td style={{ textAlign: 'center' }}>
+        `2` 
+      </td>
+      <td style={{ textAlign: 'center' }}>
+        `x,y` 
+      </td>
+      <td>
+        It defines a new segment, starting at the current position of the cursor
+        and ending at the  `(x,y)`  coordinate.
+        <ul>
+          <li>
+            In the case of a  `LINESTRING`  type geometry, the segment
+            extends the current line.
+          </li>
+          <li>
+            In the case of a  `POLYGON`  type geometry, the segment
+            extends the current linear ring.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">`ClosePath`</th>
+      <td style={{ textAlign: 'center' }}>
+        `7` 
+      </td>
+      <td style={{ textAlign: 'center' }}>none</td>
+      <td>
+        It closes the current linear ring of a  `POLYGON`  type
+        geometry.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Count  
+
+The value of `count` is decoded as follows:  
+
+```cpp
+count = command_and_count >> 0x3
+```
+
+- It defines the `n` number of `[xn][yn]` encoded coordinate pairs following the `command_and_count` value.  
+- These coordinate pairs must be interpreted according to the preceding `command` type.  
+
+### Coordinates  
+
+Coordinates `[x0][y0]..[xn][yn]` are encoded in zigzag encoding and are relative to the previous coordinate pair. This means that only the first coordinate pair `[x0][y0]` in the first command in every `TileFeature` stores absolute values.
+
+The coordinates are decoded as follows:
+
+```cpp
+decode(x0) = ((x0 >> 0x1) ^ (-(x0 & 0x1)))
+decode(y0) = ((y0 >> 0x1) ^ (-(y0 & 0x1)))
+
+decode(x1) = decode(x0) + ((x1 >> 0x1) ^ (-(x1 & 0x1)))
+decode(y1) = decode(y0) + ((y1 >> 0x1) ^ (-(y1 & 0x1)))
+
+...
+
+decode(xn) = decode(xn-1) + ((xn >> 0x1) ^ (-(xn & 0x1)))
+decode(yn) = decode(yn-1) + ((yn >> 0x1) ^ (-(yn & 0x1)))
+```
+
+### Examples
+
+<h4 style={{ fontSize: '1em' }}>
+  For a  `POINT`  type feature:
+</h4>
+
+#### Input:
+
+```cpp
+layer: 0
+  feature: 0
+    type: POINT
+    geometry: [9, 1136, 6564]
+```
+
+#### Decoding:
+
+```cpp
+geometry:
+  command_and_count = 9
+  command = 9 & 0x7 = 1
+  count = 9 >> 0x3 = 1
+
+  x= 1136, y0 = 6564
+  decode(x0) = ((1136 >> 0x1) ^ (-(1136 & 0x1))) = 568
+  decode(y0) = ((6564 >> 0x1) ^ (-(6564 & 0x1))) = 3282
+```
+
+#### Output:
+
+```cpp
+layer: 0
+  feature: 0
+  geometry: POINT(561, 3282)
+```
+
+<h4 style={{ fontSize: '1em' }}>
+  For a  `LINESTRING`  type feature:
+</h4>
+
+#### Input:
+
+```cpp
+layer: 0
+    feature: 0
+        type: LINESTRING
+        geometry: [9, 846, 2312, 10, 652, 1938]
+```
+
+#### Decoding:
+
+```cpp
+geometry:
+  1:
+    command_and_count = 9
+    command = 9 & 0x7 = 1
+    count = 9 >> 0x3 = 1
+
+    x0' = 846, y0' = 2312
+    decode(x0') = ((846 >> 0x1) ^ (-(846 & 0x1))) = 423
+    decode(y0') = ((2312 >> 0x1) ^ (-(2312 & 0x1))) = 1156
+  2:
+    command_and_count = 10
+    command = 10 & 0x7 = 2
+    count = 10 >> 0x3 = 1
+
+    x0 = 652, y0 = 1938
+    decode(x0) = decode(x0') + ((x0 >> 0x1) ^ (-(x0 & 0x1)))
+    decode(y0) = decode(y0') + ((y0 >> 0x1) ^ (-(y0 & 0x1)))
+    decode(x0) = 423 + ((652 >> 0x1) ^ (-(652 & 0x1))) = 749
+    decode(y0) = 1156 + ((1938 >> 0x1) ^ (-(1938 & 0x1))) = 2125
+```
+
+#### Output:
+
+```cpp
+layer: 0
+  feature: 0
+  geometry: LINESTRING[(423, 1156), (749, 2125)]
+```
+
+<h4 style={{ fontSize: '1em' }}>
+  For a  `POLYGON`  type feature:
+</h4>
+
+#### Input:
+
+```cpp
+layer: 0
+  feature: 0
+    type: POLYGON
+    geometry: [9, 1320, 5622, 26, 416, 707, 68, 612, 483, 96, 7]
+```
+
+#### Decoding:
+
+```cpp
+geometry:
+  1:
+    command_and_count = 9
+    command = 9 & 0x7 = 1
+    count = 9 >> 0x3 = 1
+
+    x0' = 1320, y0' = 5622
+    decode(x0') = ((1320 >> 0x1) ^ (-(1320 & 0x1))) = 660
+    decode(y0') = ((5622 >> 0x1) ^ (-(5622 & 0x1))) = 2811
+  2:
+    command_and_count = 26
+    command = 26 & 0x7 = 2
+    count = 26 >> 0x3 = 3
+
+    x0 = 1736, y0 = 4914
+    decode(x0) = decode(x0') + ((416 >> 0x1) ^ (-(416 & 0x1))) = 660 + 208 = 868
+    decode(y0) = decode(y0') + ((707 >> 0x1) ^ (-(707 & 0x1))) = 2811 + (-354) = 2457
+
+    x1 = 68, y1 = 612
+    decode(x1) = decode(x0) + ((68 >> 0x1) ^ (-(68 & 0x1))) = 902
+    decode(y1) = decode(y0) + ((612 >> 0x1) ^ (-(612 & 0x1))) = 2763
+
+    x2 = 483, y2 = 96
+    decode(x2) = decode(x1) + ((483 >> 0x1) ^ (-(483 & 0x1))) = 660
+    decode(y2) = decode(y1) + ((96 >> 0x1) ^ (-(96 & 0x1))) = 2811
+  3:
+    command_and_count = 7
+    command = 7 & 0x7 = 7
+    count = 7 >> 0x3 = 0
+```
+
+#### Output:
+
+```cpp
+layer: 0
+  feature: 0
+  geometry: POLYGON[(660, 2811), (868, 2457), (902, 2763), (660, 2811)]
+```
+
+### Decoding feature tags
+
+In order to reduce tile size, the properties of each feature are encoded in a  `tags`  array.
+
+- The `tags` array contains integer values which are indexes of `keys` and `values` arrays belonging to the corresponding layer.
+- The size of a `tags` array is always even.
+- The content of a `tags` array can be grouped into a list of pairs. Each odd element of an array is the first element of a pair, and each even element of an array is the second element of a pair.
+- The first element of each pair should be mapped to a `keys` array.
+- The second element of each pair should be mapped to a `values` array.
+- As a result, we get a decoded list of `tags` where the first element is the tag name and the second element is the tag value in the form of `TileValue`.
+
+<h4 style={{ fontSize: '1em' }}>Example</h4>
+
+Below is an example of what an encoded tile may look like.
+
+```cpp
+layer: 0
+  keys: ["country_code", "icon_text"],
+  values: ["SWE", "E4"]
+  feature: 0
+    tags : [0,0,1,1]
+```
+
+After decoding it has to be read like this:
+
+```cpp
+layer: 0
+  feature: 0
+    properties:
+      country_code : "SWE"
+      icon_text : "E4"
+```
+
+## Tile Layers
+
+The data in Example Vector Tiles is organized in layers. The following section provides detailed information about:
+
+- Available layers.
+- Tags that typically appear in features from a given layer.
+
+### earth_cover
+
+Earth cover refers to the generalized surface cover of the earth, whether vegetation, sand, ice, or other.
+
+<h4 style={{ fontSize: '1em' }}>Geometry type:  `POLYGON`</h4>
+
+<table data-notbreakword summary="earth_cover tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>earth_cover tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:**  
+          <ul>
+            <li>`cropland`</li>
+            <li>`herbaceous`</li>
+            <li>`ice_and_snow`</li>
+            <li>`sand`</li>
+            <li>`woody`</li>
+          </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### land_cover
+
+Land cover refers to the surface cover on the ground, whether vegetation, urban infrastructure, or other; it does not describe the use of land, and the use of land may be different for lands with the same cover type. For instance, a land cover type of forest may be used for timber production, wildlife management, or recreation; it might be private land, a protected watershed, or a popular state park.
+
+<h4 style={{ fontSize: '1em' }}>Geometry type:  `POLYGON`</h4>
+
+<table summary="land_cover tags" data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>land_cover tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:**  
+          <ul>
+            <li>`woodland`</li>
+            <li>`grassland`</li>
+            <li>`shrubland`</li>
+            <li>`agricultural`</li>
+            <li>`sandy`</li>
+            <li>`bareland`</li>
+          </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `subcategory`  
+        *string* 
+      </th>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between land covers in the same category.  
+        **Values** for category `grassland`:
+        <ul>
+          <li>`natural`</li>
+          <li>`managed`</li>
+        </ul>  
+        <br />      
+        **Values** for category `agricultural`:  
+        <ul>
+          <li>`crop_plantation`</li>
+          <li>`tree_plantation`</li>
+          <li>`nursery`</li>
+        </ul>  
+        <br />   
+        **Values** for category `sandy`:  
+        <ul>
+          <li>`sand`</li>
+          <li>`beach`</li>
+        </ul>  
+        <br />   
+        **Values** for category `bareland`:
+        <ul>
+          <li>`shingle`</li>
+          <li>`mud`</li>
+          <li>`rock`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `primary_tag`  
+        *string* 
+      </th>
+      <td>
+        Fine-grain attribution of each land cover feature corresponding to the 
+        most relevant value found among different feature tags (natural, landuse, 
+        boundary, etc...) for more precise filtering or custom styling.  
+        **Values:**  
+        <ul>
+          <li>`lsr:*`</li>
+          <li>`lds:*`</li>
+          <li>`wet:*`</li>
+          <li>`ntr:*`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `display_class`
+        *integer* 
+      </th>
+      <td>
+        A numerical value attribute that enables ordering and filtering based on 
+        the ranking of the area. The values are in the range 1, 16 inclusive.  
+        **Values:** [1, 16]
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `wetland`  
+        *boolean* 
+      </th>
+      <td>
+        An attribute depicting whether a feature belongs to a wetland, to enable 
+        pattern representation as additional overlay on standard fill symbology.  
+        **Value:** `true` 
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### land_use  
+
+The land use refers to the purpose the land serves, for example, recreation, wildlife habitat or agriculture; it does not describe the surface cover on the ground. For example, a recreational land use could occur in a forest, shrubland, grasslands, or on manicured lawns.
+
+<h4 style={{ fontSize: '1em' }}>Geometry type:  `POLYGON`</h4>
+
+<table summary="land_use tags" data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>land_use tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `group`    
+        *string* 
+      </th>
+      <td>
+      This tag specifies to which group a given feature belongs.  
+      **Values:**
+        <ul>
+          <li>`artificial`</li>
+          <li>`business`</li>
+          <li>`shopping`</li>
+          <li>`transport`</li>
+          <li>`driving`</li>
+          <li>`parking`</li>
+          <li>`healthcare`</li>
+          <li>`education`</li>
+          <li>`outdoor`</li>
+          <li>`leisure`</li>
+          <li>`sport`</li>
+          <li>`lodging`</li>
+          <li>`religion`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+      This tag narrows down the group values allowing fine-grained styling
+        and provides a distinction between land uses in the same group.  
+      **Values** for group  `artificial` :
+        <ul>
+          <li>
+            `urban` 
+          </li>
+          <li>
+            `rural` 
+          </li>
+          <li>
+            `construction` 
+          </li>
+        </ul>  
+        <br />
+        **Values** for group  `business` :
+        <ul>
+          <li>
+            `industrial` 
+          </li>
+          <li>
+            `commercial` 
+          </li>
+        </ul>  
+        <br />
+        **Values** for group  `transport` :
+        <ul>
+          <li>
+            `ground` 
+          </li>
+          <li>
+            `station` 
+          </li>
+          <li>
+            `airport` 
+          </li>
+        </ul>  
+        <br />
+        **Values** for group `outdoor` :
+        <ul>
+          <li>
+            `ground` 
+          </li>
+          <li>
+            `facility` 
+          </li>
+        </ul>  
+        <br />
+        **Values** for group  `sport` :
+        <ul>
+          <li>
+            `ground` 
+          </li>
+          <li>
+            `pitch` 
+          </li>
+        </ul>
+        <br />
+        **Values** for group `lodging` :
+        <ul>
+          <li>
+            `camping` 
+          </li>
+          <li>
+            `resort` 
+          </li>
+        </ul>
+        <br />
+        **Values** for group `religion` :
+        <ul>  
+          <li>
+            `place_of_worship` 
+          </li>
+          <li>
+            `cemetery` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `primary_tag`    
+        *string* 
+      </th>
+      <td>
+        Fine-grain attribution of each feature corresponding to the most 
+        relevant value found among different primary tags (leisure, landuse, 
+        boundary, etc...) for more precise filtering or custom styling.  
+        **Values:**  
+        <ul>
+          <li>`lds:*`</li>
+          <li>`trs:*`</li>
+          <li>`lsr:*`</li>
+          <li>`amn:*`</li>
+          <li>`ptr:*`</li>
+          <li>`arw:*`</li>
+          <li>`shp:*`</li>
+          <li>`rlw:*`</li>
+          <li>`hgw:*`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `display_class`    
+        *integer* 
+      </th>
+      <td>
+        A numerical value attribute that enables ordering and filtering based on 
+        the ranking of the area. The values are in the range 1, 16 inclusive.  
+        **Values:**  `[1, 16]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `underground`    
+        *boolean* 
+      </th>
+      <td>
+        Indicates that area is an underground areas, such as subway platform, parking, etc.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `modality`  
+        *string* 
+      </th>
+      <td>
+        Attribution to qualify the main mobility type of a passenger transportation feature.  
+        **Values:**   
+        <ul>
+          <li>`aerial`</li>
+          <li>`rail`</li>
+          <li>`tram`</li>
+          <li>`bus`</li>
+          <li>`subway`</li>
+          <li>`ferry`</li>
+          <li>`taxi`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `profile`  
+        *string* 
+      </th>
+      <td>
+        Indicates main profile of use of an area.  
+        **Values:**   
+        <ul>
+          <li>`vehicle`</li>
+          <li>`motorcycle`</li>
+          <li>`bicycle`</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### structures
+
+Features in this layer represent man-made structures.
+
+<h4 style={{ fontSize: '1em' }}>Geometry type:  `POLYGON`</h4>
+
+<table summary="structures tags" data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>structures&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string*
+      </th>
+      <td>
+        Provides macro-classification based on the main type of structure.  
+        **Values:**  
+        <ul>
+          <li>
+            `bridge`
+          </li>
+          <li>
+            `pier`
+          </li>
+          <li>
+            `water_barrier`
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `subcategory`  
+        *string*
+      </th>
+      <td>
+        Provides fine-grained classification based on the specific function of the structure to enable filtering depending on the use case.  
+        **Values** for category  `water_barrier` :  
+        <ul>
+          <li>
+            `breakwater`
+          </li>
+          <li>
+            `groyne`
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `z_level`    
+        *integer*
+      </th>
+      <td>
+        The integer value used to determine the drawing order of overlapping structure segments. The values are in the range -5, 5 inclusive.  
+        **Values:** `[-5, 5]`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### structures_lines  
+
+Features in this layer represent man-made structure lines.  
+
+<h4 style={{ fontSize: '1em' }}>Geometry type:  `LINESTRING`</h4>
+
+<table summary="structures_lines tags" data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>structures_lines tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string*
+      </th>
+      <td>
+        Provides macro-classification based on the main type of structure.  
+        **Values:**  
+        <ul>
+          <li>
+            `pier`
+          </li>
+          <li>
+            `water_barrier`
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `subcategory`    
+        *string*
+      </th>
+      <td>
+        Provides fine-grained classification based on the specific function of the structure to enable filtering depending on the use case.  
+        **Values** for category  `water_barrier` :  
+        <ul>
+          <li>
+            `breakwater`
+          </li>
+          <li>
+            `groyne`
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `z_level`     
+        *integer*
+      </th>
+      <td>
+        The integer value used to determine the drawing order of overlapping
+        structure segments. The values are in the range -5, 5 inclusive.  
+        **Values:** `[-5, 5]`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### overlays
+
+Features in this layer represent areas of the earth's surface based on special status with a prescribed use/restrictions established by different entities.
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `POLYGON`</h4>
+
+<table summary="overlays tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>overlays tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `group`    
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which group a given feature belongs.  
+        **Values:**  
+        <ul>
+          <li>`protected`</li>
+          <li>`military`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag narrows down the group values allowing fine-grained styling
+        and provides a distinction between areas in the same group.  
+        **Values** for group  `protected` :
+        <ul>
+          <li>
+            `national_park` 
+          </li>
+          <li>
+            `protected_area` 
+          </li>
+          <li>
+            `aboriginal` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `primary_tag`    
+        *string* 
+      </th>
+      <td>
+        Fine-grain attribution of each feature corresponding to the most 
+        relevant value found among different primary tags (leisure, landuse, 
+        boundary, etc...) for more precise filtering or custom styling.  
+        **Values:**  
+          <ul>
+            <li>`lds:*`</li>
+            <li>`bdr:*`</li>
+            <li>`lsr:*`</li>
+            <li>`mlt:*`</li>
+          </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `display_class`    
+        *integer* 
+      </th>
+      <td>
+        A numerical value attribute that enables ordering and filtering based on 
+        the ranking of the area. The values are in the range 1, 16 inclusive.  
+        **Values:** `[1, 16]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `protect_class`    
+        *integer* 
+      </th>
+      <td>
+        A numerical value attribute that enables ordering and filtering based on 
+        the protection status of the area. The values are in the range 1, 6 inclusive.  
+        **Values:** `[1, 6]`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### built_up_areas  
+
+The built_up_areas layer contains features that represent an urbanized area with a large/dense concentration of buildings.  
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `POLYGON`</h4>  
+
+<table data-notbreakword summary="built_up_areas tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>built_up_areas&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Value:** `built_up_area`  
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### transit  
+
+The transit layer contains line geometries that represent public and private transit network 
+for person and goods. It conflates entities coming from different means of transportation.
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `LINESTRING`</h4>  
+
+<table data-notbreakword summary="transit tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>transit&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:**  
+          <ul>
+            <li>`railway`</li>
+            <li>`ferry`</li>
+            <li>`aerialway`</li>
+            <li>`aeroway`</li>
+            <li>`platform`</li>
+          </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `subcategory`    
+        *string* 
+      </th>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between features in the same category.  
+        **Values** for category  `railway`:  
+        <ul>
+          <li>
+            `main` 
+          </li>
+          <li>
+            `subway` 
+          </li>
+          <li>
+            `tram` 
+          </li>
+          <li>
+            `light` 
+          </li>
+          <li>
+            `special` 
+          </li>
+        </ul>  
+        <br />  
+        **Values** for category `aerialway` :
+        <ul>
+          <li>
+            `cabin` 
+          </li>
+          <li>
+            `lift` 
+          </li>
+          <li>
+            `goods` 
+          </li>
+        </ul>  
+        <br />  
+        **Values** for category `aeroway` :
+        <ul>
+          <li>
+            `runway` 
+          </li>
+          <li>
+            `taxiway` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `z_level`    
+        *integer* 
+      </th>
+      <td>
+        The integer value used to determine the drawing order of overlapping 
+        transit segments. The values are in the range -5, 5 inclusive.  
+        **Values:** [-5, 5]
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `bridge`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the feature is part of a bridge. The value is
+        always true. If the feature is not a part of a bridge, then this tag is
+        absent.  
+        **Value:** `true` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `tunnel`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the feature is part of a tunnel. The value is
+        always true. If the feature is not a part of a tunnel, then this tag is
+        absent.  
+        **Value:** `true` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `service`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates minor tracks present in proximity of railway stations 
+        and yards. The value is always true if applicable, otherwise absent.  
+        **Value:** `true`  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `under_construction`  
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the feature is under construction. The value is
+        always true. If the feature is not under construction, then this tag is
+        absent.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `toll`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that it is necessary to pay a toll to use a transit. 
+        The value is always true. If the transit is not paid, the this tag is 
+        absent.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `modality`  
+        *string* 
+      </th>
+      <td>
+        Attribution to qualify the main mobility type of a passenger transportation feature.  
+        **Values:**  
+        <ul>
+          <li>`aerial`</li>
+          <li>`rail`</li>
+          <li>`tram`</li>
+          <li>`bus`</li>
+          <li>`subway`</li>
+          <li>`ferry`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`  
+        *string* 
+      </th>
+      <td>
+        A transit name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.  
+        **Value:** A transit name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name_[language]`  
+        *string* 
+      </th>
+      <td>
+        A transit name in a language specified in a [language] suffix. [List of supported languages](./supported-languages).  
+        **Value:** A transit name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `reference_number`  
+        *string* 
+      </th>
+      <td>
+        This tag contains reference numbers or code for a route or transit segment.  
+        **Value:** Reference numbers or code.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### transit_areas  
+
+The transit_areas layer contains public and private transit areas/facilities for person and 
+goods. It conflates entities coming from different means of transportation.  
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `POLYGON`</h4>  
+
+<table data-notbreakword summary="transit_area tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>transit_area&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:**  
+        <ul>
+          <li>`aeroway`</li>
+          <li>`platform`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `subcategory`    
+        *string* 
+      </th>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between features in the same category.  
+        **Values** for category `aeroway` :
+        <ul>
+          <li>
+            `runway` 
+          </li>
+          <li>
+            `apron` 
+          </li>
+          <li>
+            `taxiway` 
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `z_level`  
+        *integer* 
+      </th>
+      <td>
+        The integer value used to determine the drawing order of overlapping 
+        transit areas. The values are in the range -5, 5 inclusive.  
+        **Values:** `[-5, 5]`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+
+### water  
+
+The water layer contains area geometries that represent oceans, seas, lakes, and other water bodies.  
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `POLYGON`</h4>  
+
+<table data-notbreakword summary="water tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}> water tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:**  
+        <ul>
+          <li>`water`</li>
+          <li>`glacier`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `intermittent`    
+        *boolean* 
+      </th>
+      <td>
+        Indicates whether the water body does not permanently contain water, 
+        including seasonal variation. Always true, absent if not applicable.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `display_class`    
+        *integer* 
+      </th>
+      <td>
+        A numerical value attribute that enables ordering and filtering based on 
+        the ranking of the area. The values are in the range 1, 15 inclusive.  
+        **Values:** `[1, 15]`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### buildings  
+
+This layer represents building footprints.  
+
+<h4 style={{ fontSize: '1em' }}>Geometry type:`POLYGON`</h4>  
+
+<table data-notbreakword summary="buildings tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>buildings&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`  
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:**  
+        <ul>
+          <li>`business`</li>
+          <li>`shopping`</li>
+          <li>`eat_and_drink`</li>
+          <li>`public`</li>
+          <li>`healthcare`</li>
+          <li>`lodging`</li>
+          <li>`religion`</li>
+          <li>`education`</li>
+          <li>`parking`</li>
+          <li>`cultural`</li>
+          <li>`leisure`</li>
+          <li>`transport`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `primary_tag`  
+        *string* 
+      </th>
+      <td>
+        Fine-grain attribution of each building feature corresponding to the 
+        most relevant value found among different feature tags for more precise 
+        filtering or custom styling.  
+        **Values:**  
+        <ul>
+          <li>`bdg:*`</li>
+          <li>`amn:*`</li>
+          <li>`off:*`</li>
+          <li>`arw:*`</li>
+          <li>`hst:*`</li>
+          <li>`trs:*`</li>
+          <li>`shp:*`</li>
+          <li>`ptr:*`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `underground`    
+        *boolean* 
+      </th>
+      <td>
+        Indicates that building is underground, such as subway station, parking, etc.  
+        **Value** `true`   
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `height`    
+        *float* 
+      </th>
+      <td>
+        Building height represents the height of the Building Footprint measured
+        from the ground level to the top of the structure. When a Building
+        Footprint has a ground height, building height represents the height of
+        the actual structure. The height is represented in meters.  
+        **Value:** Height in meters.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `ground_height`    
+        *float* 
+      </th>
+      <td>
+        Ground height represents the height of the Building Footprint measured
+        from the ground level to the bottom of the structure. The height is
+        represented in meters.  
+        **Value:** Height in meters.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `part`    
+        *boolean* 
+      </th>
+      <td>
+        Indicates that building is part of bigger structure. Allows you to 
+        differentiate a building into parts that differ from each other in 
+        terms of some building attributes or the building function.  
+        **Value:** `true`  
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### water_lines  
+
+The water_lines layer contains line geometries that represent river and stream center lines.  
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `LINESTRING`</h4>  
+
+<table data-notbreakword summary="water_lines tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>water_lines&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`   
+        *string* 
+      </th>
+      <td>
+      This tag specifies to which category a given feature belongs.  
+      **Values:**  
+      <ul>
+        <li>`river`</li>
+        <li>`stream`</li>
+        <li>`canal`</li>
+        <li>`drain`</li>
+        <li>`ditch`</li>
+      </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `artificial`    
+        *boolean* 
+      </th>
+      <td>
+        Indicates whether the water body is man-made or natural. Always true, absent if not applicable.  
+        **Value:** `true` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `intermittent`    
+        *boolean* 
+      </th>
+      <td>
+        Indicates whether the water body does not permanently contain water, 
+        including seasonal variation. Always true, absent if not applicable.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `tunnel`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the water body is part of a tunnel. The value is
+        always true. If the water body is not a part of a tunnel, then this tag is
+        absent.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `bridge`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the water body is part of a bridge. The value is
+        always true. If the water body is not a part of a bridge, then this tag is
+        absent.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`    
+        *string* 
+      </th>
+      <td>
+        A feature name in a NGT (Neutral Ground Truth) language.  
+        **Value:** A feature name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name_[language]`    
+        *string* 
+      </th>  
+      <td>
+        A feature name in a language specified in a [language] suffix.  
+        **Value:** A feature name. See: [List of supported languages](./supported-languages).
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### places  
+
+This layer contains points for labeling places including countries, states, cities, and towns.  
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `POINT`</h4>
+
+<table data-notbreakword summary="places tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>places&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`  
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:**  
+        <ul>
+          <li>`country`</li>
+          <li>`admin_division`</li>
+          <li>`settlement`</li>
+          <li>`settlement_division`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `subcategory`    
+        *string* 
+      </th>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between places in the same category.  
+        **Value for category `admin_division`:** `state` 
+        <br />  
+        **Values for category `settlement`:**
+        <ul>
+          <li>
+            `city` 
+          </li>
+          <li>
+            `town` 
+          </li>
+          <li>
+            `village` 
+          </li>
+          <li>
+            `hamlet` 
+          </li>
+        </ul>  
+        <br />  
+        **Values for category `settlement_division`:**  
+        <ul>
+          <li>
+            `borough` 
+          </li>
+          <li>
+            `suburb` 
+          </li>
+          <li>
+            `quarter` 
+          </li>
+          <li>
+            `neighbourhood` 
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`    
+        *string* 
+      </th>
+      <td>
+        A feature name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.  
+        **Value:** A feature name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name_[language]`  
+        *string* 
+      </th>
+      <td>
+        A feature name in a language specified in a [language] suffix.  
+        [List of supported languages](./supported-languages).  
+        **Value:** A feature name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `admin_class`    
+        *integer* 
+      </th>
+      <td>
+        Indicates if a settlement is the capital of an administrative area of a given level (2=country, 4=state, etc.). The values are in the range 2, 11 inclusive.  
+        **Values:** `[2, 11]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `display_class`    
+        *integer* 
+      </th>
+      <td>
+        Represents a classification of places based on their importance with respect to map display. The values are in the range 1, 12 inclusive.  
+        **Values:** `[1, 12]`  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `icon`    
+        *string*
+      </th>
+      <td>
+        The identifier of the icon asset in the Example styles that should be
+        used for the visualization purpose of the Point of Interest.  
+        **Values:**  
+        <ul>
+          <li>
+            `capital`
+          </li>
+          <li>
+            `city_large`
+          </li>
+          <li>
+            `city_medium`
+          </li>
+          <li>
+            `city_small`
+          </li>
+          <li>
+            `town`
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`    
+        *string*
+      </th>
+      <td>
+        A unique place identifier that can be used across other Example services.  
+        **Value:** A unique place identifier.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `country_code`    
+        *string*
+      </th>
+      <td>
+        ISO-3166 code of the country for a given label point.  
+        **Value:** ISO-3166 country code.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `state_code`    
+        *string*
+      </th>
+      <td>
+        ISO-3166 code of state or first sub-national subdivision for label points.  
+        **Value:** ISO-3166 code.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `minzoom`    
+        *float*
+      </th>
+      <td>
+        Minimum zoom level at which a feature must be visualized.  
+        **Value:** Float value in range `[0.0, 22.0]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `maxzoom`    
+        *float*
+      </th>
+      <td>
+        Maximum zoom level at which feature must be visualized.  
+        **Value:** Float value in range `[0.0, 22.0]`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### poi  
+
+The POI layer represents points of interest.  
+
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `POINT`</h4>
+
+<table data-notbreakword summary="poi tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>poi&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `group`    
+        *string* 
+      </th>
+      <td>
+        This tag provides a broad grouping of the Points of Interest entities based on general semantic affiliations.  
+        **Values:**  
+        <ul>
+          <li>`business`</li>
+          <li>`cultural`</li>
+          <li>`driving`</li>
+          <li>`eat_and_drink`</li>
+          <li>`education`</li>
+          <li>`finance`</li>
+          <li>`healthcare`</li>
+          <li>`leisure`</li>
+          <li>`lodging`</li>
+          <li>`military`</li>
+          <li>`outdoor`</li>
+          <li>`parking`</li>
+          <li>`protected`</li>
+          <li>`public`</li>
+          <li>`religion`</li>
+          <li>`shopping`</li>
+          <li>`sport`</li>
+          <li>`transport`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag groups Points of Interest into broad categories that can be  
+        used for styling purposes.  
+        **Values** for group  `business`:
+        <ul>
+        <li>
+            `commercial_area`
+        </li>
+        <li>
+            `conference_center`
+        </li>
+        <li>
+            `industrial_area`
+        </li>
+        </ul>  
+        <br />  
+        **Values** for group `cultural`:
+        <ul>
+          <li>
+            `cultural_center`
+          </li>
+          <li>
+            `historic_site`
+          </li>
+          <li>
+            `landmark`
+          </li>
+          <li>
+            `museum`
+          </li>
+          <li>
+            `theater`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `driving`:
+        <ul>
+          <li>
+            `border_control`
+          </li>
+          <li>
+            `charging_location`
+          </li>
+          <li>
+            `fuel_station`
+          </li>
+          <li>
+            `mountain_pass`
+          </li>
+          <li>
+            `rest_and_service_area`
+          </li>
+          <li>
+            `toll_booth`
+          </li>
+          <li>
+            `truck_stop`
+          </li>
+          <li>
+            `vehicle_repair`
+          </li>
+          <li>
+            `vehicle_wash`
+          </li>
+          <li>
+            `weighbridge`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `eat_and_drink`:
+        <ul>
+          <li>
+            `bar`
+          </li>
+          <li>
+            `cafe`
+          </li>
+          <li>
+            `coffee_shop`
+          </li>
+          <li>
+            `fast_food`
+          </li>
+          <li>
+            `food_court`
+          </li>
+          <li>
+            `pub`
+          </li>
+          <li>
+            `restaurant`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `education`:
+        <ul>
+          <li>
+            `childcare`
+          </li>
+          <li>
+            `college_or_university`
+          </li>
+          <li>
+            `school_or_kindergarten`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `finance`:
+        <ul>
+          <li>
+            `atm`
+          </li>
+          <li>
+            `bank`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `leisure`:  
+        <ul>
+          <li>
+            `amusement_park`
+          </li>
+          <li>
+            `beach_resort`
+          </li>
+          <li>
+            `cinema`
+          </li>
+          <li>
+            `ice_rink`
+          </li>
+          <li>
+            `nightlife`
+          </li>
+          <li>
+            `stadium`
+          </li>
+          <li>
+            `tourist_attraction`
+          </li>
+          <li>
+            `zoo_or_aquarium`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `lodging`:
+        <ul>
+          <li>
+            `camping_ground`
+          </li>
+          <li>
+            `hotel_or_motel`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `healthcare`:  
+        <ul>
+          <li>
+            `clinic`
+          </li>
+          <li>
+            `dentist`
+          </li>
+          <li>
+            `doctor`
+          </li>
+          <li>
+            `emergency_ward_entrance`
+          </li>
+          <li>
+            `hospital`
+          </li>
+          <li>
+            `pharmacy`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `military`:  
+        <ul>
+          <li>
+            `military_airfield`
+          </li>
+          <li>
+            `military_facility`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `outdoor`:  
+        <ul>
+          <li>
+            `park_and_recreation_area`
+          </li>
+          <li>
+            `park_and_recreation_facility`
+          </li>
+          <li>
+            `viewpoint`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `parking`:  
+        <ul>
+          <li>
+            `bicycle_parking`
+          </li>
+          <li>
+            `motorcycle_parking`
+          </li>
+          <li>
+            `parking_facility`
+          </li>
+          <li>
+            `rental_car_parking`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `protected`:  
+        <ul>
+          <li>
+            `aboriginal_land`
+          </li>
+          <li>
+            `national_park`
+          </li>
+          <li>
+            `protected_land`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `public`:  
+        <ul>
+          <li>
+            `courthouse`
+          </li>
+          <li>
+            `fire_station`
+          </li>
+          <li>
+            `government_office`
+          </li>
+          <li>
+            `police_station`
+          </li>
+          <li>
+            `post_office`
+          </li>
+          <li>
+            `prison`
+          </li>
+          <li>
+            `public_library`
+          </li>
+          <li>
+            `townhall`
+          </li>
+          <li>
+            `vehicle_inspection`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `religion`:  
+        <ul>
+          <li>
+            `cemetery`
+          </li>
+          <li>
+            `religious_site`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `shopping`:  
+        <ul>
+          <li>
+            `animal_service`
+          </li>
+          <li>
+            `bicycle_rental`
+          </li>
+          <li>
+            `car_rental`
+          </li>
+          <li>
+            `clothing_shop`
+          </li>
+          <li>
+            `consumer_service`
+          </li>
+          <li>
+            `department_store`
+          </li>
+          <li>
+            `food_and_drinks_shop`
+          </li>
+          <li>
+            `mall`
+          </li>
+          <li>
+            `marketplace`
+          </li>
+          <li>
+            `motorcycle_rental`
+          </li>
+          <li>
+            `personal_care_service`
+          </li>
+          <li>
+            `retail_area`
+          </li>
+          <li>
+            `shop_or_store`
+          </li>
+          <li>
+            `supermarket`
+          </li>
+          <li>
+            `vehicle_dealer`
+          </li>
+          <li>
+            `veterinary`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `sport`:    
+        <ul>
+          <li>
+            `fitness_center`
+          </li>
+          <li>
+            `golf_course`
+          </li>
+          <li>
+            `sport_facility`
+          </li>
+          <li>
+            `winter_sports`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for group `transport`:  
+        <ul>
+          <li>
+            `aerialway_station`
+          </li>
+          <li>
+            `airport`
+          </li>
+          <li>
+            `bus_station`
+          </li>
+          <li>
+            `car_sharing`
+          </li>
+          <li>
+            `ferry_terminal`
+          </li>
+          <li>
+            `heliport_or_helipad`
+          </li>
+          <li>
+            `public_transport_platform`
+          </li>
+          <li>
+            `public_transport_station`
+          </li>
+          <li>
+            `public_transport_stop`
+          </li>
+          <li>
+            `railway_station`
+          </li>
+          <li>
+            `taxi_stand`
+          </li>
+          <li>
+            `transport_access`
+          </li>
+        </ul>   
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `primary_tag`  
+        *string* 
+      </th>
+      <td>
+        Fine-grain attribution of each POI feature corresponding to the  
+        most relevant value found among different feature tags for more  
+        precise filtering or custom styling.  
+        **Values:**  
+        <ul>
+          <li>`arl:*`</li>
+          <li>`arw:*`</li>
+          <li>`amn:*`</li>
+          <li>`brr:*`</li>
+          <li>`bnd:*`</li>
+          <li>`clb:*`</li>
+          <li>`crf:*`</li>
+          <li>`emr:*`</li>
+          <li>`hgw:*`</li>
+          <li>`hst:*`</li>
+          <li>`lds:*`</li>
+          <li>`lsr:*`</li>
+          <li>`mnm:*`</li>
+          <li>`mlt:*`</li>
+          <li>`mnt:*`</li>
+          <li>`off:*`</li>
+          <li>`ptr:*`</li>
+          <li>`rlw:*`</li>
+          <li>`shp:*`</li>
+          <li>`trs:*`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `display_class`    
+        *integer* 
+      </th>  
+      <td>
+        A numerical value attribute that enables ordering and filtering based on  
+        the importance/relevance of the POI. The values are in the range 1, 18 inclusive.  
+        **Values:** `[1, 18]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `priority`  
+        *integer* 
+      </th>
+      <td>
+        The tag value represents an absolute priority of the POI among all the POI features.  
+        **Value:** Integer
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `profile`    
+        *string* 
+      </th>
+      <td>
+        The tag value represents a use profile for which the POI entity is relevant.  
+        **Values:**  
+        <ul>
+          <li>`car`</li>
+          <li>`truck`</li>
+          <li>`motorcycle`</li>
+          <li>`bicycle`</li>
+          <li>`passenger`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `modality`  
+        *string* 
+      </th>
+      <td>
+        Attribution to qualify the main mobility type of a passenger transportation feature.  
+        **Values:**  
+        <ul>
+          <li>`car`</li>
+          <li>`taxi`</li>
+          <li>`bus`</li>
+          <li>`rail`</li>
+          <li>`tram`</li>
+          <li>`subway`</li>
+          <li>`aerial`</li>
+          <li>`ferry`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`  
+        *string* 
+      </th>
+      <td>
+        A POI name in an NGT (Neutral Ground Truth) language; the native  
+        language of each country, respectively.  
+        **Value:** A POI name.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name_[language]`    
+        *string* 
+      </th>
+      <td>
+        A POI name in a language specified in a [language] suffix.  
+        See the [List of supported languages](./supported-languages).  
+        **Value:** A POI name. 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `sub_text`    
+        *string* 
+      </th>
+      <td>
+        Attribute that captures additional information about POIs, depending on their group affiliation.  
+        **Value:** Additional information.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `brand`    
+        *string* 
+      </th>
+      <td>
+        Attribute that captures POI brand information.  
+        **Value:** Additional brand information.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`    
+        *string* 
+      </th>
+      <td>
+        A unique POI identifier that can be used across other services.  
+        **Value:** A unique POI identifier.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `semantic_id`    
+        *string* 
+      </th>
+      <td>
+        Semantic id associated to each feature `primary_tag`.  
+        **Value:** A semantic id.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### carto_labels  
+
+The carto_labels layer includes points that represent cartographic labels.  
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `POINT`</h4>  
+
+<table data-notbreakword summary="carto_labels">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>carto_labels tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:** 
+        <ul>
+          <li>`island`</li>
+          <li>`water`</li>
+          <li>`glacier`</li>
+          <li>`woodland`</li>
+          <li>`sandy`</li>
+          <li>`natural_feature`</li>
+          <li>`elevation_point`</li>
+          <li>`grassland	`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `subcategory`    
+        *string* 
+      </th>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling and provides a distinction between places in the same category.  
+        **Values** for category `island`:  
+        <ul>
+          <li>
+            `archipelago`
+          </li>
+          <li>
+            `island`
+          </li>
+          <li>
+            `islet`
+          </li>
+        </ul>  
+        <br />  
+        **Values** for category `water`:  
+        <ul>
+          <li>
+            `ocean`
+          </li>
+          <li>
+            `sea`
+          </li>
+          <li>
+            `bay`
+          </li>
+          <li>
+            `strait`
+          </li>
+          <li>
+            `inland`
+          </li>
+        </ul>  
+        <br />   
+        **Values** for category `grassland`:  
+        <ul>
+          <li>
+            `natural`
+          </li>
+          <li>
+            `managed`
+          </li>
+        </ul>  
+        <br />  
+         **Values:** for category `sandy`:  
+        <ul>
+          <li>
+            `sand`
+          </li>
+          <li>
+            `beach`
+          </li>
+        </ul>  
+        <br />  
+        **Values:** for category `natural_feature`:  
+        <ul>
+          <li>
+            `plain`
+          </li>
+          <li>
+            `plateau`
+          </li>
+          <li>
+            `valley`
+          </li>
+          <li>
+            `cape`
+          </li>
+          <li>
+            `isthmus`
+          </li>
+        </ul>  
+        <br />  
+        **Values:** for category `elevation_point`:  
+        <ul>
+          <li>
+            `peak`
+          </li>
+          <li>
+            `volcano`
+          </li>
+          <li>
+            `hill`
+          </li>
+          <li>
+            `saddle`
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `intermittent`  
+        *boolean*
+      </th>
+      <td>
+        Indicates whether the water body does not permanently contain water,
+        including seasonal variation. Always true, absent if not applicable.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `display_class`    
+        *integer*
+      </th>
+      <td>
+        A numerical value attribute that enables ordering and filtering based on the size of the corresponding feature or other ranking method. The values are in the range 0, 13 inclusive.  
+        **Values:** `[0, 13]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`    
+        *string* 
+      </th>
+      <td>
+        A feature name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.  
+        **Value:** A feature name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name_[language]`    
+        *string* 
+      </th>
+      <td>
+        A feature name in a language specified in a [language] suffix. [List of supported languages](./supported-languages).  
+        **Value:** A feature name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `elevation`    
+        *integer*
+      </th>
+      <td>
+        A numeric value attribute representing the elevation of the point in meters above the sea level.  
+        **Values:** `[1, 8850]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `minzoom`    
+        *float*
+      </th>
+      <td>
+        Minimum zoom level at which a feature must be visualized.  
+        **Value:** Float value in range `[0.0, 22.0]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `maxzoom`    
+        *float*
+      </th>
+      <td>
+        Maximum zoom level at which feature must be visualized.  
+        **Value:** Float value in range `[0.0, 22.0]`
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### roads
+
+The roads layers include lines that can be used for drawing roads.
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `LINESTRING`</h4>
+
+<table data-notbreakword summary="roads">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>roads&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:**  
+        <ul>
+          <li>`motorway`</li>
+          <li>`motorway_link`</li>
+          <li>`trunk`</li>
+          <li>`trunk_link`</li>
+          <li>`primary`</li>
+          <li>`primary_link`</li>
+          <li>`secondary`</li>
+          <li>`secondary_link`</li>
+          <li>`tertiary`</li>
+          <li>`tertiary_link`</li>
+          <li>`street`</li>
+          <li>`service`</li>
+          <li>`bus`</li>
+          <li>`pedestrian`</li>
+          <li>`track`</li>
+          <li>`path`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `subcategory`    
+        *string* 
+      </th>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between places in the same category.  
+        **Values:** for category `street`:
+        <ul>
+          <li>
+            `unclassified` 
+          </li>
+          <li>
+            `residential` 
+          </li>
+          <li>
+            `living_street` 
+          </li>
+        </ul>  
+        <br />  
+        **Values:** for category `service`:  
+        <ul>
+          <li>
+            `parking` 
+          </li>
+          <li>
+            `alley` 
+          </li>
+          <li>
+            `driveway` 
+          </li>
+          <li>
+            `emergency` 
+          </li>
+        </ul>  
+        <br />  
+        **Values:** for category `path`:  
+        <ul>
+          <li>
+            `footway` 
+          </li>
+          <li>
+            `steps` 
+          </li>
+          <li>
+            `bridleway` 
+          </li>
+          <li>
+            `cycleway` 
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `direction`    
+        *integer* 
+      </th>
+      <td>
+        This tag indicates that traffic on a road is one-way. Value 1 indicates
+        that the traffic flows in the same direction as geometry of the road,
+        and the value -1 indicates that the traffic flows in the opposite
+        direction to the geometry of the road.  
+        **Values:**  
+        <ul>
+          <li>`1` </li>
+          <li>`-1`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `bridge`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the road is part of a bridge. The value is
+        always true. If the road is not a part of a bridge, then this tag is
+        absent.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `tunnel`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the road is part of a tunnel. The value is
+        always true. If the road is not a part of a tunnel, then this tag is
+        absent.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `covered`    
+        *boolean* 
+      </th>
+      <td>
+        Indicates that the road is covered but open at least on one side. The
+        value is always true, If road is not covered or fully covered this tag is absent.  
+        **Value:** `true`  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `z_level`    
+        *integer* 
+      </th>
+      <td>
+        The integer value used to determine the drawing order of overlapping 
+        road segments. The values are in the range -5, 5 inclusive.  
+        **Values:** `[-5, 5]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `under_construction`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the road is under construction. The value is
+        always true. If the road is not under construction, then this tag is
+        absent.  
+        **Value:** `true` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `display_class`    
+        *integer* 
+      </th>
+      <td>
+        A numerical value attribute that enables ordering and filtering based on 
+        the ranking of the road. The values are in the range 5, 15 inclusive.  
+        **Values:** `[5, 15]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `unpaved`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the road surface is not paved. The value is
+        always true. If the road is paved then this tag is absent.  
+        **Value:** `true` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `toll`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that it is necessary to pay a toll to use a road. The
+        value is always true. If the road is not paid, then this tag is absent.  
+        **Value:** `true` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `grade`  
+        *integer* 
+      </th>
+      <td>
+        Depending on the road type, indicates the degree of difficulty to be 
+        expected by the user (depending on either the steepness, level of maintenance, 
+        etc). The values are in the range -6, 6 inclusive.  
+        **Value:** `[-6, 6]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        access  
+        *string* 
+      </th>
+      <td>
+        Indicates if the road is access-restricted to the general public, to 
+        some specific use or category or based on certain conditions (e.g., time, day).  
+        **Values:**  
+        <ul>
+          <li>`prohibited`</li>
+          <li>`restricted`</li>
+          <li>`conditional`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`  
+        *string* 
+      </th>
+      <td>
+        A road name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.  
+        **Value:** A road name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name_[language]`  
+        *string* 
+      </th>
+      <td>
+        A road name in a language specified in a [language] suffix. [List of supported languages](./supported-languages).  
+        **Value:** A road name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `route_number`  
+        *string* 
+      </th>
+      <td>
+        Text to be placed on the road shield icon.  
+        **Value:** Route number text.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `route_shield_text`  
+        *string* 
+      </th>  
+      <td>
+        Primary route shield text for a given road to be used as the label of the road shield symbol.  
+        **Value:** Primary route shield text.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `route_shield_text[x][1..3]`  
+        *string* 
+      </th>  
+      <td>
+        Alternate route shield(s) text for a given road to be used as the label of the road shield symbol.  
+        **Value:** Text `[x][1..3]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `route_shield_id`  
+        *integer* 
+      </th>
+      <td>
+        Primary route shield id for a given road to reference a unique route type id.  
+        **Value:** `Id`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `route_shield_id[x][1..3]`  
+        *integer* 
+      </th>
+      <td>
+        Alternate route shield(s) id for a given road to reference a unique route type id.  
+        **Value:** `Id`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `route_shield_icon`  
+        *string* 
+      </th>
+      <td>
+        Primary route shield icon name for a given road to be used to source the asset of the road shield symbol.  
+        **Value:** Icon name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `route_shield_icon[x][1...3]`  
+        *string* 
+      </th>
+      <td>
+        Alternate route shield(s) icon name for a given road to be used to source the asset of the road shield symbol.  
+        **Value:** Icon name.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `route_shield_text_color`  
+        *string* 
+      </th>
+      <td>
+        Primary route shield text color for a given road to style the text in the road shield symbol.  
+        **Value:** Text color.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `route_shield_text_color_[x] [1...3]`  
+        *string* 
+      </th>
+      <td>
+        Alternate route shield(s) text color for a given road to style the text in the road shield symbol.  
+        **Value:** Text Color.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### roads_areas  
+
+The roads_areas layers include polygons that can be used for drawing road areas.  
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `POLYGON`</h4>  
+
+<table data-notbreakword summary="roads_area">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>roads_area&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`  
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:**  
+        <ul>
+          <li>`pedestrian`</li>
+          <li>`service`</li>
+          <li>`path`</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `bridge`  
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the road area is part of a bridge. The value is
+        always true. If the road area is not a part of a bridge, then this tag is
+        absent.  
+        **Value:** `true`  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `tunnel`  
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the road area is part of a tunnel. The value is
+        always true. If the road area is not a part of a tunnel, then this tag is
+        absent.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `covered`    
+        *boolean* 
+      </th>
+      <td>
+        Indicates that the road area is covered but open at least on one side. The 
+        value is always true, If road area is not covered or fully covered this tag is absent.  
+        **Value:** `true`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `z_level`    
+        *integer* 
+      </th>
+      <td>
+        The integer value used to determine the drawing order of overlapping 
+        road areas. The values are in the range -5, 5 inclusive.  
+        **Values:** `[-5, 5]`  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `display_class`    
+        *integer* 
+      </th>
+      <td>
+        A numerical value attribute that enables ordering and filtering based on 
+        the ranking of the road. The values are in the range 5, 15 inclusive.  
+        **Values:** `[5, 15]`  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `unpaved`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the road surface is not paved. The value is
+        always true. If the road is paved then this tag is absent.  
+        **Value:** `true`  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `access`  
+        *string* 
+      </th>
+      <td>
+        Indicates if the road is access-restricted to the general public, to 
+        some specific use or category or based on certain conditions (e.g. time, day).  
+        **Values:**  
+        <ul>
+          <li>`prohibited`</li>
+          <li>`restricted`</li>
+          <li>`conditional`</li>
+        </ul>  
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### roads_points  
+
+Features in this layer represent man-made structures.  
+
+Features in this layer represent points related to the road network, including road furniture (traffic lights and signs), junction/exit points, special traffic figures (mini roundabouts, turning loops, etc.) and other relevant features.
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `POLYGON`</h4>
+
+<table data-notbreakword summary="roads_points tags">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>roads_points&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`  
+        *string*
+      </th>
+      <td>
+        Provides macro-classification based on the main type of road-related point.  
+        **Values:**  
+        <ul>
+          <li>`highway_exit`</li>
+          <li>`turning_feature`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `subcategory`   
+        *string*
+      </th>
+      <td>
+        Provides fine-grained classification based on the original definition of the feature to enable filtering depending on the use case.  
+        **Values:** for category `turning_feature`:  
+        <ul>
+          <li>
+            `mini_roundabout`
+          </li>
+          <li>
+            `turning_loop`
+          </li>
+          <li>
+            `turning_circle`
+          </li>
+        </ul>   
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `number`  
+        *string*
+      </th>
+      <td>
+        The highway exit reference number to be visualized on the point.  
+        **Value:** Exit reference number.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`    
+        *string*
+      </th>
+      <td>
+        The highway exit name to be visualized on the point on higher zoom levels if needed.  
+        **Value:** Exit name.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `destination`    
+        *string*
+      </th>
+      <td>
+        The main destination name of the highway exit to be visualized on the point on higher zoom levels if needed.  
+        **Value:** Destination highway exit name.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `country_code`
+        *string*
+      </th>
+      <td>
+        ISO-3166 country code of the highway exit.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### boundaries  
+
+The boundaries layer includes boundary lines for national and subnational administrative units.  
+
+<h4 style={{ fontSize: '1em' }}>Geometry type: `LINESTRING`</h4>  
+
+<table data-notbreakword summary="boundaries">
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>boundaries&nbsp;tags</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `category`    
+        *string* 
+      </th>
+      <td>
+        This tag specifies to which category a given feature belongs.  
+        **Values:**  
+        <ul>
+          <li>`country`</li>
+          <li>`state`</li>
+          <li>`maritime`</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `subcategory`    
+        *string*
+      </th>
+      <td>
+        This tag narrows down the category values allowing fine-grained styling
+        and provides a distinction between boundaries in the same category.  
+        **Values** for category `maritime`:  
+        <ul>
+          <li>
+            `territorial_sea`
+          </li>
+          <li>
+            `contiguous_zone`
+          </li>
+          <li>
+            `exclusive_economic_zone`
+          </li>
+          <li>
+            `continental_shelf`
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `treaty`    
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the border is the result of an agreement under
+        international law entered by sovereign states and international
+        organizations but is still experienced as a very sensitive geopolitical
+        matter.  
+        **Value:** `true` 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `disputed`  
+        *boolean* 
+      </th>
+      <td>
+        This tag indicates that the border is the subject of a dispute between
+        two or more countries. It does not give information about the nature of
+        the dispute.  
+        **Value:** `true`  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name`    
+        *string* 
+      </th>
+      <td>
+        A feature name in an NGT (Neutral Ground Truth) language; the native
+        language of each country, respectively.  
+        **Value:** An NGT feature name. 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `name_[language]`    
+        *string* 
+      </th>
+      <td>
+        A feature name in a language specified in a [language] suffix. See the [List of supported languages](./supported-languages).  
+        **Value:** A feature name. 
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `minzoom`  
+        *float*
+      </th>
+      <td>
+        Minimum zoom level at which a feature must be visualized.  
+        **Value:** Float value in range `[0.0, 22.0]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `maxzoom`    
+        *float*
+      </th>
+      <td>
+        Maximum zoom level at which a feature must be visualized.  
+        **Value:** Float value in range `[0.0, 22.0]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `label_minzoom`   
+        *float*
+      </th>
+      <td>
+        Minimum zoom level at which a feature label must be visualized.  
+        **Value:** Float value in range `[0.0, 22.0]`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `label_maxzoom`    
+        *float*
+      </th>
+      <td>
+        Maximum zoom level at which a feature label must be visualized.  
+        **Value:** Float value in range `[0.0, 22.0]`
+      </td>
+    </tr>
+  </tbody>
+</table>   
+
+## Handling label translations  
+
+Vector tiles contain all available translations for suitable layers and features, i.e., *POINT* features in the places layer. These translations can be used in style files to change the label language. In order to use translations, you need to modify the desired layer in the style file by replacing the value of the  `text-field`  key with the following expression:  
+
+```
+["coalesce",["get", "name_[language]"],["get", "name"]]
+```
+
+**Important note:**  
+The `[language]` part in `name_[language]` needs to be replaced by one of the [supported languages](./supported-languages).  
+
+**Example:**  
+
+```
+{
+    ...
+    "id": "Places - Capital",
+    "layout": {
+        "text-anchor": "center",
+        "text-field": ["coalesce",["get", "name_en-GB"],["get", "name_en"],["get", "name"]],
+        "text-font": ["Noto-Bold"],
+        "text-justify": "auto",
+        "text-letter-spacing": 0.05,
+        ...
+    }
+    ...
+}
+```
+
+To combine the translated label with other tags the following expression can be used:  
+
+```
+["concat",["coalesce",["get", "name_[language]"],["get", "name"]], ["get", "[tag_name]"]]
+```
+
+**Important notes:**  
+
+- The `[language]` part in `name_[language]` needs to be replaced by one of the [supported languages](./supported-languages).  
+- The `[tag_name]` should be replaced by one of the tags available in the version 2 tile.  
+
+**Example:**  
+
+```
+{
+    ...
+    "id": "POI",
+    "layout": {
+        "text-anchor": "center",
+        "text-field": ["concat",["coalesce",["get', "name_en-GB"],["coalesce",["get', "name_en"],["get", "name"]], "\n", ["get", "sub_text"]],
+        "text-font": ["Noto-Bold"],
+        "text-justify": "auto",
+        "text-letter-spacing": 0.05,
+        ...
+    }
+    ...
+}
+```

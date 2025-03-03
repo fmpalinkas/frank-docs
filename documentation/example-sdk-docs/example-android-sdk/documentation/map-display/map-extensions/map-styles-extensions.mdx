@@ -1,0 +1,82 @@
+---
+title: Map Styles Extensions
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="styles-extensions"
+></a>
+
+The New Maps SDK gives you the ability to use either online or offline styles in your mobile
+application.
+
+**IMPORTANT:** The Map Display API comes with a built-in offline style, but this approach was
+deprecated in May 2020. In one year, the offline style will be removed from the package and replaced
+with an URL to the style from Style Merger.
+
+- If you choose to use offline styles, they will be imported to your app with the Maps SDK package.
+  Thanks to that, the styles will already be included in your app at download time. The styles are
+  added to the Maps SDK package by default.
+- If you choose to use online styles, they will be downloaded into your application when the map is
+  displayed for the first time. Thanks to that, your mobile app size is smaller at the app’s
+  download time so your app downloadable is lighter. In this case you need to exclude offline styles
+  from the SDK.
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_online_styles"
+></a>
+
+## Online styles
+
+**IMPORTANT:** The Map Display API comes with a built-in offline style, but this approach was
+deprecated in May 2020. In one year, the offline style will be removed from the package and replaced
+with an URL to the style from Style Merger.
+
+To exclude offline styles from the sdk-maps module, use an exclude declaration when the sdk-maps
+module is declared as shown in the following code example.
+
+```java
+api("com.New.online:sdk-maps:.internalVersions.sdk@aar") {
+            transitive = true
+            exclude module: 'sdk-maps-styles-extensions'
+        }
+```
+
+When offline styles are excluded, then the online styles should be set up. You can set up online
+styles in `MapFragment`:
+
+```java
+<fragment
+    android:id="@+id/map_fragment"
+    android:name="com.New.online.sdk.map.MapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    New:customStyleUrl="http://your-server:port/style/example-merged.json" />
+```
+
+You can set up online styles in `MapView`:
+
+```java
+<?xml version="1.0" encoding="utf-8"?>
+<com.New.online.sdk.map.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:New="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/map_view"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    New:styleUrl="asset://styles/night.json"
+    >
+</com.New.online.sdk.map.MapView>
+```
+
+To use the offline style library, no actions are required because the offline styles are attached to
+the map by default.
+
+To use the offline style library with your custom map, add the following dependency to the
+build.gradle file:
+
+```java
+implementation("com.New.online:sdk-maps-styles-extensions:{libversion}")
+```

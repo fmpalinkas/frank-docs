@@ -1,0 +1,178 @@
+---
+title: Documentation
+---
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_documentation"
+></a>
+
+<a
+  href="#"
+  style={{ display: 'block', margin: '0', padding: '0' }}
+  name="_initialization"
+></a>
+
+## Initialization
+
+There are two ways to perform a search:
+
+1. Create a SearchAPI (android-sdk-search) object
+2. Start and bind to a SearchService (android-sdk-search-extensions)
+
+You should use the first option if you want to handle multithreading / orientation changing and
+caching by yourself. The second option is dedicated to you if you want to have an easy, out of the
+box Android Service which will handle most of the mentioned problems by itself. Both options are
+described in the following section. They all use the same public API. In both cases you will need
+the appropriate Search API Key. For more information on obtaining and configuring New API Keys
+and their configuration, go to the "Getting started" subpage.
+
+A `SearchApi` object is created in the following manner:
+
+<Code>
+
+```java
+SearchApi searchApi = OnlineSearchApi.create(context, BuildConfig.SEARCH_API_KEY)
+```
+
+```kotlin
+private val searchApi = OnlineSearchApi.create(context, BuildConfig.SEARCH_API_KEY)
+```
+
+</Code>
+
+The alternative to using a SearchAPI object is to create the SearchService. To do so, first use
+SearchServiceManager to create a ServiceConnection object and set SearchServiceConnectionCallback to
+react on bind to the service event:
+
+<Code>
+
+```java
+searchServiceConnection = SearchServiceManager.createAndBind(getContext(),
+        searchServiceConnectionCallback());
+```
+
+```kotlin
+val searchServiceConnection = SearchServiceManager.createAndBind(context,
+    searchServiceConnectionCallback)
+```
+
+</Code>
+
+To unbind from SearchService use the following:
+
+<Code>
+
+```java
+SearchServiceManager.unbind(getContext(), searchServiceConnection);
+```
+
+```kotlin
+SearchServiceManager.unbind(context, searchServiceConnection)
+```
+
+</Code>
+
+In the preceding example, the SearchFragmentPresenter was chosen to play the role of a listener on a
+source callback. An example implementation can be as follows:
+
+<Code>
+
+```java
+@Override
+public void onBindSearchService(SearchService service) {
+    searchService = service;
+}
+```
+
+```kotlin
+override fun onBindSearchService(service: SearchService) {
+    val searchService = service
+}
+```
+
+</Code>
+
+The Android Search API provides simple yet very handy search functionality. An application developer
+can implement his own search component using either a classic callback-based approach or use a
+reactive search.
+
+the first approach involves using the void search() method, taking the SearchQuery and
+FuzzySearchResultListener implementation as parameters. Implementation of FuzzySearchResultListener
+should cover the following two methods:
+
+```java
+void onSearchResult(FuzzySearchResponse results);
+```
+
+```java
+void onSearchError(final SearchError error);
+```
+
+The methods are calling back a list of SearchResult objects with corresponding content. All poles of
+SearchResult have associated getters, so its information is easily accessible.
+
+Another way to subscribe a search response is to use a reactive search method. It returns a
+RxJavas `Observable<List<SearchResult>>`. To take advantage of this implementation, one has to
+subscribe for it (for instance with a `Disposable<List<SearchResult>>` or
+a `Consumer<List<SearchResult>>`.
+
+An example implementation can look like the following code:
+
+<Code>
+
+```java
+searchService.search(specification, fuzzyOutcomeCallback);
+```
+
+```kotlin
+searchService.search(query)
+    .subscribeOn(workingScheduler)
+    .observeOn(resultScheduler)
+    .subscribe(observer)
+```
+
+</Code>
+
+Example implementation of subscriber:
+
+<Code>
+
+```java
+private FuzzyOutcomeCallback fuzzyOutcomeCallback = new FuzzyOutcomeCallback() {
+    @Override
+    public void onSuccess(@NonNull FuzzyOutcome fuzzyOutcome) {
+        lastSearchResult = ImmutableList.copyOf(fuzzyOutcome.getFuzzyDetailsList());
+        searchView.updateSearchResults(ImmutableList.copyOf(fuzzyOutcome.getFuzzyDetailsList()));
+        searchFinished();
+    }
+
+    @Override
+    public void onError(@NonNull SearchException error) {
+        searchView.showSearchFailedMessage(error.getMessage());
+        searchView.updateSearchResults(ImmutableList.of());
+        searchFinished();
+    }
+};
+```
+
+```kotlin
+val observer = object : DisposableSingleObserver<FuzzySearchResponse>() {
+    override fun onSuccess(fuzzySearchResponse: FuzzySearchResponse) {
+        Resource.success(fuzzySearchResponse.results)
+    }
+
+    override fun onError(throwable: Throwable) {
+        Resource.error(null, Error(throwable.message))
+    }
+}
+```
+
+</Code>
+
+Please note, a consecutive search request cannot be made before its successor’s callback (either
+onSearchResult or onSearchError) is received.
+
+Concurrent search requests are not handled in the current version of the Maps SDK for Android, and
+an internal error is reported.

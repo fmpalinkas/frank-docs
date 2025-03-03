@@ -1,0 +1,1271 @@
+---
+title: Search along a route
+---
+
+## Overview
+
+This tutorial shows how to use the Example Maps SDK for iOS to create an application that helps a
+user find points of interest along a planned route. The application is written in Objective-C and
+Swift language. If you are interested in another example, please check
+the [Time to leave](/maps-ios-sdk/documentation/tutorials/use-cases/time-to-leave)
+tutorial.
+
+It shows how to use:
+
+- The Example Map SDK module to display a map, including markers with custom icons and balloons.
+- The Example Routing SDK module to plan routes with and without waypoints.
+- The Example Search SDK module to search for points of interest (POIs) and to geocode map positions.
+
+An end user can start interacting with the application by planning a route with departure and
+destination points:
+
+- One long press on the map sets a departure point.
+- A second long press sets a destination point and draws a route between those two points on the
+  map.
+
+When the route is visible on the map, the user can type a POI name or category into a search field
+or click on any of the predefined POI category buttons (gas station, restaurant, ATM). The map
+displays markers for POIs that match the user's request. The user can add one of the displayed POIs
+to their planned route by tapping the marker on the map and choosing the "Add to my route" button
+inside the marker balloon that is then displayed. The route is recalculated and redrawn to include
+the selected point.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/full-app-1.png)
+
+</ContentWrapper>
+
+## Prerequisites
+
+1. Make sure that the CocoaPods dependency manager is installed on your
+   computer: [https://cocoapods.org](https://cocoapods.org/).
+2. Create a new **App** project named **SearchAlongARoute.**. Choose either Objective-C or Swift and
+   make sure that Storyboard is selected.
+3. Go to the console and create a pod file by executing a `pod init` command.
+4. Copy and paste SDK module dependencies into the newly created _Podfile_:
+   ```prettyprint
+   pod 'ExampleOnlineSDKMaps', ‘2.4.713’
+   pod 'ExampleOnlineSDKSearch', ‘2.4.713’
+   pod 'ExampleOnlineSDKRouting', ‘2.4.713’
+   pod 'ExampleOnlineSDKMapsUIExtensions', ‘2.4.713’
+   ```
+   Install the SDK modules by typing `pod install` from the console. After this is finished close
+   your project and open _\*.xcworkspace_ file with XCode. For more details about this step, please
+   see the [downloads](/maps-ios-sdk/documentation/product-information/downloads) section.
+5. If you don't have an API key visit
+   a [How to get a Example API key](https://developer.Example.com/how-to-get-Example-api-key) site and
+   create one. The key will be used later in the code.
+
+## Map initialization
+
+To initialize a Example map, import the ExampleOnlineSDKMaps module into your project file and add a
+placeholder for the new API key. Paste your key in the `YOUR_API_KEY` placeholder.
+
+<Code>
+
+```objectivec
+#import "ViewController.h"
+#import <ExampleOnlineSDKMaps/ExampleOnlineSDKMaps.h>
+
+NSString *const API_KEY = @"YOUR_API_KEY"
+```
+
+```swift
+public class Key: NSObject {
+    @objc public static let Map = "YOUR_API_KEY"
+    @objc public static let Routing = "YOUR_API_KEY"
+    @objc public static let Search = "YOUR_API_KEY"
+    @objc public static let Traffic = "YOUR_API_KEY"
+}
+```
+
+</Code>
+
+Now, add a `TTMapView` property into a ViewController interface.
+
+<Code>
+
+```objectivec
+@interface ViewController ()
+@property(nonatomic) IBOutlet TTMapView *ExampleMap;
+@end
+```
+
+```swift
+class ViewController {
+    @IBOutlet private var mapView: TTMapView!
+}
+```
+
+</Code>
+
+Next, add a following lines of code into the `viewDidLoad` method.
+
+<Code>
+
+```objectivec
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    TTMapStyleDefaultConfiguration *style = [[TTMapStyleDefaultConfiguration alloc] init];
+    TTMapConfiguration *config = [[[[[TTMapConfigurationBuilder alloc]
+           withMapKey:API_KEY]
+          withTrafficKey:API_KEY]
+      withMapStyleConfiguration:style] build];
+    self.ExampleMap = [[TTMapView alloc] initWithFrame:self.view.frame mapConfiguration:config];
+    [self.view addSubview:self.ExampleMap];
+}
+```
+
+```swift
+let style = TTMapStyleDefaultConfiguration()
+let config = TTMapConfigurationBuilder.create()
+    .withMapKey(Key.Map)
+    .withTrafficKey(Key.Traffic)
+    .withMapStyleConfiguration(style)
+    .build()
+self.ExampleMap = TTMapView(frame: self.view.frame, mapConfiguration: config)
+self.view.addSubview(self.ExampleMap)
+```
+
+</Code>
+
+Run your application. You should see a map.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/map-1.png)
+
+</ContentWrapper>
+
+The Example map handles zooming, panning, rotating and double tapping gestures. In this application
+you need to add additional map interactions including location handling, long map press events,
+drawing routes and markers.
+
+Now add `import` statements inside the _ViewController_ file:
+
+<Code>
+
+```objectivec
+#import <ExampleOnlineSDKSearch/ExampleOnlineSDKSearch.h>
+#import <ExampleOnlineSDKRouting/ExampleOnlineSDKRouting.h>
+#import <ExampleOnlineSDKMapsUIExtensions/ExampleOnlineSDKMapsUIExtensions.h>
+```
+
+```swift
+import ExampleOnlineSDKSearch
+import ExampleOnlineSDKRouting
+import ExampleOnlineSDKMapsUIExtensions
+```
+
+</Code>
+
+Your `ViewController` class must conform to the protocols:
+
+- TTMapViewDelegate
+- TTAnnotationDelegate
+- TTAlongRouteSearchDelegate
+
+Add an `initExampleServices` method to the `ViewController` class where the Map Display API modules
+are initialized. At the same time, add an `initUIViews` method where User Interface (UI) elements
+are initialized. Move the map initialization code in the `initExampleServices` method. Once the map
+view is ready to be used the `onMapReady` method is called, in which you need to enable showing user
+current location and enable clustering annotations.
+
+<Code>
+
+```objectivec
+#import "ViewController.h"
+
+#import <ExampleOnlineSDKMaps/ExampleOnlineSDKMaps.h>
+#import <ExampleOnlineSDKSearch/ExampleOnlineSDKSearch.h>
+#import <ExampleOnlineSDKRouting/ExampleOnlineSDKRouting.h>
+#import <ExampleOnlineSDKMapsUIExtensions/ExampleOnlineSDKMapsUIExtensions.h>
+
+NSString *const API_KEY = @"YOUR_API_KEY";
+
+@interface ViewController() <TTMapViewDelegate, TTAnnotationDelegate, TTAlongRouteSearchDelegate>
+@property (strong, nonatomic) TTMapView *ExampleMap;
+@end
+
+@implementation ViewController
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self initExampleServices];
+    [self initUIViews];
+}
+
+- (void)initExampleServices {
+    TTMapStyleDefaultConfiguration *style = [[TTMapStyleDefaultConfiguration alloc] init];
+    TTMapConfiguration *config = [[[[[TTMapConfigurationBuilder alloc]
+           withMapKey:API_KEY]
+          withTrafficKey:API_KEY]
+      withMapStyleConfiguration:style] build];
+    self.ExampleMap = [[TTMapView alloc] initWithFrame:self.view.frame mapConfiguration:config];
+    [self.view addSubview:self.ExampleMap];
+}
+
+- (void)initUIViews {
+}
+@end
+
+- (void)onMapReady:(TTMapView *)mapView {
+    self.ExampleMap.showsUserLocation = YES;
+    self.ExampleMap.annotationManager.clustering = true;
+}
+```
+
+```swift
+import UIKit
+import ExampleOnlineSDKMaps
+import ExampleOnlineSDKSearch
+import ExampleOnlineSDKRouting
+import ExampleOnlineSDKMapsUIExtensions
+
+
+class ViewController: UIViewController, TTMapViewDelegate, TTAlongRouteSearchDelegate, TTAnnotationDelegate {
+
+    @IBOutlet private var ExampleMap: TTMapView!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.initExampleServices()
+        self.initUIViews()
+    }
+
+    private func initExampleServices(){
+        let style = TTMapStyleDefaultConfiguration()
+        let config = TTMapConfigurationBuilder.create()
+            .withMapKey(Key.Map)
+            .withTrafficKey(Key.Traffic)
+            .withMapStyleConfiguration(style)
+            .build()
+        self.ExampleMap = TTMapView(frame: self.view.frame, mapConfiguration: config)
+        self.view.addSubview(self.ExampleMap)
+    }
+
+    private func initUIViews(){
+    }
+
+    func onMapReady(_ mapView: TTMapView) {
+        self.ExampleMap.isShowsUserLocation = true
+        self.ExampleMap.annotationManager.clustering = true
+    }
+}
+```
+
+</Code>
+
+## Drawing a route on the map
+
+Drawing a route on the map requires that the following additional properties be defined in the
+ViewController interface:
+
+- TTRoute
+- TTReverseGeocoder
+- TTAlongRouteSearch – used in later part of this tutorial
+- Departure coordinates
+- Destination coordinates
+- Waypoint coordinates
+- TTFullRoute
+
+<Code>
+
+```objectivec
+@property(strong,nonatomic) TTRoute*route;
+@property(strong,nonatomic) TTReverseGeocoder *reverseGeocoder;
+@property(strong,nonatomic) TTAlongRouteSearch *alongRouteSearch;
+@property TTFullRoute*fullRoute;
+@property CLLocationCoordinate2D departurePosition;
+@property CLLocationCoordinate2D destinationPosition;
+@property CLLocationCoordinate2D wayPointPosition;
+@property TTAnnotationImage* departureImage;
+```
+
+```swift
+private var route: TTRoute!
+private var reverseGeocoder: TTReverseGeocoder!
+private var alongRouteSearch: TTAlongRouteSearch!
+private var fullRoute: TTFullRoute!
+private var departurePosition: CLLocationCoordinate2D? = nil
+private var destinationPosition: CLLocationCoordinate2D? = nil
+private var wayPointPosition: CLLocationCoordinate2D? = nil
+private var departureImage: TTAnnotationImage!
+```
+
+</Code>
+
+Initialize required fields and services inside the `initExampleServices` method. Your **
+ViewController** class is used here as a delegate receiving an event notification from the Example
+Map, Routing and Search services.
+
+<Code>
+
+```objectivec
+- (void)initExampleServices {
+    TTMapStyleDefaultConfiguration *style = [[TTMapStyleDefaultConfiguration alloc] init];
+    TTMapConfiguration *config = [[[[[TTMapConfigurationBuilder alloc]
+           withMapKey:API_KEY]
+          withTrafficKey:API_KEY]
+      withMapStyleConfiguration:style] build];
+    self.ExampleMap = [[TTMapView alloc] initWithFrame:self.view.frame mapConfiguration:config];
+    [self.view addSubview:self.ExampleMap];
+
+    self.ExampleMap.delegate = self;
+    self.ExampleMap.annotationManager.delegate = self;
+
+    self.reverseGeocoder = [[TTReverseGeocoder alloc] initWithKey:API_KEY];
+    self.route = [[TTRoute alloc] initWithKey:API_KEY];
+    self.alongRouteSearch = [[TTAlongRouteSearch alloc] initWithKey:API_KEY];
+    self.alongRouteSearch.delegate = self;
+    self.departurePosition = kCLLocationCoordinate2DInvalid;
+    self.destinationPosition = kCLLocationCoordinate2DInvalid;
+    self.wayPointPosition = kCLLocationCoordinate2DInvalid;
+}
+```
+
+```swift
+private func initExampleServices(){
+    let style = TTMapStyleDefaultConfiguration()
+    let config = TTMapConfigurationBuilder.create()
+        .withMapKey(Key.Map)
+        .withTrafficKey(Key.Traffic)
+        .withMapStyleConfiguration(style)
+        .build()
+
+    self.ExampleMap = TTMapView(frame: self.view.frame, mapConfiguration: config)
+    self.view.addSubview(self.ExampleMap)
+
+    self.ExampleMap.delegate = self
+    self.ExampleMap.annotationManager.delegate = self
+
+    self.reverseGeocoder = TTReverseGeocoder(key: Key.Search)
+    self.route = TTRoute(key: Key.Routing)
+    self.alongRouteSearch = TTAlongRouteSearch(key: Key.Search)
+    self.alongRouteSearch.delegate = self
+}
+```
+
+</Code>
+
+Initialize an icon for a departure map annotation inside the `initUIViews` method.You also need to
+add an icon named _ic_map_route_departure_ to the _Assets.xcassets_ directory.
+
+<Code>
+
+```objectivec
+self.departureImage = [TTAnnotationImage createPNGWithName:@"ic_map_route_departure"];
+```
+
+```swift
+self.departureImage = TTAnnotationImage.createPNG(with: UIImage(named: "ic_map_route_departure")!)!
+```
+
+</Code>
+
+You need a `clearMap` function, where all the markers and the route are removed from the map.
+
+<Code>
+
+```objectivec
+- (void)clearMap {
+    [self.ExampleMap.routeManager removeAllRoutes];
+    [self.ExampleMap.annotationManager removeAllAnnotations];
+    self.departurePosition = kCLLocationCoordinate2DInvalid;
+    self.destinationPosition = kCLLocationCoordinate2DInvalid;
+    self.wayPointPosition = kCLLocationCoordinate2DInvalid;
+    self.fullRoute = nil;
+}
+```
+
+```swift
+private func clearMap(){
+    self.ExampleMap.routeManager.removeAllRoutes()
+    self.ExampleMap.annotationManager.removeAllAnnotations()
+    self.departurePosition = nil
+    self.destinationPosition = nil
+    self.wayPointPosition = nil
+    self.fullRoute = nil
+}
+```
+
+</Code>
+
+Now add an implementation to the method `didLongPress` that handles long press events on the map.
+
+<Code>
+
+```objectivec
+- (BOOL)isDestinationPositionSet {
+    return CLLocationCoordinate2DIsValid(self.destinationPosition);
+}
+
+- (BOOL)isDeparturePositionSet {
+    return CLLocationCoordinate2DIsValid(self.departurePosition);
+}
+
+- (void)mapView:(TTMapView *)mapView didLongPress:(CLLocationCoordinate2D)coordinate {
+    if ([self isDeparturePositionSet] && [self isDestinationPositionSet]) {
+        [self clearMap];
+    } else {
+        [self handleLongPress:coordinate];
+    }
+}
+
+- (void)handleLongPress:(CLLocationCoordinate2D)coordinate {
+    TTReverseGeocoderQuery *query = [[TTReverseGeocoderQueryBuilder createWithCLLocationCoordinate2D:coordinate] build];
+
+    [self.reverseGeocoder reverseGeocoderWithQuery:query completionHandle:^(TTReverseGeocoderResponse *response, TTResponseError *error) {
+        if (response.result.addresses.count > 0) {
+            TTReverseGeocoderFullAddress *firstAddress = response.result.addresses.firstObject;
+            NSString *address = firstAddress.address.freeformAddress ? firstAddress.address.freeformAddress : @"  ";
+            [self processGeocoderResponse:firstAddress.position address:address];
+        }
+    }];
+}
+
+- (void)processGeocoderResponse:(CLLocationCoordinate2D)geocodedPosition address:(NSString *)address {
+    if (!CLLocationCoordinate2DIsValid(self.departurePosition)) {
+        self.departurePosition = geocodedPosition;
+        [self createAndDisplayMarkerAtPosition:self.departurePosition withAnnotationImage:self.departureImage andBalloonText:address];
+    } else {
+        self.destinationPosition = geocodedPosition;
+        [self drawRouteWithDeparture:self.departurePosition andDestination:self.destinationPosition];
+    }
+}
+```
+
+```swift
+private var isDeparturePositionSet: Bool {
+    return departurePosition != nil
+}
+
+private var isDestinationPositionSet: Bool {
+    return destinationPosition != nil
+}
+
+func mapView(_ mapView: TTMapView, didLongPress coordinate: CLLocationCoordinate2D) {
+    self.dismissKeyboard()
+    if self.isDeparturePositionSet && self.isDestinationPositionSet {
+        self.clearMap()
+    }else {
+        self.handleLongPress(coordinate)
+    }
+}
+
+private func handleLongPress(_ coordinate: CLLocationCoordinate2D){
+    let query = TTReverseGeocoderQueryBuilder.create(with: coordinate).build()
+    self.reverseGeocoder.reverseGeocoder(with: query, completionHandle: {(response, error) -> Void in
+        if let error = error {
+            self.handleApiError(error)
+        } else if let firstAddress = response?.result.addresses.first {
+            let address = firstAddress.address.freeformAddress != nil ? firstAddress.address.freeformAddress : " "
+            self.processGeocoderResponse(coordinate: firstAddress.position, address: address!)
+        }
+    })
+}
+
+private func processGeocoderResponse(coordinate: CLLocationCoordinate2D, address: String){
+    if !self.isDeparturePositionSet {
+        self.departurePosition = coordinate
+        self.createAndDisplayMarkerAtPosition(coordinate, withAnnotationImage: self.departureImage, andBaloonText: address)
+    } else if !isDestinationPositionSet {
+        self.destinationPosition = coordinate
+        self.drawRouteWithDeparture()
+    }
+}
+```
+
+</Code>
+
+The `didLongPress` function calls a reverseGeocoder's `reverseGeocoderWithQuery` method. This method
+checks if a road can be found in the place where a long press is registered on the map.
+
+If the reverse geocoding call is successful and contains valid results, the effect of the long press
+depends on context:
+
+- The first long press on the map sets the `departurePosition` object.
+- A second long press sets the `destinationPosition` object and draws a route on the map.
+- A third long press removes any destination and departure markers and the route from the map.
+
+Next add functions to send a route request to the Routing API and to draw a route from the response
+on the map.
+
+<Code>
+
+```objectivec
+- (void)drawRouteWithDeparture:(CLLocationCoordinate2D)departure andDestination:(CLLocationCoordinate2D)destination {
+    [self drawRouteWithDeparture:departure andDestination:destination andWayPoint:kCLLocationCoordinate2DInvalid];
+}
+
+- (void)drawRouteWithDeparture:(CLLocationCoordinate2D)departure andDestination:(CLLocationCoordinate2D)destination andWayPoint:(CLLocationCoordinate2D)wayPoint {
+    TTRouteQuery *query = [self createRouteQueryWithOrigin:departure andDestination:destination andWayPoint:wayPoint];
+    [self.route planRouteWithQuery:query completionHandler:^(TTRouteResult *result, TTResponseError *error) {
+        if (result.routes.count > 0) {
+            [self addActiveRouteToMap:result.routes.firstObject];
+        }
+    }];
+}
+
+- (TTRouteQuery *)createRouteQueryWithOrigin:(CLLocationCoordinate2D)origin andDestination:(CLLocationCoordinate2D)destination andWayPoint:(CLLocationCoordinate2D)wayPoint {
+    TTRouteQueryBuilder *builder = [TTRouteQueryBuilder createWithDest:destination andOrig:origin];
+    if (CLLocationCoordinate2DIsValid(wayPoint)) {
+        [builder withWayPoints:@[[NSValue value:&wayPoint withObjCType:@encode(CLLocationCoordinate2D)]]];
+    }
+    return [builder build];
+}
+
+- (void)addActiveRouteToMap:(TTFullRoute *)route {
+    [self.ExampleMap.routeManager removeAllRoutes];
+    self.fullRoute = route;
+    if (!CLLocationCoordinate2DIsValid(self.wayPointPosition)) {
+        [self.ExampleMap.annotationManager removeAllAnnotations];
+    }
+    TTMapRoute *mapRoute = [TTMapRoute routeWithCoordinatesData:self.fullRoute withRouteStyle:TTMapRouteStyle.defaultActiveStyle
+        imageStart:TTMapRoute.defaultImageDeparture imageEnd:TTMapRoute.defaultImageDestination];
+    [self.ExampleMap.routeManager addRoute:mapRoute];
+}
+```
+
+```swift
+private func drawRouteWithDeparture(wayPoint: CLLocationCoordinate2D? = nil){
+    guard let departurePosition = self.departurePosition, let destinationPosition = self.destinationPosition else {
+        self.displayMessage("Departure position or destination position were not set.")
+        return
+    }
+    let routeQuery = createRouteQuery(departure: departurePosition, destination: destinationPosition, wayPoint: self.wayPointPosition)
+    self.route.plan(with: routeQuery, completionHandler: { (routeResult: TTRouteResult?, error: TTResponseError?) -> Void in
+        if let error = error {
+            self.handleApiError(error)
+            self.clearMap()
+        } else if let result = routeResult {
+            self.fullRoute = result.routes.first
+            if let fullRoute = self.fullRoute {
+                self.addActiveRouteToMapView(fullRoute)
+            }
+        }
+    })
+}
+
+private func createRouteQuery(departure: CLLocationCoordinate2D, destination: CLLocationCoordinate2D, wayPoint: CLLocationCoordinate2D?) -> TTRouteQuery  {
+    let builder = TTRouteQueryBuilder.create(withDest: destination, andOrig: departure)
+    if var wayPoint = wayPoint {
+        builder.withWayPoints(&wayPoint, count: 1)
+    }
+    return builder.build()
+}
+
+private func addActiveRouteToMapView(_ fullRoute: TTFullRoute?) {
+    let iconStart = UIImage(named: "ic_map_route_departure")
+    let iconEnd = UIImage(named: "ic_map_route_destination")
+    if let fullRoute = fullRoute {
+        self.ExampleMap.routeManager.removeAllRoutes()
+        if self.wayPointPosition == nil {
+            self.ExampleMap.annotationManager.removeAllAnnotations()
+        }
+        let mapRoute = TTMapRoute(coordinatesData: fullRoute, with: TTMapRouteStyle.defaultActive(), imageStart: iconStart, imageEnd: iconEnd)
+        self.ExampleMap.routeManager.add(mapRoute)
+        self.ExampleMap.routeManager.showAllRoutesOverview()
+    }
+}
+```
+
+</Code>
+
+The `createRouteQuery` method returns a routeQuery object:
+
+- With additional waypoints (if the `wayPoint` field is a valid 2D coordinate).
+- Without additional waypoints (if the `wayPoint` field is not a valid 2D coordinate).
+
+The `drawRouteWithDeparture` method calls the Routing API. If the response is successful, an active
+route is drawn on the map.
+
+Add a `createAndDisplayMarkerAtPosition` method to display a departure position marker if the
+destination position is not set:
+
+<Code>
+
+```objectivec
+- (NSString *)coordinatesToString:(CLLocationCoordinate2D)coords {
+    return [NSString stringWithFormat:@"%@,%@", [@(coords.latitude) stringValue], [@(coords.longitude) stringValue]];
+}
+
+- (void)createAndDisplayMarkerAtPosition:(CLLocationCoordinate2D)coords withAnnotationImage:(TTAnnotationImage *)image andBalloonText:(NSString *)text {
+    self.positionsPoisInfo[[self coordinatesToString:coords]] = text;
+    [self.ExampleMap.annotationManager addAnnotation:[TTAnnotation annotationWithCoordinate:coords annotationImage:image anchor:TTAnnotationAnchorCenter type:TTAnnotationTypeFocal]];
+}
+```
+
+```swift
+private func coordinatesToString(_ coordinate: CLLocationCoordinate2D) -> String {
+    return "\(coordinate.latitude),\(coordinate.longitude)"
+}
+
+private func createAndDisplayMarkerAtPosition(_ coordinate: CLLocationCoordinate2D, withAnnotationImage image: TTAnnotationImage, andBaloonText: String){
+    self.positionsPoisInfo[self.coordinatesToString(coordinate)] = andBaloonText
+    let annotation = TTAnnotation(coordinate: coordinate, annotationImage: image, anchor: TTAnnotationAnchor.center, type: TTAnnotationType.focal)
+    self.ExampleMap.annotationManager.add(annotation)
+}
+```
+
+</Code>
+
+Now add dictionary property where you can store coordinates with a balloon text to display when any
+map marker is tapped.
+
+<Code>
+
+```objectivec
+@property NSMutableDictionary *positionsPoisInfo;
+```
+
+```swift
+private var positionsPoisInfo: [String : String]!
+```
+
+</Code>
+
+Make sure that you initialize the dictionary inside the `initUIViews` method:
+
+<Code>
+
+```objectivec
+self.positionsPoisInfo = [[NSMutableDictionary alloc] init];
+```
+
+```swift
+self.positionsPoisInfo = [:]
+```
+
+</Code>
+
+Now you can draw the route on the map by using long presses in chosen locations.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/routing-1.gif)
+
+</ContentWrapper>
+
+## Searching for POIs along the route
+
+Modify the _Main.storyboard_ file by adding a SearchBar control. Add constraints to the SearchBar
+control to make sure that it will be displayed correctly on all of the devices.
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/ide-search-poi-1-2.png)
+
+Now add constraints to the `TTMapView` property:
+
+<Code>
+
+```objectivec
+- (void)initExampleMapConstraints {
+    [self.ExampleMap setTranslatesAutoresizingMaskIntoConstraints:false];
+    [[self.ExampleMap.leftAnchor constraintEqualToAnchor:self.view.leftAnchor] setActive:true];
+    [[self.ExampleMap.topAnchor constraintEqualToAnchor:self.view.topAnchor] setActive:true];
+    [[self.ExampleMap.rightAnchor constraintEqualToAnchor:self.view.rightAnchor] setActive:true];
+    [[self.ExampleMap.bottomAnchor constraintEqualToAnchor:self.searchBar.topAnchor] setActive:true];
+}
+```
+
+```swift
+private func initExampleMapConstraints(){
+    self.ExampleMap.translatesAutoresizingMaskIntoConstraints = false
+    let left = self.ExampleMap.leftAnchor.constraint(equalTo: self.view.leftAnchor)
+    let right = self.ExampleMap.rightAnchor.constraint(equalTo: self.view.rightAnchor)
+    let top = self.ExampleMap.topAnchor.constraint(equalTo: self.view.topAnchor)
+    let bottom = self.ExampleMap.bottomAnchor.constraint(equalTo: self.searchBar.topAnchor)
+    NSLayoutConstraint.activate([left, right, top, bottom])
+}
+```
+
+</Code>
+
+Execute the `initExampleMapConstraints` function inside `initExampleServices`.
+
+In the next step you need to make sure that the SearchBar which you just added is always above a
+keyboard when it is visible.
+
+First add two constant fields above the interface declaration in the _ViewController_ file:
+
+<Code>
+
+```objectivec
+static const int KEYBOARD_SHOW_MULTIPLIER = 1;
+static const int KEYBOARD_HIDE_MULTIPLIER = -1;
+```
+
+```swift
+private static let KEYBOARD_SHOW_MULTIPLIER = 1;
+private static let KEYBOARD_HIDE_MULTIPLIER = -1;
+```
+
+</Code>
+
+and two properties inside the ViewController class:
+
+<Code>
+
+```objectivec
+@property(weak, nonatomic) IBOutlet NSLayoutConstraint *bottomConstraint;
+@property Boolean keyboardShown;
+```
+
+```swift
+private var isKeyboardShown: Bool!
+@IBOutlet private var bottomConstraint: NSLayoutConstraint!
+```
+
+</Code>
+
+A `bottomConstraint` property is adjusted with the size of the keyboard shown on the phone screen
+when the user starts typing inside the SearchBar. A `keyboardShown` property is used to store
+information if keyboard is currently visible.
+
+Make sure that the `bottomConstraint` property field is connected with a SearchBar bottom constraint
+from the _Main.storyboard_ file.
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/ide-search-poi-3-2.png)
+
+Next add an `initKeyboardNotificationEvents` method where keyboard events are assigned to methods
+executed whenever a specific event is triggered.
+
+<Code>
+
+```objectivec
+- (void)initKeyboardNotificationEvents {
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [nc addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    [nc addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+    [nc addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
+}
+```
+
+```swift
+private func initKeyboardNotificationEvents() {
+    let nc = NotificationCenter.default
+    nc.addObserver(self, selector: #selector(keyboardWillShow), name: UIWindow.keyboardWillShowNotification, object: nil)
+    nc.addObserver(self, selector: #selector(keyboardWillHide), name: UIWindow.keyboardWillHideNotification, object: nil)
+    nc.addObserver(self, selector: #selector(keyboardDidShow), name: UIWindow.keyboardDidShowNotification, object: nil)
+    nc.addObserver(self, selector: #selector(keyboardDidHide), name: UIWindow.keyboardDidHideNotification, object: nil)
+}
+```
+
+</Code>
+
+Execute the `initKeyboardNotificationEvents` inside the `viewDidLoad` method.
+
+<Code>
+
+```objectivec
+[self initKeyboardNotificationEvents];
+```
+
+```swift
+self.initKeyboardNotificationEvents()
+```
+
+</Code>
+
+Add required methods:
+
+<Code>
+
+```objectivec
+- (void)keyboardWillShow:(NSNotification *)notification {
+    if (!self.keyboardShown) {
+        CGFloat keyboardHeight = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+        [self adjustHeight:YES withHeight:keyboardHeight];
+    }
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    if (self.keyboardShown) {
+        CGFloat keyboardHeight = [notification.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
+        [self adjustHeight:NO withHeight:keyboardHeight];
+    }
+}
+
+- (void)keyboardDidShow:(NSNotification *)notification {
+    self.keyboardShown = YES;
+}
+
+- (void)keyboardDidHide:(NSNotification *)notification {
+    self.keyboardShown = NO;
+}
+
+- (void)adjustHeight:(Boolean)show withHeight:(CGFloat)height {
+    CGFloat bottomStackHeight = self.bottomStackHeight.constant;
+    CGFloat changeInHeight = (height - bottomStackHeight) * (show ? KEYBOARD_SHOW_MULTIPLIER : KEYBOARD_HIDE_MULTIPLIER);
+    self.bottomConstraint.constant += changeInHeight;
+}
+```
+
+```swift
+@objc private func keyboardWillShow(notification : Notification) {
+    if !self.isKeyboardShown {
+        let keyboardHeight = getKeyboardHeight(notification: notification)
+        if let keyboardHeight = keyboardHeight {
+            self.adjustHeight(withHeight: keyboardHeight, show: true)
+        }
+    }
+}
+
+@objc private func keyboardWillHide(notification : Notification) {
+    if self.isKeyboardShown {
+        let keyboardHeight = getKeyboardHeight(notification: notification)
+        if let keyboardHeight = keyboardHeight {
+            self.adjustHeight(withHeight: keyboardHeight, show: false)
+        }
+    }
+}
+
+private func getKeyboardHeight(notification: Notification) -> CGFloat? {
+    let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue
+    return keyboardFrame?.cgRectValue.height
+}
+
+@objc private func keyboardDidShow(notification : Notification) {
+    self.isKeyboardShown = true
+}
+
+@objc private func keyboardDidHide(notification : Notification){
+    self.isKeyboardShown =  false
+}
+
+private func adjustHeight(withHeight height: CGFloat, show: Bool){
+    let bottomStackHeight = self.bottomStackHeight.constant
+    let changeInHeight = (height - bottomStackHeight) * CGFloat(show ? ViewController.KEYBOARD_SHOW_MULTIPLIER : ViewController.KEYBOARD_HIDE_MULTIPLIER)
+    self.bottomConstraint.constant += changeInHeight
+}
+```
+
+</Code>
+
+Methods `keyboardDidShow` and `keyboardDidHide` are used to set the `keyboardShown` field with a
+Boolean value holding information about a current keyboard state. Inside a `keyboardWillShow` and
+a `keyboardWillHide` methods, the keyboard height is adjusted with the value of a keyboard frame
+rectangle height.
+
+Optionally implement a single tap on the map event, where you can hide keyboard if it is visible:
+
+<Code>
+
+```objectivec
+- (void)mapView:(TTMapView *_Nonnull)mapView didSingleTap:(CLLocationCoordinate2D)coordinate {
+    [self.view endEditing:YES];
+}
+```
+
+```swift
+func mapView(_ mapView: TTMapView, didSingleTap coordinate: CLLocationCoordinate2D) {
+    self.searchBar.endEditing(true)
+}
+```
+
+</Code>
+
+Add a **UISearchBarDelegate** protocol declaration to the ViewController inside the _
+ViewController.m_ file and a SearchBar outlet as property inside. Connect your outlet property with
+the SearchBar from the _Main.storyboard_ file.
+
+<Code>
+
+```objectivec
+@property(weak,nonatomic) IBOutlet UISearchBar *searchBar;
+```
+
+```swift
+@IBOutlet private var searchBar: UISearchBar!
+```
+
+</Code>
+
+Designate a current ViewController object as a delegate for the newly added `searchBar` property by
+adding this line inside the `initUIViews` method:
+
+<Code>
+
+```objectivec
+self.searchBar.delegate = self;
+```
+
+```swift
+self.searchBar.delegate = self
+```
+
+</Code>
+
+This will allow you to receive and react to the `searchBar` event notifications. Implement a
+method _searchBarSearchButtonClicked_ to be executed whenever a search bar search button is pressed.
+
+In the next step add implementation of the method executed whenever the search bar button is
+clicked.
+
+<Code>
+
+```objectivec
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    if (self.fullRoute) {
+        [self searchAlongTheRoute:self.searchBar.text];
+    }
+}
+- (void)searchAlongTheRoute:(NSString *)searchText {
+    TTAlongRouteSearchQuery *alongRouteSearchQuery = [[[[TTAlongRouteSearchQueryBuilder alloc] initWithTerm:searchText withRoute:self.fullRoute withMaxDetourTime:1000] withLimit:10] build];
+    [self.alongRouteSearch searchWithQuery:alongRouteSearchQuery];
+}
+```
+
+```swift
+func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    if self.fullRoute != nil, let searchText = self.searchBar.text {
+        self.searchAlongTheRoute(searchText)
+    } else {
+        self.displayMessage("Long press on the map to choose departure and destination points")
+    }
+}
+
+private func searchAlongTheRoute(_ searchText: String) {
+    let query = TTAlongRouteSearchQueryBuilder(term: searchText, withRoute: self.fullRoute, withMaxDetourTime: ViewController.MAX_DETOUR_TIME)
+        .withLimit(ViewController.SEARCH_RESULTS_LIMIT)
+        .build()
+    self.alongRouteSearch.search(with: query)
+}
+```
+
+</Code>
+
+The `searchAlongTheRoute` function in this object executes a search query for the provided search
+term along the route visible on the map.
+
+Add a `completedWithResponse` method executed when a response is received from the Example search
+module. Make sure to declare that your ViewController class conforms to the **
+TTAlongRouteSearchDelegate** protocol.
+
+<Code>
+
+```objectivec
+- (void)search:(TTAlongRouteSearch *)search completedWithResponse:(TTAlongRouteSearchResponse *)response {
+    [self.ExampleMap.annotationManager removeAllAnnotations];
+    [self.positionsPoisInfo removeAllObjects];
+
+    for (TTAlongRouteSearchResult *result in response.results) {
+        NSString *markerString = [NSString stringWithFormat:@"%@, %@", result.poi.name, result.address.freeformAddress];
+        [self createAndDisplayMarkerAtPosition:result.position withAnnotationImage:TTAnnotation.defaultAnnotationImage andBalloonText:markerString];
+    }
+    [self.ExampleMap zoomToAllAnnotations];
+}
+```
+
+```swift
+func search(_ search: TTAlongRouteSearch, completedWith response: TTAlongRouteSearchResponse) {
+    self.ExampleMap.annotationManager.removeAllAnnotations()
+    self.positionsPoisInfo.removeAll()
+    for result in response.results {
+        guard result.poi != nil && result.address.freeformAddress != nil else {
+            continue
+        }
+        let markerText = "\(result.poi!.name), \(result.address.freeformAddress!)"
+        self.createAndDisplayMarkerAtPosition(result.position, withAnnotationImage: TTAnnotation.defaultAnnotationImage(), andBaloonText: markerText)
+    }
+    self.ExampleMap.zoomToAllAnnotations()
+}
+```
+
+</Code>
+
+The `createAndDisplayMarkerAtPosition` method then adds a map marker in the position returned by the
+search query, including the name and address of the POI.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/search-poi-1.png)
+
+</ContentWrapper>
+
+## Adding custom marker balloons
+
+Add a new User Interface View file named **CustomAnnotationView**. Open the newly added _
+CustomAnnotationView.xib_ file and configure the size of the View component inside this file.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/ide-marker-1.png)
+
+</ContentWrapper>
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/ide-marker-2.png)
+
+</ContentWrapper>
+
+Add labels where a point of interest name and an address can be displayed. Additionally add a button
+to include point of interest marker to the route displayed on map.
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/ide-marker-3.png)
+
+Select all views and add a layout constraints to align items.
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/popup-constraints.png)
+
+Now create a new **Cocoa Touch Class** file named _CustomAnnotationView_ as a subclass of **UIView**. Make sure that your _CustomAnnotationView_ conforms to a **TTCalloutView** protocol by modifying
+a _CustomAnnotationView_ file.
+
+<Code>
+
+```objectivec
+#import <UIKit/UIKit.h>
+#import <ExampleOnlineSDKMaps/ExampleOnlineSDKMaps.h>
+@interface CustomAnnotationView : UIView <TTCalloutView>
+
+@end
+```
+
+```swift
+import UIKit
+import ExampleOnlineSDKMaps
+
+class CustomAnnotationView : UIView & TTCalloutView {
+}
+```
+
+</Code>
+
+Configure a custom class for the main View component in the _CustomViewController.xib_ file.
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/ide-marker-4.png)
+
+Inside the _CustomAnnotationView_ file add a **WayPointAddedDelegate** protocol with a `setWayPoint`
+method defined inside. The class implementing this protocol receives notifications from a button
+click inside the marker balloon. Additionally define properties and methods inside the _
+CustomAnnotationView_.
+
+<Code>
+
+```objectivec
+#import <UIKit/UIKit.h>
+#import <ExampleOnlineSDKMaps/ExampleOnlineSDKMaps.h>
+
+@protocol WayPointAddedDelegate
+
+- (void) setWayPoint:(TTAnnotation* )annotation;
+
+@end
+
+@interface CustomAnnotationView : UIView <TTCalloutView>
+
+@property(nonatomic, strong) TTAnnotation *annotation;
+@property(strong, nonatomic) IBOutlet UILabel *poiName;
+@property(strong, nonatomic) IBOutlet UILabel *poiAddress;
+@property(strong, nonatomic) id myDelegate;
+- (IBAction)addWayPoint:(id)sender;
+
+@end
+```
+
+```swift
+import UIKit
+import ExampleOnlineSDKMaps
+
+protocol WayPointAddedDelegate {
+    func setWayPoint(_ annotation: TTAnnotation!)
+}
+
+class CustomAnnotationView : UIView & TTCalloutView {
+
+    @IBOutlet var poiName: UILabel!
+    @IBOutlet var poiAddress: UILabel!
+    var annotation: TTAnnotation!
+    var myDelegate: WayPointAddedDelegate!
+
+    @IBAction func addWayPoint(_ sender: Any) {
+    }
+
+}
+```
+
+</Code>
+
+Connect outlets with previously added labels and the `addWayPoint`method for the **Touch up inside**
+action performed on the add waypoint button.
+
+Now add an implementation of the **CustomAnnotationView** class inside the _CustomAnnotationView.m_
+file
+
+<Code>
+
+```objectivec
+#import "CustomAnnotationView.h"
+
+@implementation CustomAnnotationView
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    return self;
+}
+
+- (IBAction)addWayPoint:(id)sender {
+    [self.myDelegate setWayPoint:self.annotation];
+}
+
+@end
+```
+
+```swift
+import UIKit
+import ExampleOnlineSDKMaps
+
+class CustomAnnotationView : UIView & TTCalloutView {
+
+    @IBOutlet var poiName: UILabel!
+    @IBOutlet var poiAddress: UILabel!
+    var annotation: TTAnnotation!
+    var myDelegate: WayPointAddedDelegate!
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
+    @IBAction func addWayPoint(_ sender: Any) {
+        self.myDelegate.setWayPoint(self.annotation)
+    }
+}
+```
+
+</Code>
+
+When a class implements the **WayPointAddedDelegate** protocol it must define a `setWayPoint` method
+which is executed whenever a button inside marker balloon is clicked.
+
+Import _CustomAnnotationView.h_ inside the _ViewController.m_ file.
+
+```objectivec
+#import"CustomAnnotationView.h"
+```
+
+Add the **WayPointAddedDelegate** protocol declaration to the ViewController class and implement
+a `setWaypoint` method
+
+<Code>
+
+```objectivec
+- (void)setWayPoint:(TTAnnotation *)annotation {
+    self.wayPointPosition = [annotation coordinate];
+    [self.ExampleMap.annotationManager deselectAnnotation];
+    [self drawRouteWithDeparture:self.departurePosition andDestination:self.destinationPosition andWayPoint:self.wayPointPosition];
+}
+```
+
+```swift
+func setWayPoint(_ annotation: TTAnnotation!) {
+    self.wayPointPosition = annotation.coordinate
+    self.ExampleMap.annotationManager.deselectAnnotation()
+    self.drawRouteWithDeparture(wayPoint: self.wayPointPosition)
+}
+```
+
+</Code>
+
+In the last step overwrite default behavior of the `viewForSelectedAnnotation` method where custom
+annotation is created for each point of interest along a route.
+
+<Code>
+
+```objectivec
+- (UIView <TTCalloutView> *)annotationManager:(id<TTAnnotationManager>)manager viewForSelectedAnnotation:(TTAnnotation *)selectedAnnotation {
+    NSString *selectedCoordinatesString = [self coordinatesToString:selectedAnnotation.coordinate];
+    if ([selectedCoordinatesString isEqualToString:[self coordinatesToString:self.departurePosition]]) {
+        return [[TTCalloutOutlineView alloc] init];
+    } else {
+        return [[TTCalloutOutlineView alloc ] initWithUIView:[self createCustomAnnotation:selectedAnnotation]];
+    }
+}
+
+- (UIView <TTCalloutView> *)createCustomAnnotation:(TTAnnotation *)selectedAnnotation {
+    CustomAnnotationView <TTCalloutView> *customAnnotation = [[NSBundle.mainBundle loadNibNamed:@"CustomAnnotationView" owner:self options:nil] firstObject];
+    NSArray *annotationStringArray = [self.positionsPoisInfo[[self coordinatesToString:selectedAnnotation.coordinate]] componentsSeparatedByString:@","];
+    customAnnotation.annotation = selectedAnnotation;
+    customAnnotation.poiName.text = annotationStringArray[0];
+    customAnnotation.poiAddress.text = annotationStringArray[1];
+    customAnnotation.myDelegate = self;
+    return customAnnotation;
+}
+- (NSString *)coordinatesToString:(CLLocationCoordinate2D)coords {
+    return [NSString stringWithFormat:@"%@,%@", [@(coords.latitude) stringValue], [@(coords.longitude) stringValue]];
+}
+```
+
+```swift
+func annotationManager(_ manager: TTAnnotationManager, viewForSelectedAnnotation selectedAnnotation: TTAnnotation) -> UIView & TTCalloutView {
+    let selectedCoordinate = self.coordinatesToString(selectedAnnotation.coordinate)
+    if self.departurePosition != nil && selectedCoordinate == self.coordinatesToString(self.departurePosition!) {
+        return TTCalloutOutlineView()
+    } else {
+        return TTCalloutOutlineView(uiView: self.createCustomAnnotation(selectedAnnotation))
+    }
+}
+
+private func createCustomAnnotation(_ selectedAnnotation: TTAnnotation) -> UIView {
+    let customAnnotation = Bundle.main.loadNibNamed("CustomAnnotationView", owner: nil, options: nil)?.first as! CustomAnnotationView
+    let annotationStringArray = self.positionsPoisInfo[ self.coordinatesToString(selectedAnnotation.coordinate)]?.components(separatedBy: ",")
+    customAnnotation.annotation = selectedAnnotation
+    customAnnotation.poiName.text = annotationStringArray?[0] ?? ""
+    customAnnotation.poiAddress.text = annotationStringArray?[1] ?? ""
+    customAnnotation.myDelegate = self
+    return customAnnotation
+}
+
+private func coordinatesToString(_ coordinate: CLLocationCoordinate2D) -> String {
+    return "\(coordinate.latitude),\(coordinate.longitude)"
+}
+```
+
+</Code>
+
+Inside the `createCustomAnnotation` method a `CustomAnnotationView` object is created, and labels
+for this object are populated with the information about a found point of interest. Next this
+annotation is displayed for each marker visible on the map.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/search-poi-2.png)
+
+</ContentWrapper>
+
+Now you should have a fully working application where you can:
+
+- Display a map.
+- Create a route between 2 points.
+- Display points of interest.
+- Add a single POI to your route.
+
+The additional styling, shortcut buttons, and help screen in the application screenshots are not a
+part of this tutorial. You can find them, along with all the icons and images used in this tutorial,
+in the application posted
+on [Github](https://github.com/Example-international/Example-use-case-search-along-a-route-ios).
+
+## Summary
+
+This tutorial explained how to create a sample application that searches for and displays points of
+interest(POIs) along a route, then recalculates the route to include one of those POIs.
+
+This application can be extended with other Example Maps SDK functions, such as displaying
+information about traffic and travel distances.
+
+Happy coding!
+
+## Example application
+
+The full application, including additional layout changes and improvements, is visible below. At the
+bottom of the screen there are three optional buttons that can be used for quick searches for gas
+stations, restaurants, and ATMs. There is also a help button in the top right corner along with a
+clear button to remove the route and any markers from the map.
+
+<ContentWrapper maxWidth="23rem" objectFit="contain">
+
+![](https://developer.Example.com/assets/tutorials/searchalongaroute-ios/full-app-low.gif)
+
+</ContentWrapper>

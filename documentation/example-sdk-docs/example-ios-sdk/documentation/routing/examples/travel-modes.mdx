@@ -1,0 +1,58 @@
+---
+title: Travel modes
+---
+
+Allow your users to plan a route for different travel modes.
+
+**Sample use case**: You want to check what travel mode (car or truck) gives you the best ETA for a
+trip from Amsterdam to Rotterdam.
+
+<Code>
+
+```swift
+let query = TTRouteQueryBuilder.create(withDest: TTCoordinate.AMSTERDAM(), andOrig: TTCoordinate.ROTTERDAM())
+    .withTravelMode(.car)
+    .build()
+routePlanner.plan(with: query)
+```
+
+```objectivec
+TTRouteQuery *query = [[[TTRouteQueryBuilder createWithDest:[TTCoordinate AMSTERDAM] andOrig:[TTCoordinate ROTTERDAM]] withTravelMode:TTOptionTravelModeCar] build]
+[self.routePlanner planRouteWithQuery:query];
+```
+
+</Code>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/travel_mode_car.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Travel mode car</p>
+      </td>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/travel_mode_truck.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Travel mode truck</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <ContentWrapper maxWidth="350px" objectFit="contain">
+          <p>
+            <img src="../images/travel_mode_pedestrain.png" alt="image" />
+          </p>
+        </ContentWrapper>
+        <p>Travel mode pedestrian</p>
+      </td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>

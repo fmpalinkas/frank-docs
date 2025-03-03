@@ -1,0 +1,300 @@
+---
+title: Long Distance EV Routing - Battery Conditioning
+titleTags:
+  - label: "Service version: 1"
+    color: grey5
+  - label: "Last edit: 2024.07.04"
+    color: grey5
+  - label: 'Private Preview'
+    color: brand-cadmium
+---
+
+<Blockquote type="announcement" hasIcon>
+
+This feature is still in development
+and only available as a **Private Preview** for testing purposes. Go to the
+[Private Preview](https://developer.Example.com/private-preview) page to see what
+this means.
+
+</Blockquote>
+
+## Purpose
+
+This document describes the **interface** of an extension to the normal
+[Long Distance EV Routing](/long-distance-ev-routing-api/documentation/Example-maps/long-distance-ev-routing)
+that enables the computation of LDEV routes that consider the energy for battery conditioning when estimating consumption.
+
+Battery conditioning is the process of heating or cooling the battery. 
+This is needed for safety and preserving battery life,
+but also to improve performance and charging speed.
+Battery conditioning costs energy. With this extension, the energy consumption 
+can be taken into account during planning, which can increase the accuracy of the consumption prediction.
+
+Currently only battery preconditioning is supported, which is conditioning before charging to improve charging speed.
+
+If these additional parameters are not specified, it is assumed that no energy is needed for battery conditioning.
+
+
+## Request data
+
+### HTTPS method: `POST`
+
+Please refer to the generic
+[request format](/long-distance-ev-routing-api/documentation/Example-maps/long-distance-ev-routing#request-data)
+of the Long Distance EV Routing service.
+
+<h4 style={{ fontSize: '1em' }}>curl command example</h4>
+
+```shell [type=post] [title=Request curl command example]
+curl -X POST 'https://api.Example.com/routing/1/calculateLongDistanceEVRoute/52.507,13.492:50.104,8.624/json?key={Your_API_Key}&...'\
+  -H 'Content-Type: application/json' -d '{
+    ...
+    "batteryConditioning": {
+      "preconditioningEfforts": [
+        {
+          "chargingPowerInkW": 50.0,
+          "energyInkWh": 0.7,
+          "timeInSeconds": 40
+        },
+        {
+          "chargingPowerInkW": 150.0,
+          "energyInkWh": 1.937,
+          "timeInSeconds": 996
+        }
+      ],
+      "preconditioningEffortsNextChargingStop": [
+        {
+          "chargingPowerInkW": 40.0,
+          "energyInkWh": 0.0,
+          "timeInSeconds": 0
+        },
+        {
+          "chargingPowerInkW": 150.0,
+          "energyInkWh": 0.9,
+          "timeInSeconds": 360
+        }
+      ]
+    }
+}'
+```
+
+### Request parameters
+
+This document only lists new request parameters. Please refer to
+[Calculate Route POST data parameters](/routing-api/documentation/routing/calculate-route#post-data-parameters)
+and
+[Long Distance EV Routing POST data parameters](/long-distance-ev-routing-api/documentation/Example-maps/long-distance-ev-routing#request-data)
+sections for further information.
+
+### POST request body formats
+
+```json [type=post] [title=POST Battery Conditioning]
+{
+  [...],
+  "batteryConditioning": {
+    "preconditioningEfforts": [
+      {
+        "chargingPowerInkW": 50.0,
+        "energyInkWh": 0.7,
+        "timeInSeconds": 40
+      },
+      {
+        "chargingPowerInkW": 150.0,
+        "energyInkWh": 1.937,
+        "timeInSeconds": 996
+      }
+    ],
+    "preconditioningEffortsNextChargingStop": [
+      {
+        "chargingPowerInkW": 40.0,
+        "energyInkWh": 0.0,
+        "timeInSeconds": 0
+      },
+      {
+        "chargingPowerInkW": 150.0,
+        "energyInkWh": 0.9,
+        "timeInSeconds": 360
+      }
+    ]
+  },
+  [...]
+}
+```
+
+### POST request body parameters
+
+The POST data can contain an optional `batteryConditioning` object that specifies the energy consumption for battery conditioning.
+The `batteryConditioning` object contains two arrays of `preconditioningEfforts` and `preconditioningEffortsNextChargingStop`,
+with `preconditioningEffortsNextChargingStop` being optional.
+
+**Note**: Battery conditioning requires a charging model to be specified, which must be provided by the `ChargingParameters` object.
+It is incompatible with the time-based `ChargingModes` model.
+Please refer to the [Long Distance EV Routing POST data parameters](/long-distance-ev-routing-api/documentation/Example-maps/long-distance-ev-routing#post-request-body-parameters) for further information on the charging parameters.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}  width="275px;">Parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `preconditioningEfforts`<br />
+        *array*
+      </th>
+      <td>
+        Required. A list of `preconditioningEffort` objects that form a curve describing the energy consumption and time
+        needed for battery preconditioning at each charging stop, depending on the charging power.
+        Entries must be in strictly ascending order of `chargingPowerInkW`.
+        Additionally, both `energyInkWh` and `timeInSeconds` must be in ascending order throughout the list of preconditioning efforts.
+        An entry with `energyInkWh` set to 0 is permitted only once and must be the first entry in the list.
+        If `energyInkWh` is 0, the corresponding `timeInSeconds` must also be 0, and vice versa.
+        The relevant battery preconditioning effort for a given charging power is determined as follows:
+        * For charging powers below the first entry, it is assumed that no effort is needed for battery preconditioning.
+        * For a charging power that exactly matches an entry's `chargingPowerInkW`, the corresponding effort is used.
+        * For charging powers between two entries, the efforts are interpolated linearly.
+        * For charging powers above the last entry, the last entry's effort is used.
+        The number of entries must be between 1 and 10.
+        Note: This behavior is similar to how the `constantSpeedConsumptionInkWhPerHundredkm` curve is interpreted, but with the difference that for consumption curves,
+        values for speeds outside the range are extrapolated using the nearest two entries.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `preconditioningEffortsNextChargingStop`<br />
+        *array*
+      </th>
+      <td>
+        Optional. A list of `preconditioningEffort` objects that describe the energy consumption and time needed for battery preconditioning only at the next charging stop,
+        that is, the first one after the specified route origin (independent of whether the route origin is the departure or an intermediate point of a longer trip).
+        The preconditioning energy for the next charging stop can be different from that for further charging stations because it depends on the current battery temperature.
+        The constraints are the same as those for `preconditioningEfforts`.
+        If this is not specified, the next station is not treated specially, that is, its preconditioning effort is taken from the `preconditioningEfforts` list.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `preconditioningEffort.chargingPowerInkW`<br />
+        *float*
+      </th>
+      <td>
+        Required. The charging power of the charging stop, in kW, for which this entry is valid.
+        The charging power must be greater than 0.
+        The charging power of a charging stop for battery preconditioning is determined by taking the minimum of the charging station's connector maximum power and the vehicle's [`chargingConnector.maxPowerInkW`](/long-distance-ev-routing-api/documentation/Example-maps/long-distance-ev-routing#post-request-body-parameters),
+        while ignoring the limiting effects of `chargingConnector.efficiency` and `chargingConnector.baseLoadInkW`.
+        The charging curve is not considered.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `preconditioningEffort.energyInkWh`<br />
+        *float*
+      </th>
+      <td>
+        Required. The energy in kWh needed for battery preconditioning at this charging power.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `preconditioningEffort.timeInSeconds`<br />
+        *integer*
+      </th>
+      <td>
+        Required. The time in seconds needed for battery preconditioning at this charging power. Note that this parameter is currently ignored.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+All consumption estimates (e.g., `routes[].summary.batteryConsumptionInkWh`) are adjusted to account
+for the energy needed for battery preconditioning.
+As a current limitation, when there is not enough time for preconditioning (i.e., the time since departure,
+the preceding charging stop or waypoint is less than `timeInSeconds`), we still assume the complete energy for preconditioning is used.
+The preconditioning energy will be evenly distributed over the progress points (`progress[].batteryConsumptionInkWh`) based on the minimum
+of `timeInSeconds` and `travelTimeInSeconds` of the leg.
+
+Additionally, whenever the `batteryConditioning` parameter is specified in the request, the response contains a
+`batteryPreconditioning` object in the `summary` section of each leg with the time and energy needed
+for battery preconditioning.
+
+Example of the response data:
+
+```json [title=Response example]
+{
+  "routes": [
+    {
+      "summary": {
+        "departureTime": "2024-08-30T18:21:01+02:00",
+        "arrivalTime": "2024-08-31T00:14:53+02:00",
+        [...]
+      },
+      "legs": [
+        {
+          "summary": {
+            "departureTime": "2024-08-30T18:21:01+02:00",
+            "arrivalTime": "2024-08-30T18:54:50+02:00",
+            "batteryConsumptionInkWh": 5.880968,
+            "remainingChargeAtArrivalInkWh": 14.119032,
+            "batteryPreconditioning": {
+              "chargingPowerInkW": 100.0,
+              "energyInkWh": 1.2913,
+              "timeInSeconds": 664
+            },
+            "chargingInformationAtEndOfLeg": {
+             [...]
+```
+
+### Response fields
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>Primary fields</th>
+    </tr>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '250px' }}>Field</th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `batteryPreconditioning.chargingPowerInkW`<br />
+        *float*
+      </th>
+      <td>
+        The charging power that was used to calculate the energy and time required for preconditioning for this leg.
+        It is determined as described in `preconditioningEffort.chargingPowerInkW`.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `batteryPreconditioning.energyInkWh`<br />
+        *float*
+      </th>
+      <td>
+        The energy in kWh needed for battery preconditioning before the charging stop at the end of this leg.
+        Zero if no preconditioning is needed.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `batteryPreconditioning.timeInSeconds`<br />
+        *integer*
+      </th>
+      <td>
+        The time in seconds needed for battery preconditioning before the charging stop at the end of this leg.
+        Zero if no preconditioning is needed.
+        The start time of preconditioning is the `arrivalTime` of this leg minus `batteryPreconditioning.timeInSeconds`.
+        As a current limitation, `batteryPreconditioning.timeInSeconds` can exceed the `legs[].summary.travelTimeInSeconds`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+

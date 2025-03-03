@@ -1,0 +1,5 @@
+platformSwitcherItems:
+  - title: Example Maps
+    fallbackUrl: /long-distance-ev-routing-api/documentation/Example-maps/product-information/introduction
+    platformRootDirectory: /long-distance-ev-routing-api/documentation/Example-maps/
+  

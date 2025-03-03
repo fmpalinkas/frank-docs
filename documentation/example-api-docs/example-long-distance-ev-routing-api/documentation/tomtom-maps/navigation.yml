@@ -1,0 +1,48 @@
+group: long-distance-ev-routing-api
+isPrivate: false
+description: The Long Distance EV Routing API is a suite of web services designed for developers to use our latest, scalable, online Routing engine.
+productName: Long Distance EV Routing API
+menuTitle: Documentation
+isMenuOpened: true
+menu:
+  - title: Product Information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+      - fileId: /product-information/release-notes
+        title: Release Notes
+      - fileId: /product-information/market-coverage
+        title: Market Coverage
+      - fileId: /product-information/language-support
+        title: Supported Languages
+  - title: Example Maps
+    items:
+      - fileId: /long-distance-ev-routing
+        title: Long Distance EV Routing
+  - title: Private APIs
+    items:
+      - fileId: /private/long-distance-ev-routing-hcp3
+        title: Long Distance EV Routing (HCP3)
+        isPrivate: true
+        subgroups: [ hcp3-group ]
+        suffix: post
+      - fileId: /private/long-distance-ev-routing-vehicle-model-id
+        title: Long Distance EV Routing - Vehicle Model ID
+        isPrivate: true
+        subgroups: [ internal-private-preview ]
+        suffix: post
+      - fileId: /private/long-distance-ev-routing-with-speed-advice
+        title: Long Distance EV Routing with Speed Advice
+        isPrivate: true
+        subgroups: [ private-preview ]
+        suffix: post
+      - fileId: /private/long-distance-ev-routing-speed-limited-alternative
+        title: Long Distance EV Routing - Speed-Limited Alternatives
+        isPrivate: true
+        subgroups: [ private-preview ]
+        suffix: post
+      - fileId: /private/long-distance-ev-routing-battery-conditioning
+        title: Long Distance EV Routing - Battery Conditioning
+        isPrivate: true
+        subgroups: [ private-preview ]
+        suffix: post

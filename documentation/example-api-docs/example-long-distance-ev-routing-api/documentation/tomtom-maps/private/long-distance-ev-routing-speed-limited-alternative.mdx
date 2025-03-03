@@ -1,0 +1,215 @@
+---
+title: Long Distance EV Routing - Speed-Limited Alternatives
+titleTags:
+  - label: "Service version: 1"
+    color: grey5
+  - label: "Last edit: 2023.08.02"
+    color: grey5
+  - label: 'Private Preview'
+    color: brand-cadmium
+---
+
+<Blockquote type="announcement" hasIcon>
+
+This feature is still in development
+and only available as a **Private Preview** for testing purposes. Go to the
+[Private Preview](https://developer.Example.com/private-preview) page to see what
+this means.
+
+</Blockquote>
+
+## Purpose
+
+This page describes the **interface** of an extension to the normal
+[Long Distance EV Routing](routing-api/documentation/extended-routing/long-distance-ev-routing)
+that enables the computation/update of speed-limited alternative routes.
+
+## Request data
+
+### HTTPS method: `POST`
+
+Please refer to the generic
+[request format](/routing-api/documentation/extended-routing/long-distance-ev-routing#request-data)
+of the Long Distance EV Routing service.
+
+<h4 style={{ fontSize: '1em' }}>curl command example</h4>
+
+```shell [type=post] [title=Request curl command example]
+curl -X POST 'https://api.Example.com/routing/1/calculateLongDistanceEVRoute/52.507,13.492:50.104,8.624/json?key={Your_API_Key}&...'\
+  -H 'Content-Type: application/json' -d '{
+    ...
+    "speedLimitedAlternativeMinimumInKmh": 100,
+    "legProperties": [
+      {
+        "speedLimitInKmh": 100
+      }
+    ]
+}'
+```
+
+### Request parameters
+
+This page only lists new request parameters. Please refer to
+[Calculate Route POST data parameters](/routing-api/documentation/routing/calculate-route#post-data-parameters)
+and
+[Long Distance EV Routing POST data parameters](/routing-api/documentation/extended-routing/long-distance-ev-routing#request-data)
+sections for further information.
+
+### POST request body format
+
+<h4 style={{ fontSize: '1em' }}>Leg Properties</h4>
+
+```json [type=post] [title=POST LegProperties format]
+{
+  [...],
+  "legProperties": [
+    {
+      "speedLimitInKmh": 100
+    }
+  ]
+}
+```
+
+### POST request body parameters
+
+The POST data may provide additional properties of individual legs of the base route given via <code>supportingPoints</code>, such as speed limits. If present, the arrays length must equal the number of provided <code>pointWaypoints</code> + 1.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>speedLimitedAlternativeMinimumInKmh</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        Indicates that a speed-limited alternative route is requested and
+        represents the lower bound for speed limits returned in such a route.
+
+        If present, the first of the requested alternative routes will be tried
+        to be computed as an energy-saving speed-limited route. If found,
+        the alternative route will get marked by
+        <code>planningReason=speedLimitedAlternative</code>
+        and speed limits per leg may be provided in the field
+        <code>reachabilitySpeedLimitInKmh</code> of the leg summaries if
+        required to reach the leg destination within the energy budget.
+
+        Requires that <code>alternativeType=betterRoute</code> is set.
+        <br />
+        <b>Minimum value:</b> <code>90 km/h</code>
+        <br />
+        <b>Maximum value:</b> <code>250 km/h</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>LegProperties</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>speedLimitInKmh</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        Speed limits as returned in legs of speed-limited alternatives, see
+        <code>speedLimitedAlternativeMinimumInKmh</code>.
+
+        <b>Minimum value:</b> <code>90 km/h</code>
+        <b>Maximum value:</b> <code>250 km/h</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+### Response body
+
+A successful response could look like this:
+
+```json [title=Response body - JSON]
+[...],
+  "routes": [
+    {
+      [...],
+      "legs": [
+        [...],
+        {
+          [...],
+          "summary": {
+            [...],
+            "reachabilitySpeedLimitInKmh": 100
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Response fields
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>planningReason</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The reason for a better route proposal. May have an additional value:
+        <br />
+        - <code>Speed_Limited_Alternative</code>
+        in case a speed-limited alternative was requested and found (see
+        <code>speedLimitedAlternativeMinimumInKmh</code> input parameter).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>reachabilitySpeedLimitInKmh</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        Maximum driving speed on this leg that should not be exceeded in order
+        to reach the next charging station or destination within the energy
+        budget. Can be included for speed-limited alternative.
+      </td>
+    </tr>
+  </tbody>
+</table>

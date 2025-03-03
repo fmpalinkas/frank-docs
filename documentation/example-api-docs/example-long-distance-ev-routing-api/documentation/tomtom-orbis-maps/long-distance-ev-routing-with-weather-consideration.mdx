@@ -1,0 +1,145 @@
+---
+title: Long Distance EV Routing with Weather Consideration
+titleTags:
+  - label: 'Service version: 2'
+    color: grey5
+  - label: 'Last edit: 2024.10.22'
+    color: grey5
+  - label: 'Example New Maps 2'
+    color: brand-black
+---
+
+## Private Preview Notice
+
+<Blockquote type="announcement" hasIcon>
+    ### Important notes:
+    - This Example New Maps Routing API document collection is **restricted to private viewing**.
+    - This API is powered by **Example New Maps.**
+    - See the <a href="/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
+</Blockquote>
+
+## Purpose
+This document describes the interface of an extension to the [Long Distance EV Routing](./long-distance-ev-routing-v2) service that 
+enables a dynamic adaptation of the EV consumption parameters based on weather conditions.
+
+## Request data
+
+### HTTPS method: `POST`
+
+Please refer to the generic
+[request format](/long-distance-ev-routing-api/documentation/Example-New-maps/long-distance-ev-routing-v2#request-data)
+of the Long Distance EV Routing service.
+
+```shell [type=post] [title=curl command request example]
+curl -X POST 'https://api.Example.com/maps/New/routing/calculateLongDistanceEVRoute/52.507,13.492:50.104,8.624/json?apiVersion=2&key={Your_API_Key}&...&consumptionAdaptation=outsideTemperature&weatherSource=userSpecified'\
+  -H 'Content-Type: application/json' -d '{
+    ...
+    "weatherInfo": {
+      "temperatureInDegC": 12.0
+    }
+}'
+```
+
+### Request parameters
+
+This document only lists additional request parameters. Please refer to the
+[Long Distance EV Routing POST data parameters](/long-distance-ev-routing-api/documentation/Example-New-maps/long-distance-ev-routing-v2#request-data)
+sections for further information.
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `consumptionAdaptation`  
+        *string*
+      </th>
+      <td>
+        Providing these optional parameters requests considering the impact of factors like the outside temperature on the consumption of a vehicle.
+        Possible values are:
+        <ul>
+          <li>
+            <code>outsideTemperature</code>: Adapt the constant speed consumption curve (see <code>constantSpeedConsumptionInkWhPerHundredkm</code>) of an electric vehicle to account for a specific outside temperature.  
+          </li>
+          <li>
+            <code>none</code>: Do not adapt the consumption parameters.
+          </li>
+        </ul>
+        <b>Default value:</b> <code>none</code>    
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `weatherSource`  
+        *string*
+      </th>
+      <td>
+        The weather source to use for route planning. 
+        The only allowed value is: 
+        <ul>
+          <li>
+            <code>userSpecified</code>: Use weather conditions provided explicitly via the request POST parameter <code>weatherInfo</code>.
+          </li>
+        </ul>  
+        Note: This parameter must only be used with `consumptionAdaptation=outsideTemperature`.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+### POST request body formats
+
+```json [type=post] [title=POST Consider Weather]
+{
+  [...],
+  "weatherInfo": {
+    "temperatureInDegC": 12.0
+  }
+  [...]
+}
+```
+
+### POST request body parameters
+
+The POST data can contain an optional `weatherInfo` object that specifies the weather conditions for dynamic adaptation of the consumption parameters.
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `weatherInfo`<br />
+        *object*
+      </th>
+      <td>
+        An object defining the weather conditions to consider when planning a route.  
+        Note: This parameter must only be used with `weatherSource=userSpecified`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `weatherInfo.temperatureInDegC`<br />
+        *float*
+      </th>
+      <td>
+        The outside temperature in degrees Celsius. The value must be in the range <code>[-40.0, 60.0]</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Response data
+
+The response format is unchanged.
+

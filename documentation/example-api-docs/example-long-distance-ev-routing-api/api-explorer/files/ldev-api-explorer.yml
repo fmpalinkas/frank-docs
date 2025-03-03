@@ -1,0 +1,741 @@
+openapi: 3.0.0
+servers:
+  - url: 'https://api.Example.com'
+info:
+  description: >-
+    The Long Distance EV Routing service endpoint calculates a route between a given origin and destination, passing through waypoints if they are specified. The route contains charging stops that have been added automatically based on the vehicle's consumption and charging model.
+
+    - Each charging stop results in an additional leg in the route response.
+    
+    - Each additional leg contains a `chargingInformationAtEndOfLeg` element in its leg summary. The `chargingInformationAtEndOfLeg` field consists of:
+        - target battery charge
+        - charging time
+        - details about the charging stop
+    
+    - Both the route summary and the leg summary include a `remainingChargeAtArrivalInkWh` element.
+
+    - The route summary includes a `totalChargingTimeInSeconds` element.  
+
+  version: 1.0.0
+  title: Long Distance EV Routing API
+  contact:
+    name: Contact Us
+    url: 'https://developer.Example.com/contact-us'
+paths:
+  '/routing/{versionNumber}/calculateLongDistanceEVRoute/{locations}/{contentType}':
+    post:
+      tags:
+        - Long Distance EV Routing 
+      summary: 
+      description:
+        Calculates a route between a given origin and destination, passing through waypoints if they are specified.
+      parameters:
+        - $ref: '#/components/parameters/versionNumber'
+        - name: locations
+          in: path
+          description: Locations through which the calculated route must pass.
+          required: true
+          schema:
+            type: string
+          example: 50.95421,6.90852:52.50825,13.45686
+        - name: contentType
+          in: path
+          required: true
+          description: The content type of the Response structure.
+          schema:
+            type: string
+            enum:
+              - json
+        - $ref: '#/components/parameters/vehicleHeading'
+        - $ref: '#/components/parameters/sectionType'
+        - $ref: '#/components/parameters/callback'
+        - $ref: '#/components/parameters/report'
+        - $ref: '#/components/parameters/departAt'
+        - name: routeType
+          in: query
+          description: The type of route requested.
+          schema:
+            type: string
+            enum:
+              - fastest
+        - $ref: '#/components/parameters/traffic'
+        - $ref: '#/components/parameters/avoid'
+        - name: travelMode
+          in: query
+          description: The mode of travel for the requested route.
+          schema:
+            type: string
+            enum:
+              - car
+        - $ref: '#/components/parameters/vehicleMaxSpeed'
+        - $ref: '#/components/parameters/vehicleWeight'
+        - $ref: '#/components/parameters/vehicleAxleWeight'
+        - $ref: '#/components/parameters/vehicleNumberOfAxles'
+        - $ref: '#/components/parameters/vehicleLength'
+        - $ref: '#/components/parameters/vehicleWidth'
+        - $ref: '#/components/parameters/vehicleHeight'
+        - $ref: '#/components/parameters/vehicleCommercial'
+        - $ref: '#/components/parameters/vehicleLoadType'
+        - $ref: '#/components/parameters/vehicleAdrTunnelRestrictionCode'
+        - name: vehicleEngineType
+          in: query
+          description: Engine type of the vehicle.
+          required: true
+          schema:
+            type: string
+            enum:
+              - electric
+            example: electric
+        - $ref: '#/components/parameters/accelerationEfficiency'
+        - $ref: '#/components/parameters/decelerationEfficiency'
+        - $ref: '#/components/parameters/uphillEfficiency'
+        - $ref: '#/components/parameters/downhillEfficiency'
+        - $ref: '#/components/parameters/consumptionInkWhPerkmAltitudeGain'
+        - $ref: '#/components/parameters/recuperationInkWhPerkmAltitudeLoss'
+        - name: constantSpeedConsumptionInkWhPerHundredkm
+          in: query
+          description: Specifies the speed-dependent component of consumption. Provided as an
+            unordered list of speed/consumption-rate pairs.
+          schema:
+            type: string
+            pattern: '^((\d+\.?\d*,\d+\.?\d*):?)+$'
+          example: '50.0,6.5:100.0,8.5'
+        - name: currentChargeInkWh
+          in: query
+          description: Specifies the current electric energy supply in kilowatt hours (kWh).
+          schema:
+            type: number
+            format: float
+            minimum: 0.0
+          example: 10
+        - name: maxChargeInkWh
+          in: query
+          description: Specifies the maximum electric energy supply in kilowatt hours (kWh) that may be stored in the vehicle's battery.
+          schema:
+            type: number
+            format: float
+          example: 40
+        - $ref: '#/components/parameters/auxiliaryPowerInkW'
+        - name: minChargeAtDestinationInkWh
+          in: query
+          description: The battery level upon arrival at the destination of the resulting route will be at least this much.
+          schema:
+            type: number
+            format: float
+          example: 5.2
+        - name: minChargeAtChargingStopsInkWh
+          in: query
+          description: The battery level upon arrival at each intermediate charging stop of the resulting route will be at least this much.
+          schema:
+            type: number
+            format: float
+          example: 1.5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/longDistanceEVRoutingPostDataParameters'
+      responses:
+        '200':
+          description: >-
+            OK: A route was calculated and the body of the response contains the route description and any other requested data.
+        '400':
+          description: >-
+            Bad request: One or more parameters were incorrectly specified, are
+            mutually exclusive, the points in the rangeequest are not connected by
+            the road network, or the points in the request are not near enough to
+            a road.
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '405':
+          $ref: '#/components/responses/405'
+        '408':
+          $ref: '#/components/responses/408'
+        '414':
+          $ref: '#/components/responses/414'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+        '502':
+          $ref: '#/components/responses/502'
+        '503':
+          $ref: '#/components/responses/503'
+        '504':
+          $ref: '#/components/responses/504'
+        '596':
+          $ref: '#/components/responses/596'
+security:
+  - api_key: []
+components:
+  parameters:
+    versionNumber:
+      name: versionNumber
+      in: path
+      description: Service version number. The current value is 1.
+      required: true
+      schema:
+        type: integer
+        enum:
+          - 1
+    locations:
+      name: locations
+      in: path
+      description: Locations through which the calculated route must pass.
+      required: true
+      schema:
+        type: string
+      example: 52.50931,13.42936:52.50274,13.43872
+    origin:
+      name: origin
+      in: path
+      description: Point from which the range calculation should start.
+      required: true
+      schema:
+        type: string
+      example: 52.50931,13.42936
+    contentType:
+      name: contentType
+      in: path
+      required: true
+      description: The content type of the response structure. If the content type is
+        jsonp, a callback method can be specified in the query parameters.
+      schema:
+        type: string
+        enum:
+          - json
+          - jsonp
+    callback:
+      name: callback
+      in: query
+      description: Specifies the jsonp callback method.
+      schema:
+        type: string
+    report:
+      name: report
+      in: query
+      description: Specifies which data should be reported for diagnosis purposes.
+      schema:
+        type: string
+        enum:
+          - effectiveSettings
+    departAt:
+      name: departAt
+      in: query
+      description: The date and time of departure from the origin point. Departure times
+        apart from <i>now</i> must be specified as a dateTime.
+      schema:
+        type: string
+    arriveAt:
+      name: arriveAt
+      in: query
+      description: The date and time of arrival at the destination point. It must be
+        specified as a dateTime.
+      schema:
+        type: string
+        format: dateTime
+    routeType:
+      name: routeType
+      in: query
+      description: The type of route requested.
+      schema:
+        type: string
+        enum:
+          - fastest
+          - shortest
+          - eco
+          - thrilling
+    traffic:
+      name: traffic
+      in: query
+      description: Determines whether current traffic is used in route calculations. Note that information on historic road speeds is always used.
+      schema:
+        type: boolean
+    avoid:
+      name: avoid
+      in: query
+      description: >-
+        Specifies whether the routing engine should try to avoid specific types of road segment when calculating the route. Can be specified multiple times.
+
+        Possible values:
+          - tollRoads
+          - motorways
+          - ferries
+          - unpavedRoads
+          - carpools
+          - alreadyUsedRoads
+      schema:
+        type: string
+    avoidInCalculateReachableRange :
+      name: avoid
+      in: query
+      description: >-
+        Specifies whether the routing engine should try to avoid specific types of road segment when calculating the route. Can be specified multiple times.
+
+        Possible values:
+          - tollRoads
+          - motorways
+          - ferries
+          - unpavedRoads
+          - carpools
+      schema:
+        type: string
+      example: unpavedRoads
+    travelMode:
+      name: travelMode
+      in: query
+      description: The mode of travel for the requested route.
+      schema:
+        type: string
+        enum:
+          - car
+          - truck
+          - taxi
+          - bus
+          - van
+          - motorcycle
+          - bicycle
+          - pedestrian
+    hilliness:
+      name: hilliness
+      in: query
+      description: Degree of hilliness for calculating a thrilling route.
+      schema:
+        type: string
+        enum:
+          - low
+          - normal
+          - high
+    windingness:
+      name: windingness
+      in: query
+      description: Amount that a thrilling route should wind.
+      schema:
+        type: string
+        enum:
+          - low
+          - normal
+          - high
+    vehicleMaxSpeed:
+      name: vehicleMaxSpeed
+      in: query
+      description: Maximum speed of the vehicle in km/hour.
+      schema:
+        type: integer
+    vehicleWeight:
+      name: vehicleWeight
+      in: query
+      description: Weight of the vehicle in kilograms.
+      schema:
+        type: integer
+    vehicleAxleWeight:
+      name: vehicleAxleWeight
+      in: query
+      description: Weight per axle of the vehicle in kg.
+      schema:
+        type: integer
+    vehicleNumberOfAxles:
+      name: vehicleNumberOfAxles
+      in: query
+      description: Number of axles of the vehicle.
+      schema:
+        type: integer
+    vehicleLength:
+      name: vehicleLength
+      in: query
+      description: Length of the vehicle in meters.
+      schema:
+        type: number
+        format: float
+    vehicleWidth:
+      name: vehicleWidth
+      in: query
+      description: Width of the vehicle in meters.
+      schema:
+        type: number
+        format: float
+    vehicleHeight:
+      name: vehicleHeight
+      in: query
+      description: Height of the vehicle in meters.
+      schema:
+        type: number
+        format: float
+    vehicleCommercial:
+      name: vehicleCommercial
+      in: query
+      description: Indicates that the vehicle is used for commercial purposes. This means it may not be allowed on certain roads.
+      schema:
+        type: boolean
+    vehicleLoadType:
+      name: vehicleLoadType
+      in: query
+      description: >-
+        Indicates what kinds of hazardous materials the vehicle is carrying (if any). This means it may not be allowed on certain roads.
+
+        Use these for routing in the US:
+
+          - <i>USHazmatClass1</i> Explosives
+          - <i>USHazmatClass2</i> Compressed gas
+          - <i>USHazmatClass3</i> Flammable liquids
+          - <i>USHazmatClass4</i> Flammable solids
+          - <i>USHazmatClass5</i> Oxidizers
+          - <i>USHazmatClass6</i> Poisons
+          - <i>USHazmatClass7</i> Radioactive
+          - <i>USHazmatClass8</i> Corrosives
+          - <i>USHazmatClass9</i> Miscellaneous
+
+        Use these for routing in all other countries:
+
+          - <i>otherHazmatExplosive</i> Explosives
+          - <i>otherHazmatGeneral</i> Miscellaneous
+          - <i>otherHazmatHarmfulToWater</i> Harmful to water
+
+        vehicleLoadType can be specified multiple times. This parameter is currently only considered for <b>travelMode</b>=<i>truck</i>.
+      schema:
+        type: string
+    vehicleAdrTunnelRestrictionCode:
+      name: vehicleAdrTunnelRestrictionCode
+      in: query
+      description: >-
+        If vehicleAdrTunnelRestrictionCode is specified, the vehicle is subject to ADR tunnel restrictions.
+      schema:
+        type: string
+        enum:
+          - B
+          - C
+          - D
+          - E
+    vehicleEngineType:
+      name: vehicleEngineType
+      in: query
+      description: Engine type of the vehicle.
+      schema:
+        type: string
+        enum:
+          - combustion
+          - electric
+
+    constantSpeedConsumptionInLitersPerHundredkm:
+      name: constantSpeedConsumptionInLitersPerHundredkm
+      in: query
+      description: Specifies the speed-dependent component of consumption. Provided as an
+        unordered list of speed/consumption-rate pairs.
+      schema:
+        type: string
+        pattern: '^((\d+\.?\d*,\d+\.?\d*):?)+$'
+    currentFuelInLiters:
+      name: currentFuelInLiters
+      in: query
+      description: Specifies the current supply of fuel in liters.
+      schema:
+        type: number
+        format: float
+    auxiliaryPowerInLitersPerHour:
+      name: auxiliaryPowerInLitersPerHour
+      in: query
+      description: Specifies the amount of fuel consumed for sustaining auxiliary systems
+        of the vehicle, in liters per hour.
+      schema:
+        type: number
+        format: float
+    fuelEnergyDensityInMJoulesPerLiter:
+      name: fuelEnergyDensityInMJoulesPerLiter
+      in: query
+      description: Specifies the amount of chemical energy stored in one liter of fuel in
+        megajoules (MJ).
+      schema:
+        type: number
+        format: float
+    accelerationEfficiency:
+      name: accelerationEfficiency
+      in: query
+      description: Specifies the efficiency of converting chemical energy stored in fuel to
+        kinetic energy when the vehicle accelerates (i.e.
+        KineticEnergyGained/ChemicalEnergyConsumed).
+      schema:
+        type: number
+        format: float
+    decelerationEfficiency:
+      name: decelerationEfficiency
+      in: query
+      description: Specifies the efficiency of converting kinetic energy to saved (not
+        consumed) fuel when the vehicle decelerates (i.e.
+        ChemicalEnergySaved/KineticEnergyLost).
+      schema:
+        type: number
+        format: float
+    uphillEfficiency:
+      name: uphillEfficiency
+      in: query
+      description: Specifies the efficiency of converting chemical energy stored in fuel to
+        potential energy when the vehicle gains elevation (i.e.
+        PotentialEnergyGained/ChemicalEnergyConsumed).
+      schema:
+        type: number
+        format: float
+    downhillEfficiency:
+      name: downhillEfficiency
+      in: query
+      description: Specifies the efficiency of converting potential energy to saved (not
+        consumed) fuel when the vehicle loses elevation (i.e.
+        ChemicalEnergySaved/PotentialEnergyLost).
+      schema:
+        type: number
+        format: float
+    consumptionInkWhPerkmAltitudeGain:
+      name: consumptionInkWhPerkmAltitudeGain
+      in: query
+      description: Specifies the electric energy in kWh consumed by the vehicle through gaining 1000 meters of elevation.
+      schema:
+        type: number
+        format: float
+    recuperationInkWhPerkmAltitudeLoss:
+      name: recuperationInkWhPerkmAltitudeLoss
+      in: query
+      description: Specifies the electric energy in kWh gained by the vehicle through losing 1000 meters of elevation.
+      schema:
+        type: number
+        format: float
+    constantSpeedConsumptionInkWhPerHundredkm:
+      name: constantSpeedConsumptionInkWhPerHundredkm
+      in: query
+      description: Specifies the speed-dependent component of consumption. Provided as an
+        unordered list of speed/consumption-rate pairs.
+      schema:
+        type: string
+        pattern: '^((\d+\.?\d*,\d+\.?\d*):?)+$'
+    maxAlternatives:
+      name: maxAlternatives
+      in: query
+      description: Number of alternative routes to be calculated.
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 5
+    alternativeType:
+      name: alternativeType
+      in: query
+      description: Determines whether the alternative routes to be calculated should be better with respect to the planning criteria provided than the reference route.
+      schema:
+        type: string
+        enum:
+          - anyRoute
+          - betterRoute
+    minDeviationDistance:
+      name: minDeviationDistance
+      in: query
+      description: All alternative routes will follow the reference route for the specified minimum number of meters starting from the origin point.
+      schema:
+        type: integer
+    minDeviationTime:
+      name: minDeviationTime
+      in: query
+      description: All alternative routes will follow the reference route for the specified minimum number of seconds starting from the origin point.
+      schema:
+        type: integer
+    instructionsType:
+      name: instructionsType
+      in: query
+      description: If specified, guidance instructions will be returned (if available).
+      schema:
+        type: string
+        enum:
+          - coded
+          - text
+          - tagged
+    language:
+      name: language
+      in: query
+      description: The language parameter determines the language of the guidance
+        messages.
+      schema:
+        type: string
+    computeBestOrder:
+      name: computeBestOrder
+      in: query
+      description: Re-order the route waypoints to reduce the route length.
+      schema:
+        type: boolean
+    routeRepresentation:
+      name: routeRepresentation
+      in: query
+      description: Specifies the representation of the set of routes provided as a
+        Response.
+      schema:
+        type: string
+        enum:
+          - polyline
+          - summaryOnly
+          - none
+    computeTravelTimeFor:
+      name: computeTravelTimeFor
+      in: query
+      description: Specifies whether to return additional travel times using different
+        types of traffic information (none, historic, live) as well as the
+        default best-estimate travel time.
+      schema:
+        type: string
+        enum:
+          - none
+          - all
+    vehicleHeading:
+      name: vehicleHeading
+      in: query
+      description: The directional heading of the vehicle in degrees. Entered in degrees, measured clockwise from north (so north is 0, east is 90, etc.).
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 359
+    sectionType:
+      name: sectionType
+      in: query
+      description: >-
+        Specifies which section types are explicitly reported in the route
+        response. Can be specified multiple times.
+          - carTrain, ferry, tunnel or motorway
+          - pedestrian
+          - tollRoad
+          - tollVignette
+          - country
+          - travelMode
+          - traffic
+      schema:
+        type: string
+    fuelBudgetInLiters:
+      name: fuelBudgetInLiters
+      in: query
+      description: Fuel budget in liters. Determines the maximum vehicle range using the specified Combustion Consumption Model.
+      schema:
+        type: number
+        format: float
+        minimum: 0
+    energyBudgetInkWh:
+      name: energyBudgetInkWh
+      in: query
+      description: Electric energy budget in kilowatt hours (kWh). Determines the maximum vehicle range using the specified Electric Consumption Model.
+      schema:
+        type: number
+        format: float
+        minimum: 0
+      example: 43
+    timeBudgetInSec:
+      name: timeBudgetInSec
+      in: query
+      description: Time budget in seconds. Determines the maximum vehicle range using the specified driving time. The consumption parameters in the request will only affect eco-routes, and thereby indirectly the driving time.
+      schema:
+        type: number
+        format: float
+        minimum: 0
+    currentChargeInkWh:
+      name: currentChargeInkWh
+      in: query
+      description: Specifies the current electric energy supply in kilowatt hours (kWh).
+      schema:
+        type: number
+        format: float
+        minimum: 0.0
+    maxChargeInkWh:
+      name: maxChargeInkWh
+      in: query
+      description: Specifies the maximum electric energy supply in kilowatt hours (kWh) that may be stored in the vehicle's battery.
+      schema:
+        type: number
+        format: float
+    auxiliaryPowerInkW:
+      name: auxiliaryPowerInkW
+      in: query
+      description: Specifies the amount of power consumed by auxiliary systems, in kilowatts (kW).
+      schema:
+        type: number
+        format: float
+  securitySchemes:
+    api_key:
+      type: apiKey
+      in: query
+      name: key
+  schemas:
+    longDistanceEVRoutingPostDataParameters:
+      type: object
+      properties:
+        chargingModes:
+          type: array
+          items:
+            type: object
+            properties:
+              chargingConnections:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    facilityType:
+                      type: string
+                    plugType:
+                      type: string
+              chargingCurve:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    chargeInkWh:
+                      type: number
+                      format: float
+                    timeToChargeInSeconds:
+                      type: integer
+      example:
+        chargingModes:
+          - chargingConnections:
+            - facilityType: Charge_380_to_480V_3_Phase_at_32A
+              plugType: IEC_62196_Type_2_Outlet
+            chargingCurve:
+            - chargeInkWh: 6.0
+              timeToChargeInSeconds: 360
+            - chargeInkWh: 12
+              timeToChargeInSeconds: 720
+            - chargeInkWh: 28
+              timeToChargeInSeconds: 1944
+            - chargeInkWh: 40
+              timeToChargeInSeconds: 4680
+          - chargingConnections:
+            - facilityType: Charge_200_to_240V_1_Phase_at_10A
+              plugType: Standard_Household_Country_Specific
+            chargingCurve:
+            - chargeInkWh: 6.0
+              timeToChargeInSeconds: 15624
+            - chargeInkWh: 12
+              timeToChargeInSeconds: 32652
+            - chargeInkWh: 28
+              timeToChargeInSeconds: 76248
+            - chargeInkWh: 40
+              timeToChargeInSeconds: 109080
+  responses:
+    403:
+      description: |-
+        Permission or authentication issues:
+          - Forbidden
+          - Not authorized
+          - Account inactive
+    404:
+      description: >-
+        Not Found: the requested resource could not be found, but it may be available again in the future.
+    405:
+      description: >-
+        Method Not Allowed: the client used a HTTP method other than GET or POST.
+    408:
+      description: Request timeout.
+    414:
+      description: Requested uri is too long.
+    429:
+      description: Too many requests were sent in a given amount of time for the supplied API Key.
+    500:
+      description: An error occurred while processing the request. Please try again later.
+    502:
+      description: Internal network connectivity issue.
+    503:
+      description: Service currently unavailable.
+    504:
+      description: Internal network connectivity issue or a request that has taken too long to complete.
+    596:
+      description: Service not found.

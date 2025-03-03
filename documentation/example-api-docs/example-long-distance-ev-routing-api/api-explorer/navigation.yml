@@ -1,0 +1,9 @@
+group: routing-api
+isPrivate: false
+description: Long Distance EV Routing API explorer.
+productName: Long Distance EV Routing API
+menuTitle: API Explorer
+menu:
+  - title: API Explorer
+    items:
+      - fileId: /index

@@ -1,0 +1,101 @@
+---
+title: Long Distance EV Routing with Vehicle Model Id
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.03.26'
+    color: grey5
+  - label: 'Private Preview'
+    color: brand-cadmium
+---
+
+## Private Preview Notice
+
+<Blockquote type="announcement" hasIcon>
+
+The Long Distance EV Routing service with Vehicle Model ID is only available as a **Private Preview** for the Example AmiGo application. Go to the
+[Private Preview](https://developer.Example.com/private-preview) page to see what
+this means.
+
+</Blockquote>
+
+## Purpose
+
+The [Long Distance EV Routing](/long-distance-ev-routing-api/documentation/Example-maps/private/long-distance-ev-routing-vehicle-model-id) service has an unpublished request parameter: `vehicleModelId`.
+Adding the Vehicle Model ID parameter to a Long Distance EV Routing request allows the calculation of an EV route without specifying the vehicle's consumption and charging parameters.
+
+
+#### curl command request example
+
+```shell [type=post] [title=curl command request example]
+curl -X POST 'https://api.Example.com/routing/1/calculateLongDistanceEVRoute/52.507,13.492:50.104,8.624/json?key={Your_API_Key}&vehicleEngineType=electric&currentChargeInkWh=20&minChargeAtDestinationInkWh=4&minChargeAtChargingStopsInkWh=4&vehicleModelId=ed4933ba-4b61-4f3d-b2c9-19bb1174ba06'
+     -H 'Content-Type: application/json' -d '{}' 
+```
+
+### Request parameters
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '250px' }}>Optional parameter</th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `vehicleModelId`  
+        *string*
+      </th>
+      <td>
+          The [Vehicle Model ID](/vehicle-service/documentation/vehicle-list#vehicle-model-id) of the vehicle as obtained from the Example Vehicle Database. It allows the calculation of an EV route without specifying the vehicle's consumption and charging parameters.
+          <br />
+          Notes:
+          <ul>
+            <li>For the `calculateReachableRange` endpoint, `vehicleModelId` is only allowed for the `energyBudgetInkWh`
+                budget.</li>
+            <li>The vehicle information specified through a `vehicleModelId` parameter cannot be overridden. More
+                specifically, it is an error if in addition to `vehicleModelId` one of the following parameters is
+                present:</li>
+                <ul>
+                    <li>`vehicleMaxSpeed`</li>
+                    <li>`vehicleWeight`</li>
+                    <li>`vehicleAxleWeight`</li>
+                    <li>`vehicleLength`</li>
+                    <li>`vehicleWidth`</li>
+                    <li>`vehicleHeight`</li>
+                    <li>`accelerationEfficiency`</li>
+                    <li>`decelerationEfficiency`</li>
+                    <li>`uphillEfficiency`</li>
+                    <li>`downhillEfficiency`</li>
+                    <li>`maxChargeInkWh`</li>
+                    <li>`constantSpeedConsumptionInkWhPerHundredkm`</li>
+                    <li>`consumptionInkWhPerkmAltitudeGain`</li>
+                    <li>`recuperationInkWhPerkmAltitudeLoss`</li>
+                    <li>`auxiliaryPowerInkW`</li>
+                    <li>`chargingParameters` in the POST request data body</li>
+                    <li>`chargingModes` in the POST request data body</li>
+                    <li>`reassessmentParameterSets` in the POST request data body</li>
+                </ul>
+            <li>The `currentChargeInkWh` parameter must still be given.</li>
+            <li>Several usecases are not (yet) supported through this API, for example:</li>
+                <ul>
+                    <li>Specifying a car similar to one from the database, but e.g., with a different weight or battery
+                        capacity.</li>
+                    <li>Battery degradation requiring different battery parameters.</li>
+                    <li>Additional load requiring specifying a different vehicle weight.</li>
+                    <li>Attached trailer affecting e.g., the maximum speed.</li>
+                    <li>Overriding auxiliary power (a more precise value might be known when embedded in a car).</li>
+                    <li>Different driving modes (e.g., "sport" mode).</li>
+                    <li>Personalized driving style.</li>
+                </ul>
+          </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+## More documentation
+
+* [Vehicle API](/vehicle-service/documentation/vehicle-list)

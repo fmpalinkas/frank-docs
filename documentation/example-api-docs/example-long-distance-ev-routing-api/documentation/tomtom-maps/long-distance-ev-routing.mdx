@@ -1,0 +1,2320 @@
+---
+title: Long Distance EV Routing
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.06.07'
+    color: grey5
+  - label: 'Example Maps'
+    color: grey5
+---
+
+## Purpose  
+
+The Long Distance EV Routing service calculates a route between a given origin and destination, passing through waypoints if they are specified. The route contains charging stops that have been added automatically based on the vehicle's consumption and charging model.  
+
+- Each charging stop results in an additional leg in the route response.
+- Each additional leg contains a `chargingInformationAtEndOfLeg` element in its leg summary.
+- Both the route summary and the leg summary include a `remainingChargeAtArrivalInkWh` element.
+- The route summary includes a `totalChargingTimeInSeconds` element.  
+
+The `chargingInformationAtEndOfLeg` field consists of:  
+
+- target battery charge
+- charging time
+- details about the charging stop
+
+## Differences to calculateRoute  
+
+This document assumes familiarity with the <a href="https://developer.Example.com/routing-api/documentation/routing/calculate-route" target="_blank">Calculate Route</a> service and only describes how `calculateLongDistanceEVRoute` differs from it.  
+
+### Prerequisites for Long Distance EV Routing support  
+
+There are two important prerequisites needed that differ from the <a href="https://developer.Example.com/routing-api/documentation/routing/calculate-route" target="_blank">Calculate Route</a> service:  
+
+- The Electric Consumption Model must be set.
+- The Charging Model must be supplied in the request.
+
+### Unsupported calculateRoute features  
+
+As opposed to the <a href="https://developer.Example.com/routing-api/documentation/routing/calculate-route" target="_blank">Calculate Route</a> service, the following features are not supported in Long Distance EV Routing:
+
+- Waypoints
+  - Circle waypoints are not supported.
+  - The parameter `computeBestOrder` and the option `routeRepresentation=none` are not supported.
+  - `routeType` values other than `fastest` are not supported.
+- `alternativeType` values other than `betterRoute` are not supported.
+- `travelMode` values other than `car`, `motorcycle`, `bus`, `van`, or `truck` are not supported.
+- `computeTravelTimeFor` is not supported.
+
+#### Deprecation notice  
+
+<Blockquote type="announcement" hasIcon>
+  **March 15, 2024**
+
+  - **Value `tollRoad` for the input parameter `sectionType` as well as the respective response section type `TOLL_ROAD` have been deprecated.**
+  - This section will be withdrawn following a 12 months deprecation period.
+  - The planned withdrawal date is March 15, 2025.
+  - Following withdrawal, requests for `toll road section` may result in an HTTP 400 error in the response.
+
+  We recommend using `toll` and `toll vignette` sections instead.
+</Blockquote>
+
+## Request data  
+
+### HTTPS method: `POST`  
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following <a href="#request-parameters">Request parameters</a> section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+<h4 style={{ fontSize: '1em' }}>URL example</h4>  
+
+```shell [type=post] [title=URL request example]
+https://{baseURL}/routing/{versionNumber}/calculateLongDistanceEVRoute/{routePlanningLocations}/json?key={Your_API_Key}
+&vehicleEngineType={vehicleEngineType}
+&constantSpeedConsumptionInkWhPerHundredkm={ElectricConstantSpeedConsumptionPairs}
+&currentChargeInkWh={float}
+&maxChargeInkWh={float}
+&minChargeAtDestinationInkWh={float}
+&criticalMinChargeAtDestinationInkWh={float}
+&minChargeAtChargingStopsInkWh={float}
+&callback={callback}
+&maxAlternatives={alternativeRoutes}
+&minDeviationDistance={integer}
+&minDeviationTime={integer}
+&vehicleHeading={integer}
+&sectionType={sectionType}
+&report={effectiveSettings}
+&departAt={time}
+&arriveAt={time}
+&traffic={boolean}
+&avoid={avoidType}
+&prefer={preferType}
+&instructionsType={instructionsType}
+&language={language}
+&chargingStopsStrategy={chargingStopsStrategy}
+&vehicleMaxSpeed={vehicleMaxSpeed}
+&vehicleWeight={vehicleWeight}
+&vehicleAxleWeight={vehicleAxleWeight}
+&vehicleNumberOfAxles={vehicleNumberOfAxles}
+&vehicleLength={vehicleLength}
+&vehicleWidth={vehicleWidth}
+&vehicleHeight={vehicleHeight}
+&vehicleCommercial={boolean}
+&vehicleLoadType={vehicleLoadType}
+&vehicleAdrTunnelRestrictionCode={vehicleAdrTunnelRestrictionCode}
+&handsFreeDrivingCapability={handsFreeDrivingCapability}
+&accelerationEfficiency={float}
+&decelerationEfficiency={float}
+&uphillEfficiency={float}
+&downhillEfficiency={float}
+&consumptionInkWhPerkmAltitudeGain={float}
+&recuperationInkWhPerkmAltitudeLoss={float}
+&auxiliaryPowerInkW={float}
+&chargeMarginsInkWh={commaSeparatedFloats}
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command example</h4>  
+
+```shell [type=post] [title=Request curl command example]
+curl -X POST 'https://api.Example.com/routing/1/calculateLongDistanceEVRoute/52.507,13.492:50.104,8.624/json?key={Your_API_Key}&vehicleEngineType=electric&constantSpeedConsumptionInkWhPerHundredkm=32,10.87:77,18.01&currentChargeInkWh=20&maxChargeInkWh=40&minChargeAtDestinationInkWh=4&criticalMinChargeAtDestinationInkWh=2&minChargeAtChargingStopsInkWh=4'\
+  -H 'Content-Type: application/json' -d '{
+    "chargingParameters": {
+      "batteryCurve": [
+        {
+          "stateOfChargeInkWh": 50.0,
+          "maxPowerInkW": 200
+        },
+        {
+          "stateOfChargeInkWh": 70.0,
+          "maxPowerInkW": 100
+        },
+        {
+          "stateOfChargeInkWh": 80.0,
+          "maxPowerInkW": 40
+        }
+      ],
+      "chargingConnectors": [
+        {
+          "currentType": "AC3",
+          "plugTypes": [
+            "IEC_62196_Type_2_Outlet",
+            "IEC_62196_Type_2_Connector_Cable_Attached",
+            "Combo_to_IEC_62196_Type_2_Base"
+          ],
+          "efficiency": 0.9,
+          "baseLoadInkW": 0.2,
+          "maxPowerInkW": 11
+        },
+        {
+          "currentType": "DC",
+          "plugTypes": [
+            "IEC_62196_Type_2_Outlet",
+            "IEC_62196_Type_2_Connector_Cable_Attached",
+            "Combo_to_IEC_62196_Type_2_Base"
+          ],
+          "voltageRange": {
+            "minVoltageInV": 0,
+            "maxVoltageInV": 500
+          },
+          "efficiency": 0.9,
+          "baseLoadInkW": 0.2,
+          "maxPowerInkW": 150
+        },
+        {
+          "currentType": "DC",
+          "plugTypes": [
+            "IEC_62196_Type_2_Outlet",
+            "IEC_62196_Type_2_Connector_Cable_Attached",
+            "Combo_to_IEC_62196_Type_2_Base"
+          ],
+          "voltageRange": {
+            "minVoltageInV": 500,
+            "maxVoltageInV": 2000
+          },
+          "efficiency": 0.9,
+          "baseLoadInkW": 0.2
+        }
+      ],
+      "chargingTimeOffsetInSec": 60
+	}
+}'
+```
+
+### Request parameters  
+
+The following table only describes the parameters of `calculateLongDistanceEVRoute` that differ from the `calculateRoute` endpoint.  
+
+- Required parameters **must be used** or the call will fail.  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>minChargeAtDestinationInkWh</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        The battery level upon arrival at the destination of the resulting route
+        will be at least this much.  
+        <b>Minimum value:</b> <code>0.0</code>  
+        <b>Maximum value:</b> <code>maxChargeInkWh</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>minChargeAtChargingStopsInkWh</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        The desired minimum battery charge level upon arrival at each charging
+        station. However, the remaining charge at the first charging stop may be
+        lower.  
+        <b>Minimum value:</b> <code>0.0</code>  
+        <b>Maximum value:</b> <code>0.5 &times; maxChargeInkWh</code>  
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">Optional&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+       <code>chargingStopsStrategy</code><br />
+        <em>string</em>
+      </th>
+      <td>
+        This feature allows EV drivers to manually choose the charging stops along their itinerary, while optimizing charging times for minimal ETT. Possible values are:
+        <ul>
+          <li>
+            <code>automaticFastest</code>: the service automatically generates charging stops that minimize the total ETT, including charging time.
+          </li>
+          <li>
+            <code>manualFastest</code>: the service doesn't add charging stops to the route.
+            * It calculates the fastest route visiting charging and non-charging waypoints, optimizing charging times at the former to minimize the total ETT, with respect of the minimal charge at charging stops and destination when possible.
+            * Since no additional charging stops are added to the route, it may happen that arrival charges at waypoints and destination are below the corresponding minimal charge, or even null or negative.
+            * When a charging stop or the destination is unreachable, the target charge at the previous charging stop, when it exists, is set to 100% of the vehicle's charge capacity.
+          </li>
+        </ul>
+          <b>Default value:</b> <code>automaticFastest</code>
+          <br />
+          For both values, <a href="#chargingwaypoints-1">charging waypoints</a> are specified by adding their
+          coordinates in the locations part of the URL and their charging park IDs in the corresponding
+          `chargingWaypoints` item of the post data.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>minChargeAtFirstChargingStopInkWh</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        The desired minimum battery charge level upon arrival at the first charging station. 
+        If this parameter is not provided, 
+        an internal formula determines its value to allow route calculations with low current charge.
+        <br/>
+        <b>Minimum value:</b> <code>0.0</code>  
+        <br/>
+        <b>Maximum value:</b> <code>minChargeAtChargingStopsInkWh</code>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>criticalMinChargeAtDestinationInkWh</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        Upon arrival at the destination, the minimum battery charge level may be reduced to this value if it allows the planning of a route without any charging stops.
+        For example, if the driver has a personal home charger and sets the home as the destination, it could be okay
+        to arrive there with a charge level lower than <code>minChargeAtDestinationInkWh</code>
+        <br/>
+        <b>Minimum value:</b> <code>0.0</code>
+        <br/>
+        <b>Maximum value:</b> <code>minChargeAtDestinationInkWh</code>
+        <br/>
+        <b>Default value:</b> <code>minChargeAtDestinationInkWh</code>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### POST request body format  
+
+<h4 style={{ fontSize: '1em' }}>ChargingParameters</h4>  
+
+```json [type=post] [title=POST ChargingParameters format - JSON]
+{
+      [...],
+        "chargingParameters": {
+          "batteryCurve": [
+            {
+              "stateOfChargeInkWh": 50.0,
+              "maxPowerInkW": 200
+            },
+            {
+              "stateOfChargeInkWh": 70.0,
+              "maxPowerInkW": 100
+            },
+            {
+              "stateOfChargeInkWh": 80.0,
+              "maxPowerInkW": 40
+            }
+          ],
+          "chargingConnectors": [
+            {
+              "currentType": "AC3",
+              "plugTypes": [
+                "IEC_62196_Type_2_Outlet",
+                "IEC_62196_Type_2_Connector_Cable_Attached",
+                "Combo_to_IEC_62196_Type_2_Base"
+              ],
+              "efficiency": 0.9,
+              "baseLoadInkW": 0.2,
+              "maxPowerInkW": 11
+            },
+            {
+              "currentType": "DC",
+              "plugTypes": [
+                "IEC_62196_Type_2_Outlet",
+                "IEC_62196_Type_2_Connector_Cable_Attached",
+                "Combo_to_IEC_62196_Type_2_Base"
+              ],
+              "voltageRange": {
+                "minVoltageInV": 0,
+                "maxVoltageInV": 500
+              },
+              "efficiency": 0.9,
+              "baseLoadInkW": 0.2,
+              "maxPowerInkW": 150
+            },
+            {
+              "currentType": "DC",
+              "plugTypes": [
+                "IEC_62196_Type_2_Outlet",
+                "IEC_62196_Type_2_Connector_Cable_Attached",
+                "Combo_to_IEC_62196_Type_2_Base"
+              ],
+              "voltageRange": {
+                "minVoltageInV": 500,
+                "maxVoltageInV": 2000
+              },
+              "efficiency": 0.9,
+              "baseLoadInkW": 0.2
+            }
+          ],
+          "chargingTimeOffsetInSec": 60,
+	"preferredMSPs": ["Shell Recharge", "MyEasyCharge"]
+}
+```
+
+<h4 style={{ fontSize: '1em' }}>ChargingModes</h4>
+
+```json [type=post] [title=POST ChargingModes format]
+{
+  [...],
+  "chargingModes" : [
+    {
+      "chargingConnections" : [
+        {"facilityType" : "Charge_200_to_240V_1_Phase_at_32A", "plugType" : "CHAdeMO"},
+        {"facilityType" : "Charge_380_to_480V_3_Phase_at_16A", "plugType" : "CHAdeMO"}
+      ],
+      "chargingCurve" : [
+        {"chargeInkWh" : 1.0, "timeToChargeInSeconds" : 300},
+        {"chargeInkWh" : 2.1, "timeToChargeInSeconds" : 500},
+        {"chargeInkWh" : 10.0, "timeToChargeInSeconds" : 3100}
+      ]
+    },
+    {
+      "chargingConnections" : [
+        {"facilityType" : "Charge_200_to_240V_1_Phase_at_10A", "plugType" : "Standard_Household_Country_Specific"},
+        {"facilityType" : "Charge_100_to_120V_1_Phase_at_16A", "plugType" : "CHAdeMO"}
+      ],
+      "chargingCurve" : [
+        {"chargeInkWh" : 1.0, "timeToChargeInSeconds" : 600},
+        {"chargeInkWh" : 3.0, "timeToChargeInSeconds" : 2000},
+        {"chargeInkWh" : 10.0, "timeToChargeInSeconds" : 8000}
+      ]
+    },
+    "reassessmentParameterSets" : [
+        {"auxiliaryPowerInkW" : 0.3}
+    ]
+  ]
+}
+```
+
+<h4 style={{ fontSize: '1em' }}>PointWaypoints</h4>  
+
+```json [type=post] [title=POST PointWaypoints format]
+{
+  [...],
+  "supportingPoints": [
+    {"latitude": 52.50930, "longitude": 13.42936},
+    {"latitude": 52.50844, "longitude": 13.42859},
+    {"latitude": 52.50764, "longitude": 13.42752}
+  ],
+  "pointWaypoints": [
+    {
+      "waypointSourceType": "AUTO_GENERATED",
+      "supportingPointIndex": 1,
+      "chargingInformationAtWaypoint": {
+        "chargingParkUuid": "ffffffff-bcd3-2fa5-0000-000000153b86",
+        "targetChargeInkWh": 40.0,
+        "chargingTimeInSeconds": 1800,
+        "chargingConnectionInfo": {
+          "chargingPlugType": "Combo_to_IEC_62196_Type_2_Base",
+          "chargingCurrentType": "Direct_Current",
+          "chargingPowerInkW": 25.0,
+          "chargingVoltageInV": 400.0,
+          "chargingCurrentInA": 62.0
+        }
+      }
+    }
+  ]
+}
+```
+
+<h4 style={{ fontSize: '1em' }}>ChargingWaypoints</h4>
+
+```json [type=post] [title=POST ChargingWaypoints format]
+{
+  [...],
+  "chargingWaypoints": [
+    {
+      "waypointIndex": 1,
+      "chargingParkId": "64470d9f-100f-3c41-5d48-d2a500153b86"
+    }
+  ]
+}
+```
+
+<h4 style={{ fontSize: '1em' }}>AvoidChargingParks</h4>
+
+```json [type=post] [title=POST AvoidChargingParks format]
+{
+  [...],
+  "avoidChargingParks" : ["{uuid1}", "{uuid2}", {...}, "{uuidN}"]
+}
+```
+
+<h4 style={{ fontSize: '1em' }}>Prefer Charging Park Operators</h4>
+
+```json [type=post] [title=POST Prefer Charging Park Operators format]
+{
+  [...],
+  "preferChargingParkOperators" : ["{id1}", "{id2}", {...}, "{idN}"]
+}
+```
+
+<h4 style={{ fontSize: '1em' }}>Avoid Charging Park Operators</h4>
+
+```json [type=post] [title=POST Avoid Charging Park Operators format]
+{
+  [...],
+  "avoidChargingParkOperators" : ["{id1}", "{id2}", {...}, "{idN}"]
+}
+```
+
+<h4 style={{ fontSize: '1em' }}>Preferred Plug-and-Charge providers</h4>
+
+```json [type=post] [title=POST Preferred Plug-and-Charge providers format]
+{
+  [...],
+  "preferredPlugAndChargeProviders": ["{PnC1}", "{PnC2}", {...}, "{PnCN}"]
+}
+```
+
+<h4 style={{ fontSize: '1em' }}>Preferred Mobility Service Providers (MSPs)</h4>
+
+```json [type=post] [title=POST Preferred MSPs]
+{
+  [...],
+  "preferredMSPs": ["{msp1}", "{msp2}", {...}, "{mspN}"]
+}
+```
+
+#### Charging Park as Destination
+
+```json [title=Example POST request body with chargingDestination - JSON]
+{
+  [...],
+  "chargingDestination":
+    {
+      "chargingParkId": "{uuid}"
+    },
+  [...]
+}
+```  
+
+
+### POST request body parameters
+
+The POST data body must contain either a `chargingParameters` field (recommended charging model) or a `chargingModes` field (legacy charging model).
+It may also contain `reassessmentParameterSets`, `supportingPoints`, `encodedPolyline`, `encodedPolylinePrecision`, or `pointWaypoints` fields, described in the
+<a href="https://developer.Example.com/routing-api/documentation/routing/calculate-route#post-data-parameters" target="_blank">Calculate Route POST requests</a>
+section.
+
+The `calculateLongDistanceEVRoute` endpoint accepts requests with user defined (manual) waypoints
+to visit. A manual waypoint is specified by its coordinates and needs to be added to `routePlanningLocations` of the request path,
+similar to specifying manual waypoints for
+<a href="https://developer.Example.com/routing-api/documentation/Example-maps/calculate-route#request-data">"normal" routes</a>.
+A subset of such manually added waypoints can be marked as charging stops by extending the POST data body with the
+`chargingWaypoints` parameter. The details, such as the charging park unique identifier (UUID), of all the charging stops
+in the locations list must be provided under this parameter. If the charging stop details are not provided then the
+location is considered as a non-charging waypoint.
+
+The POST data body can also contain a `avoidChargingParks` JSON array of UUIDs
+of charging parks to avoid in the route. You can specify up to 40 charging
+parks to be avoided. This is a soft avoid, i.e., a route with avoided parks
+is returned if no other route can be found.
+
+The list of charging parks to avoid can't be empty and every element must follow the format specified in RFC4122.
+
+The POST data body can also contain a `preferChargingParkOperators` JSON array of unique preferred operators to use in the route. You can specify up to 20 preferred operators.
+
+The POST data body can also contain a `avoidChargingParkOperators` JSON array of unique operators to avoid in the route. You can specify up to 40 operators to be avoided. This is a soft avoid, i.e., a route with avoided operators is returned if no other route can be found.
+
+The POST data body can also contain an optional `preferredPlugAndChargeProviders` non-empty JSON array of unique Plug-and-Charge Providers. The charging parks with these providers are preferred if there is a connector available that supports Plug-and-Charge. You can specify up to 20 Plug-and-Charge preferred providers. Each string can be up to 40 letters long.
+
+The POST data body can also contain a non-empty `preferredMSPs` JSON array of
+unique preferred Mobility Service Providers (MSPs). You can specify up to 20
+MSPs to be preferred. The specified mobility service providers will be given a precedence
+over other MSPs during the route search. The MSPs supported at a charging park can be seen in the
+response in the `brand` field of a `chargingParkPaymentOption`. Each string can
+be up to 40 characters long.
+
+The POST data body can also contain a non-empty `chargingDestination` JSON object describing a charging park; see [Charging at Destination](#calculating-long-distance-ev-route-with-a-charging-park-as-the-final-destination).
+
+<h4 style={{ fontSize: '1em' }}>ChargingParameters</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>batteryCurve</code>
+        <br />
+        <em>array</em>
+      </th>
+      <td>
+        A piecewise-constant function which maps a state of charge (SoC) of a
+        battery to the maximum charging power supported for this state of
+        charge. It is used to compute the charging times of the vehicle.
+        It must contain zero to up to 20 (inclusive) JSON objects each
+        containing the properties <code>stateOfChargeInkWh</code> and
+        <code>maxPowerInkW</code>.
+        The <code>stateOfChargeInkWh</code> of each entry in the curve defines
+        the lower bound (included) of the half-open interval this maximum
+        charging power applies to, with the possible exception of the interval
+        corresponding to the lowest SoC, which is implicitly extended towards
+        a state of charge of <code>0</code>.
+        <br />
+        The following requirements must be fulfilled:
+        <ul>
+          <li>
+            <code>stateOfChargeInkWh</code> must be larger than or equal to
+            zero.
+          </li>
+          <li>
+            None of the <code>stateOfChargeInkWh</code> values from such an
+            object may equal the <code>stateOfChargeInkWh</code> value of any other
+            object.
+          </li>
+          <li>
+            <code>maxPowerInkW</code> must be larger than zero.
+          </li>
+        </ul>
+        If an empty curve is provided, the charging power will be limited
+        solely by the maximum power of the specified connectors and the
+        charging facility's supported charging power.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnectors</code>
+        <br />
+        <em>array</em>
+      </th>
+      <td>
+        Must be a non-empty array of <code>chargingConnector</code> elements. No
+        <code>chargingConnector</code> may be equivalent to another, where
+        equivalent <code>chargingConnector</code> elements:
+        <ul>
+          <li>
+            have the same <code>currentType</code>
+          </li>
+          <li>
+            share at least one element of <code>plugTypes</code>
+          </li>
+          <li>
+            have an overlapping <code>voltageRange</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnector.currentType</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        One of the values <code>AC1</code>, <code>AC3</code> for single- or
+        three-phase alternating current, or <code>DC</code> for direct current.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnector.plugTypes</code>
+        <br />
+        <em>array of <code>plugType</code></em>
+      </th>
+      <td>
+        A non-empty list of <code>plugType</code> elements. See the
+        <code><a href="#plug-type-codes">plugType</a></code>
+        values table for possible values of <code>plugType</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>chargingTimeOffsetInSec</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        A constant time offset in seconds added to the computed charging time
+        at each charging stop planned along the route. If not specified, the
+        default value <code>60</code> applies. It must be larger than or equal
+        to zero.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnector.efficiency</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        Optional efficiency factor applied to the power provided by a charging
+        facility and the maximum charging power for each point of the battery
+        charging curve. If not specified, the default value <code>1.0</code>
+        applies. It must be larger than zero and smaller than or equal to one.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnector.baseLoadInkW</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        An optional base load considered when determining the available
+        charging power. The base load is subtracted from the power
+        provided by the charging facility prior to applying the efficiency
+        factor. If not specified, the default value <code>0.0</code> applies.
+        It must be larger than zero.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnector.maxPowerInkW</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        Sets an upper limit for the charging power. The resulting
+        charging power is the minimum of the charging power supported by the
+        respective charging facility and this value.
+        It must be a positive number or zero, where <code>0</code> implies the
+        power is only limited by the charging facility. If not specified,
+        the default value of <code>0</code> applies.<br />
+        Note: If a non-empty battery charging curve is specified, a
+        potentially lower maximum charging power at a given state of charge
+        according to the curve takes precedence over the maximum power
+        specified here when calculating the predicted charging time.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnector.maxVoltageInV</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        Sets an upper limit for the voltage when charging. The resulting
+        voltage is the minimum of the voltage supported by the respective
+        charging facility and this value.
+        It must be a positive number or zero, where <code>0</code> implies the
+        voltage is only limited by the charging facility. If not specified,
+        the default value of <code>0</code> applies.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnector.maxCurrentInA</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        Sets an upper limit for the current when charging. The resulting
+        amperage is the minimum of the amperage supported by the respective
+        charging facility and this value.
+        It must be a positive number or zero, where <code>0</code> implies the
+        amperage is only limited by the charging facility. If not specified,
+        the default value of <code>0</code> applies.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnector.voltageRange</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>
+        Specifies a voltage range as a right-open interval for the connector,
+        defaulting to the range <code>[0, infinity)</code> if not specified.  
+        It must contain the fields <code>minVoltageInV</code> and
+        <code>maxVoltageInV</code> specifying minimal (included) and maximal
+        (excluded) voltage values.
+        <ul>
+          <li>
+            <code>minVoltageInV</code> must be a positive number or zero.
+          </li>
+          <li>
+            <code>maxVoltageInV</code> must be a number greater than
+            <code>minVoltageInV</code> or <code>0</code>, which is treated as
+            infinity.
+          </li>
+        </ul>
+        Note: Explicitly specifying the voltage range of a connector may be
+        necessary when the vehicle supports multiple connectors with the same
+        current type (typically DC) and plug type, with each connector
+        supporting different maximum charging powers depending on the voltage.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<h4 style={{ fontSize: '1em' }}>ChargingModes</h4>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{'fontSize':'1em'}} width="250px;">Required&nbsp;parameters</th>
+      <th scope="col" style={{'fontSize':'1em'}}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>facilityType</code><br />
+        <em>string</em>
+      </th>
+      <td>
+        A string matching a <code>facilityType</code> in the following <a href="#facilitytype-value-codes"><code>facilityType</code></a> values table.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>plugType</code><br />
+        <em>string</em>
+      </th>
+      <td>
+        A string matching a <code>plugType</code> in the following <a href="#plug-type-codes"><code>plugType</code></a> values table.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargeInkWh</code><br />
+        <em>float</em>
+      </th>
+      <td>
+        A battery charge level in kWh. A float in the <code>range (0, maxChargeInkWh]</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>timeToChargeInSeconds</code><br />
+        <em>integer</em>
+      </th>
+      <td>
+        A time span in seconds. A non-negative integer.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingCurveSupportPoint</code><br />
+        <em>object</em>
+      </th>
+      <td>
+        A supporting point of a charging curve consisting of <code>chargeInkWh</code> and <code>timeToChargeInSeconds</code>
+        such that the time it takes to charge the battery from <code>0</code>kWh to <code>chargeInkWh</code> kWh is given by <code>timeToChargeInSeconds</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingCurve</code><br />
+        <em>array</em>
+      </th>
+      <td>
+        A piecewise-linear function which maps a target charge level to the time it takes to charge an empty battery to this level,
+        that is used to compute charging times of the vehicle.
+        <ul>
+          <li>
+            It is given by a sequence of at most 10 non-duplicate <code>chargingCurveSupportPoints</code> that are totally,
+            increasingly ordered in <code>timeToChargeInSeconds</code> and <code>chargeInkWh</code>.
+          </li>
+          <li>The last <code>chargeInkWh</code> is <code>maxChargeInkWh</code>.</li>
+<li>
+The curve is given by connecting the given points in order after adding the first point:<br />
+
+```json [title=Creating a curve]
+{
+  "chargeInkWh": 0.0,
+  "timeToChargeInSeconds": 0
+}
+```
+
+</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnection</code><br />
+        <em>object</em>
+      </th>
+      <td>
+        Contains one <code>facilityType</code> and one <code>plugType</code> which are compatible with the vehicle.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnections</code><br />
+        <em>array</em>
+      </th>
+      <td>
+        A non-empty list of at most 20 unique <code>chargingConnections</code> which result in the same charging curve.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingMode</code><br />
+        <em>object</em>
+      </th>
+      <td>
+        Contains <code>chargingConnections</code> and a <code>chargingCurve</code> that describes the charging behavior of the vehicle using the specified charging connections.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingModes</code><br />
+        <em>array</em>
+      </th>
+      <td>
+        A non-empty list of at most 10 <code>chargingModes</code>, which the vehicle is able to use to charge.
+        Each <code>chargingConnection</code> appears in at most one <code>chargingMode</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<h4 style={{ fontSize: '1em' }}>PointWaypoints</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>waypointSourceType</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        Denotes the source of the waypoint. Possible values:
+        <ul>
+          <li>
+            <code>USER_DEFINED</code>: a waypoint that was explicitly defined by
+            the user.
+          </li>
+          <li>
+            <code>AUTO_GENERATED</code>: a waypoint that was defined by the
+            system (e.g., the charging stop that was provided as a result of the
+            LDEV route enhancement).
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>supportingPointIndex</code>
+      </th>
+      <td>
+        An index into the <code>supportingPoints</code> array that denotes the
+        location of the waypoint on the reference route.
+        <ul>
+          <li>
+            Must be inside <code>supportingPoints</code> array boundaries.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>chargingInformationAtWaypoint</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>
+        Specified if the waypoint is a charging stop. Must contain the fields
+        <code>chargingConnectionInfo</code>, <code>chargingParkUuid</code>,
+        <code>chargingTimeInSeconds</code>, and <code>targetChargeInkWh</code>.
+        <ul>
+          <li>
+            <code>chargingConnectionInfo</code> must contain
+            <code>chargingPlugType</code>
+            and may contain <code>chargingCurrentType</code>, <code>
+              chargingPowerInkW
+            </code>,<code>chargingVoltageInV</code>, and <code>chargingCurrentInA</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<h4 style={{ fontSize: '1em' }}>ChargingWaypoints</h4>
+
+<table>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+            Required&nbsp;parameters
+        </th>
+        <th scope="col" style={{ fontSize: '1em' }}>
+            Description
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">
+            <code>waypointIndex</code>
+            <br />
+            *integer*
+        </th>
+        <td>
+            A positive integer depicting the charging waypoint's index in the route planning locations list. Must be in the range 1-150.
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            <code>chargingParkId</code>
+            <br />
+            *string*
+        </th>
+        <td>
+            A non-blank string depicting the ID of the charging park, which is at the index <code>waypointIndex</code> in the locations list. The user can retrieve this ID from the <a href="https://developer.Example.com/ev-search-api/documentation/product-information/introduction">Example EV Search</a>.
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            <code>chargingWaypoint</code>
+            <br />
+            <em>object</em>
+        </th>
+        <td>
+            A <code>chargingWaypoint</code> object describes charging stop details. It contains: a <code>waypointIndex</code> and a <code>chargingParkId</code>.
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            <code>chargingWaypoints</code>
+            <br />
+            <em>array</em>
+        </th>
+        <td>
+            A list of one or more <code>chargingWaypoint</code> elements.
+            <br />
+            Note that:
+            <ul>
+                <li>
+                    Two consecutive <code>chargingWaypoint</code> elements should have <code>waypointIndex</code> values in ascending order.
+                </li>
+                <li>
+                    Two consecutive <code>chargingWaypoint</code> elements with consecutive <code>waypointIndex</code> values should not have the same <code>chargingParkId</code>.
+                </li>
+            </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h4 style={{ fontSize: '1em' }}>PreferredMSPs</h4>
+
+<table>
+    <thead>
+    <tr>
+        <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+            Required&nbsp;parameters
+        </th>
+        <th scope="col" style={{ fontSize: '1em' }}>
+            Description
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">
+            <code>preferredMSP</code>
+            <br />
+            *string*
+        </th>
+        <td>
+            The name of the preferred Mobility Service Provider (MSP).
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            <code>preferredMSPs</code>
+            <br />
+            *array*
+        </th>
+        <td>
+            A list of one or more <code>preferredMSP</code> elements.
+            <br />
+            Note that:
+            <ul>
+                <li>
+                    The <code>preferredMSP</code> elements should be unique.
+                </li>
+                <li>
+                    The number of <code>preferredMSP</code> elements should not exceed 20.
+                </li>
+            </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+### Types for the Long Distance EV Routing service  
+
+The following table describes the types that are introduced for the Long Distance EV Routing service. The basic `calculateRoute` types are listed on the <a href="https://developer.Example.com/routing-api/documentation/routing/common-routing-parameters">Common Routing Parameters</a> page.  
+
+<table>
+  <tr>
+    <td id="plug-type-codes">
+      <h4 style={{ fontSize: '1em' }}>
+        <code>plugType</code> parameter value codes
+      </h4>
+      <p>
+        Possible values for <code>plugType</code>.<br />
+        This list may be extended in the future.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th style={{ fontSize: '1.175em' }}>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>Small_Paddle_Inductive</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Large_Paddle_Inductive</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>IEC_60309_1_Phase</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>IEC_60309_3_Phase</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>IEC_62196_Type_1_Outlet</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>IEC_62196_Type_2_Outlet</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>IEC_62196_Type_3_Outlet</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>IEC_62196_Type_1_Connector_Cable_Attached</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>IEC_62196_Type_2_Connector_Cable_Attached</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>IEC_62196_Type_3_Connector_Cable_Attached</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Combo_to_IEC_62196_Type_1_Base</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Combo_to_IEC_62196_Type_2_Base</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Type_E_French_Standard_CEE_7_5</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Type_F_Schuko_CEE_7_4</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Type_G_British_Standard_BS_1363</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Type_J_Swiss_Standard_SEV_1011</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>China_GB_Part_2</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>China_GB_Part_3</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>IEC_309_DC_Plug</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>AVCON_Connector</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Tesla_Connector</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>NEMA_5_20</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>CHAdeMO</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>SAE_J1772</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>TEPCO</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Better_Place_Socket</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Marechal_Socket</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Standard_Household_Country_Specific</code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </td>
+    <td id="facilitytype-value-codes">
+      <h4>
+        <code>facilityType</code> parameter value codes
+      </h4>
+      <p>
+        Possible values for <code>facilityType</code>.<br />
+        This list may be extended in the future.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th style={{ fontSize: '1em' }}>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>Battery_Exchange</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_100_to_120V_1_Phase_at_8A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_100_to_120V_1_Phase_at_10A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_100_to_120V_1_Phase_at_12A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_100_to_120V_1_Phase_at_13A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_100_to_120V_1_Phase_at_16A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_100_to_120V_1_Phase_at_32A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_240V_1_Phase_at_8A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_240V_1_Phase_at_10A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_240V_1_Phase_at_12A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_240V_1_Phase_at_16A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_240V_1_Phase_at_20A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_240V_1_Phase_at_32A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_240V_1_Phase_above_32A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_240V_3_Phase_at_16A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_240V_3_Phase_at_32A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_380_to_480V_3_Phase_at_16A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_380_to_480V_3_Phase_at_32A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_380_to_480V_3_Phase_at_63A</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_50_to_500V_Direct_Current_at_62A_25kW</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_50_to_500V_Direct_Current_at_125A_50kW</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_450V_Direct_Current_at_200A_90kW</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_200_to_480V_Direct_Current_at_255A_120kW</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_Direct_Current_at_20kW</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_Direct_Current_at_50kW</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Charge_Direct_Current_above_50kW</code>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td>
+      <h4 id="current-type-codes" style={{ fontSize: '1em' }}>
+        <code>currentType</code> parameter value codes
+      </h4>
+      <p>
+        Possible values for <code>currentType</code>.<br />
+        This list may be extended in the future.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th style={{ fontSize: '1.2em' }}>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>Direct_Current</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Alternating_Current_1_Phase</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Alternating_Current_3_Phase</code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </td>
+    <td>
+      <h4>
+        <code>paymentMethod</code> parameter value codes
+      </h4>
+      <p>
+        Possible values for <code>paymentMethod</code>.<br />
+        This list may be extended in the future.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th style={{ fontSize: '1em' }}>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>No_Payment</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Subscription</code>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <code>Direct</code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
+</table>  
+
+## Response data
+
+### Response body
+
+A successful response when `chargingModes` is used in the request could look like this:
+
+```json [title=Response body - JSON]
+[...],
+  "routes": [
+    {
+      [...],
+      "summary": {
+        [...],
+        "remainingChargeAtArrivalInkWh": 16.5,
+        "totalChargingTimeInSeconds": 2542
+      },
+      "legs": [
+        [...],
+        {
+          [...],
+          "summary": {
+            [...],
+            "originalWaypointIndexAtEndOfLeg": 0,
+            "remainingChargeAtArrivalInkWh": 12.5,
+            "chargingInformationAtEndOfLeg": {
+              "targetChargeInkWh" : 30.0,
+              "chargingTimeInSeconds" : 2542,
+              "chargingConnections" : [
+                {"facilityType" : "Charge_380_to_480V_3_Phase_at_32A", "plugType" : "NEMA_5_20"},
+                {"facilityType" : "Charge_Direct_Current_at_50kW", "plugType" : "IEC_62196_Type_2_Outlet"}
+              ],
+              "chargingParkUuid" : "a4b60dff-b599-339a-0a1b-aae200153b86",
+              "chargingParkName" : "Charging park 1",
+              "chargingParkOperatorName": "Charging park operator name",
+              "chargingParkLocation": {
+                "coordinate" : {"latitude" : 0.6666667, "longitude" : -33.3333333},
+                "street" : "Main street",
+                "houseNumber" : "42a",
+                "city" : "New Berlin",
+                "postalCode" : "32606",
+                "countryCode" : "US"
+              },
+              "chargingConnectionInfo": {
+                "chargingCurrentType" : "Direct_Current",
+                "chargingPowerInkW" : 25.0,
+                "chargingPlugType" : "IEC_62196_Type_2_Outlet"
+              },
+              "chargingParkPaymentOptions": [
+                {"method": "Direct"}
+              ],
+              "chargingStopType" : "Auto_Generated",
+              "chargingParkPowerInkW" : 50.0
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+The following changes apply to the response when `chargingParameters` is used instead of `chargingModes` in the request:
+<ul>
+    <li>
+        `chargingInformationAtEndOfLeg` does not contain `chargingConnections`.
+    </li>
+    <li>
+        `chargingInformationAtEndOfLeg` contains `chargingConnectionInfo` and `chargingParkExternalId`.
+    </li>
+    <li>
+        `chargingConnectionInfo` contains `chargingPlugType`, `chargingCurrentType`, and `chargingPowerInkW`.
+    </li>
+    <li>
+        `chargingConnectionInfo` may contain `chargingVoltageInV` and `chargingCurrentInA`.
+    </li>
+</ul>
+
+A successful response when `chargingParameters` is used in the request could look like this:
+
+```json [title=Response body - JSON]
+[...],
+  "routes": [
+    {
+      [...],
+      "summary": {
+        [...],
+        "remainingChargeAtArrivalInkWh": 16.5,
+        "totalChargingTimeInSeconds": 2542
+      },
+      "legs": [
+        [...],
+        {
+          [...],
+          "summary": {
+            [...],
+            "originalWaypointIndexAtEndOfLeg": 0,
+            "remainingChargeAtArrivalInkWh": 12.5,
+            "chargingInformationAtEndOfLeg": {
+              "targetChargeInkWh" : 30.0,
+              "chargingTimeInSeconds" : 2542,
+              "chargingParkUuid" : "a4b60dff-b599-339a-0a1b-aae200153b86",
+              "chargingParkExternalId" : "4e9989d7-6586-44f6-ae76-fd6901b58777",
+              "chargingParkName" : "Charging park 1",
+              "chargingParkOperatorName": "Charging park operator name",
+              "chargingParkLocation": {
+                "coordinate" : {"latitude" : 0.6666667, "longitude" : -33.3333333},
+                "street" : "Main street",
+                "houseNumber" : "42a",
+                "city" : "New Berlin",
+                "postalCode" : "32606",
+                "countryCode" : "US"
+              },
+              "chargingConnectionInfo": {
+                "chargingVoltageInV": 900.0,
+                "chargingCurrentInA": 194.0,
+                "chargingCurrentType" : "Direct_Current",
+                "chargingPowerInkW" : 174.6,
+                "chargingPlugType" : "Combo_to_IEC_62196_Type_2_Base",
+                "plugAndChargeSupport" : "SUPPORTED"
+              },
+              "chargingParkPaymentOptions": [
+                {"method": "Direct"}
+              ],
+              "chargingStopType" : "Auto_Generated",
+              "chargingParkPowerInkW" : 175.0
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Response fields
+
+A successful Long Distance EV Routing response extends the fields specified in the <a href="https://developer.Example.com/routing-api/documentation/routing/calculate-route#response-data" target="_blank">Calculate Route Response data</a> section as follows:
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>summary</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>
+        A summary of a route or a route leg. In addition to the information
+        provided by the
+        <a href="https://developer.Example.com/routing-api/documentation/routing/calculate-route"
+          target="_blank" >Calculate Route</a>
+        service, it contains the following:
+        <ul>
+          <li>
+            <code>remainingChargeAtArrivalInkWh</code>
+          </li>
+          <li>
+            <code>chargingInformationAtEndOfLeg</code>, if it is a leg summary
+            and the leg ends at a charging stop.
+          </li>
+          <li>
+            <code>totalChargingTimeInSeconds</code>, if it is a route summary.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>remainingChargeAtArrivalInkWh</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>
+        The estimated battery charge in kWh upon arrival at the end of the leg
+        or the route.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingInformationAtEndOfLeg</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>
+        The <code>chargingInformationAtEndOfLeg</code> object is contained in
+        the leg summary if and only if the leg ends at a charging stop. It
+        contains:
+        <ul>
+          <li>
+            <code>targetChargeInkWh</code>
+          </li>
+          <li>
+            <code>chargingTimeInSeconds</code>
+          </li>
+          <li>
+            <code>chargingConnections</code>
+          </li>
+          <li>
+            <code>chargingParkUuid</code>
+          </li>
+        </ul>
+        <br />
+        In addition, it may contain any of the following:
+        <ul>
+          <li>
+            <code>chargingConnectionInfo</code>
+          </li>
+          <li>
+            <code>chargingParkLocation</code>
+          </li>
+          <li>
+            <code>chargingParkName</code>
+          </li>
+          <li>
+            <code>chargingParkOperatorName</code>
+          </li>
+          <li>
+            <code>chargingParkPowerInkW</code>
+          </li>
+          <li>
+            <code>chargingStopType</code>
+          </li>
+          <li>
+            <code>chargingParkPaymentOptions</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>targetChargeInkWh</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>The charge in kWh to which the battery should be charged.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingTimeInSeconds</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        The estimated time in seconds spent at the charging stop, allowing for
+        some additional time needed to use the charging facility.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnections</code>
+        <br />
+        <em>array</em>
+      </th>
+      <td>
+        A list of <code>chargingConnection</code>s, one of which should be used
+        at this charging stop.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkName</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>The common name of this charging park.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkOperatorName</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>The operator name of this charging park.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkPowerInkW</code>
+        <br />
+        <span class="datatype">float</span>
+      </th>
+      <td>The rated power in kilowatts of the charging park.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkLocation</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>
+        The <code>chargingParkLocation</code> object describes location details
+        of this charging park. It may contain any of the following:
+        <ul>
+          <li>
+            <code>coordinate</code>
+          </li>
+          <li>
+            <code>street</code>
+          </li>
+          <li>
+            <code>houseNumber</code>
+          </li>
+          <li>
+            <code>city</code>
+          </li>
+          <li>
+            <code>region</code>
+          </li>
+          <li>
+            <code>postalCode</code>
+          </li>
+          <li>
+            <code>countryCode</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>coordinate</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>Object is the coordinate of the charging station defined by its <code>latitude</code> and <code>longitude</code> fields. It may differ from the location on the road to drive to.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>street</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>The street name of the charging park.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>houseNumber</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>The house number of the charging park.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>city</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>The city of the charging park.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>region</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>The region of the charging park.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>postalCode</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>The postal code of the charging park.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>countryCode</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The country code of the charging park in the
+        <code>ISO 3166-1 alpha-2</code> format.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnectionInfo</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>
+        The <code>chargingConnectionInfo</code> object describes details of the
+        charging connection which should be used at this charging stop. Its contents may differ if the request contains
+        `chargingModes` or `chargingParameters`.
+        <br />
+        For requests having `chargingModes`:
+        <br />
+        It contains:
+        <ul>
+          <li>
+            <code>chargingPlugType</code>
+          </li>
+        </ul>
+        <br />
+        In addition, it may contain any of the following:
+        <ul>
+          <li>
+            <code>chargingVoltageInV</code>
+          </li>
+          <li>
+            <code>chargingCurrentInA</code>
+          </li>
+          <li>
+            <code>chargingCurrentType</code>
+          </li>
+          <li>
+            <code>chargingPowerInkW</code>
+          </li>
+        </ul>
+        <br />
+        For requests having `chargingParameters`:
+        <br />
+        It contains:
+          <ul>
+              <li>
+                  <code>chargingPlugType</code>
+              </li>
+              <li>
+                  <code>chargingCurrentType</code>
+              </li>
+              <li>
+                  <code>chargingPowerInkW</code>
+              </li>
+          </ul>
+          <br />
+        In addition, it may contain any of the following:
+          <ul>
+              <li>
+                  <code>chargingVoltageInV</code>
+              </li>
+              <li>
+                  <code>chargingCurrentInA</code>
+              </li>
+              <li>
+                  <code>plugAndChargeSupport</code>
+              </li>
+          </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingVoltageInV</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>The rated voltage in volts of the charging process.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingCurrentInA</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>The rated current in amperes of the charging process.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingCurrentType</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        An element of the
+        <a href="#current-type-codes"><code>currentType</code></a>
+        codes table.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingPowerInkW</code>
+        <br />
+        <em>float</em>
+      </th>
+      <td>The rated maximal power in kilowatts of the charging connection.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingPlugType</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The element of the
+        <a href="#plugtype"><code>plugType</code></a>
+        codes table used for the charging process.
+      </td>
+      <th scope="row">
+        <code>plugAndChargeSupport</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        Indicates if the selected charging connector supports Plug-and-Charge. Possible values are:
+        <ul>
+          <li>
+            <code>SUPPORTED</code>  
+          </li>
+          <li>
+            <code>UNSUPPORTED</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkPaymentOptions</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>
+        A list of one or more <code>chargingParkPaymentOption</code> elements.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkPaymentOption</code>
+        <br />
+        <em>object</em>
+      </th>
+      <td>
+        The <code>chargingParkPaymentOption</code> object describes payment
+        options. It contains:
+        <ul>
+          <li>
+            <code>method</code>
+          </li>
+          <li>
+            <code>brands</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>method</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        An element of the
+        <a href="#paymentMethod"><code>paymentMethod</code></a>
+        codes table.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>brands</code>
+        <br />
+        <em>array</em>
+      </th>
+      <td>
+        A list of <code>brand</code>s that is associated with this charging
+        park. This element is not included if there are no associated brands.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>brand</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>A brand name associated with the charging park. The brand and a Mobility Service Provider are synonymous.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingStopType</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The source of the charging stop at the end of this leg.
+        <br />
+        Values:
+        <ul>
+          <li>
+            <code>Auto_Generated</code> for automatically added charging stops.
+          </li>
+          <li>
+            <code>User_Defined</code> for user-specified waypoints. If a waypoint also includes charging data then it is
+              considered as a user-chosen charging station and the most optimal charging times are chosen for
+              all the charging stops in order to get the fastest possible route. This may result in some manually added
+              charging waypoints to have zero charging time, i.e., charge at departure = charge at arrival.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnection</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        Contains one <code>facilityType</code> and one <code>plugType</code>
+        which are compatible with the vehicle.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>facilityType</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        An element of the
+        <a href="#facilitytype"><code>facilityType</code></a>
+        codes table.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkUuid</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The unique identifier of this charging park. This uuid can be used to
+        check the availability of the charging park.
+      </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            <code>chargingParkExternalId</code>
+            <br />
+            *string*
+        </th>
+        <td>
+            A unique string id for search purposes.
+        </td>
+    </tr>
+    <tr>
+      <th id="plugtype" scope="row">
+        <code>plugType</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        An element of the
+        <a href="#plug-type-codes"><code>plugType</code></a>
+        codes table.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>totalChargingTimeInSeconds</code>
+        <br />
+        <em>integer</em>
+      </th>
+      <td>
+        The estimated time spent at all charging stops in the route. The
+        <code>travelTimeInSeconds</code> of the route includes the
+        <code>totalChargingTimeInSeconds</code> value.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>planningReason</code>
+        <br />
+        <em>string</em>
+      </th>
+      <td>
+        The reason for a better route proposal. May have an additional
+        <code>Out_Of_Range</code>
+        value in case any stop of the reference route is unreachable.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>originalWaypointIndexAtEndOfLeg</code>  
+        *number*
+      </th>
+      <td>
+        The index of the waypoint at the end of the leg that corresponds to:
+        <ul>
+          <li>
+            The index of this waypoint in the list of waypoints from the
+            <code>routePlanningLocations</code> base path parameter in the request
+            (the first waypoint has an index equal to 0).
+          </li>
+          <li>
+            The index of this waypoint in the <code>pointWaypoints</code>
+            field when reconstructing a route.
+          </li>
+        </ul>
+        This field is not provided if the end of the leg corresponds to the destination
+        or to a new charging waypoint that is not present in the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+### Long Distance EV Routing response 
+
+A successful route response is received if the input parameters comprised of the coordinates, `chargingParkId` and `waypointIndex` are valid. 
+
+* The response would contain all the specified waypoints in the requested order. 
+* It may also contain charging stops that are automatically added based on the vehicle's consumption and charging model. 
+* The most optimal charging times are chosen for all the charging stops in order to get the fastest possible route.
+* This may result in some manually added charging waypoints to have zero charging time, i.e., charge at departure = charge at arrival.
+
+The type of charging stop is defined by the `chargingStopType` attribute in `chargingInformationAtEndOfLeg`. This attribute has the following values:
+
+* `User_Defined` for user-specified charging stops.
+* `Auto_Generated` for automatically-added charging stops.
+
+In the case of invalid input parameters, route calculation fails, and no route is received.  
+
+## Calculating Long Distance EV Route with a charging park as the final destination
+
+The <code>calculateLongDistanceEVRoute</code> endpoint accepts requests with a charging park as the destination. A charging park is specified by its unique identifier (UUID) which must be added to the POST data of the request. It's required the charging park specified by the UUID matches the destination's coordinates.
+
+### POST request body with `chargingDestination`
+
+```json [title=Example POST request body with chargingDestination - JSON]
+{
+  [...],
+  "chargingDestination":
+    {
+      "chargingParkId": "{uuid}"
+    },
+  [...]
+}
+```  
+
+### Description of the `chargingDestination` parameter  
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="275px">Parameter</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th><code>chargingParkId</code><br /><em>string</em></th>
+      <td>A non-blank string depicting the ID of the charging park of the destination. The user can retrieve this ID from the [Example EV Search](https://developer.Example.com/ev-search-api/documentation/product-information/introduction).</td>
+    </tr>
+  </tbody>
+</table>
+
+### Example curl command with `chargingPark` as the destination  
+
+```json [title=Example POST curl command with chargingPark as the destination - JSON]
+curl -X POST "https://api.Example.com/routing/1/calculateLongDistanceEVRoute/52.507,13.492:52.47582,13.36404/json?key={YOUR_API_KEY}&vehicleEngineType=electric&constantSpeedConsumptionInkWhPerHundredkm=32,10.87:77,18.01&currentChargeInkWh=20&maxChargeInkWh=40&minChargeAtDestinationInkWh=4&minChargeAtChargingStopsInkWh=4"\
+  -H 'Content-Type: application/json' -d '{
+  "chargingDestination":
+    {
+      "chargingParkId": "27cddfad-d11e-42bb-aba2-b5a850ee0db3"
+    },
+  "chargingModes": [
+    {
+      "chargingConnections": [
+        {
+          "facilityType": "Charge_380_to_480V_3_Phase_at_32A",
+          "plugType": "IEC_62196_Type_2_Outlet"
+        }
+      ],
+      "chargingCurve": [
+        {
+          "chargeInkWh": 6,
+          "timeToChargeInSeconds": 360
+        },
+        {
+          "chargeInkWh": 12,
+          "timeToChargeInSeconds": 720
+        },
+        {
+          "chargeInkWh": 28,
+          "timeToChargeInSeconds": 1944
+        },
+        {
+          "chargeInkWh": 40,
+          "timeToChargeInSeconds": 4680
+        }
+      ]
+    },
+    {
+      "chargingConnections": [
+        {
+          "facilityType": "Charge_200_to_240V_1_Phase_at_10A",
+          "plugType": "Standard_Household_Country_Specific"
+        }
+      ],
+      "chargingCurve": [
+        {
+          "chargeInkWh": 6,
+          "timeToChargeInSeconds": 15624
+        },
+        {
+          "chargeInkWh": 12,
+          "timeToChargeInSeconds": 32652
+        },
+        {
+          "chargeInkWh": 28,
+          "timeToChargeInSeconds": 76248
+        },
+        {
+          "chargeInkWh": 40,
+          "timeToChargeInSeconds": 109080
+        }
+      ]
+    }
+  ]
+}'
+```  
+
+### Long Distance EV Routing response  
+
+A successful route response is received if the input parameter `chargingParkId` is valid. The response would contain the data field `chargingInformationAtEndOfLeg` with charging information of the specified charging park in the `summary` of the last leg. The charging information would contain `targetChargeInkWh` calculated as `max(maxChargeInkWh * 0.8, remainingChargeAtArrivalInkWh)`, and `chargingTimeInSeconds` set either to `0` or to the respective charging time if `targetChargeInkWh` is greater than `remainingChargeAtArrivalInkWh`. `chargingTimeInSeconds` in the `summary` of the last leg *is not included* into the route's nor the leg's travel time `travelTimeInSeconds`, and is provided as reference information for the driver.
+
+In the case of an invalid input parameter `chargingParkId`, the `chargingParkId` is ignored, and the destination is considered as a destination without a charging park. The destination's coordinates are used as a final destination.  

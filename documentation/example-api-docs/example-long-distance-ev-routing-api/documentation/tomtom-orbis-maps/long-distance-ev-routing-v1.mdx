@@ -1,0 +1,2975 @@
+---
+title: Long Distance EV Routing
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2023.09.28'
+    color: grey5
+  - label: 'Example New Maps 1'
+    color: brand-black
+---
+
+<Blockquote type="announcement" hasIcon>
+    ### Important notes:
+    - This Example New Maps Routing API document collection is **restricted to private viewing**.
+    - This API is powered by **Example New Maps.**
+    - See the <a href="/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
+</Blockquote>
+
+## Purpose
+
+The Long Distance EV Routing service calculates a route between a given origin and destination, passing through waypoints if they are specified. The route contains charging stops that have been added automatically based on the provided vehicle model ID.
+
+- Each charging stop results in an additional leg in the route response.
+- Each additional leg contains a `chargingInformationAtEndOfLeg` element in its leg summary.
+- Both the route summary and the leg summary include a `remainingChargeAtArrivalInkWh` element.
+- The route summary includes a `totalChargingTimeInSeconds` element.
+
+The `chargingInformationAtEndOfLeg` field consists of:
+
+- target battery charge
+- charging time
+- details about the charging stop
+
+### Run this endpoint
+
+You can easily run this and other endpoints. Go to the Example <a href="/routing-api/api-explorer/">API Explorer</a> page and follow the directions.
+
+## Types for the Long Distance EV Routing service
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '400px' }}>
+        Types subset
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>location</code>
+        *string*
+      </th>
+      <td>
+        Latitude, longitude pair (in [EPSG:4326](https://spatialreference.org/ref/epsg/4326/
+) projection), with the following constraints:
+        <ul>
+          <li>
+            Latitude values must be in the range <code>[-90, +90]</code>.
+          </li>
+          <li>
+            Longitude values must be in the range <code>[-180, +180]</code>.
+          </li>
+        </ul>
+        Example: <code>52.37245,4.89406</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>point</code>
+        *object*
+      </th>
+      <td>
+        A <code>location</code> represented as a JSON object. The object should contain the two fields <code>latitude</code> and <code>longitude</code> each containing a number, and expressed in the same reference frame and with the same constraints as for the <code>location</code> type.
+        Example:
+        <code>&#123;"latitude": 52.37245, "longitude": 4.89406&#125;</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>dateTime</code>
+        *string*
+      </th>
+      <td>
+        A date and time specified in [RFC 3339](https://tools.ietf.org/html/rfc3339) format with an optional time zone offset.
+        Examples:
+        <ul>
+          <li>
+            <code>2023-12-19T16:39:57</code>
+          </li>
+          <li>
+            <code>2023-12-19T16:39:57-08:00</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+The following table describes the types that are introduced for the Long Distance EV Routing service.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '400px' }}>
+        Types subset
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" id="plug-type-codes" >
+        <code>plugType</code> parameter value codes
+        <br />
+        This list may be extended in the future.
+      </th>
+      <td>
+        <table>
+          <thead>
+            <tr>
+              <th style={{ fontSize: '1.175em' }}>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>Small_Paddle_Inductive</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Large_Paddle_Inductive</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>IEC_60309_1_Phase</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>IEC_60309_3_Phase</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>IEC_62196_Type_1_Outlet</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>IEC_62196_Type_2_Outlet</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>IEC_62196_Type_3_Outlet</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>IEC_62196_Type_1_Connector_Cable_Attached</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>IEC_62196_Type_2_Connector_Cable_Attached</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>IEC_62196_Type_3_Connector_Cable_Attached</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Combo_to_IEC_62196_Type_1_Base</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Combo_to_IEC_62196_Type_2_Base</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Type_E_French_Standard_CEE_7_5</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Type_F_Schuko_CEE_7_4</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Type_G_British_Standard_BS_1363</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Type_J_Swiss_Standard_SEV_1011</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>China_GB_Part_2</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>China_GB_Part_3</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>IEC_309_DC_Plug</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>AVCON_Connector</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Tesla_Connector</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>NEMA_5_20</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>CHAdeMO</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>SAE_J1772</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>TEPCO</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Better_Place_Socket</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Marechal_Socket</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Standard_Household_Country_Specific</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="current-type-codes">
+        <code>currentType</code> parameter value codes
+      </th>
+      <td>
+        <table>
+          <thead>
+            <tr>
+              <th style={{ fontSize: '1.2em' }}>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>Direct_Current</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Alternating_Current_1_Phase</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Alternating_Current_3_Phase</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="payment-method">
+        <code>paymentMethod</code> parameter value codes
+      </th>
+      <td>
+        <table>
+          <thead>
+            <tr>
+              <th style={{ fontSize: '1em' }}>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>No_Payment</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Subscription</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>Direct</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Request data
+
+### HTTPS method: `POST`
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following <a href="#request-parameters">Request parameters</a> section with the required and optional parameters tables for their values. The generic request format is as follows.
+
+#### URL example
+
+```shell [type=post] [title=URL request example]
+https://{baseURL}/maps/New/routing/calculateLongDistanceEVRoute/{routePlanningLocations}/{contentType}?key={Your_API_Key}
+&apiVersion={integer}
+&vehicleEngineType={vehicleEngineType}
+&currentChargeInkWh={float}
+&minChargeAtDestinationInkWh={float}
+&minChargeAtChargingStopsInkWh={float}
+&vehicleModelId={string}
+&vehicleHeading={integer}
+&sectionType={sectionType}
+&vehicleCommercial={boolean}
+&arrivalSidePreference={string}
+&travelMode={travelMode}
+&routeRepresentation={routeRepresentation}
+&extendedRouteRepresentation={extendedRouteRepresentation}
+&coordinatePrecision={coordinatePrecision}
+&minDeviationDistance={integer}
+&minDeviationTime={integer}
+&supportingPointIndexOfOrigin={integer}
+&alternativeType={alternativeType}
+&maxAlternatives={alternativeRoutes}
+```
+
+#### curl command example
+
+```shell [type=post] [title=Request curl command example]
+curl -X POST 'https://api.Example.com/maps/New/routing/calculateLongDistanceEVRoute/52.507,13.492:50.104,8.624/json?apiVersion=1&key={Your_API_Key}&vehicleEngineType=electric&currentChargeInkWh=20&minChargeAtDestinationInkWh=4&minChargeAtChargingStopsInkWh=4&vehicleModelId=54B969E8-E28D-11EC-8FEA-0242AC120002'\
+  -H 'Content-Type: application/json' -d '{}'
+```
+
+### Request headers
+
+The following data table describes supported HTTP request headers.
+
+- Required headers must be used or the call will fail.
+- Optional headers may be used.
+- The order of request headers is not important.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '250px'  }}>
+        Optional headers
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Example-Api-Version</th>
+      <td>
+        Specifies API version.  
+        Value: <code>1</code>
+        <b>
+          Note: this header is required if the query parameter <code>apiVersion</code> is not provided.
+        </b>
+      </td>
+    </tr>
+    <tr>
+      <th id="accept-encoding" scope="row">
+        [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding)
+      </th>
+      <td>
+        Requests that the response be compressed.
+        Value: <code>gzip</code>
+      </td>
+    </tr>
+    <tr>
+      <th id="content-encoding" scope="row">
+        [Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)
+      </th>
+      <td>
+        Specifies the used compression of the request body. Currently, only
+        <code>gzip</code> is supported. If not specified, no compression is
+        assumed. This is equal to specifying <code>identity</code>.
+        <b>
+          Note: This header is optional and can only be used for
+          <code>POST</code> requests.
+        </b>
+        Values:
+        <ul>
+          <li>
+            <code>identity</code>
+          </li>
+          <li>
+            <code>gzip</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th id="content-type" scope="row">
+        [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)
+      </th>
+      <td>
+        Specifies the MIME type of the request body.
+        <b>
+          Note: This header is required for <code>POST</code> requests.
+        </b>
+        Value: <code>application/json</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tracking-ID</th>
+      <td>
+        Specifies an identifier for the request.
+        <ul>
+          <li>
+            The value should be unique for each request.
+          </li>
+          <li>
+            The value must match the regular expression <code>&#39;^[a-zA-Z0-9-_\\.]&#123;1,100&#125;$&#39;</code>.
+          </li>
+          <li>
+            If specified, the same value is sent back in the similar-named response header. Otherwise, a generated value may be sent back.
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Base path parameters
+
+The following table describes the parameters that can be used in the Long Distance EV Routing service.
+
+- Required parameters **must be used** or the call will fail.
+- The order of the required parameters is important and must be followed.
+- There are no optional parameters.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px">
+        Required&nbsp;parameters (Base path)
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>routePlanningLocations</code>
+        *string*
+      </th>
+      <td>
+        Locations through which the route is calculated. The following
+        constraints apply:
+        <ul>
+          <li>
+            At least two locations must be provided.
+          </li>
+          <li>
+            The first location in the sequence defines the origin and must be a
+            <code>location</code>.
+          </li>
+          <li>
+            The last location in the sequence defines the destination and must
+            be a <code>location</code>.
+          </li>
+          <li>
+            One or more optional intermediate <code>location</code>s
+            (known as <code>waypoints</code> in this context) may be provided:
+            <ul>
+              <li>
+                The maximum allowed number of waypoints is 150.
+              </li>
+              <li>
+                A waypoint of type <code>location</code> results in an extra leg
+                in the response.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <b>Values:</b> Colon-delimited <code>location</code>s, with the
+        constraints mentionned above.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>baseURL</code>
+        *string*
+      </th>
+      <td>
+        Base URL for calling the API.
+        Value: <code>api.Example.com</code> (The default global API endpoint.)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>contentType</code>
+        *string*
+      </th>
+      <td>
+        The content type of the response structure.
+        Only possible value:
+        <ul>
+          <li>
+            <code>json</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+### Request parameters
+
+This section presents a set of loosely connected parameters that influence the operation of the Long Distance EV Routing algorithm. While some of them are associated, the majority can be used independently of the others.
+
+- Required parameters **must be used** or the call will fail.
+- Optional parameters may be used.
+- The order of the optional request parameters is not important.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="300px">
+        Required&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>key</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        Authorization key to access the API.
+        <b>Value:</b> Your valid <code>API Key</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>apiVersion</code>  
+        *integer*
+      </th>
+      <td>
+        Specifies the API version.  
+        Only allowed value: <code>1</code>
+        <b>
+          Note: this parameter is not required if the header <code>Example-Api-Version</code> is provided.
+        </b>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleEngineType</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        This parameter has been deprecated. It may be removed in the future.
+        The only allowed value for <code>calculateLongDistanceEVRoute</code>: <code>electric</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>currentChargeInKwh</code>
+        <br />
+        *float*
+      </th>
+      <td>
+        Specifies the current electric energy supply in kilowatt hours (kWh).
+        <b>Minimum value:</b> <code>0.0</code>.
+        <b>Maximum value:</b> vehicle's battery capacity defined by given <code>vehicleModelId</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>minChargeAtDestinationInkWh</code>
+        <br />
+        *float*
+      </th>
+      <td>
+        The battery level upon arrival at the destination of the resulting route
+        will be at least this much.
+        <b>Maximum value:</b> vehicle's battery capacity defined by given <code>vehicleModelId</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>minChargeAtChargingStopsInkWh</code>
+        <br />
+        *float*
+      </th>
+      <td>
+        The desired minimum battery charge level upon arrival at each charging
+        station. However, the remaining charge at the first charging stop may be
+        lower.
+        <b>Maximum value:</b> <code>0.5 &times;</code> vehicle's battery capacity defined by given <code>vehicleModelId</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleModelId</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        Identifier of the vehicle model which should be used for routing.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px">
+        Optional&nbsp;parameters
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>vehicleHeading</code>
+        <br />
+        *integer*
+      </th>
+      <td>
+        The directional heading of the vehicle, in degrees starting at true
+        North and continuing in a clockwise direction.
+        <ul>
+          <li>
+            North is 0 degrees.
+          </li>
+          <li>
+            East is 90 degrees.
+          </li>
+          <li>
+            South is 180 degrees.
+          </li>
+          <li>
+            West is 270 degrees.
+          </li>
+        </ul>
+        <b>Maximum value:</b> <code>359</code>.
+        <b>Other values:</b> <code>0-359</code>.
+        **Note:** The vehicle heading is ignored when doing the base route reconstruction if `reconstructionMode` is set to `strict` or `update`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>sectionType</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        Specifies which of the section types is reported in the route response.
+        <code>sectionType</code> can be specified multiple times (e.g.,
+        <code>...&sectionType=tollRoad&sectionType=tollVignette&...</code>).  
+        Possible values are:
+        <ul>
+          <li>
+            <code>carTrain</code>: sections of the route that are car trains.
+          </li>
+          <li>
+            <code>ferry</code>: sections of the route that are ferries.
+          </li>
+          <li>
+            <code>tunnel</code>: sections of the route that are tunnels.
+          </li>
+          <li>
+            <code>motorway</code>: sections of the route that are motorways.
+          </li>
+          <li>
+            <code>pedestrian</code>: sections of the route that are only suited
+            for pedestrians.
+          </li>
+          <li>
+            <code>tollRoad</code>: sections of the route that require a toll to
+            be paid.
+          </li>
+          <li>
+            <code>toll</code>: sections of the route with the usage-based toll collection
+            system (i.e., distance-based tolls, toll bridges and tunnels, weight-based tolls).
+          </li>
+          <li>
+            <code>tollVignette</code>: sections of the route that require a toll
+            vignette to be present.
+          </li>
+          <li>
+            <code>country</code>: sections indicating which countries the route
+            is in.
+          </li>
+          <li>
+            <code>travelMode</code>: sections in relation to the request
+            parameter <code>travelMode</code>.
+          </li>
+          <li>
+            <code>traffic</code>: sections of the route that contain traffic
+            information.
+          </li>
+          <li>
+            <code>carpool</code>: sections of the route that require use of
+            carpool (HOV/High Occupancy Vehicle) lanes.
+          </li>
+          <li>
+            <code>urban</code>: sections of the route that are located within
+            urban areas.
+          </li>
+          <li>
+            <code>unpaved</code>: sections of the route that are unpaved.
+          </li>
+          <li>
+            <code>lowEmissionZone</code>: sections of the route that are located
+            within low-emission zones.
+          </li>
+        </ul>
+        <b>Default value:</b> <code>travelMode</code>
+        <b>Other values:</b>
+        <ul>
+          <li>
+            <code>carTrain</code>
+          </li>
+          <li>
+            <code>country</code>
+          </li>
+          <li>
+            <code>ferry</code>
+          </li>
+          <li>
+            <code>motorway</code>
+          </li>
+          <li>
+            <code>pedestrian</code>
+          </li>
+          <li>
+            <code>tollRoad</code>
+          </li>
+          <li>
+            <code>tollVignette</code>
+          </li>
+          <li>
+            <code>traffic</code>
+          </li>
+          <li>
+            <code>tunnel</code>
+          </li>
+          <li>
+            <code>carpool</code>
+          </li>
+          <li>
+            <code>urban</code>
+          </li>
+          <li>
+            <code>unpaved</code>
+          </li>
+          <li>
+            <code>lowEmissionZone</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>vehicleCommercial</code>
+        <br />
+        *boolean*
+      </th>
+      <td>
+        This parameter has been deprecated. It may be removed in the future.
+        Default value and only allowed value: <code>false</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>arrivalSidePreference</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        This parameter has been deprecated. It may be removed in the future.
+        Default value and only allowed value: <code>anySide</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>travelMode</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        This parameter has been deprecated. It may be removed in the future.
+        Default value and only allowed value: <code>car</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>routeRepresentation</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        This parameter has been deprecated. It may be removed in the future.
+        Default value and only allowed value: <code>polyline</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>extendedRouteRepresentation</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        Specifies the extended representation of the set of routes provided as a
+        response.
+        <code>&lt;extendedRouteRepresentation&gt;</code> can be specified multiple
+        times (e.g., <code>
+          ...&amp;extendedRouteRepresentation=distance&amp;extendedRouteRepresentation=travelTime&amp;...
+        </code>).
+        Possible values are:
+        <ul>
+          <li>
+            <code>distance</code>: Includes distances to route polyline points
+            in the response.
+          </li>
+          <li>
+            <code>travelTime</code>: Includes travel times to route polyline
+            points in the response.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>coordinatePrecision</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        Specifies the precision of coordinates in the response.
+        Possible values are:
+        <ul>
+          <li>
+            <code>default</code>: All coordinates are rounded to 5 digits after
+            the decimal point. Default precision coordinates are targeted
+            towards clients that are sensitive to response sizes. This should be
+            sufficient for most applications.
+          </li>
+          <li>
+            <code>full</code>: All coordinates are rounded to 7 digits after the
+            decimal point. Full precision coordinates are targeted towards
+            applications that require precise polyline visualization at high
+            zoom levels.
+          </li>
+        </ul>
+        Default value: <code>default</code>
+        Other value: <code>full</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>minDeviationDistance</code>
+        <br />
+        *integer*
+      </th>
+      <td>
+        All alternative routes returned will follow the reference route (see the <a href="#post-data-parameters">POST data parameters</a> section) from the origin point of the <code>calculateLongDistanceEVRoute</code> request for at least this number of meters.
+        <ul>
+          <li>
+            Can only be used for a route update request.
+          </li>
+        </ul>
+        <b>Default value:</b> <code>0</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>minDeviationTime</code>
+        <br />
+        *integer*
+      </th>
+      <td>
+        All alternative routes returned will follow the reference route (see the <a href="#post-data-parameters">POST data parameters</a> section) from the origin point of the <code>calculateLongDistanceEVRoute</code> request for at least this number of seconds.
+        <ul>
+          <li>
+            Can only be used for a route update request.
+          </li>
+        </ul>
+        <b>Default value:</b> <code>0</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>supportingPointIndexOfOrigin</code>
+        <br />
+        *integer*
+      </th>
+      <td>
+        Largest index in the <code>supportingPoints</code> array (see the <a href="#post-data-parameters">POST data parameters</a> section) for which <code>supportingPoints[supportingPointIndexOfOrigin]</code> lies on or before the origin point.
+        The Routing API uses this index as a hint to disambiguate situations where the <code>supportingPoints</code> in the POST data are not planar, or where they come back close to the origin at a later point in the reconstructed route. In these cases, the <code>supportingPointIndexOfOrigin</code> can explicitly identify if the origin is meant to be on the later part of the route, or not.
+        <ul>
+          <li>
+            Can only be used for a route update request.
+          </li>
+        </ul>
+        <b>Minimum value:</b> <code>0</code>.
+        <b>Maximum value:</b> Size of <code>supportingPoints</code> array - 1.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>alternativeType</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        When <code>maxAlternatives</code> is greater than <code>0</code>, allows to specify the objective of computing alternative routes: finding routes that are significantly different than the reference route, or finding routes that are better than the reference route. Possible values are:
+        <ul>
+          <li>
+            <code>anyRoute:</code> returns alternative routes that are significantly different from the reference route.
+          </li>
+          <li>
+            <code>betterRoute:</code> only returns alternative routes that have smaller travel time. If there is a road block on the reference route, then any alternative that does not contain any blockages will be considered a better route. The <code>summary</code> in the route response will contain information (see the <code>planningReason</code> parameter) about the reason for the better alternative.
+          </li>
+        </ul>
+        <b>Note:</b> This optional parameter can only be used for a route update request.
+        <b>Default value:</b> <code>anyRoute</code>
+        <b>Other values:</b> <code>betterRoute</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>maxAlternatives</code>
+        <br />
+        *integer*
+      </th>
+      <td>
+        Number of desired alternative routes to be calculated. The value provided:
+        <ul>
+          <li>
+            Can only be used for a route update request.
+          </li>
+          <li>
+            Must be an integer in the range 0-5.
+          </li>
+          <li>
+            Fewer alternative routes may be returned if either fewer alternatives exist, or the requested number of alternatives is larger than the service can calculate.
+          </li>
+        </ul>
+        <b>Default value:</b> <code>0</code>
+        <b>Maximum value:</b> <code>5</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### POST data parameters
+
+#### Request POST data example
+
+```json [type=post] [title=Request content example]
+{
+  "avoidAreas": {
+    "rectangles": [
+      {
+        "southWestCorner": {
+          "latitude": 48.81851,
+          "longitude": 2.26593
+        },
+        "northEastCorner": {
+          "latitude": 48.90309,
+          "longitude": 2.41115
+        }
+      }
+    ]
+  },
+  "supportingPoints": [
+    {"latitude": 52.50930, "longitude": 13.42936},
+    {"latitude": 52.50844, "longitude": 13.42859},
+    {"latitude": 52.50764, "longitude": 13.42752}
+  ],
+  "pointWaypoints": [
+    {
+      "waypointSourceType": "AUTO_GENERATED",
+      "supportingPointIndex": 1,
+      "chargingInformationAtWaypoint": {
+        "chargingParkUuid": "ffffffff-bcd3-2fa5-0000-000000153b86",
+        "targetChargeInkWh": 40.0,
+        "chargingTimeInSeconds": 1800,
+        "chargingConnectionInfo": {
+          "chargingPlugType": "Combo_to_IEC_62196_Type_2_Base",
+          "chargingCurrentType": "Direct_Current",
+          "chargingPowerInkW": 25.0,
+          "chargingVoltageInV": 400.0,
+          "chargingCurrentInA": 62.0
+        }
+      }
+    }
+  ]
+}
+```
+
+#### Details
+
+Some parameters can be provided using the HTTP `POST` method.
+
+- The POST data should be in JSON format, see the [Content-Type](#content-type) header.
+- All POST data parameters are optional.
+- It is an error to use the HTTP POST method if no POST data parameters are provided.
+
+There is an upper limit on the total size of the POST data.
+
+- Exceeding this limit results in a response with the response code <code>413</code>, indicating invalid POST data.
+- The client must not rely on the exact value of this limit.
+- The current limit is 10 MB.
+
+The POST data body can only contain `avoidAreas` JSON array, `supportingPoints` JSON array or `pointWaypoints` JSON array. The following table describes these parameters.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '250px' }}>
+        Parameter
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>avoidAreas</code>
+        <br />
+        *array*
+      </th>
+      <td>
+        This is an array of shapes to avoid for planning routes. Supported shapes include <code>rectangles</code>. It can contain one of each supported shapes fields.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>rectangles</code>
+        <br />
+        *array*
+      </th>
+      <td>
+        This is an array of objects, with a maximum of ten elements. Each object describes an axis-aligned rectangle, defined using the fields <code>southWestCorner</code> and <code>northEastCorner</code>.
+        <ul>
+          <li>
+            The maximum size of a rectangle is about 160x160 km.
+          </li>
+          <li>
+            It cannot cross the 180th meridian.
+          </li>
+          <li>
+            It must be between -80 and +80 degrees of latitude.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>southWestCorner</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        The south-west corner of a rectangle. It is an object consisting of a <code>latitude</code> and a <code>longitude</code> field, each field containing the value in degrees as a number.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>northEastCorner</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        The north-east corner of a rectangle. It is an object consisting of a <code>latitude</code> and a <code>longitude</code> field, each field containing the value in degrees as a number.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>supportingPoints</code>
+        <br />
+        *array of point objects*
+      </th>
+      <td>
+        Locations to be used as input for route reconstruction.
+        <ul>
+          <li>
+            Can only be used for a route update request.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>pointWaypoints</code>
+        <br />
+        *array of pointWaypoint objects*
+      </th>
+      <td>
+        An array of <code>pointWaypoint</code> objects, to be used to represent
+        waypoints when reconstructing a route.
+        <ul>
+          <li>
+            If specified, the array must not be empty.
+          </li>
+          <li>
+            If specified, all location waypoints in the <code>routePlanningLocations</code> will be ignored.
+          </li>
+          <li>
+            Can only be used for a route update request.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>pointWaypoint</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        Must contain one <code>waypointSourceType</code> and one <code>supportingPointIndex</code> object. Can additionally contain one <code>chargingInformationAtWaypoint</code> object.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>waypointSourceType</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        Denotes the source of the waypoint. Possible values:
+        <ul>
+          <li>
+            <code>USER_DEFINED</code>: a waypoint that was explicitly defined by the user.
+          </li>
+          <li>
+            <code>AUTO_GENERATED</code>: a waypoint that was defined by the system (e.g., the charging stop that was provided as a result of the LDEV route enhancement).
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>supportingPointIndex</code>
+        <br />
+        *integer*
+      </th>
+      <td>
+        An index into the <code>supportingPoints</code> array that denotes the location of the waypoint on the reference route.
+        <ul>
+          <li>
+            Must be inside <code>supportingPoints</code> array boundaries.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingInformationAtWaypoint</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        Specified if the waypoint is a charging stop. Must contain the fields <code>chargingConnectionInfo</code>, <code>chargingParkUuid</code>, <code>chargingTimeInSeconds</code>, and <code>targetChargeInkWh</code>.
+        <ul>
+          <li>
+            <code>chargingConnectionInfo</code> must contain <code>chargingPlugType</code> and may contain <code>chargingCurrentType</code>, <code> chargingPowerInkW </code>,<code>chargingVoltageInV</code>, and <code>chargingCurrentInA</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+The <code>supportingPoints</code> field is used to reconstruct a route during route update request. This route is then used as a reference route for route reassessment, or calculating zero or more alternative routes.
+
+- The provided sequence of supporting points is used as input for route reconstruction.
+- The `pointWaypoints` field is used to represent waypoints when reconstructing a route.
+
+## Response data
+
+### Response headers
+
+The following table describes the possible HTTP response headers.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold', width: '350px' }}>
+        Header
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+          [Access-Control-Expose-Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers)
+      </th>
+      <td>
+        The service whitelists response headers that browsers are allowed to
+        access.
+        Value: <code>Content-Length</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        [Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)
+      </th>
+      <td>
+        The service allows cross-origin resource sharing.
+        Value: <code> * </code> (wildcard)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        [Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)
+      </th>
+      <td>
+        The service supports HTTP compression, if requested by the client.
+        Value: <code>gzip</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)
+      </th>
+      <td>
+        The format of the response. The service supports specifying the desired
+        response format. See the <code>contentType</code> parameter.
+        Values:
+        <ul>
+          <li>
+            <code>application/json; charset=utf-8</code>
+          </li>
+          <li>
+            <code>application/javascript; charset=utf-8</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control)
+      </th>
+      <td>
+        The Cache-Control general-header field is used to specify directives
+        that must be obeyed by all caching mechanisms along the request/response
+        chain. It is supported by HTTP/1.1 clients. It may not be supported by
+        HTTP/1.0 clients.
+        Values:
+        <ul>
+          <li>
+            <code>no-cache</code>
+          </li>
+          <li>
+            <code>no-transform</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        [Pragma](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Pragma)
+      </th>
+      <td>
+        The Pragma general-header field is used to specify directives that might
+        apply to any recipient along the request/response chain. It is supported
+        by HTTP/1.0 client.
+        Value: <code>no-cache</code>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tracking-ID</th>
+      <td>
+        This is an identifier for the request. If <code>Tracking-ID</code> was
+        specified in the request headers, it contains the same value. Otherwise
+        it may contain a generated value.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        [Warning](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Warning)
+      </th>
+      <td>
+        This may be sent for deprecated features.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Response codes
+
+The following table describes HTTP response codes.
+
+<table style={{ overflowWrap: 'anywhere' }}>
+  <thead>
+    <tr>
+      <th
+        scope="col"
+        style={{ fontSize: '1em', textAlign: 'center', fontWeight: 'bold', width: '250px' }}>
+        Code
+      </th>
+      <th scope="col" style={{ fontSize: '1em', fontWeight: 'bold' }}>
+        Meaning &amp; possible causes
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>200</code>
+      </th>
+      <td>
+        OK: A route was calculated and the body of the response
+        contains the data for a successful response.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>400</code>
+      </th>
+      <td>
+        Bad request: One or more parameters were:
+        <ul>
+          <li>
+            Incorrectly specified.
+          </li>
+          <li>
+            Are mutually exclusive.
+          </li>
+          <li>
+            The points in the route request are not connected by the road
+            network.
+          </li>
+          <li>
+            The points in the request are not near enough to a road.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>403</code>
+      </th>
+      <td>
+        Permission or authentication issues:
+        <ul>
+          <li>
+            Forbidden
+          </li>
+          <li>
+            Not authorized
+          </li>
+          <li>
+            Account inactive
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>404</code>
+      </th>
+      <td>
+        Not Found: The requested resource could not be found, but it may
+        be available again in the future.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>405</code>
+      </th>
+      <td>
+        Method Not Allowed: The client used a HTTP method other than POST.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>408</code>
+      </th>
+      <td>
+        Request timeout: The client took too long to transmit the
+        request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>414</code>
+      </th>
+      <td>
+        Requested uri is too long.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>415</code>
+      </th>
+      <td>
+        Unsupported Media Type.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>429</code>
+      </th>
+      <td>
+        Too Many Requests: Too many requests were sent in a given amount
+        of time for the supplied API Key.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>500</code>
+      </th>
+      <td>
+        An error occurred while processing the request. Please try again
+        later. This can also indicate that the request reached an internal computation
+        time threshold and timed out.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>502</code>
+      </th>
+      <td>
+        Internal network connectivity issue.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>503</code>
+      </th>
+      <td>
+        Service currently unavailable.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>504</code>
+      </th>
+      <td>
+        Internal network connectivity issue.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>
+        <code>596</code>
+      </th>
+      <td>
+        Service not found.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Example of a successful response
+
+The routes in a successful response are listed in the order of decreasing optimality. In case the request includes the supporting points `supportingPoints` field, the response will specify the reconstructed route before any alternative routes.
+
+Note: for the purpose of brevity the following example contains all the fields described in this document. In practice some fields are incompatible with others, and only a subset of them will be present in the response depending on the given request parameters.
+
+A response could look like this:
+
+<Accordion label="Response body - JSON" isClosed>
+```json
+{
+  "formatVersion": "0.0.12",
+  "routes": [
+    {
+      "summary": {
+        "lengthInMeters": 256063,
+        "travelTimeInSeconds": 11116,
+        "trafficDelayInSeconds": 0,
+        "trafficLengthInMeters": 0,
+        "departureTime": "2023-08-24T13:30:30+02:00",
+        "arrivalTime": "2023-08-24T16:35:45+02:00",
+        "batteryConsumptionInkWh": 55.842600000000004,
+        "deviationDistance": 25575,
+        "deviationTime": 1073,
+        "deviationPoint": {
+          "latitude": 44.6738809,
+          "longitude": 20.5990461
+        },
+        "remainingChargeAtArrivalInkWh": 9.080099520000001,
+        "totalChargingTimeInSeconds": 1734,
+        "planningReason": "Out_Of_Range"
+      },
+      "legs": [
+        {
+          "summary": {
+            "lengthInMeters": 116439,
+            "travelTimeInSeconds": 4174,
+            "trafficDelayInSeconds": 37,
+            "trafficLengthInMeters": 806,
+            "departureTime": "2023-08-24T01:15:15+02:00",
+            "arrivalTime": "2023-08-24T02:24:48+02:00",
+            "originalWaypointIndexAtEndOfLeg": 0,
+            "batteryConsumptionInkWh": 24.987360000000002,
+            "remainingChargeAtArrivalInkWh": 11.012639999999998,
+            "chargingInformationAtEndOfLeg": {
+              "targetChargeInkWh" : 30.0,
+              "chargingTimeInSeconds" : 2542,
+              "chargingParkUuid" : "a4b60dff-b599-339a-0a1b-aae200153b86",
+              "chargingParkName" : "Charging park 1",
+              "chargingParkOperatorName": "Charging park operator name",
+              "chargingParkLocation": {
+                "coordinate" : {"latitude" : 0.6666667, "longitude" : -33.3333333},
+                "street" : "Main street",
+                "houseNumber" : "42a",
+                "city" : "New Berlin",
+                "postalCode" : "32606",
+                "countryCode" : "US"
+              },
+              "chargingConnectionInfo": {
+                "chargingVoltageInV": 450.0,
+                "chargingCurrentInA": 200.0,
+                "chargingCurrentType": "Direct_Current",
+                "chargingPowerInkW": 90.0,
+                "chargingPlugType": "Combo_to_IEC_62196_Type_2_Base"
+              },
+              "chargingParkPaymentOptions": [
+                {"method": "Direct"}
+              ],
+              "chargingStopType" : "Auto_Generated",
+              "chargingParkPowerInkW" : 50.0
+            }
+          },
+         "points": [
+            {
+              "latitude": 52.50931,
+              "longitude": 13.42937
+            },
+            {
+              "latitude": 52.50904,
+              "longitude": 13.42912
+            },
+  ...further points...
+          ]
+        },
+  ...further legs...
+      ],
+      "progress": [
+        {
+          "pointIndex": 0,
+          "travelTimeInSeconds": 0,
+          "distanceInMeters": 0
+        },
+        {
+          "pointIndex": 5,
+          "travelTimeInSeconds": 7,
+          "distanceInMeters": 74
+        },
+  ...further progresses...
+        {
+          "pointIndex": 87,
+          "travelTimeInSeconds": 161,
+          "distanceInMeters": 1147
+        }
+      ],
+      "sections": [
+        {
+          "startPointIndex": 0,
+          "endPointIndex": 3,
+          "sectionType": "TRAVEL_MODE"
+          "travelMode": "other"
+        },
+        {
+          "startPointIndex": 3,
+          "endPointIndex": 7,
+          "sectionType": "TRAVEL_MODE"
+          "travelMode": "car"
+        },
+        {
+          "startPointIndex": 2,
+          "endPointIndex": 5,
+          "sectionType": "TOLL_ROAD"
+        },
+        {
+          "startPointIndex": 3,
+          "endPointIndex": 4,
+          "sectionType": "TUNNEL"
+        },
+        {
+          "startPointIndex": 0,
+          "endPointIndex": 1,
+          "sectionType": "PEDESTRIAN"
+        },
+        {
+          "startPointIndex": 3,
+          "endPointIndex": 4,
+          "sectionType": "TRAFFIC",
+          "simpleCategory": "JAM",
+          "effectiveSpeedInKmh": 40,
+          "delayInSeconds": 158,
+          "magnitudeOfDelay": 1,
+          "tec": {
+            "effectCode": 4,
+            "causes": [
+              {
+                "mainCauseCode": 1
+              },
+              {
+                "mainCauseCode": 26,
+                "subCauseCode": 2
+              }
+            ]
+          }
+        },
+  ...further sections...
+      ]
+    }
+  ...further routes...
+  ]
+}
+```
+</Accordion>
+
+### Example of an error response
+
+If an error occurs, the response contains the description of the error. The error response would look like this:
+
+```json [title=Error response example - JSON]
+{
+  "formatVersion": "0.0.12",
+  "detailedError": {
+    "code": <error code>,
+    "message": "Error message"
+  }
+}
+```
+
+### Structure of a successful response
+
+Note that some names are implicitly defined. One example is the name <code>leg</code>
+when describing <code>legs</code> as an array of <code>leg</code> objects.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', width: '300px' }}>
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>formatVersion</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The format version.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>routes</code>
+        <br />
+        *array of route objects*
+      </th>
+      <td>
+        The request may return more than one route.
+        Each object has at least a <code>summary</code> field and a
+        <code>legs</code> field. It may contain other fields depending on the
+        request parameters such as <code>sections</code> or <code>progress</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>legs</code>
+        <br />
+        *array of leg objects*
+      </th>
+      <td>
+        A description of a part of a route, comprised of an array of points.
+        <ul>
+          <li>
+            Contains the <code>summary</code> and <code>points</code> fields.
+          </li>
+          <li>
+            Each additional waypoint provided in the request will result in an
+            additional leg in the returned route.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>summary</code>
+        <br />
+        *summary object*
+      </th>
+      <td>
+        The summary of a route, or of a route leg.
+        The <code>summary</code> object may be extended with new fields in the
+        future; clients should ignore fields they do not recognize.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>lengthInMeters</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        The route or leg length in meters.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>travelTimeInSeconds</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        The estimated travel time in seconds.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>trafficDelayInSeconds</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        The delay in seconds compared to free-flow conditions according to
+        real-time traffic information.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>trafficLengthInMeters</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        The portion of the route or leg, expressed in meters, that is affected
+        by traffic events which cause the delay.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>departureTime</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The estimated departure time for the route or leg. Specified as a
+        <code>dateTime</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>arrivalTime</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The estimated arrival time for the route or leg. Specified as a
+        <code>dateTime</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>deviationDistance</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        The distance (in meters) from the origin point to the first point where this route
+        forks off from the reference route.
+        <ul>
+          <li>
+            If the route is identical to the reference route, then this field is
+            set to the length of the route.
+          </li>
+          <li>
+            Included in all alternative (but not reference) <code>route</code>
+            <code>summary</code> fields.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>deviationTime</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        The travel time (in seconds) from the origin point to the first point where this route
+        forks off from the reference route.
+        <ul>
+          <li>
+            If the route is identical to the reference route, then this field is
+            set to the estimated travel time of the route.
+          </li>
+          <li>
+            Included in all alternative (but not reference) <code>route</code>
+            <code>summary</code> fields.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>deviationPoint</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        The coordinates of the first point where this route forks off from the
+        reference route.
+        <ul>
+          <li>
+            If the route is identical to the reference route, then this field is
+            set to the coordinates of the last point on the route.
+          </li>
+          <li>
+            Included in all alternative (but not reference) <code>route</code>
+            <code>summary</code> fields.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>batteryConsumptionInkWh</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        The estimated electric energy consumption in kilowatt hours (kWh) using
+        the vechicle model specified by the give <code>vehicleModelId</code>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>remainingChargeAtArrivalInkWh</code>
+        <br />
+        *float*
+      </th>
+      <td>
+        The estimated battery charge in kWh upon arrival at the end of the leg
+        or the route.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingInformationAtEndOfLeg</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        The <code>chargingInformationAtEndOfLeg</code> object is contained in
+        the leg summary if and only if the leg ends at a charging stop. It
+        contains:
+        <ul>
+          <li>
+            <code>targetChargeInkWh</code>
+          </li>
+          <li>
+            <code>chargingTimeInSeconds</code>
+          </li>
+          <li>
+            <code>chargingConnectionInfo</code>
+          </li>
+          <li>
+            <code>chargingParkUuid</code>
+          </li>
+        </ul>
+        <br />
+        In addition, it may contain any of the following:
+        <ul>
+          <li>
+            <code>chargingParkLocation</code>
+          </li>
+          <li>
+            <code>chargingParkName</code>
+          </li>
+          <li>
+            <code>chargingParkOperatorName</code>
+          </li>
+          <li>
+            <code>chargingParkPowerInkW</code>
+          </li>
+          <li>
+            <code>chargingStopType</code>
+          </li>
+          <li>
+            <code>chargingParkPaymentOptions</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>targetChargeInkWh</code>
+        <br />
+        *float*
+      </th>
+      <td>
+        The charge in kWh to which the battery should be charged.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingTimeInSeconds</code>
+        <br />
+        *integer*
+      </th>
+      <td>
+        The estimated time in seconds spent at the charging stop, allowing for
+        some additional time needed to use the charging facility.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkName</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The common name of this charging park.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkOperatorName</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The operator name of this charging park.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkPowerInkW</code>
+        <br />
+        *float*
+      </th>
+      <td>
+        The rated power in kilowatts of the charging park.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkLocation</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        The <code>chargingParkLocation</code> object describes location details
+        of this charging park. It may contain any of the following:
+        <ul>
+          <li>
+            <code>coordinate</code>
+          </li>
+          <li>
+            <code>street</code>
+          </li>
+          <li>
+            <code>houseNumber</code>
+          </li>
+          <li>
+            <code>city</code>
+          </li>
+          <li>
+            <code>region</code>
+          </li>
+          <li>
+            <code>postalCode</code>
+          </li>
+          <li>
+            <code>countryCode</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+     <tr>
+      <th scope="row">
+        <code>coordinate</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        Object is the coordinate of the charging station defined by its <code>latitude</code> and <code>longitude</code> fields. It may differ from the location on the road to drive to.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>street</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The street name of the charging park.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>houseNumber</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The house number of the charging park.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>city</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The city of the charging park.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>region</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The region of the charging park.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>postalCode</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The postal code of the charging park.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>countryCode</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The country code of the charging park in the
+        <code>ISO 3166-1 alpha-2</code> format.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingConnectionInfo</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        The <code>chargingConnectionInfo</code> object describes details of the
+        charging connection which should be used at this charging stop. It
+        contains:
+        <ul>
+          <li>
+            <code>chargingPlugType</code>
+          </li>
+        </ul>
+        <br />
+        In addition, it may contain any of the following:
+        <ul>
+          <li>
+            <code>chargingVoltageInV</code>
+          </li>
+          <li>
+            <code>chargingCurrentInA</code>
+          </li>
+          <li>
+            <code>chargingCurrentType</code>
+          </li>
+          <li>
+            <code>chargingPowerInkW</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingVoltageInV</code>
+        <br />
+        *float*
+      </th>
+      <td>
+        The rated voltage in volts of the charging process.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingCurrentInA</code>
+        <br />
+        *float*
+      </th>
+      <td>
+        The rated current in amperes of the charging process.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingCurrentType</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        An element of the
+        <a href="#current-type-codes">
+          <code>currentType</code>
+        </a>
+        codes table.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingPowerInkW</code>
+        <br />
+        *float*
+      </th>
+      <td>
+        The rated maximal power in kilowatts of the charging connection.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingPlugType</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The element of the
+        <a href="#plug-type-codes">
+          <code>plugType</code>
+        </a>
+        codes table used for the charging process.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkPaymentOptions</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        A list of one or more <code>chargingParkPaymentOption</code> elements.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkPaymentOption</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        The <code>chargingParkPaymentOption</code> object describes payment
+        options. It contains:
+        <ul>
+          <li>
+            <code>method</code>
+          </li>
+          <li>
+            <code>brands</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>method</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        An element of the
+        <a href="#payment-method">
+          <code>paymentMethod</code>
+        </a>
+        codes table.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>brands</code>
+        <br />
+        *array*
+      </th>
+      <td>
+        A list of <code>brand</code>s that is associated with this charging
+        park. This element is not included if there are no associated brands.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>brand</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        A brand name associated with the charging park.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingStopType</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The source of the charging stop at the end of this leg.
+        <br />
+        Values:
+        <ul>
+          <li>
+            <code>Auto_Generated</code>
+          </li>
+          <li>
+            <code>User_Defined</code>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>chargingParkUuid</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The unique identifier of this charging park. This uuid can be used to
+        check the availability of the charging park.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>totalChargingTimeInSeconds</code>
+        <br />
+        *integer*
+      </th>
+      <td>
+        The estimated time spent at all charging stops in the route. The
+        <code>travelTimeInSeconds</code> of the route includes the
+        <code>totalChargingTimeInSeconds</code> value.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>planningReason</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        The reason for a better route proposal. Can currently be:
+        <ul>
+          <li>
+            <code>Blockage</code> in case the reference route contains road
+            blockages. The returned value is implementation-defined in case both
+            reasons for a better proposal are applicable to the same route.
+          </li>
+          <li>
+            <code>Better_Proposal</code> in case the alternative type is better
+            than the reference route.
+          </li>
+          <li>
+            <code>Out_Of_Range</code> in case any stop of the reference route is unreachable.
+          </li>
+        </ul>
+        This field is included in the response only if the route is requested
+        with <code>alternativeType=betterRoute</code>. This field is not present
+        in the
+        <code>leg</code> <code>summary</code> field.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>points</code>
+        <br />
+        *array of objects*
+      </th>
+      <td>
+        Each object in the array is a location on the surface of the globe
+        defined by its <code>latitude</code> and <code>longitude</code> fields.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>sections</code>
+        <br />
+        *array of section objects*
+      </th>
+      <td>
+        This array is available inside <code>route</code>objects.
+        <ul>
+          <li>
+            Contains one or more <code>section</code> objects.
+          </li>
+          <li>
+            The structure of <code>section</code> objects is given below.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>startPointIndex</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        Index of the first point (offset <code>0</code>) in the route this
+        section applies to.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>endPointIndex</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        Index of the last point (offset <code>0</code>) in the route this
+        section applies to.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>countryCode</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        A 3-character
+        <a href="https://gist.github.com/tadast/8827699" target="_blank">
+          ISO 3166-1 alpha-3
+        </a>
+        country code.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>simpleCategory</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        Type of the incident.
+        <ul>
+          <li>
+            Can currently be <code>JAM</code>, <code>ROAD_WORK</code>,
+            <code>ROAD_CLOSURE</code>, or <code>OTHER</code>.
+          </li>
+          <li>
+            See the <code>tec</code> field for detailed information.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>effectiveSpeedInKmh</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        The effective speed of the incident in km/h, averaged over its entire
+        length.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>delayInSeconds</code>
+        <br />
+        *number*
+      </th>
+      <td>
+        The delay in seconds caused by the incident.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>magnitudeOfDelay</code>
+        *number*
+      </th>
+      <td>
+        The magnitude of delay caused by the incident.
+        Possible values:
+        <ul>
+          <li>
+            <code>0</code>: unknown
+          </li>
+          <li>
+            <code>1</code>: minor
+          </li>
+          <li>
+            <code>2</code>: moderate
+          </li>
+          <li>
+            <code>3</code>: major
+          </li>
+          <li>
+            <code>4</code>: undefined, used for road closures and other
+            indefinite delays
+          </li>
+        </ul>
+        These values correspond to the values of the response field
+        <a href="https://developer.Example.com/traffic-api/documentation/traffic-incidents/incident-details#structure-of-the--incidentproperties--object"><code>magnitudeOfDelay</code></a>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>tec</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        Details of the traffic event. It uses the definitions in the
+        <a href="https://www.iso.org/standard/63116.html" target="_blank">
+          TPEG2-TEC
+        </a>
+        standard. It can contain the <code>effectCode</code> and
+        <code>causes</code> fields.  
+        A selection of TPEG2-TEC causes can be found in the
+        <a href="https://tisa.org/wp-content/uploads/ITSTF20001_SafetyrelatedMessage-Sets-DATEXII_DENM_TPEG-TEC_TMC_-v1.5_FINAL-1.pdf" target="_blank">Terms and definitions of Safety related message sets</a>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>effectCode</code>  
+        *number*
+      </th>
+      <td>
+        The effect on the traffic flow. Contains a value in the
+        <code>tec001:EffectCode</code> table, as defined in the
+        <a href="https://www.iso.org/standard/63116.html" target="_blank">
+          TPEG2-TEC
+        </a>
+        standard. Can be used to color-code traffic events according to
+        severity.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>causes</code>  
+        *array of objects*
+      </th>
+      <td>
+        Each object in the array describes one cause of the traffic event.
+        <ul>
+          <li>
+            It can contain the <code>mainCauseCode</code> and
+            <code>subCauseCode</code> fields.
+          </li>
+          <li>It can be used to define iconography and descriptions.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>mainCauseCode</code>  
+        *number*
+      </th>
+      <td>
+        The main cause of the traffic event. Contains a value in the
+        <code>tec002:CauseCode</code> table, as defined in the
+        <a href="https://www.iso.org/standard/63116.html" target="_blank">
+          TPEG2-TEC
+        </a>
+        standard.  
+        A selection of TPEG2-TEC causes can be found in the
+        <a href="https://tisa.org/wp-content/uploads/ITSTF20001_SafetyrelatedMessage-Sets-DATEXII_DENM_TPEG-TEC_TMC_-v1.5_FINAL-1.pdf" target="_blank">Terms and definitions of Safety related message sets</a>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>subCauseCode</code>  
+        *number*
+      </th>
+      <td>
+        The sub-cause of the traffic event. Contains a value in the sub cause
+        table defined by the <code>mainCauseCode</code>, as defined in the
+        <a href="https://www.iso.org/standard/63116.html" target="_blank">
+          TPEG2-TEC
+        </a>
+        standard.  
+        A selection of TPEG2-TEC causes can be found in the
+        <a href="https://tisa.org/wp-content/uploads/ITSTF20001_SafetyrelatedMessage-Sets-DATEXII_DENM_TPEG-TEC_TMC_-v1.5_FINAL-1.pdf" target="_blank">Terms and definitions of Safety related message sets</a>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>progress</code>
+        <br />
+        *array of progress point objects*
+      </th>
+      <td>
+        This field is included if <code>extendedRouteRepresentation</code> is
+        used.
+        <ul>
+          <li>
+            It always contains entries for the first and the last point in the
+            route.
+          </li>
+          <li>
+            For any pair of consecutive entries in the <code>progress</code>
+            array, progress for
+            <code>pointIndex</code> values that are not explicitly present and are
+            enclosed by said pair, can be linearly interpolated by summing up straight
+            line distances of the leg points.
+          </li>
+          <li>
+            The [Haversine formula](https://en.wikipedia.org/wiki/Haversine_formula)
+            is precise enough to compute such distances.
+          </li>
+        </ul>
+        A <code>progress point</code> object may contain the following members:
+        <ul>
+          <li>
+            <code>pointIndex</code>: index of the point (offset <code>0</code>)
+            in the route this object applies to.
+          </li>
+          <li>
+            <code>distanceInMeters</code>: distance (in meters) from the start
+            of the route to this point. This field is included if the
+            <code>extendedRouteRepresentation</code> value <code>distance</code>
+            is used.
+          </li>
+          <li>
+            <code>travelTimeInSeconds</code>: travel time (in seconds) from the
+            start of the route to this point. This field is included if the
+            <code>extendedRouteRepresentation</code> value
+            <code>travelTime</code> is used.
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>originalWaypointIndexAtEndOfLeg</code>  
+        *number*
+      </th>
+      <td>
+        The index of the waypoint at the end of the leg that corresponds to:
+        <ul>
+          <li>
+            The index of this waypoint in the list of waypoints from the
+            <code>routePlanningLocations</code> base path parameter in the request
+            (the first waypoint has an index equal to 0).
+          </li>
+          <li>
+            The index of this waypoint in the <code>pointWaypoints</code>
+            field when reconstructing a route.
+          </li>
+        </ul>
+        This field is not provided if the end of the leg corresponds to the destination
+        or to a new charging waypoint that is not present in the request.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Structure of the <code>section</code> object
+
+Each <code>section</code> object contains additional information about parts of a route. A <code>section</code> object contains at least the fields <code>startPointIndex</code>, <code>endPointIndex</code>, and <code>sectionType</code>.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px;">
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>sectionType</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        Contains the response section type.
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Request section type</th>
+              <th scope="col">Response section type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <code>carTrain</code>
+              </td>
+              <td>
+                <code>CAR_TRAIN</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>country</code>
+              </td>
+              <td>
+                <code>COUNTRY</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>ferry</code>
+              </td>
+              <td>
+                <code>FERRY</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>motorway</code>
+              </td>
+              <td>
+                <code>MOTORWAY</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>pedestrian</code>
+              </td>
+              <td>
+                <code>PEDESTRIAN</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>tollRoad</code>
+              </td>
+              <td>
+                <code>TOLL_ROAD</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>tollVignette</code>
+              </td>
+              <td>
+                <code>TOLL_VIGNETTE</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>traffic</code>
+              </td>
+              <td>
+                <code>TRAFFIC</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>travelMode</code>
+              </td>
+              <td>
+                <code>TRAVEL_MODE</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>tunnel</code>
+              </td>
+              <td>
+                <code>TUNNEL</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>carpool</code>
+              </td>
+              <td>
+                <code>CARPOOL</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>urban</code>
+              </td>
+              <td>
+                <code>URBAN</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>unpaved</code>
+              </td>
+              <td>
+                <code>UNPAVED</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <code>lowEmissionZone</code>
+              </td>
+              <td>
+                <code>LOW_EMISSION_ZONE</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        The <code>COUNTRY</code> sections span between country border crossings,
+        from the departure, or to the destination.
+        <ul>
+          <li>
+            The section additionally contains <code>countryCode</code>.
+          </li>
+          <li>
+            If the route has disjointed parts in the same country, there will be
+            several sections with the same <code>countryCode</code>.
+          </li>
+          <li>
+            If no country can be assigned to a part of the route, as for example
+            in international waters, there may be no country section for this
+            part.
+            <ul>
+              <li>
+                A <code>TRAFFIC</code> section may additionally contain any of
+                the following: <code>simpleCategory</code>,
+                <code>effectiveSpeedInKmh</code>, <code>delayInSeconds</code>,
+                <code>magnitudeOfDelay</code>, <code>tec</code>.
+              </li>
+              <li>
+                <code>TRAVEL_MODE</code> sections cover the whole route. Each
+                section&#39;s travel mode is reported in <code>travelMode</code>
+                .
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        <code>travelMode</code>
+        <br />
+        *string*
+      </th>
+      <td>
+        This field is either set to the value given to the request parameter
+        <code>travelMode</code>, if this travel mode is possible, or to
+        <code>other</code> which indicates that the given mode of transport is
+        not possible in this section. This field can only be used within
+        sections of type <code>TRAVEL_MODE</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Structure of an error response
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="150px;">
+        JSON field
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        <code>detailedError</code>
+        <br />
+        *object*
+      </th>
+      <td>
+        This object provides a representation of the error message. It contains
+        a <code>code</code> and a <code>message</code> field.
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" width="100px;">
+                JSON field
+              </th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                <code>code</code>
+                <br />
+                *string*
+              </th>
+              <td>
+                <p>The (non-complete) list of error codes is:</p>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col" width="250px;">
+                        Error code
+                      </th>
+                      <th scope="col">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">
+                        <code>MAP_MATCHING_FAILURE</code>
+                      </th>
+                      <td>
+                        One of the input points (Origin, Destination, Waypoints)
+                        could not be matched to the map because there is no
+                        known drivable section near this point. This error code
+                        is always followed by a description of one point that
+                        was not matchable:
+                        <ul>
+                          <li>
+                            Origin (Latitude, Longitude)
+                          </li>
+                          <li>
+                            Destination (Latitude, Longitude)
+                          </li>
+                          <li>
+                            Waypoint N (Latitude, Longitude)
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">
+                        <code>NO_ROUTE_FOUND</code>
+                      </th>
+                      <td>
+                        No valid route could be found.
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">
+                        <code>CANNOT_RESTORE_BASEROUTE</code>
+                      </th>
+                      <td>
+                        The route reconstruction using
+                        <code>supportingPoints</code> failed.
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">
+                        <code>BAD_INPUT</code>
+                      </th>
+                      <td>
+                        Some input parameter combination was not valid.
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">
+                        <code>COMPUTE_TIME_LIMIT_EXCEEDED</code>
+                      </th>
+                      <td>
+                        The request exceeded the internal compute time limit and
+                        was canceled.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <code>message</code>
+                *string*
+              </th>
+              <td>
+                A human readable error message.
+                <ul>
+                  <li>
+                    It is a freeform string which may be extended in the future,
+                    so it is recommended to only match substrings of the
+                    description.
+                  </li>
+                  <li>
+                    The string always contains an error code.
+                  </li>
+                </ul>
+                #### Example of a description string:
+                <code>
+                  Engine error while executing route request:
+                  MAP_MATCHING_FAILURE: Origin (54.3226, 3.11463)
+                </code>
+                <code>
+                  Engine error while executing route request:
+                  MAP_MATCHING_FAILURE: Origin (54.3226, 3.11463)
+                </code>
+                <code>
+                  Engine error while executing route request:
+                  MAP_MATCHING_FAILURE: Waypoint 3 (54.3226, 3.11463)
+                </code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,1497 @@
+---  
+title: Reverse Geocode
+titleTags:
+  - label: "Service version: 1"
+    color: grey5
+  - label: "Last edit: 2024.10.28"
+    color: grey5
+  - label: 'Example New Maps'
+---
+
+<Blockquote type="announcement" hasIcon>
+### Important notes:
+- This Example New API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example New Maps.**
+- See the <a href="https://developer.Example.com/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
+</Blockquote>  
+
+
+## Purpose  
+
+The Example New Maps Reverse Geocoding API Reverse Geocode endpoint gives users a tool to translate a coordinate (for example: `37.786505, -122.3862`) into a human-understandable street address, street element, or geography. Most often, this is needed in tracking applications where you receive a GPS feed from the device or asset and you want to know the address.  
+
+The type of response depends on the available data:  
+
+- **address:** Returns the most detailed information.
+- **street element:** Less detailed returned when there 
+  is no address data.
+- **geography:** Returns the smallest available 
+  geographic data.
+  - This is returned when there is no address or street 
+    element data.
+  - You can specify the level of geography (see the 
+    [entityType](#entitytype-array) parameter in the request 
+    parameters section) to get a **geometry**.  
+  - The geometry data can be fetched using the  
+    [Additional Data](https://developer.Example.com/search-api/documentation/Example-New-maps/additional-data-service/additional-data) service.
+
+### Run this endpoint  
+
+You can easily run this and other endpoints. Go to the Example  [API Explorer](/reverse-geocoding-api/api-explorer/)  page and follow the directions.
+
+## Request data  
+
+### HTTPS Method: `GET`  
+
+For ease of viewing and identification:  
+
+- Constants and parameters enclosed in curly brackets &#123; &#125; **must be replaced** with their values.
+- Please see the following [Request parameters](#request-parameters) section with the required and optional parameters tables for their values. The generic request format is as follows.  
+
+**Important note:** Either the `apiVersion` parameter or the `Example-Api-Version` header needs to be present.  
+
+<h4 style={{ fontSize: '1em' }}>URL request format</h4>  
+
+```shell [type=get] [title=URL request format]
+https://{baseURL}/maps/New/places/reverseGeocode/{position}.{ext}?key={Your_API_Key}&apiVersion={versionNumber}&returnSpeedLimit={returnSpeedLimit}&heading={heading}&radius={radius}&returnRoadClass={returnRoadClass}&entityType={entityType}&callback={callback}&language={language}&allowFreeformNewline={allowFreeformNewline}&returnMatchType={returnMatchType}&view={view}&mapcodes={mapcodes}&filter={filter}
+```
+
+<h4 style={{ fontSize: '1em' }}>URL request example</h4>  
+
+```shell [type=get] [title=URL request example]
+https://api.Example.com/maps/New/places/reverseGeocode/52.157831,5.223776.json?key={Your_API_Key}&radius=100&apiVersion=1
+```
+
+<h4 style={{ fontSize: '1em' }}>curl command request example</h4>  
+
+```shell [type=get] [title=curl command request example]
+curl 'https://api.Example.com/maps/New/places/reverseGeocode/52.157831,5.223776.xml?key={Your_API_Key}&radius=100&apiVersion=1'
+```
+
+### Request parameters  
+
+The following table describes the parameters that can be used in a request.  
+
+- Required parameters **must** be used or the call will fail.
+- Optional parameters _may_ be used.
+- If there is a default value that will be assumed when an optional parameter is not used, it is shown in the table.
+- The order of request parameters is not important.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Required&nbsp;parameters</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `baseURL`  
+        *string*
+      </th>
+      <td>
+        Base URL for calling the API.  
+        **Value:** `api.Example.com`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `versionNumber`  
+        *string*
+      </th>
+      <td>
+        The service version. If the `Example-Api-Version` header 
+        is not present, the `apiVersion` parameter is required.  
+        **Value:** A service version value. The current value is `1`.  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `position`  
+        *comma-separated string*
+      </th>
+      <td>
+        This is specified as a comma-separated string composed 
+        by lat,lon.  
+        **Value:** `lat,lon`  
+        **Example:** `37.553,-122.453`.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `ext`  
+        *string*
+      </th>
+      <td>
+        A valid response format:  
+        **Values:** `json`, `jsonp`, `js`, or `xml`
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `key`  
+        *string*
+      </th>
+      <td>
+        An API Key valid for the requested service.  
+        **Value:**  Your valid Example `API Key`.  
+        See: [How do I get a Example API Key?](https://developer.Example.com/how-to-get-Example-api-key)
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+<table data-notbreakword>
+    <thead>
+      <tr>
+        <th scope="col" style={{'fontSize':'1em'}}>Optional&nbsp;parameters</th>
+        <th scope="col" style={{'fontSize':'1em'}}>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">
+          `returnSpeedLimit`  
+          *boolean*
+        </th>
+        <td>
+          Enables the return of the posted speed 
+          limit (where available).  
+          **Default value:** `false`
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          `heading`  
+          *float*
+        </th>
+        <td>
+          The directional heading of the vehicle in degrees, 
+          for travel along a segment of roadway. `0` is North,  
+          `90` is East and so on. The precision can include up 
+          to one decimal place.  
+          **Values:** Values range from  `-360`  to  `360`.
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          `radius`  
+          *integer*
+        </th>
+        <td>
+          The maximum distance in meters from the specified 
+          position for the `reverseGeocode` to consider.  
+          **Default value:** `10000` meters (10 km).
+        </td>
+      </tr>
+      <tr>
+        <th scope="row" id="return-roadclass-parameter">
+          `returnRoadClass`  
+          *comma-separated string*
+        </th>
+        <td>
+          Enables the return of the `roadClass` array for 
+          `reverseGeocodes` at street level.  
+          **Value:** `Functional` Represents a classification of 
+          roads based on the importance that the constituting roads 
+          have in the total road network.  
+          <Blockquote type="announcement" hasIcon>
+          **Note:** Right now, the service supports only a single 
+          value, but in future, it may change.
+        </Blockquote>  
+        </td>
+      </tr>
+      <tr>
+        <th id="entitytype-array" scope="row">
+          `entityType`  
+          *comma-separated string*
+        </th>
+        <td>
+          This parameter specifies the level of filtering performed 
+          on geographies. Providing this parameter narrows the search 
+          for specified geography entity types. The resulting response 
+          will contain the matched entity type. The following parameters 
+          are ignored when `entityType` is set:  
+            <ul>
+              <li> `heading`</li>
+              <li> `returnRoadClass`</li>
+              <li> `returnSpeedLimit`</li>
+              <li> `returnMatchType`</li>
+            </ul>  
+           **Values:** One or more of:  
+            <ul>
+              <li> `Country`</li>
+              <li> `CountrySubdivision`</li>
+              <li> `CountrySecondarySubdivision`</li>
+              <li> `CountryTertiarySubdivision`</li>
+              <li> `Municipality`</li>
+              <li> `MunicipalitySubdivision`</li>
+              <li> `MunicipalitySecondarySubdivision`</li>
+              <li> `Neighbourhood`</li>
+              <li> `PostalCodeArea`</li>
+            </ul>  
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          `callback`  
+          *string*
+        </th>
+        <td>
+          Specifies the callback method.  
+          **Default value:** `cb`
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          `language`  
+          *string*
+        </th>
+        <td>
+          The language in which the reverse geocode result 
+          should be returned. It should be one of the 
+          Example IETF [Supported Languages](../Example-New-maps/product-information/supported-languages)  
+          tags, case insensitive. When data in a specified 
+          language is not available for a specific field, 
+          the default language is used.  
+          **Default value:** `NGT`
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          `allowFreeformNewline`  
+          *boolean*
+        </th>
+        <td>
+          The format of newlines in the formatted address. 
+          If `true`, the address will contain newlines. 
+          Otherwise, newlines will be converted to spaces.  
+          **Default value:** `false`.
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          `returnMatchType`  
+          *boolean*
+        </th>
+        <td>
+          This includes information on the type of match the 
+          geocoder achieved in the response.  
+        </td>
+      </tr>
+      <tr>
+        <th>`view`  
+            *string* </th>
+        <td>
+          Geopolitical View. The context used to resolve the 
+          handling of disputed territories. Views include 
+          `Unified` along with `AR` and `IL` which are 
+          respectively tailored for Argentina and Israel.  
+          **Default values:**  
+          <ul>
+            <li> **Argentina**, default view: `AR`, other 
+                  available views: `Unified`, `IL`</li>
+            <li> **Others**, default view: `Unified`, other 
+                  available views: `AR`, `IL</li>
+          </ul>  
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          `mapcodes`  
+          *comma-separated string*
+        </th>
+        <td>
+          Enables the return of mapcodes. Can also filter the 
+          response to only show selected mapcode types. 
+          See  [mapcode](#mapcode-object) in the response. 
+          A mapcode represents a specific location, to within 
+          a few meters. Every location on Earth can be 
+          represented by a mapcode. Mapcodes are designed to 
+          be short, easy to recognize, remember and communicate. 
+          Visit [the Mapcode project website](http://www.mapcode.com) 
+          for more information.  
+          **Values:** One or more of: `Local`, `International`, and `Alternative`.
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">
+          `filter`  
+          *string*
+        </th>
+        <td>
+          Excludes a certain group of inspected address-carrying 
+          elements in order to find the closest match to a requested 
+          point. Right now service supports only single value, but in 
+          future it may change.  
+          **Value:** `BackRoads`  
+          **BackRoads**: Roads that do not have an official name and 
+          any other kind of address information attached: unaddressable 
+          paths, forest paths, tracks, commercial driveways used as 
+          service roads, hiking paths, etc. Use of this filter is 
+          advised in cases where obtaining accurate address is top 
+          priority. It should not be used in a 'vehicle/asset tracking' 
+          use case or in road elements 'matching/focus' use case(s).
+        </td>
+      </tr>
+    </tbody>
+  </table>  
+
+### Request headers  
+
+The following table describes HTTP request headers.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Optional&nbsp;headers</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Example-Api-Version</th>
+        <td>
+            Service version. If the `apiVersion` parameter is not 
+            present the `Example-Api-Version` header is required.  
+            **Value:** A service version value. The current value 
+            is `1`.  
+        </td>
+    </tr>
+    <tr>
+      <th id="accept-encoding">[Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding)</th>
+      <td>
+        Enables response compression.  
+        **Value:** `gzip`
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-request" scope="row">Tracking-ID</th>
+        <td>
+        Specifies an identifier for the request.  
+        <ul>
+          <li>It can be used to trace a call.</li>
+          <li>The value must match the regular expression 
+          `'^[a-zA-Z0-9-]{1,100}$'`.</li>
+          <li>An example of the format that matches this 
+          regular expression is UUID: 
+          (e.g., `9ac68072-c7a4-11e8-a8d5-f2801f1b9fd1`).</li>
+          <li>For details check [RFC 4122](https://tools.ietf.org/html/rfc4122).</li>
+          <li>If specified, it is replicated in the [Tracking-ID](#trackingid-response) 
+          response header.</li>
+          <li>It is only meant to be used for support and 
+          does not involve tracking of you or your users 
+          in any form.</li>
+        </ul>  
+      **Value:**  An  `identifier`  for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+## Response data  
+
+### Response body  
+
+For illustrative purposes the examples below are neatly indented. Please note that actual responses will vary based on the result type and the data available. See the following response fields section for more information. When requesting JSON output, the response has the following structure:  
+
+```json [title=Response structure - JSON]
+{
+  "summary": {
+    "queryTime": 102,
+    "numResults": 1
+  },
+  "addresses": []
+}
+```
+
+Example response for the result of the `Point Address` type is in the following format:  
+
+```json [title=Point Address type example response - JSON]
+{
+  "summary": {
+    "queryTime": 8,
+    "numResults": 1
+  },
+  "addresses": [
+    {
+      "address": {
+        "buildingNumber": "4320",
+        "streetNumber": "4320",
+        "routeNumbers": [],
+        "street": "Payne Avenue",
+        "streetName": "Payne Avenue",
+        "streetNameAndNumber": "4320 Payne Avenue",
+        "countryCode": "US",
+        "countrySubdivision": "OH",
+        "countrySecondarySubdivision": "Cuyahoga",
+        "municipality": "Cleveland",
+        "postalCode": "44103",
+        "neighbourhood": "Goodrich Park",
+        "country": "United States",
+        "countryCodeISO3": "USA",
+        "freeformAddress": "4320 Payne Avenue, Cleveland, OH 44103",
+        "boundingBox": {
+          "northEast": "41.511569,-81.655694",
+          "southWest": "41.511238,-81.656870",
+          "entity": "position"
+        },
+        "extendedPostalCode": "44103-2329",
+        "countrySubdivisionName": "Ohio",
+        "countrySubdivisionCode": "OH",
+        "localName": "Cleveland"
+      },
+      "position": "41.511272,-81.656738",
+      "matchType": "AddressPoint",
+      "mapcodes": [
+        {
+          "type": "Local",
+          "fullMapcode": "US-OH RL.BPD",
+          "territory": "US-OH",
+          "code": "RL.BPD"
+        },
+        {
+          "type": "International",
+          "fullMapcode": "T8GNX.DMVD"
+        },
+        {
+          "type": "Alternative",
+          "fullMapcode": "US-OH 63Y.LMT",
+          "territory": "US-OH",
+          "code": "63Y.LMT"
+        },
+        {
+          "type": "Alternative",
+          "fullMapcode": "US-OH FDPJ.HPV",
+          "territory": "US-OH",
+          "code": "FDPJ.HPV"
+        },
+        {
+          "type": "Alternative",
+          "fullMapcode": "US-OH VPLJ.0MC9",
+          "territory": "US-OH",
+          "code": "VPLJ.0MC9"
+        },
+        {
+          "type": "Alternative",
+          "fullMapcode": "USA VPLJ.0MC9",
+          "territory": "USA",
+          "code": "VPLJ.0MC9"
+        }
+      ],
+      "id": "ZuV4ux-XfHAqL3Ep73d9cg"
+    }
+  ]
+}
+```
+
+Example response for the Geography result with `entityType=PostalCodeArea` filtering: <br id="example-postal-code-area"/>  
+
+```json [title=Geography example response - JSON]
+{
+  "summary": {
+    "queryTime": 10,
+    "numResults": 1
+  },
+  "addresses": [
+    {
+      "address": {
+        "routeNumbers": [],
+        "countryCode": "US",
+        "countrySubdivision": "CA",
+        "countrySecondarySubdivision": "Santa Cruz",
+        "municipality": "Santa Cruz",
+        "postalName": "Santa Cruz",
+        "postalCode": "95065",
+        "country": "United States",
+        "countryCodeISO3": "USA",
+        "freeformAddress": "Santa Cruz, CA 95065",
+        "boundingBox": {
+          "northEast": "37.085762,-121.949375",
+          "southWest": "36.983408,-122.013236",
+          "entity": "position"
+        },
+        "countrySubdivisionName": "California"
+      },
+      "position": "36.988171,-121.974876",
+      "dataSources": {
+        "geometry": {
+          "id": "00005543-3300-3c00-0000-00004dc8b8e5"
+        }
+      },
+      "entityType": "PostalCodeArea",
+      "mapcodes": [
+        {
+          "type": "Local",
+          "fullMapcode": "US-CA FS.WRG0",
+          "territory": "US-CA",
+          "code": "FS.WRG0"
+        },
+        {
+          "type": "International",
+          "fullMapcode": "S4ZW4.89XV"
+        },
+        {
+          "type": "Alternative",
+          "fullMapcode": "US-CA 4349.S7L",
+          "territory": "US-CA",
+          "code": "4349.S7L"
+        },
+        {
+          "type": "Alternative",
+          "fullMapcode": "US-CA JJCH.H9CF",
+          "territory": "US-CA",
+          "code": "JJCH.H9CF"
+        },
+        {
+          "type": "Alternative",
+          "fullMapcode": "USA JJCH.H9CF",
+          "territory": "USA",
+          "code": "JJCH.H9CF"
+        }
+      ],
+      "id": "00005543-3300-3c00-0000-00004dc8b8e5"
+    }
+  ]
+}
+```
+
+### Response fields  
+
+The following tables describe all of the fields that can appear in a response. Fields are listed by the response section they belong to and in the order that they appear in the response.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th colspan="2" style={{ fontSize: '1em' }}>Primary&nbsp;fields</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `summary`  
+        *object*
+      </th>
+      <td>
+        Summary information about the search that 
+        was performed.  
+        [`summary`](#summary-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `addresses`  
+        *array*
+      </th>
+      <td>
+        The result list containing a single record.  
+        [`addresses`](#addresses-array) array
+      </td>
+    </tr>
+    <tr>
+      <th id="summary-object" colspan="2" style={{ fontSize: '1em' }}>summary object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `queryTime`  
+        *integer*
+      </th>
+      <td>The time spent on resolving the 
+      query (in milliseconds).</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `numResults`  
+        *integer*
+      </th>
+      <td>The number of results in the response. 
+      The current version of the API returns a 
+      maximum of one result.</td>
+    </tr>
+    <tr>
+      <th id="addresses-array" colspan="2" style={{ fontSize: '1em' }}>addresses array</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `address`  
+        *object*
+      </th>
+      <td>
+        The structured address for the result.  
+        [`address`](#address-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `position`  
+        *double (LatLon)*
+      </th>
+      <td>
+        Position of the result in the form of 
+        "latitude,longitude" coordinates. Position 
+        of the entry point. Position on the street 
+        where you can enter the location.  
+        **Example:** `37.553,-122.453`
+      </td>
+    </tr>
+    <tr id="sup2">
+      <th scope="row" id="roadclass-array">
+        `roadClass`  
+        *array*
+      </th>
+      <td>
+        Road classes at the address.  
+        [`roadclass`](#roadclass-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `matchType`  
+        *string*
+      </th>
+      <td>
+        Information on the type of match. One of:  
+        <ul>
+          <li>
+            `AddressPoint`
+          </li>
+          <li>
+            `HouseNumberRange`
+          </li>
+          <li>
+            `Street`
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `dataSources`  
+        *object*
+      </th>
+      <td>
+        Optional section. Reference ids for use with the 
+        [Additional Data](https://developer.Example.com/search-api/documentation/Example-New-maps/additional-data-service/additional-data) service.  
+        <ul>
+          <li>[`dataSources`](#datasources-object) object</li>
+          <li>[`geometry`](#geometry-object) object</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `mapcodes`  
+        *array*
+      </th>
+      <td>
+        Optional section. It can be returned only if the 
+        'mapcodes' input parameter is used.  
+        [`mapcode`](#mapcode-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        A stable, unique id for a given entity.
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="address-object" style={{ fontSize: '1em' }}>address object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `buildingNumber`  
+        *string*
+      </th>
+      <td>
+        The building number on the street.  
+        <Blockquote type="warning" hasIcon>
+          Use `streetNumber` instead.
+        </Blockquote>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `streetNumber`  
+        *string*
+      </th>
+      <td>The building number on the street.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `routeNumbers`  
+        *array*
+      </th>
+      <td>The codes used to unambiguously identify 
+      the street.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `street`  
+        *string*
+      </th>
+      <td>
+        The street name.  
+        <Blockquote type="warning" hasIcon>
+          Use  `streetName`  instead.  
+        </Blockquote>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `streetName`  
+        *string*
+      </th>
+      <td>The street name.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `streetNameAndNumber`  
+        *string*
+      </th>
+      <td>The street name and number.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `speedLimit`  
+        *string*
+      </th>
+      <td>
+        The speed limit for the street in the 
+        form (D)(D)D.DDUUU, For example:  
+        <ul>
+          <li>30.00KPH</li>
+          <li>
+             **(D)(D)D.DD** is a number with two decimal 
+              places (for example: 5.00, 30.00 or 120.00).
+          </li>
+          <li>
+             **UUU**  is either KPH or MPH (whichever is 
+              correct for the address).
+          </li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countryCode`  
+        *string*
+      </th>
+      <td>
+        Country  
+        <Blockquote type="announcement" hasIcon>
+          **Note:** This is a two-letter code, 
+          not a country name.
+        </Blockquote>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countrySubdivision`  
+        *string*
+      </th>
+      <td>State or Province</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countrySecondary
+        Subdivision`  
+        *string*
+      </th>
+      <td>County</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countryTertiary
+        Subdivision`  
+        *string*
+      </th>
+      <td>Named Area</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `municipality`  
+        *string*
+      </th>
+      <td>City / Town</td>
+    </tr>
+    <tr>
+      <th scope="row" id="postal-name">
+        `postalName`  
+        *string*
+      </th>
+      <td>
+        An address component which represents the name 
+        for a postal code that is related to a single 
+        administrative area, city, town, or other 
+        populated place. Only present when the parameter 
+        `entityType == PostalCodeArea` is present.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `postalCode`  
+        *string*
+      </th>
+      <td>Postal Code / Zip Code</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `municipality
+        Subdivision`  
+        *string*
+      </th>
+      <td>Sub City</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `municipalitySecondary
+        Subdivision`  
+        *string*
+      </th>
+      <td>Sub Sub City</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `neighbourhood`  
+        *string*
+      </th>
+      <td>Neighbourhood</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `country`  
+        *string*
+      </th>
+      <td>Country name</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `countryCodeISO3`  
+        *string*
+      </th>
+      <td>
+        [ISO 3166-1 alpha-3 country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3)
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="free-form-address">
+        `freeformAddress`  
+        *string*
+      </th>
+      <td>
+        An address line formatted according to the 
+        formatting rules of a result's country of origin, 
+        or in the case of a country, its full
+        country name.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `boundingBox`  
+        *object*
+      </th>
+      <td>
+        The bounding box of the location.  
+        [`boundingBox`](#boundingbox-object) object
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="country-subdivision-name">
+        `country
+        SubdivisionName`  
+        *string*
+      </th>
+      <td>
+        The full name of a first level of country 
+        administrative hierarchy.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="country-subdivision-code">
+        `country
+        SubdivisionCode`  
+        *string*
+      </th>
+      <td>
+        `countrySubdivisionCode` prefixed by `countryCode`
+        and the hyphen (`countryCode-countrySubdivisionCode`) forms
+        the [ISO 3166-2 code](https://en.wikipedia.org/wiki/ISO_3166-2).  
+        `countrySubdivisionCode` examples: `TX` for 
+        Texas, `SCT` for Scotland, `ON` for Ontario, 
+        `ZE` for Zeeland and `BB` for Brandenburg.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" id="local-name">
+        `localName`  
+        *string*
+      </th>
+      <td>
+        An address component which represents the name of a geographic area or
+        locality that groups a number of addressable objects for addressing
+        purposes, without being an administrative unit.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `extendedPostalCode`  
+        *string*
+      </th>
+      <td>Extended postal code (availability is dependent on the region).</td>
+    </tr>
+    <tr>
+      <th id="boundingbox-object" colspan="2" style={{ fontSize: '1em' }}>boundingBox object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `northEast`  
+        *comma-separated floats*
+      </th>
+      <td>
+        Northeast (top-left) `latitude`, `longitude`
+        coordinate of the bounding box.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `southWest`  
+        *comma-separated floats*
+      </th>
+      <td>
+        Southwest (bottom-right) `latitude`, `longitude`
+        coordinate of the bounding box.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `entity`  
+        *string*
+      </th>
+      <td>
+        Entity type source of the bounding box.  
+        <Blockquote type="announcement" hasIcon>
+          **Note:** For **reverse-geocoding** this is always 
+          equal to string: 'position'.
+        </Blockquote>  
+      </td>
+    </tr>
+    <tr>
+      <th id="roadclass-object" colspan="2" style={{ fontSize: '1em' }}>roadClass object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `type`  
+        string
+      </th>
+      <td>
+      Possible value: `Functional`. Represents a classification of 
+      roads based on the importance that the constituting roads 
+      have in the total road network.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `values`  
+        array
+      </th>
+      <td>
+        Possible values:  
+        <ul>
+          <li>
+            for type `Functional`:
+            <ul>
+              <li>
+                `Motorway`: Includes all roads officially designated as 
+                members of an internationally, nationally, and/or regionally 
+                important network of limited-access highways.
+              </li>
+              <li>
+                `Trunk`: Includes all roads of high importance (but not officially 
+                assigned as motorways) that are part of a connection for international 
+                and national traffic and transport.
+              </li>
+              <li>
+                `Primary`: Includes all roads used to travel between neighboring 
+                regions of a country.
+              </li>
+              <li>
+                `Secondary`: Includes all roads used to travel between different 
+                parts of the same region.
+              </li>
+              <li>
+                `Tertiary`: Includes:  
+                <ul>
+                    <li>All roads that make each settlement or parts (north, south, 
+                    east, west and central) of a settlement accessible.</li>
+                    <li>All roads on the local level are the main connections in a 
+                    settlement or represent frequently used rural connections. 
+                    These are roads where important through traffic is possible.</li>
+                    <li>All roads used to travel within a part of a settlement or 
+                    roads of minor connecting importance in a rural area. </li>
+                </ul>  
+              </li>
+              <li>
+                `Street`: Includes all roads that only have a destination function. 
+                Such roads reach a particular address or destination (e.g., dead-end 
+                streets, roads inside a living area, alleys 
+                [narrow roads between buildings], or roads found in a park or garden).
+              </li>
+              <li>
+                `Ferry`: Includes all ferry routes.
+              </li>
+              <li>
+                `Other`: Includes all other roads that are less important for 
+                the navigation system.
+              </li>
+            </ul>
+          </li>
+        </ul>  
+        <Blockquote type="announcement" hasIcon>
+          **Note:** For the `Functional` type, the service always returns a single element from possible values.
+        </Blockquote>  
+      </td>
+    </tr>
+    <tr>
+      <th id="datasources-object" colspan="2" style={{ fontSize: '1em' }}>dataSources object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `geometry`  
+        *object*
+      </th>
+      <td>
+        Information about the geometric shape of the result. 
+        Only present if `type == Geography`.  
+        [`geometry`](#geometry-object)  object
+      </td>
+    </tr>
+    <tr>
+      <th id="geometry-object" colspan="2" style={{ fontSize: '1em' }}>geometry object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `id`  
+        *string*
+      </th>
+      <td>
+        Pass this as `geometryId` to the [Additional Data](https://developer.Example.com/search-api/documentation/Example-New-maps/additional-data-service/additional-data)
+        service to fetch geometry information for this result.
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2" id="mapcode-object" style={{ fontSize: '1em' }}>mapcode object</th>
+    </tr>
+    <tr>
+      <th>Field</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `type`  
+        *string*
+      </th>
+      <td>
+        Type of mapcode. Possible values:  
+        <ul>
+          <li>`Local`: The shortest possible (and easiest to remember) 
+          mapcode. Local mapcodes are especially useful when the user 
+          knows what [territory](#territory) the mapcode is in (for 
+          example, when an application is designed to be used inside 
+          just one European country or US state).  
+          **Note** that the `code` element of a `Local` mapcode is 
+          ambiguous when used without the  `territory`  element - 
+          e.g.,: the "4J.P2" mapcode can mean the Eiffel Tower location 
+          (48.858380, 2.294440) (with the  `territory`  set to  `FRA` ), 
+          but also some place in Amsterdam-Noord, Netherlands 
+          (52.382184, 4.911021) (with the `territory` set to `NLD`).</li>
+          <li>`International`: This mapcode is unambiguous. It is also 
+          the longest.</li>
+          <li>`Alternative`: Alternatives to `Local` mapcodes. Each 
+          `Alternative` mapcode points to slightly different coordinates 
+          due to the way mapcodes are computed (see [the mapcode 
+          documentation](https://www.mapcode.com/documentation)). 
+          For example: the position from a response can be encoded as "5DM.WC" 
+          (51.759244, 19.448316) and the "VHJ.036" (51.759245, 19.448264), 
+          which are close to each other, but not exactly the same place.</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `fullMapcode`  
+        *string*
+      </th>
+      <td>
+        The full form of a mapcode (`territory` + `code`).
+        It is always unambiguous. The `territory` element is always 
+        in the Latin alphabet. In an `International` mapcode, the 
+        `territory` part is empty.
+      </td>
+    </tr>
+    <tr>
+      <th id="territory" scope="row">
+        `territory`  
+        *string*
+      </th>
+      <td>
+        The `territory` element of the mapcode. The 
+        `territory` element is always in the Latin alphabet. 
+        Usually, the `territory` is the [ISO 3166-1 alpha 3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3)
+        abbreviation for the country name. However in these 
+        eight very large countries:  
+        <ul>
+          <li>USA,</li>
+          <li>Canada,</li>
+          <li>Mexico,</li>
+          <li>Brazil,</li>
+          <li>India,</li>
+          <li>Australia,</li>
+          <li>Russia,</li>
+          <li>China</li>
+        </ul>  
+        an address has little meaning unless the user also 
+        knows what state it's in (just as, elsewhere, an 
+        address has little meaning if the user doesn't know 
+        what country it's in). More information about
+        `territory` codes is available at [Territories for 
+        mapcodes](http://www.mapcode.com/isos.html). This 
+        field is not returned for an `International` mapcode.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`  
+        *string*
+      </th>
+      <td>
+        The mapcode without the `territory` element. It consists of
+        two groups of letters and digits separated by a dot. The 
+        `code` is using the same language and alphabet as the 
+        response. The `language` parameter may be used to modify the 
+        language and alphabet of both the response and the `code` 
+        (for example: Cyrillic for the `language` 'ru-RU'). This 
+        field is not returned for the `International` mapcodes - use 
+        `fullMapcode` instead.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response codes  
+
+The following data table contains response codes signifying successful and failed requests to an API server.  
+
+<table id="response-codes" data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em', textAlign: 'center' }}>Code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Meaning &amp; possible causes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`200`</th>
+      <td>
+         **OK**: The search successfully returned zero or more results.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`400`</th>
+      <td>
+         **Bad request**: One or more parameters were incorrectly specified.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`403`</th>
+      <td>
+         **Forbidden**: Possible causes include:  
+        <ul>
+          <li>Service requires SSL</li>
+          <li>Not authorized</li>
+          <li>Over QPS (Queries per second), or over QPD (Queries per day)</li>
+          <li>Unknown referer</li>
+        </ul>  
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`405`</th>
+      <td>
+        **Method Not Allowed**: The HTTP method ( `GET`, 
+        `POST`, etc.) is not supported for this request.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`404/596`</th>
+      <td>
+        **Not Found**: The HTTP request method ( `GET`, 
+        `POST`, etc.) or path is incorrect.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`429`</th>
+      <td>
+        **Too Many requests**: The API Key is over QPS (Queries per second).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row" style={{ textAlign: 'center' }}>`5xx`</th>
+      <td>
+        **Server Error**: The service was unable to process your request.
+        Contact support to resolve the issue.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Response headers  
+
+The following data table contains response headers sent back from an API server.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Header</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">[Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)</th>
+      <td>
+        Ensures that clients implementing the CORS security 
+        model are able to access the response from this service.  
+        **Value:** An asterisk  ` * ` that signifies access to the
+        Example API using the Access-Control-Allow-Origin (ACAO) 
+        header in its response indicating which origin sites 
+        are allowed.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">[Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)</th>
+      <td>
+        Indicates the format of the response, as chosen by the client.  
+        **Format:** `type/subtype; charset=utf-8`  
+        **Values:**  `type/subtype` is one of: 
+        `application/json`, `text/javascript`, or `text/xml`.
+      </td>
+    </tr>
+    <tr>
+      <th id="content-encoding" scope="row">[Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding)</th>
+      <td>
+        The Reverse Geocode service endpoint applies gzip 
+        compression to the responses if requested by the 
+        client with the [Accept-Encoding](#accept-encoding) header.  
+        **Value:** `gzip`
+      </td>
+    </tr>
+    <tr>
+      <th id="trackingid-response" scope="row">Tracking-ID</th>
+      <td>
+        An identifier for the request. If the 
+        [Tracking-ID](#trackingid-request) header was specified, it 
+        is replicated in the response. Otherwise, it is generated 
+        automatically by the service. It is only meant to be used 
+        for support and does not involve tracking of you or your 
+        users in any form.  
+        **Value:** An `identifier` for the request.
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Error response  
+
+The content type of an error response depends on the requested output format (`.json` or `.xml`).  
+
+```json [title=Error response example (JSON)]
+{
+  "error": "Invalid request: invalid position: latitude/longitude out of range.",
+  "httpStatusCode": 400,
+  "detailedError": {
+    "code": "BadRequest",
+    "message": "Invalid request: invalid position: latitude/longitude out of range.",
+    "target": "position"
+  }
+}
+```
+
+```xml [title=Error response example (XML)]
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<response>
+  <error>Invalid request: invalid position: latitude/longitude out of range.</error>
+  <httpStatusCode>400</httpStatusCode>
+  <detailedError>
+    <code>BadRequest</code>
+    <message>Invalid request: invalid position: latitude/longitude out of range.</message>
+    <target>position</target>
+  </detailedError>
+</response>
+```
+
+### Error response fields  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Primary&nbsp;fields</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+        `error`  
+        *string*
+      </th>
+      <td>
+        A human-readable description of the error code. 
+        It is intended as an aid to developers and is not 
+        suitable for exposure to end users.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `httpStatusCode`  
+        *integer*
+      </th>
+      <td>HTTP error code.</td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `detailedError`  
+        *object*
+      </th>
+      <td>
+        Detailed information about the error.  
+        [`detailedError`](#detailederror-object) object
+      </td>
+    </tr>
+    <tr>
+      <th id="detailederror-object" colspan="2" style={{ fontSize: '1em' }}>detailedError object</th>
+    </tr>
+    <tr>
+      <th scope="col">Field</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <th scope="row">
+        `code`  
+        *string*
+      </th>
+      <td>
+        One of the defined  [error codes](#response-codes).
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `message`  
+        *string*
+      </th>
+      <td>
+        A human-readable representation of the error code. 
+        It is intended as an aid to developers and is not 
+        suitable for exposure to end users.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        `target`  
+        *string*
+      </th>
+      <td>
+        Optional. Target of the particular error.  
+        **Value:** The name of the [request parameter](#request-parameters).
+      </td>
+    </tr>
+  </tbody>
+</table>  
+
+### Error code hierarchy  
+
+A list of predefined, hierarchical, human-readable error codes. The `httpStatusCode` relates to HTTP error codes. An error code in `detailedError` can redefine `httpStatusCode` to one of the codes described in this section. In the future, the list may be extended with additional codes.  
+
+<table data-notbreakword>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }}>Error&nbsp;code</th>
+      <th scope="col" style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        `BadRequest`
+      </th>
+      <td>
+          The code for requests which ended with an HTTP
+          `400 Bad Request`.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `Forbidden`
+      </th>
+      <td>
+          The code for requests which ended with an HTTP 
+          `403 Forbidden`.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `InternalServerError`
+      </th>
+      <td>
+        The code for requests which ended with an HTTP 
+        `500 Internal Server Error`. The service cannot handle the 
+        request right now, an unexpected condition was encountered.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        `ServerTimeout`
+      </th>
+      <td>
+        The code for requests which ended with an HTTP 
+        `504 Gateway Timeout`. The service cannot handle the request 
+        right now, this is certainly a temporary state.
+      </td>
+    </tr>
+  </tbody>
+</table>  

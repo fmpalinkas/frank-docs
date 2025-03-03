@@ -1,0 +1,9 @@
+group: reverse-geocoding-api
+isPrivate: false
+description: Reverse Geocoding API explorer.
+productName: Reverse Geocoding API
+menuTitle: API Explorer
+menu:
+  - title: API Explorer
+    items:
+      - fileId: /index

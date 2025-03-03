@@ -1,0 +1,8 @@
+platformSwitcherItems:
+  - title: Example Maps
+    fallbackUrl: /reverse-geocoding-api/documentation/product-information/introduction
+    platformRootDirectory: /reverse-geocoding-api/documentation/
+  - title: Example New Maps
+    fallbackUrl: /reverse-geocoding-api/documentation/Example-New-maps/product-information/introduction
+    platformRootDirectory:  /reverse-geocoding-api/documentation/Example-New-maps/
+    

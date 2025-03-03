@@ -1,0 +1,106 @@
+---
+title: Best practices
+titleTags:
+  - label: "Service version: 2"
+    color: grey5
+  - label: "Last edit: 2022.10.27"
+    color: grey5
+---
+
+## Purpose
+
+The following topics provide some helpful tips to improve your Example API query results.
+
+**Note:** Constants and parameters enclosed in curly brackets `{ }` must be replaced with their values.
+
+## Using radius
+
+You can use a radius parameter to restrict the result to a given area around input coordinates. Radius is defined in meters. For instance, this query will return a building result (Point Address type result) only if there is one in a 100 meter radius from the given lat/lon:
+
+```shell [title=Request with a radius parameter and its value]
+https://api.Example.com/search/2/reverseGeocode/52.157831,5.223776.json?key={Your_API_Key}&radius=100
+```
+
+If there are no buildings within the given radius, then the street match type result might be returned (if there are streets within the radius from the particular point) - as in the example given above. Depending on the use case (for example: for a delivery use-case) limiting radius might be extremely useful for filtering out unacceptable results. Of course, limiting radius decreases the amount of returned full addresses in general.
+
+For other use-cases (like fleet tracking) a higher radius is usually advised. You may modify the example query by changing the accepted radius to 200m (or more) to see that in this case a full address will be returned (as there is a property 170 meters away from the input coordinates). Remember that a higher radius value means a lower general address precision is accepted. On the other hand, it increases the chance of obtaining a full address (including a house number).
+
+## Using different response formats
+
+We also support JSON or XML formatted responses.
+
+<h4 style={{ fontSize: '1em' }}>Request example with a JSON response format</h4> 
+
+```shell [title=Request example with a JSON response format]
+https://api.Example.com/search/2/reverseGeocode/52.157831,5.223776.json?key={Your_API_Key}
+```
+
+<h4 style={{ fontSize: '1em' }}>Request example with an XML response format</h4> 
+
+```shell [title=Request example with an XML response format]
+https://api.Example.com/search/2/reverseGeocode/52.157831,5.223776.xml?key={Your_API_Key}
+```
+
+## Setting a response language
+
+Our service by default returns results using the language and alphabet used in a reverse geocoded location. For example,
+
+- For input coordinates from Spain, the returned results will be using the Spanish language.
+- For input coordinates from Greece, the results will be using the Greek language, and the Greek alphabet will be preferred.
+
+If you want to restrict results to one specific language you will need to explicitly set it in the request parameters. For example, by setting the `language` parameter to a value of `en`, you explicitly request results in the English language (using the Latin alphabet) whenever possible.
+
+## Understanding a response
+
+The `returnMatchType` parameter can be used to get a response type explicitly returned in the response. This might be useful for understanding the quality of the match/returned result.
+
+When this parameter is used then the response will have a `matchType` response field with one of the following returned values: `AddressPoint` / `HouseNumberRange` / `Street`.
+
+- The `AddressPoint` value means that the exact address was found and returned.
+- The `HouseNumberRange` value means that the address is approximated from the house number range assigned to `road-element`.
+- The `Street` value means that returned result doesn't contain the full address data particularly that no building was matched and thus the `buildingNumber` (and `streetNumber`) fields will be missing in the response.
+  - The `Street` match-level result means that the result cannot be used as an address. For example, for package or food delivery purposes.
+  - It might be an indication of a gap in our data, but it can also be a 100% correct and accurate response, for example, input coordinates lying on the highway.
+
+## Understanding a response summary
+
+The following example uses JSON. Note: For your benefit, the code comments are preceded by // and are not part of the actual JSON.
+
+```json [title=JSON response]
+{
+  "summary": {
+    "queryTime": 9, // query time on the server in milliseconds
+    "numResults": 1 // number of results in this response, always set to 1
+  },
+  "addresses": [
+    // array that always contains one element
+    {
+      "address": {
+        "buildingNumber": "3", // building number on the street, it is the same as streetNumber
+        "streetNumber": "3", // building number on the street, it is the same as buildingNumber
+        "routeNumbers": [], // this attribute returns official route numbers if there are any assigned, like I-80 for Interstate 80
+        "street": "Vuurscheweg", // the street name, it is the same as streetName
+        "streetName": "Vuurscheweg", // the street name, it is the same as street
+        "streetNameAndNumber": "Vuurscheweg 3", // the street name and number concatenated
+        "countryCode": "NL", // ISO 3166-1 alfa-2 country code
+        "countrySubdivision": "Utrecht", // state or Province
+        "municipality": "De Bilt", // a municipality, often a city/town name
+        "postalCode": "3723", // postal code
+        "municipalitySubdivision": "Bilthoven", // smaller organization unit than municipality, here a village
+        "country": "Holandia", // country name
+        "countryCodeISO3": "NLD", // ISO 3166-1 alfa-3 country code
+        "freeformAddress": "Vuurscheweg 3, 3723 MD Bilthoven", // full formated address that can be used for addressing a place; freeformAddress is formed according to appropriate country addressing rules
+        "boundingBox": {
+          // boundingBox enclosing the closest road-element to input cooridnates
+          "northEast": "52.158259,5.223712",
+          "southWest": "52.158148,5.222734",
+          "entity": "position"
+        },
+        "extendedPostalCode": "3723 MD", // extended postal code (available only is some places)
+        "localName": "Bilthoven" // localName, most often is the same value as municipality or municipalitySubdivision, used in freeformAddress
+      },
+      "position": "52.159172,5.223768" // position of a matched result, in the case of a building it’s entry point
+    }
+  ]
+}
+```

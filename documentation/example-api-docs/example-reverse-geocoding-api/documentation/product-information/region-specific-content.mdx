@@ -1,0 +1,300 @@
+---
+title: Region-specific content
+titleTags:
+  - label: "Last edit: 2022.11.14"
+    color: grey5
+---
+
+Some parts of Example data are subject to additional legal terms and conditions. When used, the customer must agree to and follow these additional conditions. Also, for some regions our APIs can have differences in requests and responses compared to the default API behavior. Customers should be aware of these differences before using the region-specific content.
+
+## Available region-specific contents
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col" style={{ fontSize: '1em' }} width="250px">
+        Hostname
+      </th>
+      <th scope="col" style={{ fontSize: '1em' }}>
+        Description
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">
+         `kr-api.Example.com` 
+      </th>
+      <td>
+        <ul>
+          <li>Hostname, where detailed South Korea data is available.</li>
+          <li>
+            Detailed South Korean data is processed and hosted in South Korea.
+            <ul>
+              <li>
+                It may impact the latency for requests sent from outside of
+                South Korea.
+              </li>
+            </ul>
+          </li>
+          <li>
+            The service customers  **are not allowed**  to download, store,
+            cache nor host the South Korean data outside of South Korea (except
+            for web browser cache).
+          </li>
+          <li>
+            The service customers  **are not allowed**  to display any
+            coordinates of any place within South Korea.
+          </li>
+          <li>
+            Response data for South Korea can have
+             [additional response data](#response-data-for-south-korea).
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Region-specific API changes
+
+### Response data for South Korea
+
+South Korea switched from a land lot-based addressing format to a street name-based format in 2011. The old format is still widely used and therefore supported by the Search API, which means both address formats can be found and returned by various Search APIs (geocode, search, and reverse geocode).
+
+Changes to the API response only apply to results of type `Point Address`. The Search API supports `Point Address` results with
+
+1. only a street name-based address
+2. both a street name-based address and a land lot-based address
+
+```json  [title=Example response for a point in South Korea - JSON]
+{
+  "summary": {
+    "queryTime": 3,
+    "numResults": 1
+  },
+  "addresses": [
+    {
+      "address": {.. 16 Items ..},
+      "linkedAddress": {
+        "routeNumbers": [],
+        "street": "석산로119번길",
+        "streetName": "석산로119번길",
+        "countryCode": "KR",
+        "countrySubdivision": "경기도",
+        "municipality": "양평군",
+        "postalCode": "12528",
+        "municipalitySubdivision": "단월면",
+        "country": "대한민국",
+        "countryCodeISO3": "KOR",
+        "freeformAddress": "12528 경기도 양평군 단월면 향소리 167-3",
+        "boundingBox": {
+          "northEast": "37.561549,127.661349",
+          "southWest": "37.561467,127.661073",
+          "entity": "position"
+        },
+      "localName": "단월면",
+      "dependentLocalName": "향소리",
+      "landCode": "167-3"
+    },
+    "position": "37.561466,127.661072"
+    }
+  ]
+}
+```
+
+### Street name-based address only
+
+For a `Point Address` with only a street name-based address, the API response is identical to the default API response.
+
+Example response for the result of the `Point Address` type is in the following format:
+
+```json [title=Point Address type example response - JSON]
+{
+  "summary": {
+    "queryTime": 17,
+    "numResults": 1
+  },
+  "addresses": [
+    {
+      "address": {
+        "buildingNumber": "2501",
+        "streetNumber": "2501",
+        "routeNumbers": [],
+        "street": "Soquel Drive",
+        "streetName": "Soquel Drive",
+        "streetNameAndNumber": "2501 Soquel Drive",
+        "speedLimit": "35.00MPH",
+        "countryCode": "US",
+        "countrySubdivision": "CA",
+        "countrySecondarySubdivision": "Santa Cruz",
+        "municipality": "Santa Cruz",
+        "postalCode": "95065",
+        "municipalitySubdivision": "Santa Cruz, Live Oak",
+        "sideOfStreet": "L",
+        "offsetPosition": "36.988430,-121.974731",
+        "country": "United States",
+        "countryCodeISO3": "USA",
+        "freeformAddress": "2501 Soquel Drive, Santa Cruz, CA 95065",
+        "boundingBox": {
+          "northEast": "36.988197,-121.974752",
+          "southWest": "36.988156,-121.975108",
+          "entity": "position"
+        },
+        "extendedPostalCode": "950651900",
+        "countrySubdivisionName": "California",
+        "localName": "Santa Cruz"
+      },
+      "position": "36.988159,-121.974762",
+      "roadUse": [
+        "Arterial"
+      ],
+      "matchType": "AddressPoint",
+      "mapcodes":[
+        {
+          "type":"Local",
+          "fullMapcode":"US-CA FS.WRH3",
+          "territory":"US-CA",
+          "code":"FS.WRH3"
+        },
+        {
+          "type":"International",
+          "fullMapcode":"S4ZW4.990V"
+        },
+        {
+          "type":"Alternative",
+          "fullMapcode":"US-CA 4349.S8W",
+          "territory":"US-CA",
+          "code":"4349.S8W"
+        },
+        {
+          "type":"Alternative",
+          "fullMapcode":"US-CA JJCH.H9DF",
+          "territory":"US-CA",
+          "code":"JJCH.H9DF"
+        },
+        {
+          "type":"Alternative",
+          "fullMapcode":"USA JJCH.H9DF",
+          "territory":"USA",
+          "code":"JJCH.H9DF"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Both address formats
+
+Most street name-based addresses have a matching land lot-based address linked to it. To support this dual-addressing scheme, the API response contains the `address` field, as well as an additional field `linkedAddress`. The `address` field contains the street name-based address, while the region-specific `linkedAddress` field contains the land lot-based address.
+The `linkedAddress` response object mostly follows the default `address` object, except for the addition of the following two fields.
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ fontSize: '1em' }} width="250px;">Field</th>
+      <th style={{ fontSize: '1em' }}>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+         `landCode` <br />
+         *string*
+      </th>
+      <td>Land-lot number.</td>
+    </tr>
+    <tr>
+      <th>
+         `dependentLocalName` <br />
+         *string*
+      </th>
+      <td>
+        Neighborhood ( *dong* ).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+A `Point Address` element in the `results` array with both address formats present is represented in JSON as follows:
+
+```json [title=Response structure - JSON]
+{
+  "summary": {
+    "queryTime": 102,
+    "numResults": 1
+  },
+  "addresses": []
+}
+```
+
+Example response for the Geography result with `entityType=PostalCodeArea` filtering:
+
+```json [title=Geography example response - JSON]
+{
+  "summary": {
+    "queryTime": 10,
+    "numResults": 1
+  },
+  "addresses": [
+    {
+      "address": {
+        "routeNumbers": [],
+        "countryCode": "US",
+        "countrySubdivision": "CA",
+        "countrySecondarySubdivision": "Santa Cruz",
+        "municipality": "Santa Cruz",
+        "postalName": "Santa Cruz",
+        "postalCode": "95065",
+        "country": "United States",
+        "countryCodeISO3": "USA",
+        "freeformAddress": "Santa Cruz, CA 95065",
+        "boundingBox": {
+          "northEast": "37.085762,-121.949375",
+          "southWest": "36.983408,-122.013236",
+          "entity": "position"
+        },
+        "countrySubdivisionName": "California"
+      },
+      "position": "36.988171,-121.974876",
+      "dataSources": {
+        "geometry": {
+          "id": "00005543-3300-3c00-0000-00004dc8b8e5"
+        }
+      },
+      "entityType": "PostalCodeArea",
+      "mapcodes":[
+        {
+          "type":"Local",
+          "fullMapcode":"US-CA FS.WRG0",
+          "territory":"US-CA",
+          "code":"FS.WRG0"
+        },
+        {
+          "type":"International",
+          "fullMapcode":"S4ZW4.89XV"
+        },
+        {
+          "type":"Alternative",
+          "fullMapcode":"US-CA 4349.S7L",
+          "territory":"US-CA",
+          "code":"4349.S7L"
+        },
+        {
+          "type":"Alternative",
+          "fullMapcode":"US-CA JJCH.H9CF",
+          "territory":"US-CA",
+          "code":"JJCH.H9CF"
+        },
+        {
+          "type":"Alternative",
+          "fullMapcode":"USA JJCH.H9CF",
+          "territory":"USA",
+          "code":"JJCH.H9CF"
+        }
+      ]
+    }
+  ]
+}
+```

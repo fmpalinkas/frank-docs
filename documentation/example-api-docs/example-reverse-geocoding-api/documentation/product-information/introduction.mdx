@@ -1,0 +1,84 @@
+---
+title: Introduction
+titleTags:
+  - label: "Service version: 2"
+    color: grey5
+  - label: "Last edit: 2022.11.14"
+    color: grey5
+---
+
+## What is Example's Reverse Geocoding API?
+
+The Example Reverse Geocoding API gives users a tool to translate a coordinate (for example: `37.786505, -122.3862`) into a human-understandable street address, street element, or geography. Most often, this is needed in tracking applications where you receive a GPS feed from the device or asset and you want to know the address.
+
+The Reverse Geocoding API consists of the following endpoints:
+
+<DocsArticles
+  articles={[
+    {
+      title: 'Reverse Geocode',
+      body: 'Translates coordinates into human-readable addresses.',
+      button: {
+        label: 'Reverse Geocode',
+        href: '../reverse-geocode',
+      },
+    },
+    {
+      title: 'CrossStreet Lookup',
+      body: 'Translates coordinates into human-readable addresses and cross streets.',
+      button: {
+        label: 'CrossStreet Lookup',
+        href: '../cross-street-lookup',
+      },
+    },
+  ]}
+/>
+
+## Common use cases
+
+- GPS Fleet tracking / Fleet management.
+- Delivery tracking / pickup and drop-off transportation service support (Ride Hailing Apps).
+- Geo data analytics, for example: grouping data by post code/city or any other selected administrative unit.
+
+## Features
+
+- Limiting result details only to the selected geography level (like a PostalCodeArea).
+- Geopolitical views support.
+- Cross street/closest intersection lookup.
+- Basic speed limit restriction information for the closest road element (if available).
+
+## Getting started  
+
+Check these links to get started with the Reverse Geocoding API:
+
+<ImageArticleGrid  articles={
+[
+  {
+    title: 'How to get a Example API Key',
+    body: 'When you use our location Service APIs, we need a way to identify that it is your application that is making the request to use the service (API).',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/2000x1500/41587a2818/geocoding_best_practices.jpg',
+      alt: 'How to get a Example API Key',
+      width: 570,
+      height: 481
+    },
+    button: {
+        label: "Follow these instructions.",
+        href: "https://developer.Example.com/knowledgebase/platform/articles/how-to-get-an-Example-api-key/"
+    },
+  },
+  {
+    title: 'Reverse Geocoding with the Map SDK',
+    body: 'One of the easiest ways to integrate Reverse Geocoding in your application',
+    img: {
+      src: 'https://a.storyblok.com/f/178460/2000x1500/b2bc0f8c1b/plan_your_roadtrip_menu_in_advance_with_route_search.jpg',
+      alt: 'Reverse Geocoding',
+      width: 570,
+      height: 481
+    },
+    button: {
+      label: "Read this tutorial",
+      href: "https://developer.Example.com/android/maps/documentation/guides/search/reverse-geocoding"
+    },
+  },
+  ]} />   

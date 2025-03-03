@@ -1,0 +1,31 @@
+group: reverse-geocoding-api
+isPrivate: false
+description: The Example Reverse Geocoding API gives users a tool to translate a coordinate into a human-understandable street address, street element, or geography.
+productName: Reverse Geocoding API
+menuTitle: Documentation
+isMenuOpened: false
+menu:
+  - title: Product Information
+    items:
+      - fileId: /product-information/introduction
+        title: Introduction
+      - fileId: /product-information/best-practices
+        title: Best practices
+      - fileId: /product-information/release-notes
+        title: Release notes
+      - fileId: /product-information/market-coverage
+        title: Market Coverage
+      - fileId: /product-information/region-specific-content
+        title: Region-specific content
+      - fileId: /product-information/supported-languages
+        title: Supported Languages
+  - title: Reverse Geocoding 
+    isExpanded: false
+    items: 
+      - fileId: /reverse-geocode
+        title: Reverse Geocode
+        suffix: get
+      - fileId: /cross-street-lookup
+        title: CrossStreet Lookup
+        suffix: get
+  

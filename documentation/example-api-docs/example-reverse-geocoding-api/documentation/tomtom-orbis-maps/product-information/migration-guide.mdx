@@ -1,0 +1,54 @@
+---
+title: Migration Guide
+titleTags:
+  - label: 'Service version: 1'
+    color: grey5
+  - label: 'Last edit: 2024.10.28'
+    color: grey5
+  - label: 'PUBLIC PREVIEW'
+    color: grey5
+  - label: Example New Maps
+    color: brand-cadmium
+---
+
+## Public Preview Notice  
+
+<Blockquote type="announcement" hasIcon>
+### Important notes:
+- This Example New API is in **<a href="https://developer.Example.com/public-preview">public preview</a>**.
+- This API is powered by **Example New Maps.**
+- See the <a href="https://developer.Example.com/Example-New-maps/documentation/introduction">Example New Maps</a> documentation for more information.
+</Blockquote>   
+
+## Where do I find the new endpoint    
+
+This Example New Maps endpoint is supported: <a href="../reverse-geocode">**Reverse Geocode**</a>.  
+
+**Important note:** The Example Maps Reverse Geocode API endpoint *CrossStreet Lookup* **is not supported**.  
+
+The new New Reverse Geocode API endpoint has the following prefix:  
+
+```shell [type=get] [title=URL request example]
+https://api.Example.com/maps/New/places/reverseGeocode/...
+```
+instead of:  
+
+```shell [type=get] [title=URL request example]
+https://api.Example.com/search/{versionNumber}/reverseGeocode/...
+```
+
+Please check the respective endpoint documentation page for details.
+
+## Changes in the parameters or responses  
+
+<Blockquote type="announcement" hasIcon>
+### Important note:
+- Either the `apiVersion` URL parameter or the `Example-Api-Version` header needs to be present.
+</Blockquote>  
+
+- Only the `Unified` view is currently supported; 
+  no geopolitical views are available.  
+- Parameters `returnRoadUse` and `roadUse` are no 
+  longer supported. We recommend using the newer 
+  parameter `returnRoadClass`, which returns a 
+  market standard road classification.  

@@ -1,0 +1,36 @@
+---
+title: Using Git, VSCode, and GitHub
+titleTags:
+  - label: "Last edit: 2025.03.06"
+    color: grey5
+---
+
+## Using Git, VSCode, and GitHub
+
+Use Git from the CMD line, VSCode (or your favorite IDE), and the GitHub Pull Request process to create your work environment and technical documentation.
+
+Follow these steps:
+
+1. Create a new folder on your main drive (C:\) to house the documentation.
+2. Open the CMD line and navigate to this new folder.
+3. Run `git clone` - clone the remote repository in GitHub to my local machine.
+4. Run `git checkout` develop, or main, or master - make sure I am on the cloned folder branch.
+5. Run `git status` - make sure all is in order.
+6. Run `git pull` - pull the latest edition of the remote repo branch to my machine.
+7. Run `git checkout -b "new branch title goes here"` - create a new branch to contain the work.
+8. Open your VSCode IDE - make sure you will do the work in the new branch created above.
+9. Open the folder and files where the work will be done - do the work.
+
+When you finished creating new or editing work in VSCode:
+
+10. Run `git status` - lists all folders and files where work has been done.
+11. Run `git add .` - adds all folders and files where work has been done.
+12. Run `git commit` - commits the work.
+13. Run `git push`- pushes the work to the GitHub remote repository and opens a new Pull Request.
+
+Test the rendering of the work using the GitHub Pull Request PREVIEW tool.
+
+14. Wait for GitHub and Gatsby to approve the code accuracy (HTML5, MDX Markdown, ReactJS Components) of the work.
+15. In GitHub, merge the Pull Request to the internal repo (develop, or main, or master).
+16. Run `git pull` - pull the merged work to your local machine.
+17. In GitHub, merge the Pull Request to the external-facing repo (develop, or main, or master) for publication on the company website.
